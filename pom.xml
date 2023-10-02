@@ -4,6 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <modules>
+        <module>bootstrap</module>
+        <module>application</module>
         <module>infrastructure</module>
         <module>api-contract</module>
         <module>domain</module>
