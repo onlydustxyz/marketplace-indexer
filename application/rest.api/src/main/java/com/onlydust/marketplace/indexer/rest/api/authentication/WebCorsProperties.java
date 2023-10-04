@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.rest.api.adapter.authentication;
+package com.onlydust.marketplace.indexer.rest.api.authentication;
 
 import lombok.Data;
 

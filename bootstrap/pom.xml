@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>com.onlydust.marketplace.indexer</groupId>
-            <artifactId>rest-api</artifactId>
+            <artifactId>rest.api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

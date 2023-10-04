@@ -2,38 +2,42 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>marketplace-indexer</artifactId>
         <groupId>com.onlydust.marketplace.indexer</groupId>
+        <artifactId>application</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>api-contract</artifactId>
+    <artifactId>rest.api</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
+        <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
+        <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
+        <openapi-generator-version>4.3.1</openapi-generator-version>
         <generated.code.dir>${project.basedir}/src/gen/java</generated.code.dir>
         <contract.name>marketplace-indexer-contract.yaml</contract.name>
         <contract.path>src/main/resources/${contract.name}</contract.path>
-        <old-contract.path>${project.build.directory}/${contract.name}</old-contract.path>
-
-        <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
-        <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
-        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
-        <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
-
         <jackson-databind-nullable.version>0.2.3</jackson-databind-nullable.version>
-
-        <openapi-generator-version>4.3.1</openapi-generator-version>
-        <openapi-diff.version>2.0.0-SNAPSHOT</openapi-diff.version>
-
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.onlydust.marketplace.indexer</groupId>
+            <artifactId>domain</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
@@ -52,19 +56,34 @@
             <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
             <version>3.0.0</version>
         </dependency>
     </dependencies>
 
-
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- ############################## -->
             <!-- clean generated sources        -->
             <!-- ############################## -->
@@ -113,8 +132,8 @@
                             <inputSpec>${project.basedir}/${contract.path}</inputSpec>
                             <generatorName>spring</generatorName>
                             <configHelp>false</configHelp>
-                            <apiPackage>com.onlydust.marketplace.indexer.contract</apiPackage>
-                            <modelPackage>com.onlydust.marketplace.indexer.contract.model</modelPackage>
+                            <apiPackage>com.onlydust.marketplace.indexer.rest.api</apiPackage>
+                            <modelPackage>com.onlydust.marketplace.indexer.rest.api.model</modelPackage>
                             <configOptions>
                                 <java8>true</java8>
                                 <library>spring-boot</library>
@@ -200,5 +219,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
