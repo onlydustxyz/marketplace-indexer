@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import onlydust.com.marketplace.indexer.domain.model.User;
+import com.onlydust.marketplace.indexer.domain.model.User;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;

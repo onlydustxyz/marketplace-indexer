@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>marketplace-indexer</artifactId>
-        <groupId>onlydust.com.marketplace.indexer</groupId>
+        <groupId>com.onlydust.marketplace.indexer</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -113,8 +113,8 @@
                             <inputSpec>${project.basedir}/${contract.path}</inputSpec>
                             <generatorName>spring</generatorName>
                             <configHelp>false</configHelp>
-                            <apiPackage>onlydust.com.marketplace.indexer.contract</apiPackage>
-                            <modelPackage>onlydust.com.marketplace.indexer.contract.model</modelPackage>
+                            <apiPackage>com.onlydust.marketplace.indexer.contract</apiPackage>
+                            <modelPackage>com.onlydust.marketplace.indexer.contract.model</modelPackage>
                             <configOptions>
                                 <java8>true</java8>
                                 <library>spring-boot</library>
