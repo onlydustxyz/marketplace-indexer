@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.postgres.adapter;
+package com.onlydust.marketplace.indexer.postgres;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;

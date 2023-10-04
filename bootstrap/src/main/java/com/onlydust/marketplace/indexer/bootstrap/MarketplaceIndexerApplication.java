@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap;
 
-import com.onlydust.marketplace.indexer.postgres.adapter.PostgresConfiguration;
+import com.onlydust.marketplace.indexer.postgres.PostgresConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

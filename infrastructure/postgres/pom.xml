@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>postgres-adapter</artifactId>
+    <artifactId>postgres</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
