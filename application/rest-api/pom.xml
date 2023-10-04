@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>rest-api-adapter</artifactId>
+    <artifactId>rest-api</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
