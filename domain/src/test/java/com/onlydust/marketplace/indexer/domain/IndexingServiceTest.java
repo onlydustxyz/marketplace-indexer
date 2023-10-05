@@ -30,6 +30,7 @@ public class IndexingServiceTest {
     final RawCommit[] pr1257Commits = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_commits.json", RawCommit[].class);
     final RawCheckRuns pr1257CheckRuns = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_check_runs.json", RawCheckRuns.class);
     final RawRepo marketplaceFrontend = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
+    final RawLanguages marketplaceFrontendLanguages = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/languages.json", RawLanguages.class);
     final RawStorageRepositoryStub rawStorageReader = new RawStorageRepositoryStub();
     final RawStorageRepositoryStub rawStorageRepository = new RawStorageRepositoryStub();
     final IndexingService indexer = new IndexingService(new CacheWriteRawStorageReaderDecorator(rawStorageReader, rawStorageRepository));
@@ -37,6 +38,7 @@ public class IndexingServiceTest {
     @BeforeEach
     void setup() throws IOException {
         rawStorageReader.feedWith(marketplaceFrontend);
+        rawStorageReader.feedWith(marketplaceFrontend.getId(), marketplaceFrontendLanguages);
         rawStorageReader.feedWith(anthony, pierre, olivier);
         rawStorageReader.feedWith(anthony.getId(), anthonySocialAccounts);
         rawStorageReader.feedWith(pierre.getId(), pierreSocialAccounts);
@@ -124,8 +126,10 @@ public class IndexingServiceTest {
         assertThat(repo.pullRequests().get(0).id()).isEqualTo(pr1257.getId());
         assertThat(repo.issues().size()).isEqualTo(1);
         assertThat(repo.issues().get(0).id()).isEqualTo(issue78.getId());
+        assertThat(repo.languages().get("TypeScript")).isEqualTo(2761826);
 
         assertCachedReposAre(marketplaceFrontend);
+        assertCachedRepoLanguagesAre(Map.of(marketplaceFrontend.getId(), marketplaceFrontendLanguages));
         assertCachedRepoPullRequestsAre(Map.of(marketplaceFrontend.getId(), List.of(pr1257)));
         assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(issue78)));
         assertCachedPullRequestsAre(pr1257);
@@ -180,6 +184,10 @@ public class IndexingServiceTest {
 
     private void assertCachedRepoIssuesAre(Map<Long, List<RawIssue>> expected) {
         assertThat(rawStorageRepository.repoIssues()).isEqualTo(expected);
+    }
+
+    private void assertCachedRepoLanguagesAre(Map<Long, RawLanguages> expected) {
+        assertThat(rawStorageRepository.repoLanguages()).isEqualTo(expected);
     }
 
     private void assertCachedPullRequestsAre(RawPullRequest... expected) {

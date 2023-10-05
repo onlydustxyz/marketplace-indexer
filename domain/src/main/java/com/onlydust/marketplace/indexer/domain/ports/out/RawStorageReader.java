@@ -12,6 +12,8 @@ public interface RawStorageReader {
 
     List<RawIssue> repoIssues(Long repoId);
 
+    RawLanguages repoLanguages(Long repoId);
+
     Optional<RawUser> user(Long userId);
 
     List<RawSocialAccount> userSocialAccounts(Long userId);

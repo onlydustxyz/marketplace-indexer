@@ -33,6 +33,13 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
+    public RawLanguages repoLanguages(Long repoId) {
+        final var languages = fetcher.repoLanguages(repoId);
+        cache.saveRepoLanguages(repoId, languages);
+        return languages;
+    }
+
+    @Override
     public Optional<RawUser> user(Long userId) {
         final var user = fetcher.user(userId);
         user.ifPresent(cache::saveUser);

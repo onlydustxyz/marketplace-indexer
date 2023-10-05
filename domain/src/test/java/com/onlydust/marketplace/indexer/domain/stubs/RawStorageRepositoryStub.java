@@ -20,6 +20,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     final Map<Tuple, List<Long>> closingIssues = new HashMap<>();
     final Map<Long, List<RawPullRequest>> repoPullRequests = new HashMap<>();
     final Map<Long, List<RawIssue>> repoIssues = new HashMap<>();
+    final Map<Long, RawLanguages> repoLanguages = new HashMap<>();
 
     public static <T> T load(String path, Class<T> type) {
         final var inputStream = type.getResourceAsStream(path);
@@ -43,6 +44,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     @Override
     public List<RawIssue> repoIssues(Long repoId) {
         return repoIssues.getOrDefault(repoId, new ArrayList<>());
+    }
+
+    @Override
+    public RawLanguages repoLanguages(Long repoId) {
+        return repoLanguages.getOrDefault(repoId, new RawLanguages());
     }
 
     @Override
@@ -94,6 +100,10 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     public void feedWith(RawRepo... repos) {
         Arrays.stream(repos).sequential().forEach(this::saveRepo);
+    }
+
+    public void feedWith(Long repoId, RawLanguages languages) {
+        saveRepoLanguages(repoId, languages);
     }
 
     public void feedWith(RawUser... users) {
@@ -188,6 +198,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
+    public void saveRepoLanguages(Long repoId, RawLanguages languages) {
+        repoLanguages.put(repoId, languages);
+    }
+
+    @Override
     public void saveClosingIssues(String repoOwner, String repoName, Long pullRequestId, List<Long> issueIds) {
         closingIssues.put(Tuple.tuple(repoOwner, repoName, pullRequestId), issueIds);
     }
@@ -234,5 +249,9 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     public Map<Long, List<RawIssue>> repoIssues() {
         return repoIssues;
+    }
+
+    public Map<Long, RawLanguages> repoLanguages() {
+        return repoLanguages;
     }
 }
