@@ -29,12 +29,14 @@ public class IndexingServiceTest {
     final RawCodeReview[] pr1257Reviews = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_reviews.json", RawCodeReview[].class);
     final RawCommit[] pr1257Commits = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_commits.json", RawCommit[].class);
     final RawCheckRuns pr1257CheckRuns = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_check_runs.json", RawCheckRuns.class);
+    final RawRepo marketplaceFrontend = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
     final RawStorageRepositoryStub rawStorageReader = new RawStorageRepositoryStub();
     final RawStorageRepositoryStub rawStorageRepository = new RawStorageRepositoryStub();
     final IndexingService indexer = new IndexingService(new CacheWriteRawStorageReaderDecorator(rawStorageReader, rawStorageRepository));
 
     @BeforeEach
     void setup() throws IOException {
+        rawStorageReader.feedWith(marketplaceFrontend);
         rawStorageReader.feedWith(anthony, pierre, olivier);
         rawStorageReader.feedWith(anthony.getId(), anthonySocialAccounts);
         rawStorageReader.feedWith(pierre.getId(), pierreSocialAccounts);
@@ -101,13 +103,22 @@ public class IndexingServiceTest {
     void should_index_issue() {
         final var issue = indexer.indexIssue("onlydustxyz", "marketplace-frontend", 78L);
 
-        assertThat(issue.id()).isEqualTo(1301824165);
+        assertThat(issue.id()).isEqualTo(issue78.getId());
         assertThat(issue.assignees().size()).isEqualTo(1);
         assertThat(issue.assignees().get(0).login()).isEqualTo("AnthonyBuisset");
 
         assertCachedIssuesAre(issue78);
         assertCachedUsersAre(anthony);
         assertCachedUserSocialAccountsAre(Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList()));
+    }
+    
+    @Test
+    void should_index_repo() {
+        final var repo = indexer.indexRepo(marketplaceFrontend.getId());
+
+        assertThat(repo.id()).isEqualTo(marketplaceFrontend.getId());
+
+        assertCachedReposAre(marketplaceFrontend);
     }
 
     @Test
@@ -120,8 +131,12 @@ public class IndexingServiceTest {
         assertCachedUsersAre();
     }
 
-    private void assertCachedUsersAre(RawUser... rawUsers) {
-        assertThat(rawStorageRepository.users()).containsExactly(rawUsers);
+    private void assertCachedReposAre(RawRepo... repos) {
+        assertThat(rawStorageRepository.repos()).containsExactly(repos);
+    }
+
+    private void assertCachedUsersAre(RawUser... users) {
+        assertThat(rawStorageRepository.users()).containsExactly(users);
     }
 
     private void assertCachedUserSocialAccountsAre(Map<Long, List<RawSocialAccount>> expected) {

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RawStorageReader {
+    Optional<RawRepo> repo(Long repoId);
+
     Optional<RawUser> user(Long userId);
 
     List<RawSocialAccount> userSocialAccounts(Long userId);

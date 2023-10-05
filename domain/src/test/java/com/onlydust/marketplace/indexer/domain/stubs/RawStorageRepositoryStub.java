@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class RawStorageRepositoryStub implements RawStorageRepository {
+    final List<RawRepo> repos = new ArrayList<>();
     final List<RawUser> users = new ArrayList<>();
     final Map<Long, List<RawSocialAccount>> userSocialAccounts = new HashMap<>();
     final List<RawPullRequest> pullRequests = new ArrayList<>();
@@ -25,6 +26,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Optional<RawRepo> repo(Long repoId) {
+        return repos.stream().filter(repo -> repo.getId().equals(repoId)).findFirst();
     }
 
     @Override
@@ -74,8 +80,12 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         return closingIssues.getOrDefault(Tuple.tuple(repoOwner, repoName, pullRequestNumber), new ArrayList<>());
     }
 
-    public void feedWith(RawUser... rawUsers) {
-        Arrays.stream(rawUsers).sequential().forEach(this::saveUser);
+    public void feedWith(RawRepo... repos) {
+        Arrays.stream(repos).sequential().forEach(this::saveRepo);
+    }
+
+    public void feedWith(RawUser... users) {
+        Arrays.stream(users).sequential().forEach(this::saveUser);
     }
 
     public void feedWith(Long userId, RawSocialAccount... socialAccounts) {
@@ -142,8 +152,17 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
+    public void saveRepo(RawRepo repo) {
+        repos.add(repo);
+    }
+
+    @Override
     public void saveClosingIssues(String repoOwner, String repoName, Long pullRequestId, List<Long> issueIds) {
         closingIssues.put(Tuple.tuple(repoOwner, repoName, pullRequestId), issueIds);
+    }
+
+    public List<RawRepo> repos() {
+        return repos;
     }
 
     public List<RawUser> users() {

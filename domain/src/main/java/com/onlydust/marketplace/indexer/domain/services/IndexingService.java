@@ -12,6 +12,11 @@ import java.util.Objects;
 public class IndexingService {
     private final RawStorageReader rawStorageReader;
 
+    public Repo indexRepo(Long repoId) {
+        final var repo = rawStorageReader.repo(repoId).orElseThrow(() -> new NotFound("Repo not found"));
+        return new Repo(repo.getId());
+    }
+
     public User indexUser(Long userId) {
         final var user = rawStorageReader.user(userId).orElseThrow(() -> new NotFound("User not found"));
         final var socialAccounts = rawStorageReader.userSocialAccounts(userId);

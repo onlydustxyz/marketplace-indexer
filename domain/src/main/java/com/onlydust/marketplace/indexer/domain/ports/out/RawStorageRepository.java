@@ -19,5 +19,7 @@ public interface RawStorageRepository extends RawStorageReader {
 
     void saveIssue(RawIssue issue);
 
+    void saveRepo(RawRepo repo);
+
     void saveClosingIssues(String repoOwner, String repoName, Long pullRequestNumber, List<Long> issueNumbers);
 }
