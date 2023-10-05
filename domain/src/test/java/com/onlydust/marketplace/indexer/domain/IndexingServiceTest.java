@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.domain;
 
+import com.onlydust.marketplace.indexer.domain.exception.NotFound;
 import com.onlydust.marketplace.indexer.domain.model.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.domain.model.raw.RawUser;
 import com.onlydust.marketplace.indexer.domain.ports.out.CachedRawStorageReaderDecorator;
@@ -28,7 +29,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_user_from_its_id() {
-        final var user = indexer.indexUserById(anthony.getId());
+        final var user = indexer.indexUser(anthony.getId());
 
         assertThat(user.id()).isEqualTo(anthony.getId());
         assertThat(user.login()).isEqualTo(anthony.getLogin());
@@ -41,8 +42,8 @@ public class IndexingServiceTest {
     @Test
     void should_throw_when_indexing_non_existing_items() {
         assertThatThrownBy(() -> {
-            indexer.indexUserById(0);
-        }).isInstanceOf(IllegalStateException.class)
+            indexer.indexUser(0);
+        }).isInstanceOf(NotFound.class)
                 .hasMessageContaining("User not found");
 
         assertCachedUsersAre();
