@@ -4,7 +4,7 @@ import com.onlydust.marketplace.indexer.domain.exception.NotFound;
 import com.onlydust.marketplace.indexer.domain.model.raw.RawPullRequest;
 import com.onlydust.marketplace.indexer.domain.model.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.domain.model.raw.RawUser;
-import com.onlydust.marketplace.indexer.domain.ports.out.CachedRawStorageReaderDecorator;
+import com.onlydust.marketplace.indexer.domain.ports.out.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.services.IndexingService;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageRepositoryStub;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +24,7 @@ public class IndexingServiceTest {
     final RawPullRequest pr1257 = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257.json", RawPullRequest.class);
     final RawStorageRepositoryStub rawStorageReader = new RawStorageRepositoryStub();
     final RawStorageRepositoryStub rawStorageRepository = new RawStorageRepositoryStub();
-    final IndexingService indexer = new IndexingService(new CachedRawStorageReaderDecorator(rawStorageReader, rawStorageRepository));
+    final IndexingService indexer = new IndexingService(new CacheWriteRawStorageReaderDecorator(rawStorageReader, rawStorageRepository));
 
     @BeforeEach
     void setup() throws IOException {
