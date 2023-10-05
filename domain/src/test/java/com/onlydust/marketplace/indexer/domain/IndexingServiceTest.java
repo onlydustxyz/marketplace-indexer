@@ -5,6 +5,7 @@ import com.onlydust.marketplace.indexer.domain.model.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.services.IndexingService;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageRepositoryStub;
+import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +27,7 @@ public class IndexingServiceTest {
     final RawPullRequest pr1257 = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257.json", RawPullRequest.class);
     final RawCodeReview[] pr1257Reviews = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_reviews.json", RawCodeReview[].class);
     final RawCommit[] pr1257Commits = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_commits.json", RawCommit[].class);
+    final RawCheckRuns pr1257CheckRuns = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_check_runs.json", RawCheckRuns.class);
     final RawStorageRepositoryStub rawStorageReader = new RawStorageRepositoryStub();
     final RawStorageRepositoryStub rawStorageRepository = new RawStorageRepositoryStub();
     final IndexingService indexer = new IndexingService(new CacheWriteRawStorageReaderDecorator(rawStorageReader, rawStorageRepository));
@@ -39,6 +41,7 @@ public class IndexingServiceTest {
         rawStorageReader.feedWith(pr1257);
         rawStorageReader.feedWith(pr1257.getId(), pr1257Reviews);
         rawStorageReader.feedWith(pr1257.getId(), pr1257Commits);
+        rawStorageReader.feedWith(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha(), pr1257CheckRuns);
     }
 
     @Test
@@ -66,10 +69,13 @@ public class IndexingServiceTest {
         assertThat(pullRequest.commits().size()).isEqualTo(1);
         assertThat(pullRequest.commits().get(0).sha()).isEqualTo("0addbe7d8cdbe1356fc8fb58e4b896616e7d7592");
         assertThat(pullRequest.commits().get(0).author().login()).isEqualTo("AnthonyBuisset");
+        assertThat(pullRequest.checkRuns().size()).isEqualTo(17);
+        assertThat(pullRequest.checkRuns().get(0).id()).isEqualTo(17002823375L);
 
         assertCachedPullRequestsAre(pr1257);
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
         assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
+        assertCachedCheckRunsAre(Map.of(Tuple.tuple(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha()), pr1257CheckRuns));
         assertCachedUsersAre(anthony, pierre, olivier, anthony);
         assertCachedUserSocialAccountsAre(
                 Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(),
@@ -106,5 +112,9 @@ public class IndexingServiceTest {
 
     private void assertCachedCommitsAre(Map<Integer, List<RawCommit>> expected) {
         assertThat(rawStorageRepository.commits()).isEqualTo(expected);
+    }
+
+    private void assertCachedCheckRunsAre(Map<Tuple, RawCheckRuns> expected) {
+        assertThat(rawStorageRepository.checkRuns()).isEqualTo(expected);
     }
 }

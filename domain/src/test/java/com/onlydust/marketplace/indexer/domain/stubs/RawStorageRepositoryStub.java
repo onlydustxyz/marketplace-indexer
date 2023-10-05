@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.domain.stubs;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.model.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageRepository;
+import org.assertj.core.groups.Tuple;
 
 import java.io.IOException;
 import java.util.*;
@@ -13,6 +14,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     final List<RawPullRequest> pullRequests = new ArrayList<>();
     final Map<Integer, List<RawCodeReview>> pullRequestReviews = new HashMap<>();
     final Map<Integer, List<RawCommit>> pullRequestCommits = new HashMap<>();
+    final Map<Tuple, RawCheckRuns> checkRuns = new HashMap<>();
 
     public static <T> T load(String path, Class<T> type) {
         final var inputStream = type.getResourceAsStream(path);
@@ -52,6 +54,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         return pullRequestCommits.getOrDefault(pullRequestId, new ArrayList<>());
     }
 
+    @Override
+    public RawCheckRuns checkRuns(Integer repoId, String sha) {
+        return checkRuns.get(Tuple.tuple(repoId, sha));
+    }
+
     public void feedWith(RawUser... rawUsers) {
         Arrays.stream(rawUsers).sequential().forEach(this::saveUser);
     }
@@ -70,6 +77,10 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     public void feedWith(Integer pullRequestId, RawCommit... commits) {
         savePullRequestCommits(pullRequestId, Arrays.stream(commits).toList());
+    }
+
+    public void feedWith(Integer repoId, String sha, RawCheckRuns checkRuns) {
+        saveCheckRuns(repoId, sha, checkRuns);
     }
 
     @Override
@@ -96,6 +107,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         pullRequestCommits.put(pullRequestId, commits);
     }
 
+    @Override
+    public void saveCheckRuns(Integer repoId, String sha, RawCheckRuns checkRuns) {
+        this.checkRuns.put(Tuple.tuple(repoId, sha), checkRuns);
+    }
+
     public List<RawUser> users() {
         return users;
     }
@@ -114,5 +130,9 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     public Map<Integer, List<RawCommit>> commits() {
         return pullRequestCommits;
+    }
+
+    public Map<Tuple, RawCheckRuns> checkRuns() {
+        return checkRuns;
     }
 }

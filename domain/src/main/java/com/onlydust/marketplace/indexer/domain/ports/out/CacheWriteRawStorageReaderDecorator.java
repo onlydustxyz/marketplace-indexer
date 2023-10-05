@@ -45,4 +45,11 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
         cache.savePullRequestCommits(pullRequestId, commits);
         return commits;
     }
+
+    @Override
+    public RawCheckRuns checkRuns(Integer repoId, String sha) {
+        final var checkRuns = fetcher.checkRuns(repoId, sha);
+        cache.saveCheckRuns(repoId, sha, checkRuns);
+        return checkRuns;
+    }
 }

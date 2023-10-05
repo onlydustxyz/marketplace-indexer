@@ -14,4 +14,6 @@ public interface RawStorageRepository extends RawStorageReader {
     void savePullRequestReviews(Integer pullRequestId, List<RawCodeReview> codeReview);
 
     void savePullRequestCommits(Integer pullRequestId, List<RawCommit> commits);
+
+    void saveCheckRuns(Integer repoId, String sha, RawCheckRuns checkRuns);
 }

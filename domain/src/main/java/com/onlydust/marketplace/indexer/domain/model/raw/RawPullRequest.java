@@ -15,6 +15,7 @@ public class RawPullRequest extends JsonDocument {
     Integer id;
     Integer number;
     Base base;
+    Head head;
 
     @JsonProperty("user")
     RawUser author;
@@ -26,6 +27,14 @@ public class RawPullRequest extends JsonDocument {
     @EqualsAndHashCode(callSuper = true)
     @NoArgsConstructor(force = true)
     public static class Base extends JsonDocument {
+        RawRepo repo;
+    }
+
+    @Value
+    @EqualsAndHashCode(callSuper = true)
+    @NoArgsConstructor(force = true)
+    public static class Head extends JsonDocument {
+        String sha;
         RawRepo repo;
     }
 }

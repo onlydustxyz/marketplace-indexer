@@ -15,4 +15,6 @@ public interface RawStorageReader {
     List<RawCodeReview> pullRequestReviews(Integer pullRequestId);
 
     List<RawCommit> pullRequestCommits(Integer pullRequestId);
+
+    RawCheckRuns checkRuns(Integer repoId, String sha);
 }
