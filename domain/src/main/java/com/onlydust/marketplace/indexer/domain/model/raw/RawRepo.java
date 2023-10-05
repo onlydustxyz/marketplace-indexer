@@ -9,4 +9,7 @@ import lombok.Value;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
 public class RawRepo extends JsonDocument {
+    Integer id;
+    String name;
+    RawUser owner;
 }

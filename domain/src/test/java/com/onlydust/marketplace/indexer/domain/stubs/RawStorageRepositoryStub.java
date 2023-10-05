@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.stubs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.onlydust.marketplace.indexer.domain.model.raw.RawPullRequest;
 import com.onlydust.marketplace.indexer.domain.model.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.domain.model.raw.RawUser;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageRepository;
@@ -9,8 +10,9 @@ import java.io.IOException;
 import java.util.*;
 
 public class RawStorageRepositoryStub implements RawStorageRepository {
-    final List<RawUser> rawUsers = new ArrayList<>();
+    final List<RawUser> users = new ArrayList<>();
     final Map<Integer, List<RawSocialAccount>> userSocialAccounts = new HashMap<>();
+    final List<RawPullRequest> pullRequests = new ArrayList<>();
 
     public static <T> T load(String path, Class<T> type) {
         final var inputStream = type.getResourceAsStream(path);
@@ -22,17 +24,26 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public Optional<RawUser> userById(Integer userId) {
-        return rawUsers.stream().filter(user -> user.getId().equals(userId)).findFirst();
+    public Optional<RawUser> user(Integer userId) {
+        return users.stream().filter(user -> user.getId().equals(userId)).findFirst();
     }
 
     @Override
-    public Optional<List<RawSocialAccount>> userSocialAccountsById(Integer userId) {
+    public Optional<List<RawSocialAccount>> userSocialAccounts(Integer userId) {
         try {
             return Optional.of(userSocialAccounts.get(userId));
         } catch (NullPointerException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Optional<RawPullRequest> pullRequest(String repoOwner, String repoName, Integer prNumber) {
+        return pullRequests.stream().filter(
+                        pr -> pr.getBase().getRepo().getOwner().getLogin().equals(repoOwner) &&
+                                pr.getBase().getRepo().getName().equals(repoName) &&
+                                pr.getNumber().equals(prNumber))
+                .findFirst();
     }
 
     public void feedWith(RawUser... rawUsers) {
@@ -43,21 +54,34 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         this.userSocialAccounts.put(userId, Arrays.stream(rawSocialAccounts).toList());
     }
 
-    @Override
-    public void save(RawUser rawUser) {
-        rawUsers.add(rawUser);
+    public void feedWith(RawPullRequest... pullRequests) {
+        Arrays.stream(pullRequests).sequential().forEach(this::save);
     }
 
     @Override
-    public void save(Integer userId, List<RawSocialAccount> rawSocialAccounts) {
-        userSocialAccounts.put(userId, rawSocialAccounts);
+    public void save(RawUser user) {
+        users.add(user);
+    }
+
+    @Override
+    public void save(Integer userId, List<RawSocialAccount> socialAccounts) {
+        userSocialAccounts.put(userId, socialAccounts);
+    }
+
+    @Override
+    public void save(RawPullRequest pullRequest) {
+        pullRequests.add(pullRequest);
     }
 
     public List<RawUser> users() {
-        return rawUsers;
+        return users;
     }
 
-    public List<RawSocialAccount> userSocialAccounts(Integer userId) {
-        return userSocialAccounts.get(userId);
+    public Map<Integer, List<RawSocialAccount>> userSocialAccounts() {
+        return userSocialAccounts;
+    }
+
+    public List<RawPullRequest> pullRequests() {
+        return pullRequests;
     }
 }
