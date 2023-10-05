@@ -27,7 +27,12 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_user_from_its_id() {
-        indexer.indexUserById(anthony.getId());
+        final var user = indexer.indexUserById(anthony.getId());
+
+        assertThat(user.getId()).isEqualTo(anthony.getId());
+        assertThat(user.getLogin()).isEqualTo(anthony.getLogin());
+        assertThat(user.getRawSocialAccounts()).containsExactly(anthonyRawSocialAccounts);
+
         assertCachedUsersAre(anthony);
         assertCachedUserSocialAccountsAre(anthony.getId(), anthonyRawSocialAccounts);
     }
