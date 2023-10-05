@@ -10,10 +10,10 @@ import java.util.*;
 
 public class RawStorageRepositoryStub implements RawStorageRepository {
     final List<RawUser> users = new ArrayList<>();
-    final Map<Integer, List<RawSocialAccount>> userSocialAccounts = new HashMap<>();
+    final Map<Long, List<RawSocialAccount>> userSocialAccounts = new HashMap<>();
     final List<RawPullRequest> pullRequests = new ArrayList<>();
-    final Map<Integer, List<RawCodeReview>> pullRequestReviews = new HashMap<>();
-    final Map<Integer, List<RawCommit>> pullRequestCommits = new HashMap<>();
+    final Map<Long, List<RawCodeReview>> pullRequestReviews = new HashMap<>();
+    final Map<Long, List<RawCommit>> pullRequestCommits = new HashMap<>();
     final Map<Tuple, RawCheckRuns> checkRuns = new HashMap<>();
 
     public static <T> T load(String path, Class<T> type) {
@@ -26,17 +26,17 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public Optional<RawUser> user(Integer userId) {
+    public Optional<RawUser> user(Long userId) {
         return users.stream().filter(user -> user.getId().equals(userId)).findFirst();
     }
 
     @Override
-    public List<RawSocialAccount> userSocialAccounts(Integer userId) {
+    public List<RawSocialAccount> userSocialAccounts(Long userId) {
         return userSocialAccounts.getOrDefault(userId, new ArrayList<>());
     }
 
     @Override
-    public Optional<RawPullRequest> pullRequest(String repoOwner, String repoName, Integer prNumber) {
+    public Optional<RawPullRequest> pullRequest(String repoOwner, String repoName, Long prNumber) {
         return pullRequests.stream().filter(
                         pr -> pr.getBase().getRepo().getOwner().getLogin().equals(repoOwner) &&
                                 pr.getBase().getRepo().getName().equals(repoName) &&
@@ -45,17 +45,17 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public List<RawCodeReview> pullRequestReviews(Integer pullRequestId) {
+    public List<RawCodeReview> pullRequestReviews(Long pullRequestId) {
         return pullRequestReviews.getOrDefault(pullRequestId, new ArrayList<>());
     }
 
     @Override
-    public List<RawCommit> pullRequestCommits(Integer pullRequestId) {
+    public List<RawCommit> pullRequestCommits(Long pullRequestId) {
         return pullRequestCommits.getOrDefault(pullRequestId, new ArrayList<>());
     }
 
     @Override
-    public RawCheckRuns checkRuns(Integer repoId, String sha) {
+    public RawCheckRuns checkRuns(Long repoId, String sha) {
         return checkRuns.get(Tuple.tuple(repoId, sha));
     }
 
@@ -63,7 +63,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         Arrays.stream(rawUsers).sequential().forEach(this::saveUser);
     }
 
-    public void feedWith(Integer userId, RawSocialAccount... socialAccounts) {
+    public void feedWith(Long userId, RawSocialAccount... socialAccounts) {
         saveUserSocialAccounts(userId, Arrays.stream(socialAccounts).toList());
     }
 
@@ -71,15 +71,15 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         Arrays.stream(pullRequests).sequential().forEach(this::savePullRequest);
     }
 
-    public void feedWith(Integer pullRequestId, RawCodeReview... codeReviews) {
+    public void feedWith(Long pullRequestId, RawCodeReview... codeReviews) {
         savePullRequestReviews(pullRequestId, Arrays.stream(codeReviews).toList());
     }
 
-    public void feedWith(Integer pullRequestId, RawCommit... commits) {
+    public void feedWith(Long pullRequestId, RawCommit... commits) {
         savePullRequestCommits(pullRequestId, Arrays.stream(commits).toList());
     }
 
-    public void feedWith(Integer repoId, String sha, RawCheckRuns checkRuns) {
+    public void feedWith(Long repoId, String sha, RawCheckRuns checkRuns) {
         saveCheckRuns(repoId, sha, checkRuns);
     }
 
@@ -89,7 +89,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public void saveUserSocialAccounts(Integer userId, List<RawSocialAccount> socialAccounts) {
+    public void saveUserSocialAccounts(Long userId, List<RawSocialAccount> socialAccounts) {
         userSocialAccounts.put(userId, socialAccounts);
     }
 
@@ -98,17 +98,17 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         pullRequests.add(pullRequest);
     }
 
-    public void savePullRequestReviews(Integer pullRequestId, List<RawCodeReview> codeReviews) {
+    public void savePullRequestReviews(Long pullRequestId, List<RawCodeReview> codeReviews) {
         pullRequestReviews.put(pullRequestId, codeReviews);
     }
 
     @Override
-    public void savePullRequestCommits(Integer pullRequestId, List<RawCommit> commits) {
+    public void savePullRequestCommits(Long pullRequestId, List<RawCommit> commits) {
         pullRequestCommits.put(pullRequestId, commits);
     }
 
     @Override
-    public void saveCheckRuns(Integer repoId, String sha, RawCheckRuns checkRuns) {
+    public void saveCheckRuns(Long repoId, String sha, RawCheckRuns checkRuns) {
         this.checkRuns.put(Tuple.tuple(repoId, sha), checkRuns);
     }
 
@@ -116,7 +116,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         return users;
     }
 
-    public Map<Integer, List<RawSocialAccount>> userSocialAccounts() {
+    public Map<Long, List<RawSocialAccount>> userSocialAccounts() {
         return userSocialAccounts;
     }
 
@@ -124,11 +124,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         return pullRequests;
     }
 
-    public Map<Integer, List<RawCodeReview>> codeReviews() {
+    public Map<Long, List<RawCodeReview>> codeReviews() {
         return pullRequestReviews;
     }
 
-    public Map<Integer, List<RawCommit>> commits() {
+    public Map<Long, List<RawCommit>> commits() {
         return pullRequestCommits;
     }
 

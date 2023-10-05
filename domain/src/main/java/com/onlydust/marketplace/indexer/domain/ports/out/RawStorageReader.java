@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RawStorageReader {
-    Optional<RawUser> user(Integer userId);
+    Optional<RawUser> user(Long userId);
 
-    List<RawSocialAccount> userSocialAccounts(Integer userId);
+    List<RawSocialAccount> userSocialAccounts(Long userId);
 
-    Optional<RawPullRequest> pullRequest(String repoOwner, String repoName, Integer prNumber);
+    Optional<RawPullRequest> pullRequest(String repoOwner, String repoName, Long prNumber);
 
-    List<RawCodeReview> pullRequestReviews(Integer pullRequestId);
+    List<RawCodeReview> pullRequestReviews(Long pullRequestId);
 
-    List<RawCommit> pullRequestCommits(Integer pullRequestId);
+    List<RawCommit> pullRequestCommits(Long pullRequestId);
 
-    RawCheckRuns checkRuns(Integer repoId, String sha);
+    RawCheckRuns checkRuns(Long repoId, String sha);
 }

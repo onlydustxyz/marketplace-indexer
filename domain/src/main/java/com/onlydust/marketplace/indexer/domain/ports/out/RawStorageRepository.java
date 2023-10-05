@@ -7,13 +7,13 @@ import java.util.List;
 public interface RawStorageRepository extends RawStorageReader {
     void saveUser(RawUser user);
 
-    void saveUserSocialAccounts(Integer userId, List<RawSocialAccount> socialAccounts);
+    void saveUserSocialAccounts(Long userId, List<RawSocialAccount> socialAccounts);
 
     void savePullRequest(RawPullRequest pullRequest);
 
-    void savePullRequestReviews(Integer pullRequestId, List<RawCodeReview> codeReview);
+    void savePullRequestReviews(Long pullRequestId, List<RawCodeReview> codeReview);
 
-    void savePullRequestCommits(Integer pullRequestId, List<RawCommit> commits);
+    void savePullRequestCommits(Long pullRequestId, List<RawCommit> commits);
 
-    void saveCheckRuns(Integer repoId, String sha, RawCheckRuns checkRuns);
+    void saveCheckRuns(Long repoId, String sha, RawCheckRuns checkRuns);
 }

@@ -12,8 +12,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
 public class RawPullRequest extends JsonDocument {
-    Integer id;
-    Integer number;
+    Long id;
+    Long number;
     Base base;
     Head head;
 

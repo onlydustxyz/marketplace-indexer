@@ -12,13 +12,13 @@ import java.util.Objects;
 public class IndexingService {
     private final RawStorageReader rawStorageReader;
 
-    public User indexUser(Integer userId) {
+    public User indexUser(Long userId) {
         final var user = rawStorageReader.user(userId).orElseThrow(() -> new NotFound("User not found"));
         final var socialAccounts = rawStorageReader.userSocialAccounts(userId);
         return new User(user.getId(), user.getLogin(), socialAccounts);
     }
 
-    private List<CodeReview> indexPullRequestReviews(Integer pullRequestId) {
+    private List<CodeReview> indexPullRequestReviews(Long pullRequestId) {
         final var codeReviews = rawStorageReader.pullRequestReviews(pullRequestId);
         return codeReviews.stream().map(review -> {
             final var author = indexUser(review.getAuthor().getId());
@@ -26,7 +26,7 @@ public class IndexingService {
         }).toList();
     }
 
-    private List<Commit> indexPullRequestCommits(Integer pullRequestId) {
+    private List<Commit> indexPullRequestCommits(Long pullRequestId) {
         final var commits = rawStorageReader.pullRequestCommits(pullRequestId);
         return commits.stream().map(commit -> {
             final var author = Objects.isNull(commit.getAuthor()) ? commit.getCommitter() : commit.getAuthor();
@@ -34,14 +34,14 @@ public class IndexingService {
         }).filter(commit -> !Objects.isNull(commit)).toList();
     }
 
-    private List<CheckRun> indexCheckRuns(Integer repoId, String sha) {
+    private List<CheckRun> indexCheckRuns(Long repoId, String sha) {
         final var checkRuns = rawStorageReader.checkRuns(repoId, sha);
         return checkRuns.getCheckRuns().stream().map(checkRun -> {
             return new CheckRun(checkRun.getId());
         }).toList();
     }
 
-    public PullRequest indexPullRequest(String repoOwner, String repoName, Integer prNumber) {
+    public PullRequest indexPullRequest(String repoOwner, String repoName, Long prNumber) {
         final var pullRequest = rawStorageReader.pullRequest(repoOwner, repoName, prNumber).orElseThrow(() -> new NotFound("Pull request not found"));
         final var author = indexUser(pullRequest.getAuthor().getId());
         final var codeReviews = indexPullRequestReviews(pullRequest.getId());

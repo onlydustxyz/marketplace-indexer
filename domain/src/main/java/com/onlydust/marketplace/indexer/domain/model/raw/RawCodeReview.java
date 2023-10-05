@@ -10,7 +10,7 @@ import lombok.Value;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
 public class RawCodeReview extends JsonDocument {
-    Integer id;
+    Long id;
 
     @JsonProperty("user")
     RawUser author;

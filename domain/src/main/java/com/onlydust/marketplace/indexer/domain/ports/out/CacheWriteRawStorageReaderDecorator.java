@@ -12,42 +12,42 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     private final RawStorageRepository cache;
 
     @Override
-    public Optional<RawUser> user(Integer userId) {
+    public Optional<RawUser> user(Long userId) {
         final var user = fetcher.user(userId);
         user.ifPresent(cache::saveUser);
         return user;
     }
 
     @Override
-    public List<RawSocialAccount> userSocialAccounts(Integer userId) {
+    public List<RawSocialAccount> userSocialAccounts(Long userId) {
         final var socialAccounts = fetcher.userSocialAccounts(userId);
         cache.saveUserSocialAccounts(userId, socialAccounts);
         return socialAccounts;
     }
 
     @Override
-    public Optional<RawPullRequest> pullRequest(String repoOwner, String repoName, Integer prNumber) {
+    public Optional<RawPullRequest> pullRequest(String repoOwner, String repoName, Long prNumber) {
         final var pullRequest = fetcher.pullRequest(repoOwner, repoName, prNumber);
         pullRequest.ifPresent(cache::savePullRequest);
         return pullRequest;
     }
 
     @Override
-    public List<RawCodeReview> pullRequestReviews(Integer pullRequestId) {
+    public List<RawCodeReview> pullRequestReviews(Long pullRequestId) {
         final var reviews = fetcher.pullRequestReviews(pullRequestId);
         cache.savePullRequestReviews(pullRequestId, reviews);
         return reviews;
     }
 
     @Override
-    public List<RawCommit> pullRequestCommits(Integer pullRequestId) {
+    public List<RawCommit> pullRequestCommits(Long pullRequestId) {
         final var commits = fetcher.pullRequestCommits(pullRequestId);
         cache.savePullRequestCommits(pullRequestId, commits);
         return commits;
     }
 
     @Override
-    public RawCheckRuns checkRuns(Integer repoId, String sha) {
+    public RawCheckRuns checkRuns(Long repoId, String sha) {
         final var checkRuns = fetcher.checkRuns(repoId, sha);
         cache.saveCheckRuns(repoId, sha, checkRuns);
         return checkRuns;

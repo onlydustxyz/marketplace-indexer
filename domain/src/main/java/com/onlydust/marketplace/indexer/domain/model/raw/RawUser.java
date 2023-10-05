@@ -9,6 +9,6 @@ import lombok.Value;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
 public class RawUser extends JsonDocument {
-    Integer id;
+    Long id;
     String login;
 }

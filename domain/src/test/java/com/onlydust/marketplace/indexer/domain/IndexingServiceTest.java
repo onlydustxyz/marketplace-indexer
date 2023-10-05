@@ -58,7 +58,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_pull_request() {
-        final var pullRequest = indexer.indexPullRequest("onlydustxyz", "marketplace-frontend", 1257);
+        final var pullRequest = indexer.indexPullRequest("onlydustxyz", "marketplace-frontend", 1257L);
 
         assertThat(pullRequest.id()).isEqualTo(1524797398);
         assertThat(pullRequest.author().login()).isEqualTo("AnthonyBuisset");
@@ -87,7 +87,7 @@ public class IndexingServiceTest {
     @Test
     void should_throw_when_indexing_non_existing_items() {
         assertThatThrownBy(() -> {
-            indexer.indexUser(0);
+            indexer.indexUser(0L);
         }).isInstanceOf(NotFound.class)
                 .hasMessageContaining("User not found");
 
@@ -98,7 +98,7 @@ public class IndexingServiceTest {
         assertThat(rawStorageRepository.users()).containsExactly(rawUsers);
     }
 
-    private void assertCachedUserSocialAccountsAre(Map<Integer, List<RawSocialAccount>> expected) {
+    private void assertCachedUserSocialAccountsAre(Map<Long, List<RawSocialAccount>> expected) {
         assertThat(rawStorageRepository.userSocialAccounts()).isEqualTo(expected);
     }
 
@@ -106,11 +106,11 @@ public class IndexingServiceTest {
         assertThat(rawStorageRepository.pullRequests()).containsExactly(expected);
     }
 
-    private void assertCachedCodeReviewsAre(Map<Integer, List<RawCodeReview>> expected) {
+    private void assertCachedCodeReviewsAre(Map<Long, List<RawCodeReview>> expected) {
         assertThat(rawStorageRepository.codeReviews()).isEqualTo(expected);
     }
 
-    private void assertCachedCommitsAre(Map<Integer, List<RawCommit>> expected) {
+    private void assertCachedCommitsAre(Map<Long, List<RawCommit>> expected) {
         assertThat(rawStorageRepository.commits()).isEqualTo(expected);
     }
 
