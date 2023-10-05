@@ -1,16 +1,16 @@
 package com.onlydust.marketplace.indexer.domain.stubs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.marketplace.indexer.domain.model.SocialAccount;
-import com.onlydust.marketplace.indexer.domain.model.User;
+import com.onlydust.marketplace.indexer.domain.model.raw.RawSocialAccount;
+import com.onlydust.marketplace.indexer.domain.model.raw.RawUser;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageRepository;
 
 import java.io.IOException;
 import java.util.*;
 
 public class RawStorageRepositoryStub implements RawStorageRepository {
-    final List<User> users = new ArrayList<>();
-    final Map<Integer, List<SocialAccount>> userSocialAccounts = new HashMap<>();
+    final List<RawUser> rawUsers = new ArrayList<>();
+    final Map<Integer, List<RawSocialAccount>> userSocialAccounts = new HashMap<>();
 
     public static <T> T load(String path, Class<T> type) {
         final var inputStream = type.getResourceAsStream(path);
@@ -22,12 +22,12 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public Optional<User> userById(Integer userId) {
-        return users.stream().filter(user -> user.getId().equals(userId)).findFirst();
+    public Optional<RawUser> userById(Integer userId) {
+        return rawUsers.stream().filter(user -> user.getId().equals(userId)).findFirst();
     }
 
     @Override
-    public Optional<List<SocialAccount>> userSocialAccountsById(Integer userId) {
+    public Optional<List<RawSocialAccount>> userSocialAccountsById(Integer userId) {
         try {
             return Optional.of(userSocialAccounts.get(userId));
         } catch (NullPointerException e) {
@@ -35,29 +35,29 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         }
     }
 
-    public void feedWith(User... users) {
-        Arrays.stream(users).sequential().forEach(this::save);
+    public void feedWith(RawUser... rawUsers) {
+        Arrays.stream(rawUsers).sequential().forEach(this::save);
     }
 
-    public void feedWith(Integer userId, SocialAccount... socialAccounts) {
-        this.userSocialAccounts.put(userId, Arrays.stream(socialAccounts).toList());
-    }
-
-    @Override
-    public void save(User user) {
-        users.add(user);
+    public void feedWith(Integer userId, RawSocialAccount... rawSocialAccounts) {
+        this.userSocialAccounts.put(userId, Arrays.stream(rawSocialAccounts).toList());
     }
 
     @Override
-    public void save(Integer userId, List<SocialAccount> socialAccounts) {
-        userSocialAccounts.put(userId, socialAccounts);
+    public void save(RawUser rawUser) {
+        rawUsers.add(rawUser);
     }
 
-    public List<User> users() {
-        return users;
+    @Override
+    public void save(Integer userId, List<RawSocialAccount> rawSocialAccounts) {
+        userSocialAccounts.put(userId, rawSocialAccounts);
     }
 
-    public List<SocialAccount> userSocialAccounts(Integer userId) {
+    public List<RawUser> users() {
+        return rawUsers;
+    }
+
+    public List<RawSocialAccount> userSocialAccounts(Integer userId) {
         return userSocialAccounts.get(userId);
     }
 }

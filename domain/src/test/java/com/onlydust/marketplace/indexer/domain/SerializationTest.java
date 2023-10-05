@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.marketplace.indexer.domain.model.User;
+import com.onlydust.marketplace.indexer.domain.model.raw.RawUser;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
@@ -19,7 +19,7 @@ public class SerializationTest {
 
         final var fileContent = Files.readString(Path.of(resource.getPath()));
 
-        final var user = mapper.readValue(fileContent, User.class);
+        final var user = mapper.readValue(fileContent, RawUser.class);
 
         assertThat(user.getId()).isEqualTo(43467246);
         assertThat(user.getLogin()).isEqualTo("AnthonyBuisset");

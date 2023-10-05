@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain;
 
-import com.onlydust.marketplace.indexer.domain.model.SocialAccount;
-import com.onlydust.marketplace.indexer.domain.model.User;
+import com.onlydust.marketplace.indexer.domain.model.raw.RawSocialAccount;
+import com.onlydust.marketplace.indexer.domain.model.raw.RawUser;
 import com.onlydust.marketplace.indexer.domain.services.IndexingService;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageRepositoryStub;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class IndexingServiceTest {
-    final User anthony = RawStorageRepositoryStub.load("/github/users/anthony.json", User.class);
-    final SocialAccount[] anthonySocialAccounts = RawStorageRepositoryStub.load("/github/users/anthony_social_accounts.json", SocialAccount[].class);
+    final RawUser anthony = RawStorageRepositoryStub.load("/github/users/anthony.json", RawUser.class);
+    final RawSocialAccount[] anthonyRawSocialAccounts = RawStorageRepositoryStub.load("/github/users/anthony_social_accounts.json", RawSocialAccount[].class);
     final RawStorageRepositoryStub rawStorageReader = new RawStorageRepositoryStub();
     final RawStorageRepositoryStub rawStorageRepository = new RawStorageRepositoryStub();
     final IndexingService indexer = new IndexingService(rawStorageReader, rawStorageRepository);
@@ -22,14 +22,14 @@ public class IndexingServiceTest {
     @BeforeEach
     void setup() throws IOException {
         rawStorageReader.feedWith(anthony);
-        rawStorageReader.feedWith(anthony.getId(), anthonySocialAccounts);
+        rawStorageReader.feedWith(anthony.getId(), anthonyRawSocialAccounts);
     }
 
     @Test
     void should_index_user_from_its_id() {
         indexer.indexUserById(anthony.getId());
         assertCachedUsersAre(anthony);
-        assertCachedUserSocialAccountsAre(anthony.getId(), anthonySocialAccounts);
+        assertCachedUserSocialAccountsAre(anthony.getId(), anthonyRawSocialAccounts);
     }
 
     @Test
@@ -42,11 +42,11 @@ public class IndexingServiceTest {
         assertCachedUsersAre();
     }
 
-    private void assertCachedUsersAre(User... users) {
-        assertThat(rawStorageRepository.users()).containsExactly(users);
+    private void assertCachedUsersAre(RawUser... rawUsers) {
+        assertThat(rawStorageRepository.users()).containsExactly(rawUsers);
     }
 
-    private void assertCachedUserSocialAccountsAre(Integer userId, SocialAccount... socialAccounts) {
-        assertThat(rawStorageRepository.userSocialAccounts(userId)).containsExactly(socialAccounts);
+    private void assertCachedUserSocialAccountsAre(Integer userId, RawSocialAccount... rawSocialAccounts) {
+        assertThat(rawStorageRepository.userSocialAccounts(userId)).containsExactly(rawSocialAccounts);
     }
 }

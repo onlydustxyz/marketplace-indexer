@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.domain.model;
+package com.onlydust.marketplace.indexer.domain.model.raw;
 
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;

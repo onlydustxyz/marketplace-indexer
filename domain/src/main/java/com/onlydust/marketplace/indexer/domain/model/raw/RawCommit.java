@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.domain.model;
+package com.onlydust.marketplace.indexer.domain.model.raw;
 
 
 import lombok.EqualsAndHashCode;
@@ -8,5 +8,5 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
-public class CheckRuns extends JsonDocument {
+public class RawCommit extends JsonDocument {
 }
