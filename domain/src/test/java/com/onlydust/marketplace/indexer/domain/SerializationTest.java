@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.domain;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawUser;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,8 @@ public class SerializationTest {
 
     @Test
     void should_deserialize_user_from_github_response() throws Exception {
+        mapper.configure(DeserializationFeature.USE_LONG_FOR_INTS, true);
+        
         final var resource = this.getClass().getResource("/github/users/anthony.json");
         assert resource != null;
 
