@@ -42,6 +42,7 @@ public class IndexingServiceTest {
         rawStorageReader.feedWith(pierre.getId(), pierreSocialAccounts);
         rawStorageReader.feedWith(olivier.getId(), olivierSocialAccounts);
         rawStorageReader.feedWith(pr1257);
+        rawStorageReader.feedWith(marketplaceFrontend.getId(), pr1257);
         rawStorageReader.feedWith("onlydustxyz", "marketplace-frontend", 1257L, 78L);
         rawStorageReader.feedWith(issue78);
         rawStorageReader.feedWith(pr1257.getId(), pr1257Reviews);
@@ -111,14 +112,36 @@ public class IndexingServiceTest {
         assertCachedUsersAre(anthony);
         assertCachedUserSocialAccountsAre(Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList()));
     }
-    
+
     @Test
     void should_index_repo() {
         final var repo = indexer.indexRepo(marketplaceFrontend.getId());
 
         assertThat(repo.id()).isEqualTo(marketplaceFrontend.getId());
 
+        assertThat(repo.pullRequests().size()).isEqualTo(1);
+        assertThat(repo.pullRequests().get(0).id()).isEqualTo(pr1257.getId());
+
         assertCachedReposAre(marketplaceFrontend);
+        assertCachedRepoPullRequestsAre(Map.of(marketplaceFrontend.getId(), List.of(pr1257)));
+        assertCachedPullRequestsAre(pr1257);
+        assertCachedIssuesAre(issue78);
+        assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), 1257L), List.of(78L)));
+        assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
+        assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
+        assertCachedCheckRunsAre(Map.of(Tuple.tuple(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha()), pr1257CheckRuns));
+        assertCachedUsersAre(
+                anthony, // as PR author
+                pierre,  // as code reviewer
+                olivier, // as requested reviewer
+                anthony, // as committer
+                anthony  // as issue assignee
+        );
+        assertCachedUserSocialAccountsAre(
+                Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(),
+                        pierre.getId(), Arrays.stream(pierreSocialAccounts).toList(),
+                        olivier.getId(), Arrays.stream(olivierSocialAccounts).toList())
+        );
     }
 
     @Test
@@ -141,6 +164,10 @@ public class IndexingServiceTest {
 
     private void assertCachedUserSocialAccountsAre(Map<Long, List<RawSocialAccount>> expected) {
         assertThat(rawStorageRepository.userSocialAccounts()).isEqualTo(expected);
+    }
+
+    private void assertCachedRepoPullRequestsAre(Map<Long, List<RawPullRequest>> expected) {
+        assertThat(rawStorageRepository.repoPullRequests()).isEqualTo(expected);
     }
 
     private void assertCachedPullRequestsAre(RawPullRequest... expected) {

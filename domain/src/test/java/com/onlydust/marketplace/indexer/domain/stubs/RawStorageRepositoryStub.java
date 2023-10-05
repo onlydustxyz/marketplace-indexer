@@ -18,6 +18,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     final Map<Long, List<RawCommit>> pullRequestCommits = new HashMap<>();
     final Map<Tuple, RawCheckRuns> checkRuns = new HashMap<>();
     final Map<Tuple, List<Long>> closingIssues = new HashMap<>();
+    final Map<Long, List<RawPullRequest>> repoPullRequests = new HashMap<>();
 
     public static <T> T load(String path, Class<T> type) {
         final var inputStream = type.getResourceAsStream(path);
@@ -31,6 +32,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     @Override
     public Optional<RawRepo> repo(Long repoId) {
         return repos.stream().filter(repo -> repo.getId().equals(repoId)).findFirst();
+    }
+
+    @Override
+    public List<RawPullRequest> repoPullRequests(Long repoId) {
+        return repoPullRequests.getOrDefault(repoId, new ArrayList<>());
     }
 
     @Override
@@ -108,6 +114,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         savePullRequestCommits(pullRequestId, Arrays.stream(commits).toList());
     }
 
+    public void feedWith(Long repoId, RawPullRequest... pullRequests) {
+        saveRepoPullRequests(repoId, Arrays.stream(pullRequests).toList());
+    }
+
+
     public void feedWith(Long repoId, String sha, RawCheckRuns checkRuns) {
         saveCheckRuns(repoId, sha, checkRuns);
     }
@@ -157,6 +168,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
+    public void saveRepoPullRequests(Long repoId, List<RawPullRequest> pullRequests) {
+        repoPullRequests.put(repoId, pullRequests);
+    }
+
+    @Override
     public void saveClosingIssues(String repoOwner, String repoName, Long pullRequestId, List<Long> issueIds) {
         closingIssues.put(Tuple.tuple(repoOwner, repoName, pullRequestId), issueIds);
     }
@@ -195,5 +211,9 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     public Map<Tuple, List<Long>> closingIssues() {
         return closingIssues;
+    }
+
+    public Map<Long, List<RawPullRequest>> repoPullRequests() {
+        return repoPullRequests;
     }
 }

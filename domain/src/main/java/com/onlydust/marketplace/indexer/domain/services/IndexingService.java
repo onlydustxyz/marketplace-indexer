@@ -14,7 +14,8 @@ public class IndexingService {
 
     public Repo indexRepo(Long repoId) {
         final var repo = rawStorageReader.repo(repoId).orElseThrow(() -> new NotFound("Repo not found"));
-        return new Repo(repo.getId());
+        final var pullRequests = rawStorageReader.repoPullRequests(repoId).stream().map(pr -> indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber())).toList();
+        return new Repo(repo.getId(), pullRequests);
     }
 
     public User indexUser(Long userId) {
