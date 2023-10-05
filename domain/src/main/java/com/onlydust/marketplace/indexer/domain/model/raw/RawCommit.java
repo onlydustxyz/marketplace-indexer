@@ -9,4 +9,7 @@ import lombok.Value;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
 public class RawCommit extends JsonDocument {
+    String sha;
+    RawUser author;
+    RawUser committer;
 }

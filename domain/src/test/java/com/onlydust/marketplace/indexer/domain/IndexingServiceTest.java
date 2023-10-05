@@ -1,10 +1,7 @@
 package com.onlydust.marketplace.indexer.domain;
 
 import com.onlydust.marketplace.indexer.domain.exception.NotFound;
-import com.onlydust.marketplace.indexer.domain.model.raw.RawCodeReview;
-import com.onlydust.marketplace.indexer.domain.model.raw.RawPullRequest;
-import com.onlydust.marketplace.indexer.domain.model.raw.RawSocialAccount;
-import com.onlydust.marketplace.indexer.domain.model.raw.RawUser;
+import com.onlydust.marketplace.indexer.domain.model.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.services.IndexingService;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageRepositoryStub;
@@ -28,6 +25,7 @@ public class IndexingServiceTest {
     final RawSocialAccount[] olivierSocialAccounts = RawStorageRepositoryStub.load("/github/users/olivier_social_accounts.json", RawSocialAccount[].class);
     final RawPullRequest pr1257 = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257.json", RawPullRequest.class);
     final RawCodeReview[] pr1257Reviews = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_reviews.json", RawCodeReview[].class);
+    final RawCommit[] pr1257Commits = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_commits.json", RawCommit[].class);
     final RawStorageRepositoryStub rawStorageReader = new RawStorageRepositoryStub();
     final RawStorageRepositoryStub rawStorageRepository = new RawStorageRepositoryStub();
     final IndexingService indexer = new IndexingService(new CacheWriteRawStorageReaderDecorator(rawStorageReader, rawStorageRepository));
@@ -40,6 +38,7 @@ public class IndexingServiceTest {
         rawStorageReader.feedWith(olivier.getId(), olivierSocialAccounts);
         rawStorageReader.feedWith(pr1257);
         rawStorageReader.feedWith(pr1257.getId(), pr1257Reviews);
+        rawStorageReader.feedWith(pr1257.getId(), pr1257Commits);
     }
 
     @Test
@@ -54,7 +53,6 @@ public class IndexingServiceTest {
         assertCachedUserSocialAccountsAre(Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList()));
     }
 
-
     @Test
     void should_index_pull_request() {
         final var pullRequest = indexer.indexPullRequest("onlydustxyz", "marketplace-frontend", 1257);
@@ -65,10 +63,14 @@ public class IndexingServiceTest {
         assertThat(pullRequest.reviews().get(0).author().login()).isEqualTo("PierreOucif");
         assertThat(pullRequest.author().login()).isEqualTo("AnthonyBuisset");
         assertThat(pullRequest.requestedReviewers().get(0).login()).isEqualTo("ofux");
+        assertThat(pullRequest.commits().size()).isEqualTo(1);
+        assertThat(pullRequest.commits().get(0).sha()).isEqualTo("0addbe7d8cdbe1356fc8fb58e4b896616e7d7592");
+        assertThat(pullRequest.commits().get(0).author().login()).isEqualTo("AnthonyBuisset");
 
         assertCachedPullRequestsAre(pr1257);
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
-        assertCachedUsersAre(anthony, pierre, olivier);
+        assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
+        assertCachedUsersAre(anthony, pierre, olivier, anthony);
         assertCachedUserSocialAccountsAre(
                 Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(),
                         pierre.getId(), Arrays.stream(pierreSocialAccounts).toList(),
@@ -102,4 +104,7 @@ public class IndexingServiceTest {
         assertThat(rawStorageRepository.codeReviews()).isEqualTo(expected);
     }
 
+    private void assertCachedCommitsAre(Map<Integer, List<RawCommit>> expected) {
+        assertThat(rawStorageRepository.commits()).isEqualTo(expected);
+    }
 }

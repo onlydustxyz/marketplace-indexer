@@ -1,10 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.stubs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.marketplace.indexer.domain.model.raw.RawCodeReview;
-import com.onlydust.marketplace.indexer.domain.model.raw.RawPullRequest;
-import com.onlydust.marketplace.indexer.domain.model.raw.RawSocialAccount;
-import com.onlydust.marketplace.indexer.domain.model.raw.RawUser;
+import com.onlydust.marketplace.indexer.domain.model.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageRepository;
 
 import java.io.IOException;
@@ -15,6 +12,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     final Map<Integer, List<RawSocialAccount>> userSocialAccounts = new HashMap<>();
     final List<RawPullRequest> pullRequests = new ArrayList<>();
     final Map<Integer, List<RawCodeReview>> pullRequestReviews = new HashMap<>();
+    final Map<Integer, List<RawCommit>> pullRequestCommits = new HashMap<>();
 
     public static <T> T load(String path, Class<T> type) {
         final var inputStream = type.getResourceAsStream(path);
@@ -49,6 +47,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         return pullRequestReviews.getOrDefault(pullRequestId, new ArrayList<>());
     }
 
+    @Override
+    public List<RawCommit> pullRequestCommits(Integer pullRequestId) {
+        return pullRequestCommits.getOrDefault(pullRequestId, new ArrayList<>());
+    }
+
     public void feedWith(RawUser... rawUsers) {
         Arrays.stream(rawUsers).sequential().forEach(this::saveUser);
     }
@@ -63,6 +66,10 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     public void feedWith(Integer pullRequestId, RawCodeReview... codeReviews) {
         savePullRequestReviews(pullRequestId, Arrays.stream(codeReviews).toList());
+    }
+
+    public void feedWith(Integer pullRequestId, RawCommit... commits) {
+        savePullRequestCommits(pullRequestId, Arrays.stream(commits).toList());
     }
 
     @Override
@@ -84,6 +91,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         pullRequestReviews.put(pullRequestId, codeReviews);
     }
 
+    @Override
+    public void savePullRequestCommits(Integer pullRequestId, List<RawCommit> commits) {
+        pullRequestCommits.put(pullRequestId, commits);
+    }
+
     public List<RawUser> users() {
         return users;
     }
@@ -98,5 +110,9 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     public Map<Integer, List<RawCodeReview>> codeReviews() {
         return pullRequestReviews;
+    }
+
+    public Map<Integer, List<RawCommit>> commits() {
+        return pullRequestCommits;
     }
 }

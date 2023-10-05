@@ -1,9 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.ports.out;
 
-import com.onlydust.marketplace.indexer.domain.model.raw.RawCodeReview;
-import com.onlydust.marketplace.indexer.domain.model.raw.RawPullRequest;
-import com.onlydust.marketplace.indexer.domain.model.raw.RawSocialAccount;
-import com.onlydust.marketplace.indexer.domain.model.raw.RawUser;
+import com.onlydust.marketplace.indexer.domain.model.raw.*;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -40,5 +37,12 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
         final var reviews = fetcher.pullRequestReviews(pullRequestId);
         cache.savePullRequestReviews(pullRequestId, reviews);
         return reviews;
+    }
+
+    @Override
+    public List<RawCommit> pullRequestCommits(Integer pullRequestId) {
+        final var commits = fetcher.pullRequestCommits(pullRequestId);
+        cache.savePullRequestCommits(pullRequestId, commits);
+        return commits;
     }
 }
