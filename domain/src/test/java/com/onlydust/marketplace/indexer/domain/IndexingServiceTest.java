@@ -25,6 +25,7 @@ public class IndexingServiceTest {
     final RawSocialAccount[] pierreSocialAccounts = RawStorageRepositoryStub.load("/github/users/pierre_social_accounts.json", RawSocialAccount[].class);
     final RawSocialAccount[] olivierSocialAccounts = RawStorageRepositoryStub.load("/github/users/olivier_social_accounts.json", RawSocialAccount[].class);
     final RawPullRequest pr1257 = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257.json", RawPullRequest.class);
+    final RawIssue issue78 = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/issues/78.json", RawIssue.class);
     final RawCodeReview[] pr1257Reviews = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_reviews.json", RawCodeReview[].class);
     final RawCommit[] pr1257Commits = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_commits.json", RawCommit[].class);
     final RawCheckRuns pr1257CheckRuns = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_check_runs.json", RawCheckRuns.class);
@@ -39,6 +40,7 @@ public class IndexingServiceTest {
         rawStorageReader.feedWith(pierre.getId(), pierreSocialAccounts);
         rawStorageReader.feedWith(olivier.getId(), olivierSocialAccounts);
         rawStorageReader.feedWith(pr1257);
+        rawStorageReader.feedWith(issue78);
         rawStorageReader.feedWith(pr1257.getId(), pr1257Reviews);
         rawStorageReader.feedWith(pr1257.getId(), pr1257Commits);
         rawStorageReader.feedWith(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha(), pr1257CheckRuns);
@@ -85,6 +87,15 @@ public class IndexingServiceTest {
     }
 
     @Test
+    void should_index_issue() {
+        final var issue = indexer.indexIssue("onlydustxyz", "marketplace-frontend", 78L);
+
+        assertThat(issue.id()).isEqualTo(1301824165);
+
+        assertCachedIssuesAre(issue78);
+    }
+
+    @Test
     void should_throw_when_indexing_non_existing_items() {
         assertThatThrownBy(() -> {
             indexer.indexUser(0L);
@@ -104,6 +115,10 @@ public class IndexingServiceTest {
 
     private void assertCachedPullRequestsAre(RawPullRequest... expected) {
         assertThat(rawStorageRepository.pullRequests()).containsExactly(expected);
+    }
+
+    private void assertCachedIssuesAre(RawIssue... expected) {
+        assertThat(rawStorageRepository.issues()).containsExactly(expected);
     }
 
     private void assertCachedCodeReviewsAre(Map<Long, List<RawCodeReview>> expected) {

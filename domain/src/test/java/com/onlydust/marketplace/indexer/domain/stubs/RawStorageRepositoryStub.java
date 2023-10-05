@@ -12,6 +12,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     final List<RawUser> users = new ArrayList<>();
     final Map<Long, List<RawSocialAccount>> userSocialAccounts = new HashMap<>();
     final List<RawPullRequest> pullRequests = new ArrayList<>();
+    final List<RawIssue> issues = new ArrayList<>();
     final Map<Long, List<RawCodeReview>> pullRequestReviews = new HashMap<>();
     final Map<Long, List<RawCommit>> pullRequestCommits = new HashMap<>();
     final Map<Tuple, RawCheckRuns> checkRuns = new HashMap<>();
@@ -45,6 +46,14 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
+    public Optional<RawIssue> issue(String repoOwner, String repoName, Long issueNumber) {
+        return issues.stream().filter(
+                        issue -> issue.getRepositoryUrl().endsWith(String.format("%s/%s", repoOwner, repoName)) &&
+                                issue.getNumber().equals(issueNumber))
+                .findFirst();
+    }
+
+    @Override
     public List<RawCodeReview> pullRequestReviews(Long pullRequestId) {
         return pullRequestReviews.getOrDefault(pullRequestId, new ArrayList<>());
     }
@@ -69,6 +78,10 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     public void feedWith(RawPullRequest... pullRequests) {
         Arrays.stream(pullRequests).sequential().forEach(this::savePullRequest);
+    }
+
+    public void feedWith(RawIssue... issues) {
+        Arrays.stream(issues).sequential().forEach(this::saveIssue);
     }
 
     public void feedWith(Long pullRequestId, RawCodeReview... codeReviews) {
@@ -112,6 +125,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         this.checkRuns.put(Tuple.tuple(repoId, sha), checkRuns);
     }
 
+    @Override
+    public void saveIssue(RawIssue issue) {
+        issues.add(issue);
+    }
+
     public List<RawUser> users() {
         return users;
     }
@@ -122,6 +140,10 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     public List<RawPullRequest> pullRequests() {
         return pullRequests;
+    }
+
+    public List<RawIssue> issues() {
+        return issues;
     }
 
     public Map<Long, List<RawCodeReview>> codeReviews() {

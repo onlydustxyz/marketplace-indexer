@@ -50,4 +50,10 @@ public class IndexingService {
         final var checkRuns = indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
         return new PullRequest(pullRequest.getId(), author, codeReviews, requestedReviewers, commits, checkRuns);
     }
+
+
+    public Issue indexIssue(String repoOwner, String repoName, Long issueNumber) {
+        final var issue = rawStorageReader.issue(repoOwner, repoName, issueNumber).orElseThrow(() -> new NotFound("Issue not found"));
+        return new Issue(issue.getId());
+    }
 }

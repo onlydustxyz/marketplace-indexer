@@ -12,6 +12,8 @@ public interface RawStorageReader {
 
     Optional<RawPullRequest> pullRequest(String repoOwner, String repoName, Long prNumber);
 
+    Optional<RawIssue> issue(String repoOwner, String repoName, Long issueNumber);
+
     List<RawCodeReview> pullRequestReviews(Long pullRequestId);
 
     List<RawCommit> pullRequestCommits(Long pullRequestId);

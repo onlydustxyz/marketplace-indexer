@@ -33,6 +33,13 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
+    public Optional<RawIssue> issue(String repoOwner, String repoName, Long issueNumber) {
+        final var issue = fetcher.issue(repoOwner, repoName, issueNumber);
+        issue.ifPresent(cache::saveIssue);
+        return issue;
+    }
+
+    @Override
     public List<RawCodeReview> pullRequestReviews(Long pullRequestId) {
         final var reviews = fetcher.pullRequestReviews(pullRequestId);
         cache.savePullRequestReviews(pullRequestId, reviews);
