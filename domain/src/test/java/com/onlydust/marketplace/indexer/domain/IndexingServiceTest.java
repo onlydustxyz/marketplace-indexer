@@ -43,6 +43,7 @@ public class IndexingServiceTest {
         rawStorageReader.feedWith(olivier.getId(), olivierSocialAccounts);
         rawStorageReader.feedWith(pr1257);
         rawStorageReader.feedWith(marketplaceFrontend.getId(), pr1257);
+        rawStorageReader.feedWith(marketplaceFrontend.getId(), issue78);
         rawStorageReader.feedWith("onlydustxyz", "marketplace-frontend", 1257L, 78L);
         rawStorageReader.feedWith(issue78);
         rawStorageReader.feedWith(pr1257.getId(), pr1257Reviews);
@@ -121,11 +122,17 @@ public class IndexingServiceTest {
 
         assertThat(repo.pullRequests().size()).isEqualTo(1);
         assertThat(repo.pullRequests().get(0).id()).isEqualTo(pr1257.getId());
+        assertThat(repo.issues().size()).isEqualTo(1);
+        assertThat(repo.issues().get(0).id()).isEqualTo(issue78.getId());
 
         assertCachedReposAre(marketplaceFrontend);
         assertCachedRepoPullRequestsAre(Map.of(marketplaceFrontend.getId(), List.of(pr1257)));
+        assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(issue78)));
         assertCachedPullRequestsAre(pr1257);
-        assertCachedIssuesAre(issue78);
+        assertCachedIssuesAre(
+                issue78, // as pr 1257 closing issue
+                issue78 // as repo issue
+        );
         assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), 1257L), List.of(78L)));
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
         assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
@@ -135,7 +142,8 @@ public class IndexingServiceTest {
                 pierre,  // as code reviewer
                 olivier, // as requested reviewer
                 anthony, // as committer
-                anthony  // as issue assignee
+                anthony, // as issue assignee
+                anthony  // as issue assignee, again...
         );
         assertCachedUserSocialAccountsAre(
                 Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(),
@@ -168,6 +176,10 @@ public class IndexingServiceTest {
 
     private void assertCachedRepoPullRequestsAre(Map<Long, List<RawPullRequest>> expected) {
         assertThat(rawStorageRepository.repoPullRequests()).isEqualTo(expected);
+    }
+
+    private void assertCachedRepoIssuesAre(Map<Long, List<RawIssue>> expected) {
+        assertThat(rawStorageRepository.repoIssues()).isEqualTo(expected);
     }
 
     private void assertCachedPullRequestsAre(RawPullRequest... expected) {

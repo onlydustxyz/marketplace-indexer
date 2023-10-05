@@ -26,6 +26,13 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
+    public List<RawIssue> repoIssues(Long repoId) {
+        final var issues = fetcher.repoIssues(repoId);
+        cache.saveRepoIssues(repoId, issues);
+        return issues;
+    }
+
+    @Override
     public Optional<RawUser> user(Long userId) {
         final var user = fetcher.user(userId);
         user.ifPresent(cache::saveUser);

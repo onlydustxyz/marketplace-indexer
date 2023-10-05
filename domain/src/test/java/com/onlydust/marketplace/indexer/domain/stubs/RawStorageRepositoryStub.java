@@ -19,6 +19,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     final Map<Tuple, RawCheckRuns> checkRuns = new HashMap<>();
     final Map<Tuple, List<Long>> closingIssues = new HashMap<>();
     final Map<Long, List<RawPullRequest>> repoPullRequests = new HashMap<>();
+    final Map<Long, List<RawIssue>> repoIssues = new HashMap<>();
 
     public static <T> T load(String path, Class<T> type) {
         final var inputStream = type.getResourceAsStream(path);
@@ -37,6 +38,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     @Override
     public List<RawPullRequest> repoPullRequests(Long repoId) {
         return repoPullRequests.getOrDefault(repoId, new ArrayList<>());
+    }
+
+    @Override
+    public List<RawIssue> repoIssues(Long repoId) {
+        return repoIssues.getOrDefault(repoId, new ArrayList<>());
     }
 
     @Override
@@ -118,6 +124,10 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         saveRepoPullRequests(repoId, Arrays.stream(pullRequests).toList());
     }
 
+    public void feedWith(Long repoId, RawIssue... issues) {
+        saveRepoIssues(repoId, Arrays.stream(issues).toList());
+    }
+
 
     public void feedWith(Long repoId, String sha, RawCheckRuns checkRuns) {
         saveCheckRuns(repoId, sha, checkRuns);
@@ -173,6 +183,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
+    public void saveRepoIssues(Long repoId, List<RawIssue> issues) {
+        repoIssues.put(repoId, issues);
+    }
+
+    @Override
     public void saveClosingIssues(String repoOwner, String repoName, Long pullRequestId, List<Long> issueIds) {
         closingIssues.put(Tuple.tuple(repoOwner, repoName, pullRequestId), issueIds);
     }
@@ -215,5 +230,9 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     public Map<Long, List<RawPullRequest>> repoPullRequests() {
         return repoPullRequests;
+    }
+
+    public Map<Long, List<RawIssue>> repoIssues() {
+        return repoIssues;
     }
 }
