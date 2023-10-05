@@ -13,7 +13,7 @@ public class SerializationTest {
     final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    void shouldDeserializeUserFromGithubResponse() throws Exception {
+    void should_deserialize_user_from_github_response() throws Exception {
         final var resource = this.getClass().getResource("/github/users/anthony.json");
         assert resource != null;
 
