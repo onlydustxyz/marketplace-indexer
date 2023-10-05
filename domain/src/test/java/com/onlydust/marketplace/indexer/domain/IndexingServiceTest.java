@@ -22,8 +22,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class IndexingServiceTest {
     final RawUser anthony = RawStorageRepositoryStub.load("/github/users/anthony.json", RawUser.class);
     final RawUser pierre = RawStorageRepositoryStub.load("/github/users/pierre.json", RawUser.class);
+    final RawUser olivier = RawStorageRepositoryStub.load("/github/users/olivier.json", RawUser.class);
     final RawSocialAccount[] anthonySocialAccounts = RawStorageRepositoryStub.load("/github/users/anthony_social_accounts.json", RawSocialAccount[].class);
-    final RawSocialAccount[] pierreSocialAccounts = RawStorageRepositoryStub.load("/github/users/anthony_social_accounts.json", RawSocialAccount[].class);
+    final RawSocialAccount[] pierreSocialAccounts = RawStorageRepositoryStub.load("/github/users/pierre_social_accounts.json", RawSocialAccount[].class);
+    final RawSocialAccount[] olivierSocialAccounts = RawStorageRepositoryStub.load("/github/users/olivier_social_accounts.json", RawSocialAccount[].class);
     final RawPullRequest pr1257 = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257.json", RawPullRequest.class);
     final RawCodeReview[] pr1257Reviews = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_reviews.json", RawCodeReview[].class);
     final RawStorageRepositoryStub rawStorageReader = new RawStorageRepositoryStub();
@@ -32,9 +34,10 @@ public class IndexingServiceTest {
 
     @BeforeEach
     void setup() throws IOException {
-        rawStorageReader.feedWith(anthony, pierre);
+        rawStorageReader.feedWith(anthony, pierre, olivier);
         rawStorageReader.feedWith(anthony.getId(), anthonySocialAccounts);
         rawStorageReader.feedWith(pierre.getId(), pierreSocialAccounts);
+        rawStorageReader.feedWith(olivier.getId(), olivierSocialAccounts);
         rawStorageReader.feedWith(pr1257);
         rawStorageReader.feedWith(pr1257.getId(), pr1257Reviews);
     }
@@ -48,7 +51,7 @@ public class IndexingServiceTest {
         assertThat(user.socialAccounts()).containsExactly(anthonySocialAccounts);
 
         assertCachedUsersAre(anthony);
-        assertCachedUserSocialAccountsAre(Map.entry(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList()));
+        assertCachedUserSocialAccountsAre(Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList()));
     }
 
 
@@ -61,13 +64,15 @@ public class IndexingServiceTest {
         assertThat(pullRequest.reviews().get(0).id()).isEqualTo(pr1257Reviews[0].getId());
         assertThat(pullRequest.reviews().get(0).author().login()).isEqualTo("PierreOucif");
         assertThat(pullRequest.author().login()).isEqualTo("AnthonyBuisset");
+        assertThat(pullRequest.requestedReviewers().get(0).login()).isEqualTo("ofux");
 
         assertCachedPullRequestsAre(pr1257);
-        assertCachedCodeReviewsAre(Map.entry(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
-        assertCachedUsersAre(anthony, pierre);
+        assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
+        assertCachedUsersAre(anthony, pierre, olivier);
         assertCachedUserSocialAccountsAre(
-                Map.entry(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList()),
-                Map.entry(pierre.getId(), Arrays.stream(pierreSocialAccounts).toList())
+                Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(),
+                        pierre.getId(), Arrays.stream(pierreSocialAccounts).toList(),
+                        olivier.getId(), Arrays.stream(olivierSocialAccounts).toList())
         );
     }
 
@@ -85,16 +90,16 @@ public class IndexingServiceTest {
         assertThat(rawStorageRepository.users()).containsExactly(rawUsers);
     }
 
-    private void assertCachedUserSocialAccountsAre(Map.Entry<Integer, List<RawSocialAccount>>... entries) {
-        assertThat(rawStorageRepository.userSocialAccounts()).containsExactly(entries);
+    private void assertCachedUserSocialAccountsAre(Map<Integer, List<RawSocialAccount>> expected) {
+        assertThat(rawStorageRepository.userSocialAccounts()).isEqualTo(expected);
     }
 
-    private void assertCachedPullRequestsAre(RawPullRequest... pullRequests) {
-        assertThat(rawStorageRepository.pullRequests()).containsExactly(pullRequests);
+    private void assertCachedPullRequestsAre(RawPullRequest... expected) {
+        assertThat(rawStorageRepository.pullRequests()).containsExactly(expected);
     }
 
-    private void assertCachedCodeReviewsAre(Map.Entry<Integer, List<RawCodeReview>>... entries) {
-        assertThat(rawStorageRepository.codeReviews()).containsExactly(entries);
+    private void assertCachedCodeReviewsAre(Map<Integer, List<RawCodeReview>> expected) {
+        assertThat(rawStorageRepository.codeReviews()).isEqualTo(expected);
     }
 
 }

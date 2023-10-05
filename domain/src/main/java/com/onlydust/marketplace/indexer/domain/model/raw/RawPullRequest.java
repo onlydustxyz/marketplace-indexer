@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
+import java.util.List;
+
 @Value
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
@@ -16,6 +18,9 @@ public class RawPullRequest extends JsonDocument {
 
     @JsonProperty("user")
     RawUser author;
+
+    @JsonProperty("requested_reviewers")
+    List<RawUser> requestedReviewers;
 
     @Value
     @EqualsAndHashCode(callSuper = true)

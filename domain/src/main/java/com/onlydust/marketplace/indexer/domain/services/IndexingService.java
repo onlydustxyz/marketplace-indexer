@@ -31,6 +31,7 @@ public class IndexingService {
         final var pullRequest = rawStorageReader.pullRequest(repoOwner, repoName, prNumber).orElseThrow(() -> new NotFound("Pull request not found"));
         final var author = indexUser(pullRequest.getAuthor().getId());
         final var codeReviews = indexPullRequestReview(pullRequest.getId());
-        return new PullRequest(pullRequest.getId(), author, codeReviews);
+        final var requestedReviewers = pullRequest.getRequestedReviewers().stream().map(reviewer -> indexUser(reviewer.getId())).toList();
+        return new PullRequest(pullRequest.getId(), author, codeReviews, requestedReviewers);
     }
 }
