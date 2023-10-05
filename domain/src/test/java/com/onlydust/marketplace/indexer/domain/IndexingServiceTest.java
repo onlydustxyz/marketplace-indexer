@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.domain;
 
 import com.onlydust.marketplace.indexer.domain.model.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.domain.model.raw.RawUser;
+import com.onlydust.marketplace.indexer.domain.ports.out.CachedRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.services.IndexingService;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageRepositoryStub;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +18,7 @@ public class IndexingServiceTest {
     final RawSocialAccount[] anthonyRawSocialAccounts = RawStorageRepositoryStub.load("/github/users/anthony_social_accounts.json", RawSocialAccount[].class);
     final RawStorageRepositoryStub rawStorageReader = new RawStorageRepositoryStub();
     final RawStorageRepositoryStub rawStorageRepository = new RawStorageRepositoryStub();
-    final IndexingService indexer = new IndexingService(rawStorageReader, rawStorageRepository);
+    final IndexingService indexer = new IndexingService(new CachedRawStorageReaderDecorator(rawStorageReader, rawStorageRepository));
 
     @BeforeEach
     void setup() throws IOException {
@@ -29,9 +30,9 @@ public class IndexingServiceTest {
     void should_index_user_from_its_id() {
         final var user = indexer.indexUserById(anthony.getId());
 
-        assertThat(user.getId()).isEqualTo(anthony.getId());
-        assertThat(user.getLogin()).isEqualTo(anthony.getLogin());
-        assertThat(user.getRawSocialAccounts()).containsExactly(anthonyRawSocialAccounts);
+        assertThat(user.id()).isEqualTo(anthony.getId());
+        assertThat(user.login()).isEqualTo(anthony.getLogin());
+        assertThat(user.socialAccounts()).containsExactly(anthonyRawSocialAccounts);
 
         assertCachedUsersAre(anthony);
         assertCachedUserSocialAccountsAre(anthony.getId(), anthonyRawSocialAccounts);
