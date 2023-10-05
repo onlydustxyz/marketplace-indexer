@@ -91,8 +91,12 @@ public class IndexingServiceTest {
         final var issue = indexer.indexIssue("onlydustxyz", "marketplace-frontend", 78L);
 
         assertThat(issue.id()).isEqualTo(1301824165);
+        assertThat(issue.assignees().size()).isEqualTo(1);
+        assertThat(issue.assignees().get(0).login()).isEqualTo("AnthonyBuisset");
 
         assertCachedIssuesAre(issue78);
+        assertCachedUsersAre(anthony);
+        assertCachedUserSocialAccountsAre(Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList()));
     }
 
     @Test

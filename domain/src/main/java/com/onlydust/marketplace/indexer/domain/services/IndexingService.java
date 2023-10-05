@@ -54,6 +54,7 @@ public class IndexingService {
 
     public Issue indexIssue(String repoOwner, String repoName, Long issueNumber) {
         final var issue = rawStorageReader.issue(repoOwner, repoName, issueNumber).orElseThrow(() -> new NotFound("Issue not found"));
-        return new Issue(issue.getId());
+        final var assignees = issue.getAssignees().stream().map(assignee -> indexUser(assignee.getId())).toList();
+        return new Issue(issue.getId(), assignees);
     }
 }
