@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.domain.model;
+package com.onlydust.marketplace.indexer.domain.models.raw;
 
 
 import lombok.EqualsAndHashCode;
@@ -8,7 +8,8 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
-public class User extends JsonDocument {
-    Integer id;
-    String login;
+public class RawRepo extends JsonDocument {
+    Long id;
+    String name;
+    RawUser owner;
 }
