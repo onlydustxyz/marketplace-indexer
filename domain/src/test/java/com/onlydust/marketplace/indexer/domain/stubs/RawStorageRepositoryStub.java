@@ -16,6 +16,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     final Map<Long, List<RawCodeReview>> pullRequestReviews = new HashMap<>();
     final Map<Long, List<RawCommit>> pullRequestCommits = new HashMap<>();
     final Map<Tuple, RawCheckRuns> checkRuns = new HashMap<>();
+    final Map<Tuple, List<Long>> closingIssues = new HashMap<>();
 
     public static <T> T load(String path, Class<T> type) {
         final var inputStream = type.getResourceAsStream(path);
@@ -68,6 +69,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         return checkRuns.get(Tuple.tuple(repoId, sha));
     }
 
+    @Override
+    public List<Long> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
+        return closingIssues.getOrDefault(Tuple.tuple(repoOwner, repoName, pullRequestNumber), new ArrayList<>());
+    }
+
     public void feedWith(RawUser... rawUsers) {
         Arrays.stream(rawUsers).sequential().forEach(this::saveUser);
     }
@@ -95,6 +101,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     public void feedWith(Long repoId, String sha, RawCheckRuns checkRuns) {
         saveCheckRuns(repoId, sha, checkRuns);
     }
+
+    public void feedWith(String repoOwner, String repoName, Long pullRequestNumber, Long... issueNumbers) {
+        saveClosingIssues(repoOwner, repoName, pullRequestNumber, Arrays.stream(issueNumbers).toList());
+    }
+
 
     @Override
     public void saveUser(RawUser user) {
@@ -130,6 +141,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         issues.add(issue);
     }
 
+    @Override
+    public void saveClosingIssues(String repoOwner, String repoName, Long pullRequestId, List<Long> issueIds) {
+        closingIssues.put(Tuple.tuple(repoOwner, repoName, pullRequestId), issueIds);
+    }
+
     public List<RawUser> users() {
         return users;
     }
@@ -156,5 +172,9 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     public Map<Tuple, RawCheckRuns> checkRuns() {
         return checkRuns;
+    }
+
+    public Map<Tuple, List<Long>> closingIssues() {
+        return closingIssues;
     }
 }

@@ -41,6 +41,11 @@ public class IndexingService {
         }).toList();
     }
 
+    private List<Issue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
+        final var closingIssueNumbers = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
+        return closingIssueNumbers.stream().map(issueNumber -> indexIssue(repoOwner, repoName, issueNumber)).toList();
+    }
+
     public PullRequest indexPullRequest(String repoOwner, String repoName, Long prNumber) {
         final var pullRequest = rawStorageReader.pullRequest(repoOwner, repoName, prNumber).orElseThrow(() -> new NotFound("Pull request not found"));
         final var author = indexUser(pullRequest.getAuthor().getId());
@@ -48,7 +53,8 @@ public class IndexingService {
         final var requestedReviewers = pullRequest.getRequestedReviewers().stream().map(reviewer -> indexUser(reviewer.getId())).toList();
         final var commits = indexPullRequestCommits(pullRequest.getId());
         final var checkRuns = indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
-        return new PullRequest(pullRequest.getId(), author, codeReviews, requestedReviewers, commits, checkRuns);
+        final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName(), pullRequest.getNumber());
+        return new PullRequest(pullRequest.getId(), author, codeReviews, requestedReviewers, commits, checkRuns, closingIssues);
     }
 
 

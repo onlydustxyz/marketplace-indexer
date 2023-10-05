@@ -40,6 +40,7 @@ public class IndexingServiceTest {
         rawStorageReader.feedWith(pierre.getId(), pierreSocialAccounts);
         rawStorageReader.feedWith(olivier.getId(), olivierSocialAccounts);
         rawStorageReader.feedWith(pr1257);
+        rawStorageReader.feedWith("onlydustxyz", "marketplace-frontend", 1257L, 78L);
         rawStorageReader.feedWith(issue78);
         rawStorageReader.feedWith(pr1257.getId(), pr1257Reviews);
         rawStorageReader.feedWith(pr1257.getId(), pr1257Commits);
@@ -73,12 +74,22 @@ public class IndexingServiceTest {
         assertThat(pullRequest.commits().get(0).author().login()).isEqualTo("AnthonyBuisset");
         assertThat(pullRequest.checkRuns().size()).isEqualTo(17);
         assertThat(pullRequest.checkRuns().get(0).id()).isEqualTo(17002823375L);
+        assertThat(pullRequest.closingIssues().size()).isEqualTo(1);
+        assertThat(pullRequest.closingIssues().get(0).id()).isEqualTo(issue78.getId());
 
         assertCachedPullRequestsAre(pr1257);
+        assertCachedIssuesAre(issue78);
+        assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), 1257L), List.of(78L)));
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
         assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
         assertCachedCheckRunsAre(Map.of(Tuple.tuple(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha()), pr1257CheckRuns));
-        assertCachedUsersAre(anthony, pierre, olivier, anthony);
+        assertCachedUsersAre(
+                anthony, // as PR author
+                pierre,  // as code reviewer
+                olivier, // as requested reviewer
+                anthony, // as committer
+                anthony  // as issue assignee
+        );
         assertCachedUserSocialAccountsAre(
                 Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(),
                         pierre.getId(), Arrays.stream(pierreSocialAccounts).toList(),
@@ -135,5 +146,9 @@ public class IndexingServiceTest {
 
     private void assertCachedCheckRunsAre(Map<Tuple, RawCheckRuns> expected) {
         assertThat(rawStorageRepository.checkRuns()).isEqualTo(expected);
+    }
+
+    private void assertCachedClosingIssuesAre(Map<Tuple, List<Long>> expected) {
+        assertThat(rawStorageRepository.closingIssues()).isEqualTo(expected);
     }
 }

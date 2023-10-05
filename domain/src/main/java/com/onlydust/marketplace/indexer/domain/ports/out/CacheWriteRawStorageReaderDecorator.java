@@ -59,4 +59,11 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
         cache.saveCheckRuns(repoId, sha, checkRuns);
         return checkRuns;
     }
+
+    @Override
+    public List<Long> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
+        final var issueNumbers = fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
+        cache.saveClosingIssues(repoOwner, repoName, pullRequestNumber, issueNumbers);
+        return issueNumbers;
+    }
 }
