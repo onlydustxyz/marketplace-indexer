@@ -14,7 +14,7 @@ public class SerializationTest {
 
     @Test
     void shouldDeserializeUserFromGithubResponse() throws Exception {
-        final var resource = this.getClass().getResource("/github/users/Anthony.json");
+        final var resource = this.getClass().getResource("/github/users/anthony.json");
         assert resource != null;
 
         final var fileContent = Files.readString(Path.of(resource.getPath()));

@@ -11,5 +11,6 @@ public class IndexingService {
 
     public void indexUserById(Integer userId) {
         rawStorageReader.userById(userId).ifPresent(rawStorageRepository::save);
+        rawStorageReader.userSocialAccountsById(userId).ifPresent(socialAccounts -> rawStorageRepository.save(userId, socialAccounts));
     }
 }
