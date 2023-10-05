@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.domain.model.raw;
+package com.onlydust.marketplace.indexer.domain.models.raw;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

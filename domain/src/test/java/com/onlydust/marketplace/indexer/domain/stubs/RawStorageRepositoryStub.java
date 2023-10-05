@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.stubs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.marketplace.indexer.domain.model.raw.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageRepository;
 import org.assertj.core.groups.Tuple;
 

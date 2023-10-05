@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain;
 
 import com.onlydust.marketplace.indexer.domain.exception.NotFound;
-import com.onlydust.marketplace.indexer.domain.model.raw.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.services.IndexingService;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageRepositoryStub;

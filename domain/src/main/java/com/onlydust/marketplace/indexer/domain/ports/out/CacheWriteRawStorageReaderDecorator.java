@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.ports.out;
 
-import com.onlydust.marketplace.indexer.domain.model.raw.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import lombok.AllArgsConstructor;
 
 import java.util.List;

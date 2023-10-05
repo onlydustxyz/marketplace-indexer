@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.domain.model.clean;
+package com.onlydust.marketplace.indexer.domain.models.clean;
 
 import java.util.List;
 
