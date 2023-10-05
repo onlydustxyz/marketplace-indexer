@@ -1,4 +1,4 @@
 package com.onlydust.marketplace.indexer.domain.model.clean;
 
-public record PullRequest(Integer id) {
+public record PullRequest(Integer id, User author) {
 }

@@ -20,6 +20,7 @@ public class IndexingService {
 
     public PullRequest indexPullRequest(String repoOwner, String repoName, Integer prNumber) {
         final var pullRequest = rawStorageReader.pullRequest(repoOwner, repoName, prNumber).orElseThrow(() -> new NotFound("Pull request not found"));
-        return new PullRequest(pullRequest.getId());
+        final var author = indexUser(pullRequest.getAuthor().getId());
+        return new PullRequest(pullRequest.getId(), author);
     }
 }

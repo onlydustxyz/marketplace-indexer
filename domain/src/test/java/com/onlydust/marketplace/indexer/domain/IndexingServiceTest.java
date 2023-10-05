@@ -51,8 +51,11 @@ public class IndexingServiceTest {
         final var pullRequest = indexer.indexPullRequest("onlydustxyz", "marketplace-frontend", 1257);
 
         assertThat(pullRequest.id()).isEqualTo(1524797398);
+        assertThat(pullRequest.author().login()).isEqualTo("AnthonyBuisset");
 
         assertCachedPullRequestsAre(pr1257);
+        assertCachedUsersAre(anthony);
+        assertCachedUserSocialAccountsAre(Map.entry(anthony.getId(), Arrays.stream(anthonyRawSocialAccounts).toList()));
     }
 
     @Test
