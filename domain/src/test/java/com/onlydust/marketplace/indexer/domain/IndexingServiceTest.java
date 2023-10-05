@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class IndexingServiceTest {
     final User anthony = RawStorageRepositoryStub.load("/github/users/anthony.json", User.class);
@@ -29,6 +30,16 @@ public class IndexingServiceTest {
         indexer.indexUserById(anthony.getId());
         assertCachedUsersAre(anthony);
         assertCachedUserSocialAccountsAre(anthony.getId(), anthonySocialAccounts);
+    }
+
+    @Test
+    void should_throw_when_indexing_non_existing_items() {
+        assertThatThrownBy(() -> {
+            indexer.indexUserById(0);
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("User not found");
+
+        assertCachedUsersAre();
     }
 
     private void assertCachedUsersAre(User... users) {
