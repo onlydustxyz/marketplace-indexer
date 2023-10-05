@@ -1,4 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.model.clean;
 
-public record PullRequest(Integer id, User author) {
+import java.util.List;
+
+public record PullRequest(Integer id, User author, List<CodeReview> reviews) {
 }
