@@ -2,9 +2,11 @@ package com.onlydust.marketplace.indexer.domain.services;
 
 import com.onlydust.marketplace.indexer.domain.exception.NotFound;
 import com.onlydust.marketplace.indexer.domain.models.clean.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestClosingIssues;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import lombok.AllArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,12 +52,13 @@ public class IndexingService {
     }
 
     private List<Issue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
-        final var closingIssueNumbers = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
-        return closingIssueNumbers.stream().map(issueNumber -> indexIssue(repoOwner, repoName, issueNumber)).toList();
+        final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
+        return closingIssues.map(RawPullRequestClosingIssues::issueIdNumbers).orElse(new ArrayList<>()).stream().map(issue -> indexIssue(repoOwner, repoName, issue.getRight())).toList();
     }
 
     public PullRequest indexPullRequest(String repoOwner, String repoName, Long prNumber) {
-        final var pullRequest = rawStorageReader.pullRequest(repoOwner, repoName, prNumber).orElseThrow(() -> new NotFound("Pull request not found"));
+        final var repo = rawStorageReader.repo(repoOwner, repoName).orElseThrow(() -> new NotFound("Repo not found"));
+        final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber).orElseThrow(() -> new NotFound("Pull request not found"));
         final var author = indexUser(pullRequest.getAuthor().getId());
         final var codeReviews = indexPullRequestReviews(pullRequest.getId());
         final var requestedReviewers = pullRequest.getRequestedReviewers().stream().map(reviewer -> indexUser(reviewer.getId())).toList();
@@ -67,7 +70,8 @@ public class IndexingService {
 
 
     public Issue indexIssue(String repoOwner, String repoName, Long issueNumber) {
-        final var issue = rawStorageReader.issue(repoOwner, repoName, issueNumber).orElseThrow(() -> new NotFound("Issue not found"));
+        final var repo = rawStorageReader.repo(repoOwner, repoName).orElseThrow(() -> new NotFound("Repo not found"));
+        final var issue = rawStorageReader.issue(repo.getId(), issueNumber).orElseThrow(() -> new NotFound("Issue not found"));
         final var assignees = issue.getAssignees().stream().map(assignee -> indexUser(assignee.getId())).toList();
         return new Issue(issue.getId(), assignees);
     }

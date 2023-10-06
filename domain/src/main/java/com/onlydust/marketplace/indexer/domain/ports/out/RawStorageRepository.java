@@ -9,7 +9,7 @@ public interface RawStorageRepository extends RawStorageReader {
 
     void saveUserSocialAccounts(Long userId, List<RawSocialAccount> socialAccounts);
 
-    void savePullRequest(RawPullRequest pullRequest);
+    void savePullRequest(Long repoId, RawPullRequest pullRequest);
 
     void savePullRequestReviews(Long pullRequestId, List<RawCodeReview> codeReview);
 
@@ -17,7 +17,7 @@ public interface RawStorageRepository extends RawStorageReader {
 
     void saveCheckRuns(Long repoId, String sha, RawCheckRuns checkRuns);
 
-    void saveIssue(RawIssue issue);
+    void saveIssue(Long repoId, RawIssue issue);
 
     void saveRepo(RawRepo repo);
 
@@ -27,5 +27,5 @@ public interface RawStorageRepository extends RawStorageReader {
 
     void saveRepoLanguages(Long repoId, RawLanguages languages);
 
-    void saveClosingIssues(String repoOwner, String repoName, Long pullRequestNumber, List<Long> issueNumbers);
+    void saveClosingIssues(RawPullRequestClosingIssues closingIssues);
 }

@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.domain.stubs;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageRepository;
+import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.groups.Tuple;
 
 import java.io.IOException;
@@ -12,12 +13,10 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     final List<RawRepo> repos = new ArrayList<>();
     final List<RawUser> users = new ArrayList<>();
     final Map<Long, List<RawSocialAccount>> userSocialAccounts = new HashMap<>();
-    final List<RawPullRequest> pullRequests = new ArrayList<>();
-    final List<RawIssue> issues = new ArrayList<>();
     final Map<Long, List<RawCodeReview>> pullRequestReviews = new HashMap<>();
     final Map<Long, List<RawCommit>> pullRequestCommits = new HashMap<>();
     final Map<Tuple, RawCheckRuns> checkRuns = new HashMap<>();
-    final Map<Tuple, List<Long>> closingIssues = new HashMap<>();
+    final Map<Long, List<Long>> closingIssues = new HashMap<>();
     final Map<Long, List<RawPullRequest>> repoPullRequests = new HashMap<>();
     final Map<Long, List<RawIssue>> repoIssues = new HashMap<>();
     final Map<Long, RawLanguages> repoLanguages = new HashMap<>();
@@ -34,6 +33,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     @Override
     public Optional<RawRepo> repo(Long repoId) {
         return repos.stream().filter(repo -> repo.getId().equals(repoId)).findFirst();
+    }
+
+    @Override
+    public Optional<RawRepo> repo(String repoOwner, String repoName) {
+        return repos.stream().filter(repo -> repo.getOwner().getLogin().equals(repoOwner) && repo.getName().equals(repoName)).findFirst();
     }
 
     @Override
@@ -62,19 +66,16 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public Optional<RawPullRequest> pullRequest(String repoOwner, String repoName, Long prNumber) {
-        return pullRequests.stream().filter(
-                        pr -> pr.getBase().getRepo().getOwner().getLogin().equals(repoOwner) &&
-                                pr.getBase().getRepo().getName().equals(repoName) &&
-                                pr.getNumber().equals(prNumber))
+    public Optional<RawPullRequest> pullRequest(Long repoId, Long prNumber) {
+        return repoPullRequests.getOrDefault(repoId, new ArrayList<>())
+                .stream().filter(pr -> pr.getNumber().equals(prNumber))
                 .findFirst();
     }
 
     @Override
-    public Optional<RawIssue> issue(String repoOwner, String repoName, Long issueNumber) {
-        return issues.stream().filter(
-                        issue -> issue.getRepositoryUrl().endsWith(String.format("%s/%s", repoOwner, repoName)) &&
-                                issue.getNumber().equals(issueNumber))
+    public Optional<RawIssue> issue(Long repoId, Long issueNumber) {
+        return repoIssues.getOrDefault(repoId, new ArrayList<>())
+                .stream().filter(issue -> issue.getNumber().equals(issueNumber))
                 .findFirst();
     }
 
@@ -94,8 +95,12 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public List<Long> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
-        return closingIssues.getOrDefault(Tuple.tuple(repoOwner, repoName, pullRequestNumber), new ArrayList<>());
+    public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
+        return repo(repoOwner, repoName).flatMap(repo ->
+                pullRequest(repo.getId(), pullRequestNumber).map(pullRequest -> {
+                    final var prClosingIssues = closingIssues.get(pullRequest.getId()).stream().map(issueId -> Pair.of(issueId, repoIssues.getOrDefault(repo.getId(), new ArrayList<>()).stream().filter(i -> i.getId().equals(issueId)).findFirst().orElseThrow().getNumber())).toList();
+                    return new RawPullRequestClosingIssues(pullRequest.getId(), prClosingIssues);
+                }));
     }
 
     public void feedWith(RawRepo... repos) {
@@ -114,14 +119,6 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         saveUserSocialAccounts(userId, Arrays.stream(socialAccounts).toList());
     }
 
-    public void feedWith(RawPullRequest... pullRequests) {
-        Arrays.stream(pullRequests).sequential().forEach(this::savePullRequest);
-    }
-
-    public void feedWith(RawIssue... issues) {
-        Arrays.stream(issues).sequential().forEach(this::saveIssue);
-    }
-
     public void feedWith(Long pullRequestId, RawCodeReview... codeReviews) {
         savePullRequestReviews(pullRequestId, Arrays.stream(codeReviews).toList());
     }
@@ -138,13 +135,12 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         saveRepoIssues(repoId, Arrays.stream(issues).toList());
     }
 
-
     public void feedWith(Long repoId, String sha, RawCheckRuns checkRuns) {
         saveCheckRuns(repoId, sha, checkRuns);
     }
 
-    public void feedWith(String repoOwner, String repoName, Long pullRequestNumber, Long... issueNumbers) {
-        saveClosingIssues(repoOwner, repoName, pullRequestNumber, Arrays.stream(issueNumbers).toList());
+    public void feedClosingIssuesWith(Long pullRequestId, RawIssue... issues) {
+        saveClosingIssues(new RawPullRequestClosingIssues(pullRequestId, Arrays.stream(issues).map(issue -> Pair.of(issue.getId(), issue.getNumber())).toList()));
     }
 
 
@@ -159,8 +155,10 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public void savePullRequest(RawPullRequest pullRequest) {
-        pullRequests.add(pullRequest);
+    public void savePullRequest(Long repoId, RawPullRequest pullRequest) {
+        final var prs = repoPullRequests.getOrDefault(repoId, new ArrayList<>());
+        prs.add(pullRequest);
+        repoPullRequests.put(repoId, prs);
     }
 
     public void savePullRequestReviews(Long pullRequestId, List<RawCodeReview> codeReviews) {
@@ -178,8 +176,10 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public void saveIssue(RawIssue issue) {
-        issues.add(issue);
+    public void saveIssue(Long repoId, RawIssue issue) {
+        final var i = repoIssues.getOrDefault(repoId, new ArrayList<>());
+        i.add(issue);
+        repoIssues.put(repoId, i);
     }
 
     @Override
@@ -189,12 +189,12 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     @Override
     public void saveRepoPullRequests(Long repoId, List<RawPullRequest> pullRequests) {
-        repoPullRequests.put(repoId, pullRequests);
+        pullRequests.forEach(pullRequest -> savePullRequest(repoId, pullRequest));
     }
 
     @Override
     public void saveRepoIssues(Long repoId, List<RawIssue> issues) {
-        repoIssues.put(repoId, issues);
+        issues.forEach(issue -> saveIssue(repoId, issue));
     }
 
     @Override
@@ -203,8 +203,8 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public void saveClosingIssues(String repoOwner, String repoName, Long pullRequestId, List<Long> issueIds) {
-        closingIssues.put(Tuple.tuple(repoOwner, repoName, pullRequestId), issueIds);
+    public void saveClosingIssues(RawPullRequestClosingIssues closingIssues) {
+        this.closingIssues.put(closingIssues.pullRequestId(), closingIssues.issueIdNumbers().stream().map(Pair::getLeft).toList());
     }
 
     public List<RawRepo> repos() {
@@ -219,14 +219,6 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         return userSocialAccounts;
     }
 
-    public List<RawPullRequest> pullRequests() {
-        return pullRequests;
-    }
-
-    public List<RawIssue> issues() {
-        return issues;
-    }
-
     public Map<Long, List<RawCodeReview>> codeReviews() {
         return pullRequestReviews;
     }
@@ -239,7 +231,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         return checkRuns;
     }
 
-    public Map<Tuple, List<Long>> closingIssues() {
+    public Map<Long, List<Long>> closingIssues() {
         return closingIssues;
     }
 

@@ -19,6 +19,13 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
+    public Optional<RawRepo> repo(String repoOwner, String repoName) {
+        final var repo = fetcher.repo(repoOwner, repoName);
+        repo.ifPresent(cache::saveRepo);
+        return repo;
+    }
+
+    @Override
     public List<RawPullRequest> repoPullRequests(Long repoId) {
         final var pullRequests = fetcher.repoPullRequests(repoId);
         cache.saveRepoPullRequests(repoId, pullRequests);
@@ -54,16 +61,16 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public Optional<RawPullRequest> pullRequest(String repoOwner, String repoName, Long prNumber) {
-        final var pullRequest = fetcher.pullRequest(repoOwner, repoName, prNumber);
-        pullRequest.ifPresent(cache::savePullRequest);
+    public Optional<RawPullRequest> pullRequest(Long repoId, Long prNumber) {
+        final var pullRequest = fetcher.pullRequest(repoId, prNumber);
+        pullRequest.ifPresent(pr -> cache.savePullRequest(repoId, pr));
         return pullRequest;
     }
 
     @Override
-    public Optional<RawIssue> issue(String repoOwner, String repoName, Long issueNumber) {
-        final var issue = fetcher.issue(repoOwner, repoName, issueNumber);
-        issue.ifPresent(cache::saveIssue);
+    public Optional<RawIssue> issue(Long repoId, Long issueNumber) {
+        final var issue = fetcher.issue(repoId, issueNumber);
+        issue.ifPresent(i -> cache.saveIssue(repoId, i));
         return issue;
     }
 
@@ -89,9 +96,9 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public List<Long> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
-        final var issueNumbers = fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
-        cache.saveClosingIssues(repoOwner, repoName, pullRequestNumber, issueNumbers);
-        return issueNumbers;
+    public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
+        final var closingIssues = fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
+        closingIssues.ifPresent(cache::saveClosingIssues);
+        return closingIssues;
     }
 }
