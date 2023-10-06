@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Value
@@ -14,7 +15,7 @@ import java.util.List;
 public class RawCheckRuns extends JsonDocument {
 
     @JsonProperty("check_runs")
-    List<CheckRun> checkRuns;
+    List<CheckRun> checkRuns = new ArrayList<>();
 
     @Value
     @EqualsAndHashCode(callSuper = true)
