@@ -24,9 +24,9 @@ public interface RawStorageReader {
 
     Optional<RawIssue> issue(Long repoId, Long issueNumber);
 
-    List<RawCodeReview> pullRequestReviews(Long pullRequestId);
+    List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber);
 
-    List<RawCommit> pullRequestCommits(Long pullRequestId);
+    List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber);
 
     RawCheckRuns checkRuns(Long repoId, String sha);
 

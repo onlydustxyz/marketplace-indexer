@@ -28,16 +28,16 @@ public class IndexingService {
         return new User(user.getId(), user.getLogin(), socialAccounts);
     }
 
-    private List<CodeReview> indexPullRequestReviews(Long pullRequestId) {
-        final var codeReviews = rawStorageReader.pullRequestReviews(pullRequestId);
+    private List<CodeReview> indexPullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        final var codeReviews = rawStorageReader.pullRequestReviews(repoId, pullRequestId, pullRequestNumber);
         return codeReviews.stream().map(review -> {
             final var author = indexUser(review.getAuthor().getId());
             return new CodeReview(review.getId(), author);
         }).toList();
     }
 
-    private List<Commit> indexPullRequestCommits(Long pullRequestId) {
-        final var commits = rawStorageReader.pullRequestCommits(pullRequestId);
+    private List<Commit> indexPullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        final var commits = rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber);
         return commits.stream().map(commit -> {
             final var author = Objects.isNull(commit.getAuthor()) ? commit.getCommitter() : commit.getAuthor();
             return Objects.isNull(author) ? null : new Commit(commit.getSha(), indexUser(author.getId()));
@@ -60,9 +60,9 @@ public class IndexingService {
         final var repo = rawStorageReader.repo(repoOwner, repoName).orElseThrow(() -> new NotFound("Repo not found"));
         final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber).orElseThrow(() -> new NotFound("Pull request not found"));
         final var author = indexUser(pullRequest.getAuthor().getId());
-        final var codeReviews = indexPullRequestReviews(pullRequest.getId());
+        final var codeReviews = indexPullRequestReviews(repo.getId(), pullRequest.getId(), prNumber);
         final var requestedReviewers = pullRequest.getRequestedReviewers().stream().map(reviewer -> indexUser(reviewer.getId())).toList();
-        final var commits = indexPullRequestCommits(pullRequest.getId());
+        final var commits = indexPullRequestCommits(repo.getId(), pullRequest.getId(), prNumber);
         final var checkRuns = indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
         final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName(), pullRequest.getNumber());
         return new PullRequest(pullRequest.getId(), author, codeReviews, requestedReviewers, commits, checkRuns, closingIssues);
