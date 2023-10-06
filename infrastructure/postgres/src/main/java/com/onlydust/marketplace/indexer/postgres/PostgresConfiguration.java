@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableAutoConfiguration
 @EntityScan(basePackages = {
-        "onlydust.com.marketplace.indexer.postgres.adapter.entity"
+        "com.onlydust.marketplace.indexer.postgres.entities"
 })
 @EnableJpaRepositories(basePackages = {
-        "onlydust.com.marketplace.indexer.postgres.adapter.repository"
+        "com.onlydust.marketplace.indexer.postgres.repositories"
 })
 @EnableTransactionManagement
 @EnableJpaAuditing

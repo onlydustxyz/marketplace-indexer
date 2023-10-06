@@ -64,7 +64,7 @@ create table
 );
 
 
--- issues
+-- issueIdNumbers
 create table
     indexer_raw.issues
 (
@@ -102,7 +102,8 @@ create table
     id              bigint primary key,
     pull_request_id bigint    NOT NULL references indexer_raw.pull_requests (id),
     reviewer_id     bigint    NOT NULL references indexer_raw.users (id),
-    indexed_at      timestamp not null,
+    created_at      timestamp not null,
+    updated_at      timestamp not null,
     data            JSONB     NOT NULL
 );
 
@@ -110,22 +111,23 @@ create table
 create table
     indexer_raw.pull_request_commits
 (
-    repo_id         bigint    NOT NULL references indexer_raw.repos (id),
-    pull_request_id bigint    NOT NULL references indexer_raw.pull_requests (id),
-    sha             TEXT      NOT NULL,
-    indexed_at      timestamp not null,
-    data            JSONB     NOT NULL,
-    PRIMARY KEY (repo_id, pull_request_id, sha)
+    pull_request_id bigint PRIMARY KEY references indexer_raw.pull_requests (id),
+    created_at      timestamp not null,
+    updated_at      timestamp not null,
+    data            JSONB     NOT NULL
 );
 
 
 create table
     indexer_raw.pull_request_closing_issues
 (
-    pull_request_id bigint references indexer_raw.pull_requests (id),
-    issue_id        bigint references indexer_raw.issues (id),
-    indexed_at      timestamp not null,
-    PRIMARY KEY (pull_request_id, issue_id)
+    repo_owner          TEXT      NOT NULL,
+    repo_name           TEXT      NOT NULL,
+    pull_request_number BIGINT    NOT NULL,
+    issue_number        bigint    NOT NULL,
+    created_at          timestamp not null,
+    updated_at          timestamp not null,
+    PRIMARY KEY (repo_owner, repo_name, pull_request_number, issue_number)
 );
 
 

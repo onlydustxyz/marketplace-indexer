@@ -8,6 +8,8 @@ import java.util.Optional;
 public interface RawStorageReader {
     Optional<RawRepo> repo(Long repoId);
 
+    Optional<RawRepo> repo(String repoOwner, String repoName);
+
     List<RawPullRequest> repoPullRequests(Long repoId);
 
     List<RawIssue> repoIssues(Long repoId);
@@ -18,9 +20,9 @@ public interface RawStorageReader {
 
     List<RawSocialAccount> userSocialAccounts(Long userId);
 
-    Optional<RawPullRequest> pullRequest(String repoOwner, String repoName, Long prNumber);
+    Optional<RawPullRequest> pullRequest(Long repoId, Long prNumber);
 
-    Optional<RawIssue> issue(String repoOwner, String repoName, Long issueNumber);
+    Optional<RawIssue> issue(Long repoId, Long issueNumber);
 
     List<RawCodeReview> pullRequestReviews(Long pullRequestId);
 
@@ -28,5 +30,5 @@ public interface RawStorageReader {
 
     RawCheckRuns checkRuns(Long repoId, String sha);
 
-    List<Long> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber);
+    Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber);
 }

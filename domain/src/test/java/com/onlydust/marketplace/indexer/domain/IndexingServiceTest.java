@@ -43,11 +43,9 @@ public class IndexingServiceTest {
         rawStorageReader.feedWith(anthony.getId(), anthonySocialAccounts);
         rawStorageReader.feedWith(pierre.getId(), pierreSocialAccounts);
         rawStorageReader.feedWith(olivier.getId(), olivierSocialAccounts);
-        rawStorageReader.feedWith(pr1257);
         rawStorageReader.feedWith(marketplaceFrontend.getId(), pr1257);
         rawStorageReader.feedWith(marketplaceFrontend.getId(), issue78);
-        rawStorageReader.feedWith("onlydustxyz", "marketplace-frontend", 1257L, 78L);
-        rawStorageReader.feedWith(issue78);
+        rawStorageReader.feedClosingIssuesWith(pr1257.getId(), issue78);
         rawStorageReader.feedWith(pr1257.getId(), pr1257Reviews);
         rawStorageReader.feedWith(pr1257.getId(), pr1257Commits);
         rawStorageReader.feedWith(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha(), pr1257CheckRuns);
@@ -83,9 +81,10 @@ public class IndexingServiceTest {
         assertThat(pullRequest.closingIssues().size()).isEqualTo(1);
         assertThat(pullRequest.closingIssues().get(0).id()).isEqualTo(issue78.getId());
 
-        assertCachedPullRequestsAre(pr1257);
-        assertCachedIssuesAre(issue78);
-        assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), 1257L), List.of(78L)));
+        assertCachedReposAre(marketplaceFrontend, marketplaceFrontend);
+        assertCachedRepoPullRequestsAre(Map.of(marketplaceFrontend.getId(), List.of(pr1257)));
+        assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(issue78)));
+        assertCachedClosingIssuesAre(Map.of(pr1257.getId(), List.of(issue78.getId())));
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
         assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
         assertCachedCheckRunsAre(Map.of(Tuple.tuple(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha()), pr1257CheckRuns));
@@ -111,7 +110,8 @@ public class IndexingServiceTest {
         assertThat(issue.assignees().size()).isEqualTo(1);
         assertThat(issue.assignees().get(0).login()).isEqualTo("AnthonyBuisset");
 
-        assertCachedIssuesAre(issue78);
+        assertCachedReposAre(marketplaceFrontend);
+        assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(issue78)));
         assertCachedUsersAre(anthony);
         assertCachedUserSocialAccountsAre(Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList()));
     }
@@ -128,16 +128,14 @@ public class IndexingServiceTest {
         assertThat(repo.issues().get(0).id()).isEqualTo(issue78.getId());
         assertThat(repo.languages().get("TypeScript")).isEqualTo(2761826);
 
-        assertCachedReposAre(marketplaceFrontend);
+        assertCachedReposAre(marketplaceFrontend, marketplaceFrontend, marketplaceFrontend, marketplaceFrontend);
         assertCachedRepoLanguagesAre(Map.of(marketplaceFrontend.getId(), marketplaceFrontendLanguages));
-        assertCachedRepoPullRequestsAre(Map.of(marketplaceFrontend.getId(), List.of(pr1257)));
-        assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(issue78)));
-        assertCachedPullRequestsAre(pr1257);
-        assertCachedIssuesAre(
+        assertCachedRepoPullRequestsAre(Map.of(marketplaceFrontend.getId(), List.of(pr1257, pr1257)));
+        assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(
                 issue78, // as pr 1257 closing issue
-                issue78 // as repo issue
-        );
-        assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), 1257L), List.of(78L)));
+                issue78, issue78  // as repo issue
+        )));
+        assertCachedClosingIssuesAre(Map.of(pr1257.getId(), List.of(issue78.getId())));
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
         assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
         assertCachedCheckRunsAre(Map.of(Tuple.tuple(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha()), pr1257CheckRuns));
@@ -190,14 +188,6 @@ public class IndexingServiceTest {
         assertThat(rawStorageRepository.repoLanguages()).isEqualTo(expected);
     }
 
-    private void assertCachedPullRequestsAre(RawPullRequest... expected) {
-        assertThat(rawStorageRepository.pullRequests()).containsExactly(expected);
-    }
-
-    private void assertCachedIssuesAre(RawIssue... expected) {
-        assertThat(rawStorageRepository.issues()).containsExactly(expected);
-    }
-
     private void assertCachedCodeReviewsAre(Map<Long, List<RawCodeReview>> expected) {
         assertThat(rawStorageRepository.codeReviews()).isEqualTo(expected);
     }
@@ -210,7 +200,7 @@ public class IndexingServiceTest {
         assertThat(rawStorageRepository.checkRuns()).isEqualTo(expected);
     }
 
-    private void assertCachedClosingIssuesAre(Map<Tuple, List<Long>> expected) {
+    private void assertCachedClosingIssuesAre(Map<Long, List<Long>> expected) {
         assertThat(rawStorageRepository.closingIssues()).isEqualTo(expected);
     }
 }
