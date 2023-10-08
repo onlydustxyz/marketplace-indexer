@@ -1,15 +1,14 @@
 package com.onlydust.marketplace.indexer.postgres.entities;
 
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.IdClass;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 
 @Data
@@ -19,17 +18,23 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @IdClass(PullRequestClosingIssue.Id.class)
 @Table(name = "pull_request_closing_issues", schema = "indexer_raw")
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class PullRequestClosingIssue {
     @javax.persistence.Id
     @OneToOne
     PullRequest pullRequest;
+
     @javax.persistence.Id
     @OneToOne
     Issue issue;
+
     @CreationTimestamp
-    ZonedDateTime createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    Instant createdAt;
+
     @UpdateTimestamp
-    ZonedDateTime updatedAt;
+    @Column(name = "updated_at", nullable = false)
+    Instant updatedAt;
 
     public static PullRequestClosingIssue of(Long pullRequestId, Long issueId) {
         final var pullRequest = PullRequest.builder().id(pullRequestId).build();
