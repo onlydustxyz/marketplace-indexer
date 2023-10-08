@@ -27,14 +27,14 @@ public class GithubRawStorageReader implements RawStorageReader {
     @Override
     public List<RawPullRequest> repoPullRequests(Long repoId) {
         return client.get("/repositories/" + repoId + "/pulls", RawPullRequest[].class)
-                .map(result -> Arrays.stream(result).toList())
+                .map(Arrays::asList)
                 .orElse(new ArrayList<>());
     }
 
     @Override
     public List<RawIssue> repoIssues(Long repoId) {
         return client.get("/repositories/" + repoId + "/issues", RawIssue[].class)
-                .map(result -> Arrays.stream(result).toList())
+                .map(Arrays::asList)
                 .orElse(new ArrayList<>());
     }
 
@@ -52,7 +52,7 @@ public class GithubRawStorageReader implements RawStorageReader {
     @Override
     public List<RawSocialAccount> userSocialAccounts(Long userId) {
         return client.get("/user/" + userId + "/social_accounts", RawSocialAccount[].class)
-                .map(result -> Arrays.stream(result).toList())
+                .map(Arrays::asList)
                 .orElse(new ArrayList<>());
     }
 
@@ -69,14 +69,14 @@ public class GithubRawStorageReader implements RawStorageReader {
     @Override
     public List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long prNumber) {
         return client.get("/repositories/" + repoId + "/pulls/" + prNumber + "/reviews", RawCodeReview[].class)
-                .map(result -> Arrays.stream(result).toList())
+                .map(Arrays::asList)
                 .orElse(new ArrayList<>());
     }
 
     @Override
     public List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long prNumber) {
         return client.get("/repositories/" + repoId + "/pulls/" + prNumber + "/commits", RawCommit[].class)
-                .map(result -> Arrays.stream(result).toList())
+                .map(Arrays::asList)
                 .orElse(new ArrayList<>());
     }
 
