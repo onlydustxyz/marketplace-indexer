@@ -18,10 +18,11 @@ import java.util.Optional;
 public class GithubHttpClient {
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
+    private final String baseUri;
 
     public <ResponseBody> Optional<ResponseBody> get(String uri, Class<ResponseBody> responseClass) {
         try {
-            final var requestBuilder = HttpRequest.newBuilder(URI.create(uri)).GET();
+            final var requestBuilder = HttpRequest.newBuilder(URI.create(baseUri + uri)).GET();
             final var httpResponse = this.httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
             final int statusCode = httpResponse.statusCode();
 

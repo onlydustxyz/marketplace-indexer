@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class WebSecurityConfiguration {
     @Bean
+    public com.onlydust.marketplace.indexer.rest.api.authentication.WebSecurityConfiguration apiSecurityConfiguration() {
+        return new com.onlydust.marketplace.indexer.rest.api.authentication.WebSecurityConfiguration();
+    }
+
+    @Bean
     @ConfigurationProperties("application.web.cors")
     public WebCorsProperties webCorsProperties() {
         return new WebCorsProperties();

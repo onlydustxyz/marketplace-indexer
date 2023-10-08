@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap;
 
+import com.onlydust.marketplace.indexer.github.GithubConfiguration;
 import com.onlydust.marketplace.indexer.postgres.PostgresConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,7 +9,7 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @EnableConfigurationProperties
-@Import(PostgresConfiguration.class)
+@Import({PostgresConfiguration.class, GithubConfiguration.class})
 public class MarketplaceIndexerApplication {
 
     public static void main(String[] args) {
