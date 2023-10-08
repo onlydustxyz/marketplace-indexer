@@ -45,6 +45,11 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>com.onlydust.marketplace.indexer</groupId>
+            <artifactId>github</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
@@ -90,6 +95,26 @@
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>macos-m1</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-resolver-dns-native-macos</artifactId>
+                    <classifier>osx-aarch_64</classifier>
+                    <version>4.1.95.Final</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
     <build>
         <finalName>marketplace-indexer</finalName>
