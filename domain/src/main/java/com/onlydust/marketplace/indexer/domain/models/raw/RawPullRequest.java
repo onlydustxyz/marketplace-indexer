@@ -4,6 +4,7 @@ package com.onlydust.marketplace.indexer.domain.models.raw;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.Value;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
+@ToString(callSuper = true)
 public class RawPullRequest extends JsonDocument {
     Long id;
     Long number;
