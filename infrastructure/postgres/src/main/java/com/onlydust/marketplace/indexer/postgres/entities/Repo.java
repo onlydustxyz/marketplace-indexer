@@ -9,7 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -24,19 +23,13 @@ import java.time.ZonedDateTime;
 @Table(name = "repos", schema = "indexer_raw")
 public class Repo {
     @Id
-    @Column(name = "id")
     Long id;
-    @Column(name = "owner")
     String owner;
-    @Column(name = "name")
     String name;
-    @Column(name = "data")
     @Type(type = "jsonb")
     RawRepo data;
-    @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     ZonedDateTime createdAt;
-    @Column(name = "updated_at")
     @UpdateTimestamp
     ZonedDateTime updatedAt;
 

@@ -21,15 +21,10 @@ import java.time.ZonedDateTime;
 @Table(name = "pull_requests", schema = "indexer_raw")
 public class PullRequest {
     @Id
-    @Column(name = "id")
     Long id;
-    @Column(name = "repo_id")
-    Long repoId;
-    @OneToOne(mappedBy = "repo_id")
+    @OneToOne
     Repo repo;
-    @Column(name = "number")
     Long number;
-    @Column(name = "data")
     @Type(type = "jsonb")
     RawPullRequest data;
     @Column(name = "created_at", updatable = false)
@@ -40,6 +35,7 @@ public class PullRequest {
     ZonedDateTime updatedAt;
 
     public static PullRequest of(Long repoId, RawPullRequest pullRequest) {
-        return PullRequest.builder().id(pullRequest.getId()).repoId(repoId).number(pullRequest.getNumber()).data(pullRequest).build();
+        final var repo = Repo.builder().id(repoId).build();
+        return PullRequest.builder().id(pullRequest.getId()).repo(repo).number(pullRequest.getNumber()).data(pullRequest).build();
     }
 }

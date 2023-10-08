@@ -9,7 +9,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.ZonedDateTime;
 
 
@@ -21,17 +23,11 @@ import java.time.ZonedDateTime;
 @Table(name = "repo_languages", schema = "indexer_raw")
 public class RepoLanguages {
     @Id
-    @Column(name = "repo_id")
     Long repoId;
-    @OneToOne(mappedBy = "repo_id")
-    Repo repo;
-    @Column(name = "data")
     @Type(type = "jsonb")
     RawLanguages data;
-    @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     ZonedDateTime createdAt;
-    @Column(name = "updated_at")
     @UpdateTimestamp
     ZonedDateTime updatedAt;
 
