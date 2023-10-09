@@ -70,12 +70,12 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
     }
 
     @Override
-    public List<RawCodeReview> pullRequestReviews(Long pullRequestId) {
+    public List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         return pullRequestReviewsRepository.findById(pullRequestId).map(PullRequestReview::getData).orElse(new ArrayList<>());
     }
 
     @Override
-    public List<RawCommit> pullRequestCommits(Long pullRequestId) {
+    public List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         return pullRequestCommitsRepository.findById(pullRequestId).map(PullRequestCommits::getData).orElse(new ArrayList<>());
     }
 

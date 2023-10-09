@@ -75,15 +75,15 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public List<RawCodeReview> pullRequestReviews(Long pullRequestId) {
-        final var reviews = fetcher.pullRequestReviews(pullRequestId);
+    public List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        final var reviews = fetcher.pullRequestReviews(repoId, pullRequestId, pullRequestNumber);
         cache.savePullRequestReviews(pullRequestId, reviews);
         return reviews;
     }
 
     @Override
-    public List<RawCommit> pullRequestCommits(Long pullRequestId) {
-        final var commits = fetcher.pullRequestCommits(pullRequestId);
+    public List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        final var commits = fetcher.pullRequestCommits(repoId, pullRequestId, pullRequestNumber);
         cache.savePullRequestCommits(pullRequestId, commits);
         return commits;
     }

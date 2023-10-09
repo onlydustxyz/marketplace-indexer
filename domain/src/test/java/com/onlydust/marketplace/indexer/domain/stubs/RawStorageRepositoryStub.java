@@ -80,12 +80,12 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public List<RawCodeReview> pullRequestReviews(Long pullRequestId) {
+    public List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         return pullRequestReviews.getOrDefault(pullRequestId, new ArrayList<>());
     }
 
     @Override
-    public List<RawCommit> pullRequestCommits(Long pullRequestId) {
+    public List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         return pullRequestCommits.getOrDefault(pullRequestId, new ArrayList<>());
     }
 
