@@ -1,5 +1,7 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
 import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
@@ -7,6 +9,7 @@ import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import com.onlydust.marketplace.indexer.bootstrap.ApplicationIT;
 import com.onlydust.marketplace.indexer.bootstrap.configuration.SwaggerConfiguration;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,18 +48,24 @@ public class IntegrationTest {
                     .withUsername("test")
                     .withPassword("test")
                     .waitingFor(Wait.forLogMessage(".*PostgreSQL init process complete; ready for start up.*", 1));
+    protected final ObjectMapper mapper = new ObjectMapper();
+    @InjectWireMock("github")
+    protected WireMockServer githubWireMockServer;
     @LocalServerPort
     int port;
     @Autowired
     WebTestClient client;
-    @InjectWireMock("github")
-    private WireMockServer githubWireMockServer;
 
     @DynamicPropertySource
     static void updateProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgresSQLContainer::getJdbcUrl);
         registry.add("spring.datasource.password", postgresSQLContainer::getPassword);
         registry.add("spring.datasource.username", postgresSQLContainer::getUsername);
+    }
+
+    @BeforeEach
+    void setup() {
+        mapper.configure(DeserializationFeature.USE_LONG_FOR_INTS, true);
     }
 
     protected URI getApiURI(final String path) {

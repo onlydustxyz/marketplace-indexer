@@ -90,7 +90,7 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
-  /api/v1/issues/{issueId}:
+  /api/v1/repos/{repoOwner}/{repoName}/issues/{issueNumber}:
     put:
       security:
         - apiKey: [ ]
@@ -102,11 +102,25 @@ paths:
         Immediately indexes the issue if it is not indexed yet. Does nothing if the issue is already indexed.
       parameters:
         - in: path
-          name: issueId
+          name: repoOwner
+          required: true
+          description: The owner of the repo
+          example: onlydustxyz
+          schema:
+            type: string
+        - in: path
+          name: repoName
+          required: true
+          description: The name of the repo
+          example: marketplace-indexer
+          schema:
+            type: string
+        - in: path
+          name: issueNumber
           required: true
           description: The ID of the issue to add
           schema:
-            $ref: '#/components/schemas/IssueId'
+            $ref: '#/components/schemas/IssueNumber'
       responses:
         "204":
           description: 'Issue indexed successfully'
@@ -270,6 +284,11 @@ components:
       type: string
       description: Github issue ID (databaseId)
       example: 1678794252
+
+    IssueNumber:
+      type: integer
+      description: Github issue number
+      example: 27
 
     AppInstallationId:
       type: integer

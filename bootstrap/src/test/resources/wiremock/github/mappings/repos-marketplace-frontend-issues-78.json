@@ -1,0 +1,15 @@
+{
+  "request": {
+    "url": "/repositories/498695724/issues/78",
+    "method": "GET",
+    "headers": {
+      "Authorization": {
+        "contains": "Bearer GITHUB_PAT"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "repos/marketplace-frontend/issues/78.json"
+  }
+}

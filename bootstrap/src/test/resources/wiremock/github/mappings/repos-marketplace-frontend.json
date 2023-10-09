@@ -1,0 +1,15 @@
+{
+  "request": {
+    "url": "/repos/onlydustxyz/marketplace-frontend",
+    "method": "GET",
+    "headers": {
+      "Authorization": {
+        "contains": "Bearer GITHUB_PAT"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "repos/marketplace-frontend.json"
+  }
+}
