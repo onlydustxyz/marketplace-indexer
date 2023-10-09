@@ -35,7 +35,7 @@ public class UserIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        final var expectedUser = mapper.readValue(getClass().getResourceAsStream("/github/users/anthony.json"), RawUser.class);
+        final var expectedUser = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawUser.class);
 
         final var users = userRepository.findAll();
         assertThat(users.size()).isEqualTo(1);

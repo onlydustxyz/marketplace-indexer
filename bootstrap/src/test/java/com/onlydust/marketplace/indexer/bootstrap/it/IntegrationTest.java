@@ -1,5 +1,9 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
+import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
+import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import com.onlydust.marketplace.indexer.bootstrap.ApplicationIT;
 import com.onlydust.marketplace.indexer.bootstrap.configuration.SwaggerConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +27,16 @@ import java.net.URI;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@ActiveProfiles({"it"})
+@ActiveProfiles({"it", "local"})
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = ApplicationIT.class)
 @Testcontainers
 @Slf4j
 @DirtiesContext
 @Import(SwaggerConfiguration.class)
+@EnableWireMock({
+        @ConfigureWireMock(name = "github", stubLocation = "", property = "infrastructure.github.baseUri")
+})
 public class IntegrationTest {
     @Container
     static PostgreSQLContainer postgresSQLContainer =
@@ -38,11 +45,12 @@ public class IntegrationTest {
                     .withUsername("test")
                     .withPassword("test")
                     .waitingFor(Wait.forLogMessage(".*PostgreSQL init process complete; ready for start up.*", 1));
-
     @LocalServerPort
     int port;
     @Autowired
     WebTestClient client;
+    @InjectWireMock("github")
+    private WireMockServer githubWireMockServer;
 
     @DynamicPropertySource
     static void updateProperties(DynamicPropertyRegistry registry) {

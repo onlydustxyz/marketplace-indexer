@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.onlydust.marketplace.indexer")
 @EnableConfigurationProperties
 @Import({PostgresConfiguration.class, GithubConfiguration.class})
 public class MarketplaceIndexerApplication {

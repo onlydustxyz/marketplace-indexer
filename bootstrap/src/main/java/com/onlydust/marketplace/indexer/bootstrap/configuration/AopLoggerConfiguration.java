@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class AopLoggerConfiguration {
 
     @Around(
-            "(execution(* com.onlydust.marketplace.indexer.rest.api.adapter.*.*(..)))"
+            "(execution(* com.onlydust.marketplace.indexer.rest.api.*.*(..)))"
     )
     public Object around(ProceedingJoinPoint point) throws Throwable {
         final StopWatch stopWatch = new StopWatch("aop-stopwatch");
