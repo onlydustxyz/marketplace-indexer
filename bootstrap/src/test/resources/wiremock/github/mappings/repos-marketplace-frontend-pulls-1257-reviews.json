@@ -1,6 +1,6 @@
 {
   "request": {
-    "url": "/user/43467246/social_accounts",
+    "url": "/repositories/498695724/pulls/1257/reviews",
     "method": "GET",
     "headers": {
       "Authorization": {
@@ -10,6 +10,6 @@
   },
   "response": {
     "status": 200,
-    "bodyFileName": "users/anthony_social_accounts.json"
+    "bodyFileName": "repos/marketplace-frontend/pulls/1257_reviews.json"
   }
 }

@@ -21,6 +21,7 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @IdClass(RepoCheckRuns.Id.class)
 @Table(name = "repo_check_runs", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
@@ -34,10 +35,12 @@ public class RepoCheckRuns {
     @Type(type = "jsonb")
     RawCheckRuns data;
 
+    @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     Instant createdAt;
 
+    @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     Instant updatedAt;
