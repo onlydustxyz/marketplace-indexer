@@ -1,0 +1,10 @@
+{
+  "request": {
+    "url": "/user/43467246",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "users/anthony.json"
+  }
+}

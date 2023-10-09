@@ -1,0 +1,10 @@
+{
+  "request": {
+    "url": "/user/43467246/social_accounts",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "users/anthony-social_accounts.json"
+  }
+}

@@ -8,15 +8,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 
 @EnableWebSecurity
 @AllArgsConstructor
-public class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
-
-
+public class WebSecurityAdapter extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().cors();
+                .and().cors()
+                .and().csrf().disable()
+                .authorizeRequests().anyRequest().permitAll();
     }
 
 }

@@ -7,7 +7,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class MarketplaceIndexerWebMvcConfigurer implements WebMvcConfigurer {
-
     private final WebSecurityConfiguration.WebCorsProperties webCorsProperties;
 
     @Autowired
@@ -21,7 +20,5 @@ public class MarketplaceIndexerWebMvcConfigurer implements WebMvcConfigurer {
                 .allowedMethods("GET", "PUT", "POST", "DELETE", "PATCH")
                 .allowedOrigins(this.webCorsProperties.getHosts());
     }
-
-
 }
 

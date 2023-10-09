@@ -1,19 +1,21 @@
 package com.onlydust.marketplace.indexer.postgres.entities;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawCommit;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 
 
@@ -23,19 +25,21 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "pull_request_commits", schema = "indexer_raw")
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class PullRequestCommits {
     @Id
-    @Column(name = "pull_request_id")
     Long pullRequestId;
-    @Column(name = "data")
+
     @Type(type = "jsonb")
     List<RawCommit> data;
-    @Column(name = "created_at", updatable = false)
+
     @CreationTimestamp
-    ZonedDateTime createdAt;
-    @Column(name = "updated_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
+    Instant createdAt;
+
     @UpdateTimestamp
-    ZonedDateTime updatedAt;
+    @Column(name = "updated_at", nullable = false)
+    Instant updatedAt;
 
     public static PullRequestCommits of(Long pullRequestId, List<RawCommit> commits) {
         return PullRequestCommits.builder().pullRequestId(pullRequestId).data(commits).build();

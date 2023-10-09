@@ -1,12 +1,14 @@
 package com.onlydust.marketplace.indexer.postgres.entities;
 
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 
 @Data
@@ -16,32 +18,34 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @IdClass(PullRequestClosingIssue.Id.class)
 @Table(name = "pull_request_closing_issues", schema = "indexer_raw")
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class PullRequestClosingIssue {
     @javax.persistence.Id
-    @Column(name = "pull_request_id")
-    Long pullRequestId;
-    @OneToOne(mappedBy = "pull_request_id")
+    @OneToOne
     PullRequest pullRequest;
+
     @javax.persistence.Id
-    @Column(name = "issue_id")
-    Long issueId;
-    @OneToOne(mappedBy = "issue_id")
+    @OneToOne
     Issue issue;
-    @Column(name = "created_at", updatable = false)
+
     @CreationTimestamp
-    ZonedDateTime createdAt;
-    @Column(name = "updated_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
+    Instant createdAt;
+
     @UpdateTimestamp
-    ZonedDateTime updatedAt;
+    @Column(name = "updated_at", nullable = false)
+    Instant updatedAt;
 
     public static PullRequestClosingIssue of(Long pullRequestId, Long issueId) {
-        return PullRequestClosingIssue.builder().pullRequestId(pullRequestId).issueId(issueId).build();
+        final var pullRequest = PullRequest.builder().id(pullRequestId).build();
+        final var issue = Issue.builder().id(issueId).build();
+        return PullRequestClosingIssue.builder().pullRequest(pullRequest).issue(issue).build();
     }
 
     @EqualsAndHashCode
     public static class Id implements Serializable {
-        Long pullRequestId;
-        Long issueId;
+        PullRequest pullRequest;
+        Issue issue;
     }
 }
 

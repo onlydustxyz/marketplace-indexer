@@ -1,0 +1,14 @@
+[
+  {
+    "provider": "twitter",
+    "url": "https://twitter.com/abuisset"
+  },
+  {
+    "provider": "generic",
+    "url": "https://t.me/abuisset"
+  },
+  {
+    "provider": "linkedin",
+    "url": "https://www.linkedin.com/in/anthony-buisset/"
+  }
+]

@@ -88,7 +88,7 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         final var closingIssues = pullRequestClosingIssueRepository.findAllByPullRequestRepoOwnerAndPullRequestRepoNameAndPullRequestNumber(repoOwner, repoName, pullRequestNumber).stream().toList();
         final var issues = closingIssues.stream().map(issue -> Pair.of(issue.getIssue().getId(), issue.getIssue().getNumber())).toList();
-        return closingIssues.stream().findFirst().map(issue -> new RawPullRequestClosingIssues(issue.getPullRequestId(), issues));
+        return closingIssues.stream().findFirst().map(issue -> new RawPullRequestClosingIssues(issue.getPullRequest().getId(), issues));
     }
 
     @Override

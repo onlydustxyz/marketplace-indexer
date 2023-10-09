@@ -1,16 +1,21 @@
 package com.onlydust.marketplace.indexer.postgres.entities;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawLanguages;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
-import java.time.ZonedDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.Instant;
 
 
 @Data
@@ -19,21 +24,21 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "repo_languages", schema = "indexer_raw")
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class RepoLanguages {
     @Id
-    @Column(name = "repo_id")
     Long repoId;
-    @OneToOne(mappedBy = "repo_id")
-    Repo repo;
-    @Column(name = "data")
+
     @Type(type = "jsonb")
     RawLanguages data;
-    @Column(name = "created_at", updatable = false)
+
     @CreationTimestamp
-    ZonedDateTime createdAt;
-    @Column(name = "updated_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
+    Instant createdAt;
+
     @UpdateTimestamp
-    ZonedDateTime updatedAt;
+    @Column(name = "updated_at", nullable = false)
+    Instant updatedAt;
 
     public static RepoLanguages of(Long repoId, RawLanguages languages) {
         return RepoLanguages.builder().repoId(repoId).data(languages).build();

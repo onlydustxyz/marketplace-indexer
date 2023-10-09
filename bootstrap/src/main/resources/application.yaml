@@ -1,7 +1,12 @@
+infrastructure:
+  github:
+    base_uri: "https://api.github.com"
+
 application:
   web:
     cors:
       hosts: ${FRONTEND_CORS_HOSTS}
+
 spring:
   application:
     name: marketplace-indexer
