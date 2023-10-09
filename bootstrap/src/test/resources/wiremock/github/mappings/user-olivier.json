@@ -1,6 +1,6 @@
 {
   "request": {
-    "url": "/user/43467246/social_accounts",
+    "url": "/user/595505",
     "method": "GET",
     "headers": {
       "Authorization": {
@@ -10,6 +10,6 @@
   },
   "response": {
     "status": 200,
-    "bodyFileName": "users/anthony_social_accounts.json"
+    "bodyFileName": "users/olivier.json"
   }
 }

@@ -32,12 +32,12 @@ public class IssueIndexingIT extends IntegrationTest {
     public UserSocialAccountsRepository userSocialAccountsRepository;
 
     @Test
-    public void should_index_user_on_demand() throws IOException {
+    public void should_index_issue_on_demand() throws IOException {
         // Given
         final var marketplaceFrontend = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend.json"), RawRepo.class);
         final var issue78 = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/issues/78.json"), RawIssue.class);
         final var anthony = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawUser.class);
-        final var anthonySocialAccounts = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony-social_accounts.json"), RawSocialAccount[].class));
+        final var anthonySocialAccounts = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony_social_accounts.json"), RawSocialAccount[].class));
 
         // When
         final var response = indexIssue("onlydustxyz", "marketplace-frontend", 78);

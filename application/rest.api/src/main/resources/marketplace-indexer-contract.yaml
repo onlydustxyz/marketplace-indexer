@@ -118,7 +118,7 @@ paths:
         - in: path
           name: issueNumber
           required: true
-          description: The ID of the issue to add
+          description: The number of the issue to add
           schema:
             $ref: '#/components/schemas/IssueNumber'
       responses:
@@ -129,7 +129,7 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
-  /api/v1/pull-requests/{pullRequestId}:
+  /api/v1/repos/{repoOwner}/{repoName}/pull-requests/{pullRequestNumber}:
     put:
       security:
         - apiKey: [ ]
@@ -141,11 +141,25 @@ paths:
         Immediately indexes the pull request if it is not indexed yet. Does nothing if the pull request is already indexed.
       parameters:
         - in: path
-          name: pullRequestId
+          name: repoOwner
           required: true
-          description: The ID of the pull request to add
+          description: The owner of the repo
+          example: onlydustxyz
           schema:
-            $ref: '#/components/schemas/PullRequestId'
+            type: string
+        - in: path
+          name: repoName
+          required: true
+          description: The name of the repo
+          example: marketplace-indexer
+          schema:
+            type: string
+        - in: path
+          name: pullRequestNumber
+          required: true
+          description: The number of the pull request to add
+          schema:
+            $ref: '#/components/schemas/PullRequestNumber'
       responses:
         "204":
           description: 'Pull request indexed successfully'
@@ -279,6 +293,11 @@ components:
       type: string
       description: Github pull request ID (databaseId)
       example: 27218542
+
+    PullRequestNumber:
+      type: integer
+      description: Github pull request number
+      example: 1023
 
     IssueId:
       type: string

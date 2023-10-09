@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000000_init_schema.sql
   - include:
       file: db/changelog/changelogs/00000001_create_raw_schema.sql
+  - include:
+      file: db/changelog/changelogs/00000002_remove-extra-columns.sql
