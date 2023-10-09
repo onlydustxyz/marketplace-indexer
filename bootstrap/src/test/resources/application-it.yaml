@@ -1,0 +1,3 @@
+infrastructure:
+  github:
+    personal-access-token: "GITHUB_PAT"

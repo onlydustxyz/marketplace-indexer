@@ -24,7 +24,7 @@ public class GithubHttpClient {
 
     public <ResponseBody> Optional<ResponseBody> get(String uri, Class<ResponseBody> responseClass) {
         try {
-            final var requestBuilder = HttpRequest.newBuilder(URI.create(config.baseUri + uri)).GET();
+            final var requestBuilder = HttpRequest.newBuilder(URI.create(config.baseUri + uri)).headers("Authorization", "Bearer " + config.personalAccessToken).GET();
             final var httpResponse = this.httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
             final int statusCode = httpResponse.statusCode();
 
@@ -41,6 +41,7 @@ public class GithubHttpClient {
     @ToString
     @Data
     public static class Config {
-        String baseUri;
+        private String baseUri;
+        private String personalAccessToken;
     }
 }

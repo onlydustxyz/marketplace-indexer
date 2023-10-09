@@ -1,6 +1,7 @@
 infrastructure:
   github:
-    base_uri: "https://api.github.com"
+    personal-access-token: ${GITHUB_PAT}
+    base-uri: "https://api.github.com"
 
 application:
   web:
