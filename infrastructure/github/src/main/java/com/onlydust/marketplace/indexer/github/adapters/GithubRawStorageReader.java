@@ -26,14 +26,13 @@ public class GithubRawStorageReader implements RawStorageReader {
 
     @Override
     public List<RawPullRequest> repoPullRequests(Long repoId) {
-        return client.get("/repositories/" + repoId + "/pulls", RawPullRequest[].class)
-                .map(Arrays::asList)
-                .orElse(new ArrayList<>());
+        return client.stream("/repositories/" + repoId + "/pulls?state=all&sort=updated&per_page=100", RawPullRequest[].class)
+                .toList();
     }
 
     @Override
     public List<RawIssue> repoIssues(Long repoId) {
-        return client.get("/repositories/" + repoId + "/issues", RawIssue[].class)
+        return client.get("/repositories/" + repoId + "/issues?state=all&sort=updated&per_page=100", RawIssue[].class)
                 .map(Arrays::asList)
                 .orElse(new ArrayList<>());
     }
