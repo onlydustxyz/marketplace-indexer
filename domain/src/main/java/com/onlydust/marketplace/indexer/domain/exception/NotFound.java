@@ -1,11 +1,11 @@
 package com.onlydust.marketplace.indexer.domain.exception;
 
-public class NotFound extends Exception {
+public class NotFound extends OnlyDustException {
     public NotFound(final String message) {
         this(message, null);
     }
 
     public NotFound(final String message, Throwable cause) {
-        super("F.NOT_FOUND", message, cause);
+        super(400, message, cause);
     }
 }

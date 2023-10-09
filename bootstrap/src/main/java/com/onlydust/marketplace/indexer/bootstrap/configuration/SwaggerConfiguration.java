@@ -26,13 +26,8 @@ public class SwaggerConfiguration {
                         new ApiInfoBuilder()
                                 .title("Marketplace indexer REST API")
                                 .version("1.0.0-SNAPSHOT")
-                                .contact(
-                                        new Contact(
-                                                "Pierre Oucif",
-                                                "http://www.onlydust.com",
-                                                "pierre@onlydust.xyz"
-                                        )
-                                ).build()
+                                .contact(new Contact("Pierre Oucif", "http://www.onlydust.com", "pierre@onlydust.xyz"))
+                                .build()
                 )
                 .securityContexts(Collections.singletonList(securityContext()))
                 .securitySchemes(List.of(apiKey()))

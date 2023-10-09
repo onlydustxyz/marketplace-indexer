@@ -22,7 +22,6 @@ public class DomainConfiguration {
 
     @Bean
     public GithubHttpClient githubHttpClient(final ObjectMapper objectMapper, final HttpClient httpClient, final GithubHttpClient.Config config) {
-        System.out.println("Github config: " + config);
         return new GithubHttpClient(objectMapper, httpClient, config);
     }
 
