@@ -12,7 +12,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 
 @Slf4j
@@ -22,20 +24,35 @@ public class GithubHttpClient {
     private final HttpClient httpClient;
     private final Config config;
 
-    public <ResponseBody> Optional<ResponseBody> get(String uri, Class<ResponseBody> responseClass) {
+    private <T> T decode(byte[] data, Class<T> classType) {
+        try {
+            return objectMapper.readValue(data, classType);
+        } catch (IOException e) {
+            throw new NotFound("Unable to deserialize github response", e);
+        }
+    }
+
+    private HttpResponse<byte[]> fetch(final String uri) {
         try {
             final var requestBuilder = HttpRequest.newBuilder(URI.create(config.baseUri + uri)).headers("Authorization", "Bearer " + config.personalAccessToken).GET();
-            final var httpResponse = this.httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
-            final int statusCode = httpResponse.statusCode();
-
-            return switch (statusCode) {
-                case 200 -> Optional.of(objectMapper.readValue(httpResponse.body(), responseClass));
-                case 404 -> Optional.empty();
-                default -> throw new NotFound("Unable to fetch github API:" + uri);
-            };
+            return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
         } catch (IOException | InterruptedException e) {
             throw new NotFound("Unable to fetch github API:" + uri, e);
         }
+    }
+
+    public <ResponseBody> Optional<ResponseBody> get(String uri, Class<ResponseBody> responseClass) {
+        final var httpResponse = fetch(uri);
+        return switch (httpResponse.statusCode()) {
+            case 200 -> Optional.of(decode(httpResponse.body(), responseClass));
+            case 403, 404 -> Optional.empty();
+            default -> throw new NotFound("Unable to fetch github API:" + uri);
+        };
+    }
+
+    public <ResponseBody> Stream<ResponseBody> stream(String uri, Class<ResponseBody[]> responseClass) {
+        final var page = new Page<ResponseBody>(uri, responseClass);
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false);
     }
 
     @ToString
@@ -43,5 +60,44 @@ public class GithubHttpClient {
     public static class Config {
         private String baseUri;
         private String personalAccessToken;
+    }
+
+    private class Page<T> implements Iterator<T> {
+        GithubPageLinks links;
+        Deque<T> content = new ArrayDeque<>();
+        Class<T[]> classType;
+
+        public Page(String uri, Class<T[]> classType) {
+            this.classType = classType;
+            fetchNextPage(uri);
+        }
+
+        private void fetchNextPage(String uri) {
+            final var httpResponse = fetch(uri);
+            switch (httpResponse.statusCode()) {
+                case 200:
+                    links = httpResponse.headers().firstValue("Links").map(GithubPageLinks::of).orElse(new GithubPageLinks());
+                    content.addAll(Arrays.asList(decode(httpResponse.body(), classType)));
+                    break;
+                case 404:
+                    break;
+                default:
+                    throw new NotFound("Unable to fetch github API:" + uri);
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !content.isEmpty() || !Objects.isNull(links.getNext());
+        }
+
+        @Override
+        public T next() {
+            if (content.isEmpty()) {
+                fetchNextPage(links.getNext());
+            }
+
+            return content.poll();
+        }
     }
 }

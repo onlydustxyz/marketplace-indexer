@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000001_create_raw_schema.sql
   - include:
       file: db/changelog/changelogs/00000002_remove-extra-columns.sql
+  - include:
+      file: db/changelog/changelogs/00000003_remove-foreign-key.sql

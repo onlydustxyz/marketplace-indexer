@@ -89,9 +89,9 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public RawCheckRuns checkRuns(Long repoId, String sha) {
+    public Optional<RawCheckRuns> checkRuns(Long repoId, String sha) {
         final var checkRuns = fetcher.checkRuns(repoId, sha);
-        cache.saveCheckRuns(repoId, sha, checkRuns);
+        checkRuns.ifPresent(checks -> cache.saveCheckRuns(repoId, sha, checks));
         return checkRuns;
     }
 

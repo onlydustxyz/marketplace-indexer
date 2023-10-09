@@ -79,6 +79,6 @@ public class IntegrationTest {
     }
 
     protected WebTestClient.ResponseSpec put(final String path) {
-        return client.put().uri(getApiURI(path)).header("X-Api-Key", "BACKEND_API_KEY").exchange();
+        return client.put().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY").exchange();
     }
 }
