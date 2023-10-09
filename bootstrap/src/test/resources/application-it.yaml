@@ -1,3 +1,7 @@
 infrastructure:
   github:
     personal-access-token: "GITHUB_PAT"
+application:
+  web:
+    authentication:
+      api-key: "BACKEND_API_KEY"

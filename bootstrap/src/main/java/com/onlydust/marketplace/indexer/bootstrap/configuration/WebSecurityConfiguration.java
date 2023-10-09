@@ -19,8 +19,14 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
-    ApiKeyAuthenticationService apiKeyAuthenticationService() {
-        return new ApiKeyAuthenticationService();
+    @ConfigurationProperties("application.web.authentication")
+    ApiKeyAuthenticationService.Config authenticationConfig() {
+        return new ApiKeyAuthenticationService.Config();
+    }
+
+    @Bean
+    ApiKeyAuthenticationService apiKeyAuthenticationService(final ApiKeyAuthenticationService.Config authenticationConfig) {
+        return new ApiKeyAuthenticationService(authenticationConfig);
     }
 
     @Bean

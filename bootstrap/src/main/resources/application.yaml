@@ -7,6 +7,8 @@ application:
   web:
     cors:
       hosts: ${FRONTEND_CORS_HOSTS}
+    authentication:
+      api-key: ${BACKEND_API_KEY}
 
 spring:
   application:
