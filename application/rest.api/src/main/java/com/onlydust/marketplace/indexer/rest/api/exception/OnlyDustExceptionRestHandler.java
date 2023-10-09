@@ -27,8 +27,13 @@ public class OnlyDustExceptionRestHandler {
         onlyDustError.setStatus(httpStatus.value());
         onlyDustError.setMessage(httpStatus.name());
         onlyDustError.setId(errorId);
-        LOGGER.error(String.format("Error %s returned from the REST API with stacktrace :", errorId),
-                isNull(exception.getCause()) ? exception : exception.getCause());
+        if (httpStatus.is5xxServerError()) {
+            LOGGER.error(String.format("Error %s returned from the REST API with stacktrace :", errorId),
+                    isNull(exception.getCause()) ? exception : exception.getCause());
+        } else {
+            LOGGER.warn(String.format("Error %s returned from the REST API with stacktrace :", errorId),
+                    isNull(exception.getCause()) ? exception : exception.getCause());
+        }
         return onlyDustError;
     }
 

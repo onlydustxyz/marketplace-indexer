@@ -25,7 +25,7 @@ public class ApiKeyAuthenticationFilter extends GenericFilterBean {
             Authentication authentication = authenticationService.getAuthentication((HttpServletRequest) request);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (BadCredentialsException e) {
-            LOGGER.info("Bad credentials: " + e.getMessage());
+            LOGGER.warn("Bad credentials: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);
