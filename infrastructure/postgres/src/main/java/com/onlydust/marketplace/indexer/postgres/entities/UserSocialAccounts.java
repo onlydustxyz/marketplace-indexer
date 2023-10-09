@@ -2,10 +2,7 @@ package com.onlydust.marketplace.indexer.postgres.entities;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -24,6 +21,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @Table(name = "user_social_accounts", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class UserSocialAccounts {
@@ -33,10 +31,12 @@ public class UserSocialAccounts {
     @Type(type = "jsonb")
     List<RawSocialAccount> data;
 
+    @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     Instant createdAt;
 
+    @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     Instant updatedAt;

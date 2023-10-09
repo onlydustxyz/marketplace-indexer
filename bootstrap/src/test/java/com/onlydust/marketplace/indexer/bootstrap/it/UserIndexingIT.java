@@ -2,14 +2,19 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawUser;
+import com.onlydust.marketplace.indexer.postgres.entities.User;
+import com.onlydust.marketplace.indexer.postgres.entities.UserSocialAccounts;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.UserSocialAccountsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,6 +23,8 @@ public class UserIndexingIT extends IntegrationTest {
 
     @Autowired
     public UserRepository userRepository;
+    @Autowired
+    public UserSocialAccountsRepository userSocialAccountsRepository;
 
     @BeforeEach
     void setup() {
@@ -36,14 +43,10 @@ public class UserIndexingIT extends IntegrationTest {
         response.expectStatus().isNoContent();
 
         final var expectedUser = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawUser.class);
+        assertThat(userRepository.findAll()).containsExactly(User.of(expectedUser));
 
-        final var users = userRepository.findAll();
-        assertThat(users.size()).isEqualTo(1);
-        assertThat(users.get(0).getId()).isEqualTo(expectedUser.getId());
-        assertThat(users.get(0).getLogin()).isEqualTo(expectedUser.getLogin());
-        assertThat(users.get(0).getData()).isEqualTo(expectedUser);
-        assertThat(users.get(0).getCreatedAt()).isNotNull();
-        assertThat(users.get(0).getUpdatedAt()).isNotNull();
+        final var expectedUserSocialAccounts = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony-social_accounts.json"), RawSocialAccount[].class);
+        assertThat(userSocialAccountsRepository.findAll()).containsExactly(UserSocialAccounts.of(ANTHONY.longValue(), Arrays.asList(expectedUserSocialAccounts)));
     }
 
     private WebTestClient.ResponseSpec indexUser(Integer userId) {
