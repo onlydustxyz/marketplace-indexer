@@ -2,10 +2,7 @@ package com.onlydust.marketplace.indexer.postgres.entities;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawIssue;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -23,6 +20,7 @@ import java.time.Instant;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 @Table(name = "issues", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Issue {
@@ -36,10 +34,12 @@ public class Issue {
     @Type(type = "jsonb")
     RawIssue data;
 
+    @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     Instant createdAt;
 
+    @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     Instant updatedAt;
