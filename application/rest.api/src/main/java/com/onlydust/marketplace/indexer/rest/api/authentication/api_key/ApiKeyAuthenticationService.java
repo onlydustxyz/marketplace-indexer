@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @AllArgsConstructor
 public class ApiKeyAuthenticationService {
-    private static final String AUTH_TOKEN_HEADER_NAME = "X-API-KEY";
+    private static final String AUTH_TOKEN_HEADER_NAME = "Api-Key";
 
     private final Config config;
 
