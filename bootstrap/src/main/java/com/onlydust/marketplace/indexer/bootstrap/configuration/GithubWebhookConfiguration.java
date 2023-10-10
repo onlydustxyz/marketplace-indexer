@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.onlydust.marketplace.indexer.domain.services.EventProcessorService;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +16,7 @@ public class GithubWebhookConfiguration {
     }
 
     @Bean
-    public GithubWebhookRestApi githubWebhookRestApi(final ObjectMapper objectMapper, final GithubWebhookRestApi.Config githubWebhookConfig) {
-        return new GithubWebhookRestApi(objectMapper, githubWebhookConfig);
+    public GithubWebhookRestApi githubWebhookRestApi(final ObjectMapper objectMapper, final GithubWebhookRestApi.Config githubWebhookConfig, final EventProcessorService eventProcessorService) {
+        return new GithubWebhookRestApi(objectMapper, githubWebhookConfig, eventProcessorService);
     }
 }

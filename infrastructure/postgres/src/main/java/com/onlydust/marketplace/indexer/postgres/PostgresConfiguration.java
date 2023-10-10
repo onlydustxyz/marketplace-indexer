@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres;
 
+import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawInstallationEventStorageRepository;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorageRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -43,5 +44,10 @@ public class PostgresConfiguration {
                 pullRequestReviewsRepository,
                 repoCheckRunsRepository
         );
+    }
+
+    @Bean
+    public PostgresRawInstallationEventStorageRepository postgresRawInstallationEventStorageRepository(final InstallationEventRepository installationEventRepository) {
+        return new PostgresRawInstallationEventStorageRepository(installationEventRepository);
     }
 }
