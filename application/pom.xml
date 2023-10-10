@@ -15,6 +15,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>rest.api</module>
+        <module>rest.github</module>
     </modules>
 
     <properties>

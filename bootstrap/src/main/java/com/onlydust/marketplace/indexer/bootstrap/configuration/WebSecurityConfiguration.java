@@ -1,7 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.onlydust.marketplace.indexer.rest.api.authentication.DelegatedAuthenticationEntryPoint;
-import com.onlydust.marketplace.indexer.rest.api.authentication.WebSecurityAdapter;
 import com.onlydust.marketplace.indexer.rest.api.authentication.api_key.ApiKeyAuthenticationFilter;
 import com.onlydust.marketplace.indexer.rest.api.authentication.api_key.ApiKeyAuthenticationService;
 import lombok.Data;
@@ -32,11 +31,6 @@ public class WebSecurityConfiguration {
     @Bean
     ApiKeyAuthenticationFilter apiKeyAuthenticationFilter(final ApiKeyAuthenticationService apiKeyAuthenticationService) {
         return new ApiKeyAuthenticationFilter(apiKeyAuthenticationService);
-    }
-
-    @Bean
-    WebSecurityAdapter webSecurityAdapter(final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter, final AuthenticationEntryPoint authenticationEntryPoint) {
-        return new WebSecurityAdapter(apiKeyAuthenticationFilter, authenticationEntryPoint);
     }
 
     @Bean

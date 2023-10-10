@@ -9,6 +9,9 @@ application:
       hosts: ${FRONTEND_CORS_HOSTS}
     authentication:
       api-key: ${BACKEND_API_KEY}
+    github:
+      webhook:
+        secret: ${GITHUB_WEBHOOK_SECRET}
 
 spring:
   application:

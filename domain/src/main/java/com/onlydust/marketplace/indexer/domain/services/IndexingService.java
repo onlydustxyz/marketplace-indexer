@@ -1,6 +1,8 @@
 package com.onlydust.marketplace.indexer.domain.services;
 
 import com.onlydust.marketplace.indexer.domain.exception.NotFound;
+import com.onlydust.marketplace.indexer.domain.mappers.RepoMapper;
+import com.onlydust.marketplace.indexer.domain.mappers.UserMapper;
 import com.onlydust.marketplace.indexer.domain.models.clean.*;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawCheckRuns;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestClosingIssues;
@@ -22,13 +24,13 @@ public class IndexingService {
         final var pullRequests = rawStorageReader.repoPullRequests(repoId).stream().map(pr -> indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber())).toList();
         final var issues = rawStorageReader.repoIssues(repoId).stream().map(issue -> indexIssue(repo.getOwner().getLogin(), repo.getName(), issue.getNumber())).toList();
         final var languages = rawStorageReader.repoLanguages(repoId);
-        return new Repo(repo.getId(), pullRequests, issues, languages.get());
+        return RepoMapper.map(repo, pullRequests, issues, languages);
     }
 
     public User indexUser(Long userId) {
         final var user = rawStorageReader.user(userId).orElseThrow(() -> new NotFound("User not found"));
         final var socialAccounts = rawStorageReader.userSocialAccounts(userId);
-        return new User(user.getId(), user.getLogin(), socialAccounts);
+        return UserMapper.map(user, socialAccounts);
     }
 
     private List<CodeReview> indexPullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
