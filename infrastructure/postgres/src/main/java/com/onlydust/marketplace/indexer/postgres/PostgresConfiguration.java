@@ -1,7 +1,10 @@
 package com.onlydust.marketplace.indexer.postgres;
 
+import com.onlydust.marketplace.indexer.postgres.adapters.PostgresInstallationEventListener;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawInstallationEventStorageRepository;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorageRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -49,5 +52,11 @@ public class PostgresConfiguration {
     @Bean
     public PostgresRawInstallationEventStorageRepository postgresRawInstallationEventStorageRepository(final InstallationEventRepository installationEventRepository) {
         return new PostgresRawInstallationEventStorageRepository(installationEventRepository);
+    }
+
+    @Bean
+    public PostgresInstallationEventListener postgresInstallationEventListener(final GithubAccountRepository githubAccountRepository,
+                                                                               final GithubRepoRepository githubRepoRepository) {
+        return new PostgresInstallationEventListener(githubAccountRepository, githubRepoRepository);
     }
 }

@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.domain.services.EventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.IndexingService;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
+import com.onlydust.marketplace.indexer.postgres.adapters.PostgresInstallationEventListener;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawInstallationEventStorageRepository;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorageRepository;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -23,8 +24,12 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public EventProcessorService eventProcessorService(final PostgresRawInstallationEventStorageRepository postgresRawInstallationEventStorageRepository) {
-        return new EventProcessorService(postgresRawInstallationEventStorageRepository);
+    public EventProcessorService eventProcessorService(final PostgresRawInstallationEventStorageRepository postgresRawInstallationEventStorageRepository,
+                                                       final PostgresInstallationEventListener postgresInstallationEventListener,
+                                                       final GithubRawStorageReader githubRawStorageReader,
+                                                       final PostgresRawStorageRepository postgresRawStorageRepository) {
+        final var rawStorageReader = new CacheWriteRawStorageReaderDecorator(githubRawStorageReader, postgresRawStorageRepository);
+        return new EventProcessorService(postgresRawInstallationEventStorageRepository, postgresInstallationEventListener, rawStorageReader);
     }
 
     @Bean

@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000003_remove-foreign-key.sql
   - include:
       file: db/changelog/changelogs/00000004_create-installation-events-table.sql
+  - include:
+      file: db/changelog/changelogs/00000005_create-exposition-schema.sql
