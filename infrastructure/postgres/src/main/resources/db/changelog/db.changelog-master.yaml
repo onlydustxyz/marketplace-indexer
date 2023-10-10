@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000002_remove-extra-columns.sql
   - include:
       file: db/changelog/changelogs/00000003_remove-foreign-key.sql
+  - include:
+      file: db/changelog/changelogs/00000004_create-installation-events-table.sql
