@@ -45,7 +45,7 @@ public class GithubHttpClient {
         final var httpResponse = fetch(uri);
         return switch (httpResponse.statusCode()) {
             case 200 -> Optional.of(decode(httpResponse.body(), responseClass));
-            case 404 -> Optional.empty();
+            case 403, 404 -> Optional.empty();
             default -> throw new NotFound("Unable to fetch github API:" + uri);
         };
     }
@@ -64,7 +64,7 @@ public class GithubHttpClient {
 
     private class Page<T> implements Iterator<T> {
         GithubPageLinks links;
-        Deque<T> content;
+        Deque<T> content = new ArrayDeque<>();
         Class<T[]> classType;
 
         public Page(String uri, Class<T[]> classType) {
@@ -76,7 +76,7 @@ public class GithubHttpClient {
             final var httpResponse = fetch(uri);
             switch (httpResponse.statusCode()) {
                 case 200:
-                    final var links = httpResponse.headers().firstValue("Links").map(GithubPageLinks::of).orElse(new GithubPageLinks());
+                    links = httpResponse.headers().firstValue("Links").map(GithubPageLinks::of).orElse(new GithubPageLinks());
                     content.addAll(Arrays.asList(decode(httpResponse.body(), classType)));
                     break;
                 case 404:
