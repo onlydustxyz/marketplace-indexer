@@ -1,8 +1,11 @@
-package com.onlydust.marketplace.indexer.postgres.entities;
+package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawLanguages;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -13,35 +16,31 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.Instant;
-import java.util.List;
 
 
-@Entity
 @Data
+@Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@Table(name = "user_social_accounts", schema = "indexer_raw")
+@Table(name = "repo_languages", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-public class UserSocialAccounts {
+public class RepoLanguages {
     @Id
-    Long userId;
+    Long repoId;
 
     @Type(type = "jsonb")
-    List<RawSocialAccount> data;
+    RawLanguages data;
 
-    @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     Instant createdAt;
 
-    @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     Instant updatedAt;
 
-    public static UserSocialAccounts of(Long userId, List<RawSocialAccount> socialAccounts) {
-        return UserSocialAccounts.builder().userId(userId).data(socialAccounts).build();
+    public static RepoLanguages of(Long repoId, RawLanguages languages) {
+        return RepoLanguages.builder().repoId(repoId).data(languages).build();
     }
 }

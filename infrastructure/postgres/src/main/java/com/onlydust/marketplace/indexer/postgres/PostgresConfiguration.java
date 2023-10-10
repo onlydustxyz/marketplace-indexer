@@ -2,7 +2,7 @@ package com.onlydust.marketplace.indexer.postgres;
 
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawInstallationEventStorageRepository;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorageRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.*;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;

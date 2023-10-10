@@ -1,6 +1,6 @@
-package com.onlydust.marketplace.indexer.postgres.entities;
+package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawCodeReview;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,20 +16,20 @@ import java.time.Instant;
 import java.util.List;
 
 
-@Data
 @Entity
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Table(name = "pull_request_reviews", schema = "indexer_raw")
+@Table(name = "user_social_accounts", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-public class PullRequestReview {
+public class UserSocialAccounts {
     @Id
-    Long pullRequestId;
+    Long userId;
 
     @Type(type = "jsonb")
-    List<RawCodeReview> data;
+    List<RawSocialAccount> data;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -41,7 +41,7 @@ public class PullRequestReview {
     @Column(name = "updated_at", nullable = false)
     Instant updatedAt;
 
-    public static PullRequestReview of(Long pullRequestId, List<RawCodeReview> codeReviews) {
-        return PullRequestReview.builder().pullRequestId(pullRequestId).data(codeReviews).build();
+    public static UserSocialAccounts of(Long userId, List<RawSocialAccount> socialAccounts) {
+        return UserSocialAccounts.builder().userId(userId).data(socialAccounts).build();
     }
 }

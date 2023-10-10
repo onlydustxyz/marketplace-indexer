@@ -1,6 +1,6 @@
-package com.onlydust.marketplace.indexer.postgres.repositories;
+package com.onlydust.marketplace.indexer.postgres.repositories.raw;
 
-import com.onlydust.marketplace.indexer.postgres.entities.PullRequest;
+import com.onlydust.marketplace.indexer.postgres.entities.raw.PullRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

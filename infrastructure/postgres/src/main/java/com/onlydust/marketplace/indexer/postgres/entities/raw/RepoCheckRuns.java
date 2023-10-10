@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.postgres.entities;
+package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawCheckRuns;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;

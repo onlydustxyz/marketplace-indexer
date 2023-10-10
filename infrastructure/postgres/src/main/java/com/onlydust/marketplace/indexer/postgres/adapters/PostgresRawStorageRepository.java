@@ -2,8 +2,8 @@ package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageRepository;
-import com.onlydust.marketplace.indexer.postgres.entities.*;
-import com.onlydust.marketplace.indexer.postgres.repositories.*;
+import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 

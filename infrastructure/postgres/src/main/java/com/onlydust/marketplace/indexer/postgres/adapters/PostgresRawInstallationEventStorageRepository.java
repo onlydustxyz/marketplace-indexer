@@ -2,8 +2,8 @@ package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawInstallationEventRepository;
-import com.onlydust.marketplace.indexer.postgres.entities.InstallationEvent;
-import com.onlydust.marketplace.indexer.postgres.repositories.InstallationEventRepository;
+import com.onlydust.marketplace.indexer.postgres.entities.raw.InstallationEvent;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.InstallationEventRepository;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

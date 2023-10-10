@@ -1,6 +1,6 @@
-package com.onlydust.marketplace.indexer.postgres.entities;
+package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawUser;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,30 +8,29 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.Instant;
 
 
-@Data
 @Entity
+@Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
-@Table(name = "pull_requests", schema = "indexer_raw")
+@Table(name = "users", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-public class PullRequest {
+public class User {
     @Id
     Long id;
 
-    @EqualsAndHashCode.Exclude
-    @OneToOne
-    Repo repo;
-
-    Long number;
+    String login;
 
     @Type(type = "jsonb")
-    RawPullRequest data;
+    RawUser data;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -43,8 +42,7 @@ public class PullRequest {
     @Column(name = "updated_at", nullable = false)
     Instant updatedAt;
 
-    public static PullRequest of(Long repoId, RawPullRequest pullRequest) {
-        final var repo = Repo.builder().id(repoId).build();
-        return PullRequest.builder().id(pullRequest.getId()).repo(repo).number(pullRequest.getNumber()).data(pullRequest).build();
+    public static User of(RawUser user) {
+        return User.builder().id(user.getId()).login(user.getLogin()).data(user).build();
     }
 }

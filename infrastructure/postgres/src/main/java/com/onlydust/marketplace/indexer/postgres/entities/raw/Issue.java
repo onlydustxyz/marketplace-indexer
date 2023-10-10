@@ -1,6 +1,6 @@
-package com.onlydust.marketplace.indexer.postgres.entities;
+package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawUser;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawIssue;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,22 +15,24 @@ import javax.persistence.Table;
 import java.time.Instant;
 
 
-@Entity
 @Data
+@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-@Table(name = "users", schema = "indexer_raw")
+@Table(name = "issues", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-public class User {
+public class Issue {
     @Id
     Long id;
 
-    String login;
+    Long repoId;
+
+    Long number;
 
     @Type(type = "jsonb")
-    RawUser data;
+    RawIssue data;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -42,7 +44,7 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     Instant updatedAt;
 
-    public static User of(RawUser user) {
-        return User.builder().id(user.getId()).login(user.getLogin()).data(user).build();
+    public static Issue of(Long repoId, RawIssue issue) {
+        return Issue.builder().id(issue.getId()).repoId(repoId).number(issue.getNumber()).data(issue).build();
     }
 }
