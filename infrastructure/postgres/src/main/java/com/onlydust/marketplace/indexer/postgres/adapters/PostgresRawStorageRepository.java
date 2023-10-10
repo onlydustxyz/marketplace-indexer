@@ -80,8 +80,8 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
     }
 
     @Override
-    public RawCheckRuns checkRuns(Long repoId, String sha) {
-        return repoCheckRunsRepository.findById(new RepoCheckRuns.Id(repoId, sha)).map(RepoCheckRuns::getData).orElse(new RawCheckRuns());
+    public Optional<RawCheckRuns> checkRuns(Long repoId, String sha) {
+        return repoCheckRunsRepository.findById(new RepoCheckRuns.Id(repoId, sha)).map(RepoCheckRuns::getData);
     }
 
     @Override

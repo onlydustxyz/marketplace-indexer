@@ -90,8 +90,8 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public RawCheckRuns checkRuns(Long repoId, String sha) {
-        return checkRuns.get(Tuple.tuple(repoId, sha));
+    public Optional<RawCheckRuns> checkRuns(Long repoId, String sha) {
+        return Optional.ofNullable(checkRuns.get(Tuple.tuple(repoId, sha)));
     }
 
     @Override

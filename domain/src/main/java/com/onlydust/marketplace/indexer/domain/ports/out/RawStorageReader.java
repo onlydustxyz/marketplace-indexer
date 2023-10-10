@@ -28,7 +28,7 @@ public interface RawStorageReader {
 
     List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber);
 
-    RawCheckRuns checkRuns(Long repoId, String sha);
+    Optional<RawCheckRuns> checkRuns(Long repoId, String sha);
 
     Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber);
 }

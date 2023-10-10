@@ -80,9 +80,8 @@ public class GithubRawStorageReader implements RawStorageReader {
     }
 
     @Override
-    public RawCheckRuns checkRuns(Long repoId, String sha) {
-        return client.get("/repositories/" + repoId + "/commits/" + sha + "/check-runs", RawCheckRuns.class)
-                .orElse(new RawCheckRuns());
+    public Optional<RawCheckRuns> checkRuns(Long repoId, String sha) {
+        return client.get("/repositories/" + repoId + "/commits/" + sha + "/check-runs", RawCheckRuns.class);
     }
 
     @Override

@@ -2,15 +2,18 @@ package com.onlydust.marketplace.indexer.domain.services;
 
 import com.onlydust.marketplace.indexer.domain.exception.NotFound;
 import com.onlydust.marketplace.indexer.domain.models.clean.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawCheckRuns;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestClosingIssues;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @AllArgsConstructor
+@Slf4j
 public class IndexingService {
     private final RawStorageReader rawStorageReader;
 
@@ -45,8 +48,8 @@ public class IndexingService {
     }
 
     private List<CheckRun> indexCheckRuns(Long repoId, String sha) {
-        final var checkRuns = rawStorageReader.checkRuns(repoId, sha);
-        return checkRuns.getCheckRuns().stream().map(checkRun -> {
+        final var checkRuns = rawStorageReader.checkRuns(repoId, sha).map(RawCheckRuns::getCheckRuns).orElse(new ArrayList<>());
+        return checkRuns.stream().map(checkRun -> {
             return new CheckRun(checkRun.getId());
         }).toList();
     }
@@ -63,7 +66,7 @@ public class IndexingService {
         final var codeReviews = indexPullRequestReviews(repo.getId(), pullRequest.getId(), prNumber);
         final var requestedReviewers = pullRequest.getRequestedReviewers().stream().map(reviewer -> indexUser(reviewer.getId())).toList();
         final var commits = indexPullRequestCommits(repo.getId(), pullRequest.getId(), prNumber);
-        final var checkRuns = indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
+        final var checkRuns = Objects.isNull(pullRequest.getHead().getRepo()) ? new ArrayList<CheckRun>() : indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
         final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName(), pullRequest.getNumber());
         return new PullRequest(pullRequest.getId(), author, codeReviews, requestedReviewers, commits, checkRuns, closingIssues);
     }
