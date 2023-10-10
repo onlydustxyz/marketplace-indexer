@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.rest.api.authentication;
+package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.onlydust.marketplace.indexer.rest.api.authentication.api_key.ApiKeyAuthenticationFilter;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,8 @@ public class WebSecurityAdapter extends WebSecurityConfigurerAdapter {
                 .and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/swagger-ui/**").permitAll()
-                .antMatchers("/api/**").authenticated()
+                .antMatchers("/github-app/**").permitAll()
+                .anyRequest().authenticated()
                 .and().addFilterBefore(apiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().authenticationEntryPoint(authEntryPoint)
         ;

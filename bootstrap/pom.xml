@@ -46,6 +46,11 @@
         </dependency>
         <dependency>
             <groupId>com.onlydust.marketplace.indexer</groupId>
+            <artifactId>rest.github</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.onlydust.marketplace.indexer</groupId>
             <artifactId>github</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
@@ -99,7 +104,7 @@
             <version>1.0.1</version>
             <scope>test</scope>
         </dependency>
-        
+
     </dependencies>
 
     <profiles>
