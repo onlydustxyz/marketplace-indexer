@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.github.adapters;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
+import com.onlydust.marketplace.indexer.github.GithubPage;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
@@ -26,15 +27,18 @@ public class GithubRawStorageReader implements RawStorageReader {
 
     @Override
     public List<RawPullRequest> repoPullRequests(Long repoId) {
-        return client.stream("/repositories/" + repoId + "/pulls?state=all&sort=updated&per_page=100", RawPullRequest[].class)
-                .toList();
+        final var page = new GithubPage<>(client, "/repositories/" + repoId + "/pulls?state=all&sort=updated&per_page=100", RawPullRequest[].class);
+        List<RawPullRequest> pullRequests = new ArrayList<>();
+        page.forEachRemaining(pullRequests::add);
+        return pullRequests;
     }
 
     @Override
     public List<RawIssue> repoIssues(Long repoId) {
-        return client.get("/repositories/" + repoId + "/issues?state=all&sort=updated&per_page=100", RawIssue[].class)
-                .map(Arrays::asList)
-                .orElse(new ArrayList<>());
+        final var page = new GithubPage<>(client, "/repositories/" + repoId + "/issues?state=all&sort=updated&per_page=100", RawIssue[].class);
+        List<RawIssue> issues = new ArrayList<>();
+        page.forEachRemaining(issues::add);
+        return issues;
     }
 
     @Override

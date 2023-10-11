@@ -20,6 +20,7 @@ public class IndexingService {
     private final RawStorageReader rawStorageReader;
 
     public Repo indexRepo(Long repoId) {
+        LOGGER.info("Indexing repo {}", repoId);
         final var repo = rawStorageReader.repo(repoId).orElseThrow(() -> new NotFound("Repo not found"));
         final var pullRequests = rawStorageReader.repoPullRequests(repoId).stream().map(pr -> indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber())).toList();
         final var issues = rawStorageReader.repoIssues(repoId).stream().map(issue -> indexIssue(repo.getOwner().getLogin(), repo.getName(), issue.getNumber())).toList();
@@ -28,12 +29,14 @@ public class IndexingService {
     }
 
     public User indexUser(Long userId) {
+        LOGGER.info("Indexing user {}", userId);
         final var user = rawStorageReader.user(userId).orElseThrow(() -> new NotFound("User not found"));
         final var socialAccounts = rawStorageReader.userSocialAccounts(userId);
         return UserMapper.map(user, socialAccounts);
     }
 
     private List<CodeReview> indexPullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        LOGGER.info("Indexing pull request reviews for repo {} and pull request {}", repoId, pullRequestId);
         final var codeReviews = rawStorageReader.pullRequestReviews(repoId, pullRequestId, pullRequestNumber);
         return codeReviews.stream().map(review -> {
             final var author = indexUser(review.getAuthor().getId());
@@ -42,6 +45,7 @@ public class IndexingService {
     }
 
     private List<Commit> indexPullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        LOGGER.info("Indexing pull request commits for repo {} and pull request {}", repoId, pullRequestId);
         final var commits = rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber);
         return commits.stream().map(commit -> {
             final var author = Objects.isNull(commit.getAuthor()) ? commit.getCommitter() : commit.getAuthor();
@@ -50,6 +54,7 @@ public class IndexingService {
     }
 
     private List<CheckRun> indexCheckRuns(Long repoId, String sha) {
+        LOGGER.info("Indexing check runs for repo {} and sha {}", repoId, sha);
         final var checkRuns = rawStorageReader.checkRuns(repoId, sha).map(RawCheckRuns::getCheckRuns).orElse(new ArrayList<>());
         return checkRuns.stream().map(checkRun -> {
             return new CheckRun(checkRun.getId());
@@ -57,11 +62,13 @@ public class IndexingService {
     }
 
     private List<Issue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
+        LOGGER.info("Indexing closing issues for repo {} and pull request {}", repoOwner, pullRequestNumber);
         final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
         return closingIssues.map(RawPullRequestClosingIssues::issueIdNumbers).orElse(new ArrayList<>()).stream().map(issue -> indexIssue(repoOwner, repoName, issue.getRight())).toList();
     }
 
     public PullRequest indexPullRequest(String repoOwner, String repoName, Long prNumber) {
+        LOGGER.info("Indexing pull request {} for repo {}/{}", prNumber, repoOwner, repoName);
         final var repo = rawStorageReader.repo(repoOwner, repoName).orElseThrow(() -> new NotFound("Repo not found"));
         final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber).orElseThrow(() -> new NotFound("Pull request not found"));
         final var author = indexUser(pullRequest.getAuthor().getId());
@@ -75,6 +82,7 @@ public class IndexingService {
 
 
     public Issue indexIssue(String repoOwner, String repoName, Long issueNumber) {
+        LOGGER.info("Indexing issue {} for repo {}/{}", issueNumber, repoOwner, repoName);
         final var repo = rawStorageReader.repo(repoOwner, repoName).orElseThrow(() -> new NotFound("Repo not found"));
         final var issue = rawStorageReader.issue(repo.getId(), issueNumber).orElseThrow(() -> new NotFound("Issue not found"));
         final var assignees = issue.getAssignees().stream().map(assignee -> indexUser(assignee.getId())).toList();
