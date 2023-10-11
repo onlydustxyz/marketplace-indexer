@@ -18,6 +18,7 @@ spring:
     name: marketplace-indexer
   liquibase:
     enabled: true
+    default-schema: indexer
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}

@@ -6,6 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class GithubWebhookIT extends IntegrationTest {
     @Autowired
     GithubWebhookRestApi.Config config;
@@ -27,9 +32,9 @@ public class GithubWebhookIT extends IntegrationTest {
     }
 
     @Test
-    void should_accept_upon_valid_signature() {
+    void should_accept_upon_valid_signature() throws URISyntaxException, IOException {
         // Given
-        final String event = this.getClass().getResourceAsStream("/github/webhook/events/new_installation.json").toString();
+        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/new_installation.json").toURI()));
 
         // When
         final var response = post("/github-app/webhook")
