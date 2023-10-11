@@ -2,8 +2,6 @@ package com.onlydust.marketplace.indexer.rest.api.authentication.api_key;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -21,12 +19,9 @@ public class ApiKeyAuthenticationFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
-            Authentication authentication = authenticationService.getAuthentication((HttpServletRequest) request);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (BadCredentialsException e) {
-            LOGGER.warn("Bad credentials: " + e.getMessage());
-        }
+        authenticationService.getAuthentication((HttpServletRequest) request).ifPresent(
+                authentication -> SecurityContextHolder.getContext().setAuthentication(authentication)
+        );
 
         filterChain.doFilter(request, response);
     }
