@@ -35,9 +35,10 @@ public class GithubRawStorageReader implements RawStorageReader {
 
     @Override
     public List<RawIssue> repoIssues(Long repoId) {
-        return client.get("/repositories/" + repoId + "/issues?state=all&sort=updated&per_page=100", RawIssue[].class)
-                .map(Arrays::asList)
-                .orElse(new ArrayList<>());
+        final var page = new GithubPage<>(client, "/repositories/" + repoId + "/issues?state=all&sort=updated&per_page=100", RawIssue[].class);
+        List<RawIssue> issues = new ArrayList<>();
+        page.forEachRemaining(issues::add);
+        return issues;
     }
 
     @Override
