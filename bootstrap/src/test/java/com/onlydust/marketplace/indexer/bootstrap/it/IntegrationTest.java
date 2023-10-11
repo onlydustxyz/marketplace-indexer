@@ -29,6 +29,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.net.URI;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.testcontainers.utility.MountableFile.forClasspathResource;
 
 @ActiveProfiles({"it", "local"})
 @AutoConfigureWebTestClient(timeout = "36000")
@@ -47,7 +48,10 @@ public class IntegrationTest {
                     .withDatabaseName("marketplace_db")
                     .withUsername("test")
                     .withPassword("test")
-                    .waitingFor(Wait.forLogMessage(".*PostgreSQL init process complete; ready for start up.*", 1));
+                    .waitingFor(Wait.forLogMessage(".*PostgreSQL init process complete; ready for start up.*", 1))
+                    .withCopyFileToContainer(
+                            forClasspathResource("db_init_script/"), "/docker-entrypoint-initdb.d");
+
     protected final ObjectMapper mapper = new ObjectMapper();
     @InjectWireMock("github")
     protected WireMockServer githubWireMockServer;
