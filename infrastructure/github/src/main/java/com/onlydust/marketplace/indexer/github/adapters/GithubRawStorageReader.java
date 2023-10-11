@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.github.adapters;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
+import com.onlydust.marketplace.indexer.github.GithubPage;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
@@ -26,8 +27,10 @@ public class GithubRawStorageReader implements RawStorageReader {
 
     @Override
     public List<RawPullRequest> repoPullRequests(Long repoId) {
-        return client.stream("/repositories/" + repoId + "/pulls?state=all&sort=updated&per_page=100", RawPullRequest[].class)
-                .toList();
+        final var page = new GithubPage<>(client, "/repositories/" + repoId + "/pulls?state=all&sort=updated&per_page=100", RawPullRequest[].class);
+        List<RawPullRequest> pullRequests = new ArrayList<>();
+        page.forEachRemaining(pullRequests::add);
+        return pullRequests;
     }
 
     @Override

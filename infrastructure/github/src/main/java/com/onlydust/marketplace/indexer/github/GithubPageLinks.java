@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
+import java.net.URI;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Value
@@ -13,10 +15,10 @@ import java.util.regex.Pattern;
 public class GithubPageLinks {
     static Pattern PATTERN = Pattern.compile("<(.*)>; rel=\"(first|last|next|prev)\"");
 
-    String prev;
-    String next;
-    String first;
-    String last;
+    URI prev;
+    URI next;
+    URI first;
+    URI last;
 
     public static GithubPageLinks of(String header) {
         final var links = new HashMap<String, String>();
@@ -28,6 +30,11 @@ public class GithubPageLinks {
             }
         }
 
-        return new GithubPageLinks(links.get("prev"), links.get("next"), links.get("first"), links.get("last"));
+        return new GithubPageLinks(
+                Optional.ofNullable(links.get("prev")).map(URI::create).orElse(null),
+                Optional.ofNullable(links.get("next")).map(URI::create).orElse(null),
+                Optional.ofNullable(links.get("first")).map(URI::create).orElse(null),
+                Optional.ofNullable(links.get("last")).map(URI::create).orElse(null)
+        );
     }
 }
