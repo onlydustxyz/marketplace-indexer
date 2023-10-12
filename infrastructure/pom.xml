@@ -17,6 +17,7 @@
     <modules>
         <module>postgres</module>
         <module>github</module>
+        <module>quartz</module>
     </modules>
 
     <properties>

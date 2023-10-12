@@ -51,7 +51,17 @@
         </dependency>
         <dependency>
             <groupId>com.onlydust.marketplace.indexer</groupId>
+            <artifactId>cron</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.onlydust.marketplace.indexer</groupId>
             <artifactId>github</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.onlydust.marketplace.indexer</groupId>
+            <artifactId>quartz</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

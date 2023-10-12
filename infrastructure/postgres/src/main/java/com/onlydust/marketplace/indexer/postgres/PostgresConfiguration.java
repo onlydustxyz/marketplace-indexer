@@ -1,8 +1,8 @@
 package com.onlydust.marketplace.indexer.postgres;
 
-import com.onlydust.marketplace.indexer.postgres.adapters.PostgresInstallationEventListener;
-import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawInstallationEventStorageRepository;
-import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorageRepository;
+import com.onlydust.marketplace.indexer.postgres.adapters.*;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
@@ -55,8 +55,23 @@ public class PostgresConfiguration {
     }
 
     @Bean
+    public JobTriggerEventListener jobTriggerEventListener(final RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository) {
+        return new JobTriggerEventListener(repoIndexingJobTriggerRepository);
+    }
+
+    @Bean
     public PostgresInstallationEventListener postgresInstallationEventListener(final GithubAccountRepository githubAccountRepository,
                                                                                final GithubRepoRepository githubRepoRepository) {
         return new PostgresInstallationEventListener(githubAccountRepository, githubRepoRepository);
+    }
+
+    @Bean
+    public PostgresRepoIndexingJobTriggerRepository postgresRepoIndexingJobTriggerRepository(final RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository) {
+        return new PostgresRepoIndexingJobTriggerRepository(repoIndexingJobTriggerRepository);
+    }
+
+    @Bean
+    public PostgresUserIndexingJobTriggerRepository userIndexingJobTriggerRepository(final UserIndexingJobTriggerEntityRepository userIndexingJobTriggerRepository) {
+        return new PostgresUserIndexingJobTriggerRepository(userIndexingJobTriggerRepository);
     }
 }

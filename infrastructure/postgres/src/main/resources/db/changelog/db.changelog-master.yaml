@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000004_create-installation-events-table.sql
   - include:
       file: db/changelog/changelogs/00000005_create-exposition-schema.sql
+  - include:
+      file: db/changelog/changelogs/00000006_create-job-triggers-table.sql
