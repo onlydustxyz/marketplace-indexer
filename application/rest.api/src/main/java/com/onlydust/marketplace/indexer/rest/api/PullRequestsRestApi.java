@@ -14,8 +14,8 @@ public class PullRequestsRestApi implements PullRequestApi {
     private final IndexingService onDemandIndexer;
 
     @Override
-    public ResponseEntity<Void> indexPullRequest(String repoOwner, String repoName, Integer pullRequestNumber) {
-        onDemandIndexer.indexPullRequest(repoOwner, repoName, pullRequestNumber.longValue());
+    public ResponseEntity<Void> indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber) {
+        onDemandIndexer.indexPullRequest(repoOwner, repoName, pullRequestNumber);
         return ResponseEntity.noContent().build();
     }
 }

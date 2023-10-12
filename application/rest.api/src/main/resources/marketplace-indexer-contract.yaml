@@ -168,64 +168,6 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
-  /api/v1/repos:
-    get:
-      security:
-        - apiKey: [ ]
-      tags:
-        - Repos
-      summary: Get a list of repos from an installation ID
-      operationId: getRepos
-      parameters:
-        - in: query
-          name: installationId
-          required: true
-          description: The (external) installation ID
-          schema:
-            $ref: '#/components/schemas/AppInstallationId'
-      responses:
-        "200":
-          description: 'Repos'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RepoListResponse'
-        "401":
-          $ref: '#/components/responses/UnauthorizedError'
-        "500":
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/v1/app-installations:
-    get:
-      security:
-        - apiKey: [ ]
-      tags:
-        - Github App installations
-      summary: Get a list of installations from a repo ID or an organization ID
-      operationId: getAppInstallations
-      parameters:
-        - in: query
-          name: repoId
-          description: The repo ID
-          schema:
-            $ref: '#/components/schemas/RepoId'
-        - in: query
-          name: organizationId
-          description: The organization ID
-          schema:
-            $ref: '#/components/schemas/OrganizationId'
-      responses:
-        "200":
-          description: 'Github App installations'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AppInstallationListResponse'
-        "401":
-          $ref: '#/components/responses/UnauthorizedError'
-        "500":
-          $ref: '#/components/responses/InternalServerError'
-
 components:
   securitySchemes:
     apiKey:
@@ -281,41 +223,49 @@ components:
 
     UserId:
       type: integer
+      format: int64
       description: Github user ID (databaseId)
       example: 595505
 
     RepoId:
       type: integer
+      format: int64
       description: Github repo ID (databaseId)
       example: 650626566
 
     PullRequestId:
       type: string
+      format: int64
       description: Github pull request ID (databaseId)
       example: 27218542
 
     PullRequestNumber:
       type: integer
+      format: int64
       description: Github pull request number
       example: 1023
 
     IssueId:
       type: string
+      format: int64
       description: Github issue ID (databaseId)
       example: 1678794252
 
     IssueNumber:
       type: integer
+      format: int64
       description: Github issue number
       example: 27
 
     AppInstallationId:
       type: integer
+      format: int64
       description: Github app installation ID
       example: 9827589
 
     OrganizationId:
       type: integer
+      format: int64
       description: Github organization ID
       example: 1983274
 

@@ -32,9 +32,9 @@ public class UserIndexingIT extends IntegrationTest {
     }
 
     @Test
-    public void should_index_user_on_demand() throws IOException {
+    public void should_add_user_to_index() throws IOException {
         // Given
-        final Integer ANTHONY = 43467246;
+        final Long ANTHONY = 43467246L;
 
         // When
         final var response = indexUser(ANTHONY);
@@ -46,10 +46,10 @@ public class UserIndexingIT extends IntegrationTest {
         assertThat(userRepository.findAll()).containsExactly(User.of(expectedUser));
 
         final var expectedUserSocialAccounts = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony_social_accounts.json"), RawSocialAccount[].class);
-        assertThat(userSocialAccountsRepository.findAll()).containsExactly(UserSocialAccounts.of(ANTHONY.longValue(), Arrays.asList(expectedUserSocialAccounts)));
+        assertThat(userSocialAccountsRepository.findAll()).containsExactly(UserSocialAccounts.of(ANTHONY, Arrays.asList(expectedUserSocialAccounts)));
     }
 
-    private WebTestClient.ResponseSpec indexUser(Integer userId) {
+    private WebTestClient.ResponseSpec indexUser(Long userId) {
         return put("/api/v1/users/" + userId);
     }
 }
