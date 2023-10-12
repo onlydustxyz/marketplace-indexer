@@ -1,12 +1,12 @@
 package com.onlydust.marketplace.indexer.domain.ports.out;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.util.List;
 import java.util.Optional;
 
-@AllArgsConstructor
+@Builder
 public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     private final RawStorageReader fetcher;
     private final RawStorageRepository cache;

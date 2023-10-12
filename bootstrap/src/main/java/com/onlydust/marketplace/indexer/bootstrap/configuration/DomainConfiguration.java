@@ -1,7 +1,9 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.onlydust.marketplace.indexer.domain.ports.out.CacheReadRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.CacheWriteRawStorageReaderDecorator;
+import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.EventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.IndexingService;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
@@ -24,12 +26,24 @@ public class DomainConfiguration {
     }
 
     @Bean
+    RawStorageReader cachedRawStorageReader(
+            final GithubRawStorageReader githubRawStorageReader,
+            final PostgresRawStorageRepository postgresRawStorageRepository
+    ) {
+        return CacheReadRawStorageReaderDecorator.builder()
+                .fetcher(CacheWriteRawStorageReaderDecorator.builder()
+                        .fetcher(githubRawStorageReader)
+                        .cache(postgresRawStorageRepository)
+                        .build())
+                .cache(postgresRawStorageRepository)
+                .build();
+    }
+
+    @Bean
     public EventProcessorService eventProcessorService(final PostgresRawInstallationEventStorageRepository postgresRawInstallationEventStorageRepository,
                                                        final PostgresInstallationEventListener postgresInstallationEventListener,
-                                                       final GithubRawStorageReader githubRawStorageReader,
-                                                       final PostgresRawStorageRepository postgresRawStorageRepository) {
-        final var rawStorageReader = new CacheWriteRawStorageReaderDecorator(githubRawStorageReader, postgresRawStorageRepository);
-        return new EventProcessorService(postgresRawInstallationEventStorageRepository, postgresInstallationEventListener, rawStorageReader);
+                                                       final RawStorageReader cachedRawStorageReader) {
+        return new EventProcessorService(postgresRawInstallationEventStorageRepository, postgresInstallationEventListener, cachedRawStorageReader);
     }
 
     @Bean
@@ -43,8 +57,7 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public IndexingService onDemandIndexer(final GithubRawStorageReader githubRawStorageReader, final PostgresRawStorageRepository postgresRawStorageRepository) {
-        final var rawStorageReader = new CacheWriteRawStorageReaderDecorator(githubRawStorageReader, postgresRawStorageRepository);
-        return new IndexingService(rawStorageReader);
+    public IndexingService onDemandIndexer(final RawStorageReader cachedRawStorageReader) {
+        return new IndexingService(cachedRawStorageReader);
     }
 }
