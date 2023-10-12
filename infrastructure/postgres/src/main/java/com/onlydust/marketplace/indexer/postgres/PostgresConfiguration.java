@@ -1,7 +1,8 @@
 package com.onlydust.marketplace.indexer.postgres;
 
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
-import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
@@ -54,7 +55,7 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public JobTriggerEventListener jobTriggerEventListener(final RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository) {
+    public JobTriggerEventListener jobTriggerEventListener(final RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository) {
         return new JobTriggerEventListener(repoIndexingJobTriggerRepository);
     }
 
@@ -65,7 +66,12 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public PostgresRepoIndexingJobTriggerRepository postgresRepoIndexingJobTriggerRepository(final RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository) {
+    public PostgresRepoIndexingJobTriggerRepository postgresRepoIndexingJobTriggerRepository(final RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository) {
         return new PostgresRepoIndexingJobTriggerRepository(repoIndexingJobTriggerRepository);
+    }
+
+    @Bean
+    public PostgresUserIndexingJobTriggerRepository userIndexingJobTriggerRepository(final UserIndexingJobTriggerEntityRepository userIndexingJobTriggerRepository) {
+        return new PostgresUserIndexingJobTriggerRepository(userIndexingJobTriggerRepository);
     }
 }

@@ -2,8 +2,8 @@ package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.InstallationEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventListener;
-import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTrigger;
-import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerRepository;
+import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTriggerEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
 import lombok.AllArgsConstructor;
 
 import javax.transaction.Transactional;
@@ -11,13 +11,13 @@ import javax.transaction.Transactional;
 @AllArgsConstructor
 @Transactional
 public class JobTriggerEventListener implements EventListener<InstallationEvent> {
-    private final RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository;
+    private final RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository;
 
     @Override
     public void onEvent(InstallationEvent event) {
         repoIndexingJobTriggerRepository.deleteAllByInstallationId(event.getInstallationId());
         repoIndexingJobTriggerRepository.saveAll(event.getRepos().stream()
-                .map(repo -> RepoIndexingJobTrigger.builder()
+                .map(repo -> RepoIndexingJobTriggerEntity.builder()
                         .repoId(repo.id())
                         .installationId(event.getInstallationId())
                         .build())

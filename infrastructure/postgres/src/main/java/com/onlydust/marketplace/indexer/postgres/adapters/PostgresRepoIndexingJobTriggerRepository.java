@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
-import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @AllArgsConstructor
 public class PostgresRepoIndexingJobTriggerRepository implements com.onlydust.marketplace.indexer.domain.ports.out.RepoIndexingJobTriggerRepository {
-    private final RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository;
+    private final RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository;
 
     @Override
     public List<RepoIndexingJobTrigger> list() {

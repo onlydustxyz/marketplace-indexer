@@ -2,11 +2,13 @@ package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJob;
+import com.onlydust.marketplace.indexer.domain.models.UserIndexingJob;
 import com.onlydust.marketplace.indexer.domain.models.clean.InstallationEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import com.onlydust.marketplace.indexer.domain.services.EventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.IndexingService;
 import com.onlydust.marketplace.indexer.domain.services.RepoIndexingJobService;
+import com.onlydust.marketplace.indexer.domain.services.UserIndexingJobService;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
@@ -91,5 +93,14 @@ public class DomainConfiguration {
             final JobScheduler<RepoIndexingJob> scheduler
     ) {
         return new RepoIndexingJobService(repoIndexingJobTriggerRepository, scheduler);
+    }
+
+
+    @Bean
+    public UserIndexingJobService userIndexingJobService(
+            final PostgresUserIndexingJobTriggerRepository userIndexingJobTriggerRepository,
+            final JobScheduler<UserIndexingJob> scheduler
+    ) {
+        return new UserIndexingJobService(userIndexingJobTriggerRepository, scheduler);
     }
 }

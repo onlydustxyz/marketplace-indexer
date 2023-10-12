@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @Table(name = "repo_indexing_job_triggers", schema = "indexer")
-public class RepoIndexingJobTrigger {
+public class RepoIndexingJobTriggerEntity {
     @Id
     Long repoId;
 

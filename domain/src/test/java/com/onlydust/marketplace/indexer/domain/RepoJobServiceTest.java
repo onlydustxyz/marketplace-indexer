@@ -3,7 +3,7 @@ package com.onlydust.marketplace.indexer.domain;
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJob;
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
 import com.onlydust.marketplace.indexer.domain.services.RepoIndexingJobService;
-import com.onlydust.marketplace.indexer.domain.stubs.RepoIndexingJobSchedulerStub;
+import com.onlydust.marketplace.indexer.domain.stubs.JobSchedulerStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RepoIndexingJobTriggerRepositoryStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,9 +12,9 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JobServiceTest {
+public class RepoJobServiceTest {
     private final RepoIndexingJobTriggerRepositoryStub repoIndexingJobTriggerRepositoryStub = new RepoIndexingJobTriggerRepositoryStub();
-    private final RepoIndexingJobSchedulerStub repoIndexingJobSchedulerStub = new RepoIndexingJobSchedulerStub();
+    private final JobSchedulerStub<RepoIndexingJob> repoIndexingJobSchedulerStub = new JobSchedulerStub<>();
     private final RepoIndexingJobService jobService = new RepoIndexingJobService(repoIndexingJobTriggerRepositoryStub, repoIndexingJobSchedulerStub);
 
     @BeforeEach
@@ -30,15 +30,19 @@ public class JobServiceTest {
     }
 
     @Test
-    public void should_list_all_triggers() {
+    public void should_triggers_all_jobs() {
         jobService.scheduleAllJobs();
-        assertScheduledJobsAre(
+        assertScheduledRepoJobsAre(
+                RepoIndexingJob.builder().installationId(1L).repos(Set.of(1L, 2L, 3L)).build(),
+                RepoIndexingJob.builder().installationId(2L).repos(Set.of(4L, 5L, 6L)).build()
+        );
+        assertScheduledRepoJobsAre(
                 RepoIndexingJob.builder().installationId(1L).repos(Set.of(1L, 2L, 3L)).build(),
                 RepoIndexingJob.builder().installationId(2L).repos(Set.of(4L, 5L, 6L)).build()
         );
     }
 
-    private void assertScheduledJobsAre(RepoIndexingJob... jobs) {
+    private void assertScheduledRepoJobsAre(RepoIndexingJob... jobs) {
         assertThat(repoIndexingJobSchedulerStub.jobs()).containsExactly(jobs);
     }
 }

@@ -50,7 +50,7 @@ public class RepoIndexingJobScheduler implements JobScheduler<RepoIndexingJob> {
     private Trigger jobTrigger(RepoIndexingJob job) {
         return TriggerBuilder.newTrigger()
                 .withIdentity(triggerKey(job))
-                .withDescription("Job trigger")
+                .withDescription("Repo refresh Job trigger")
                 .forJob(newJob(job))
                 .build();
     }
