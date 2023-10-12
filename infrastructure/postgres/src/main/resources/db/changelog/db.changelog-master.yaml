@@ -13,3 +13,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000005_create-exposition-schema.sql
   - include:
       file: db/changelog/changelogs/00000006_create-job-triggers-table.sql
+  - include:
+      file: db/changelog/changelogs/00000007_rename-job-triggers-column.sql

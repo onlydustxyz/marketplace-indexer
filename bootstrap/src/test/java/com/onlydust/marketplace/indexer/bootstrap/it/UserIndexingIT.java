@@ -32,7 +32,7 @@ public class UserIndexingIT extends IntegrationTest {
     }
 
     @Test
-    public void should_index_user_on_demand() throws IOException {
+    public void should_add_user_to_index() throws IOException {
         // Given
         final Integer ANTHONY = 43467246;
 

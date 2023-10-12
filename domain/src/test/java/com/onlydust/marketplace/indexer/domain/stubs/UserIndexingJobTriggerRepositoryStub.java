@@ -11,11 +11,16 @@ public class UserIndexingJobTriggerRepositoryStub implements UserIndexingJobTrig
     private final List<UserIndexingJobTrigger> triggers = new ArrayList<>();
 
     @Override
+    public void add(UserIndexingJobTrigger trigger) {
+        triggers.add(trigger);
+    }
+
+    @Override
     public List<UserIndexingJobTrigger> list() {
         return triggers;
     }
 
     public void feedWith(UserIndexingJobTrigger... triggers) {
-        this.triggers.addAll(Arrays.stream(triggers).toList());
+        Arrays.stream(triggers).forEach(this::add);
     }
 }
