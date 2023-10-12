@@ -10,6 +10,8 @@ import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @Slf4j
 public class EventProcessorService {
@@ -22,10 +24,9 @@ public class EventProcessorService {
         final var event = InstallationEvent.builder()
                 .installationId(rawEvent.getInstallation().getId())
                 .account(UserMapper.map(rawEvent.getInstallation().getAccount()))
-                .repos(rawEvent.getRepositories().stream().map(eventRepo -> {
-                    final var repo = rawStorageReader.repo(eventRepo.getId()).orElseThrow();
-                    return RepoMapper.map(repo);
-                }).toList())
+                .repos(rawEvent.getRepositories().stream()
+                        .map(eventRepo -> rawStorageReader.repo(eventRepo.getId()).map(RepoMapper::map).orElse(null))
+                        .filter(Objects::nonNull).toList())
                 .build();
         installationEventEventListener.onEvent(event);
     }
