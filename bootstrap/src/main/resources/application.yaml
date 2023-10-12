@@ -54,4 +54,4 @@ spring:
     show-sql: false
 
 server:
-  port: 9999
+  port: ${PORT}
