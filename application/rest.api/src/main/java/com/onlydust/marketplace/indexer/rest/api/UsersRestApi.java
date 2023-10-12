@@ -14,8 +14,8 @@ public class UsersRestApi implements UsersApi {
     private final IndexingService onDemandIndexer;
 
     @Override
-    public ResponseEntity<Void> indexUser(Integer userId) {
-        onDemandIndexer.indexUser(userId.longValue());
+    public ResponseEntity<Void> indexUser(Long userId) {
+        onDemandIndexer.indexUser(userId);
         return ResponseEntity.noContent().build();
     }
 }

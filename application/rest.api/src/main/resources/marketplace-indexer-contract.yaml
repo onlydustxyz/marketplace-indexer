@@ -223,41 +223,49 @@ components:
 
     UserId:
       type: integer
+      format: int64
       description: Github user ID (databaseId)
       example: 595505
 
     RepoId:
       type: integer
+      format: int64
       description: Github repo ID (databaseId)
       example: 650626566
 
     PullRequestId:
       type: string
+      format: int64
       description: Github pull request ID (databaseId)
       example: 27218542
 
     PullRequestNumber:
       type: integer
+      format: int64
       description: Github pull request number
       example: 1023
 
     IssueId:
       type: string
+      format: int64
       description: Github issue ID (databaseId)
       example: 1678794252
 
     IssueNumber:
       type: integer
+      format: int64
       description: Github issue number
       example: 27
 
     AppInstallationId:
       type: integer
+      format: int64
       description: Github app installation ID
       example: 9827589
 
     OrganizationId:
       type: integer
+      format: int64
       description: Github organization ID
       example: 1983274
 

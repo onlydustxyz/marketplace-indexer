@@ -40,7 +40,7 @@ public class IssueIndexingIT extends IntegrationTest {
         final var anthonySocialAccounts = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony_social_accounts.json"), RawSocialAccount[].class));
 
         // When
-        final var response = indexIssue("onlydustxyz", "marketplace-frontend", 78);
+        final var response = indexIssue("onlydustxyz", "marketplace-frontend", 78L);
 
         // Then
         response.expectStatus().isNoContent();
@@ -51,7 +51,7 @@ public class IssueIndexingIT extends IntegrationTest {
         assertThat(userSocialAccountsRepository.findAll()).containsExactly(UserSocialAccounts.of(anthony.getId(), anthonySocialAccounts));
     }
 
-    private WebTestClient.ResponseSpec indexIssue(String repoOwner, String repoName, Integer issueNumber) {
+    private WebTestClient.ResponseSpec indexIssue(String repoOwner, String repoName, Long issueNumber) {
         return put("/api/v1/repos/" + repoOwner + "/" + repoName + "/issues/" + issueNumber);
     }
 }

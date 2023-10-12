@@ -18,14 +18,14 @@ public class IndexesRestApi implements IndexesApi {
     private final RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository;
 
     @Override
-    public ResponseEntity<Void> addUserToIndex(Integer userId) {
-        userIndexingJobTriggerRepository.add(new UserIndexingJobTrigger(userId.longValue()));
+    public ResponseEntity<Void> addUserToIndex(Long userId) {
+        userIndexingJobTriggerRepository.add(new UserIndexingJobTrigger(userId));
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<Void> addRepoToIndex(Integer repoId) {
-        repoIndexingJobTriggerRepository.add(new RepoIndexingJobTrigger(0L, repoId.longValue()));
+    public ResponseEntity<Void> addRepoToIndex(Long repoId) {
+        repoIndexingJobTriggerRepository.add(new RepoIndexingJobTrigger(0L, repoId));
         return ResponseEntity.noContent().build();
     }
 }

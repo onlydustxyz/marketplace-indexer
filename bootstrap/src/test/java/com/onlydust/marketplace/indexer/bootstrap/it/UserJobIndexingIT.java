@@ -17,7 +17,7 @@ public class UserJobIndexingIT extends IntegrationTest {
     @Test
     public void should_index_user_on_demand() throws IOException {
         // Given
-        final Integer ANTHONY = 43467246;
+        final Long ANTHONY = 43467246L;
 
         // When
         final var response = indexUser(ANTHONY);
@@ -25,10 +25,10 @@ public class UserJobIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        assertThat(userIndexingJobTriggerRepository.list()).containsExactly(new UserIndexingJobTrigger(ANTHONY.longValue()));
+        assertThat(userIndexingJobTriggerRepository.list()).containsExactly(new UserIndexingJobTrigger(ANTHONY));
     }
 
-    private WebTestClient.ResponseSpec indexUser(Integer userId) {
+    private WebTestClient.ResponseSpec indexUser(Long userId) {
         return put("/api/v1/indexes/users/" + userId);
     }
 }

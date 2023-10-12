@@ -14,8 +14,8 @@ public class IssuesRestApi implements IssuesApi {
     private final IndexingService onDemandIndexer;
 
     @Override
-    public ResponseEntity<Void> indexIssue(String repoOwner, String repoName, Integer issueNumber) {
-        onDemandIndexer.indexIssue(repoOwner, repoName, issueNumber.longValue());
+    public ResponseEntity<Void> indexIssue(String repoOwner, String repoName, Long issueNumber) {
+        onDemandIndexer.indexIssue(repoOwner, repoName, issueNumber);
         return ResponseEntity.noContent().build();
     }
 }

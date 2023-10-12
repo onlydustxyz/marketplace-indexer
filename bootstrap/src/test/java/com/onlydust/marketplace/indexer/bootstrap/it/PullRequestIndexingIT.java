@@ -45,7 +45,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
         final var olivierSocialAccounts = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/olivier_social_accounts.json"), RawSocialAccount[].class));
 
         // When
-        final var response = indexPullRequest("onlydustxyz", "marketplace-frontend", 1257);
+        final var response = indexPullRequest("onlydustxyz", "marketplace-frontend", 1257L);
 
         // Then
         response.expectStatus().isNoContent();
@@ -63,7 +63,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
         );
     }
 
-    private WebTestClient.ResponseSpec indexPullRequest(String repoOwner, String repoName, Integer pullRequestNumber) {
+    private WebTestClient.ResponseSpec indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber) {
         return put("/api/v1/repos/" + repoOwner + "/" + repoName + "/pull-requests/" + pullRequestNumber);
     }
 }
