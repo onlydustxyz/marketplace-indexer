@@ -16,6 +16,7 @@
     <modules>
         <module>rest.api</module>
         <module>rest.github</module>
+        <module>cron</module>
     </modules>
 
     <properties>
