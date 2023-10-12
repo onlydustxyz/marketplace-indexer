@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.cron;
+package com.onlydust.indexer.infrastructure.quartz.adapters;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,8 @@ public class RepoRefresherJob implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         final var installationId = context.getJobDetail().getJobDataMap().getLong("installationId");
-        LOGGER.info("Refreshing repos for installation {}", installationId);
+        final var repos = context.getJobDetail().getJobDataMap().get("repos");
+        LOGGER.info("Refreshing repos for installation {} and repos {}", installationId, repos);
         try {
             Thread.sleep(7000);
         } catch (InterruptedException e) {

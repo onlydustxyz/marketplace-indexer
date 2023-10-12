@@ -1,16 +1,15 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJob;
 import com.onlydust.marketplace.indexer.domain.models.clean.InstallationEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import com.onlydust.marketplace.indexer.domain.services.EventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.IndexingService;
+import com.onlydust.marketplace.indexer.domain.services.RepoIndexingJobService;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
-import com.onlydust.marketplace.indexer.postgres.adapters.JobTriggerEventListener;
-import com.onlydust.marketplace.indexer.postgres.adapters.PostgresInstallationEventListener;
-import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawInstallationEventStorageRepository;
-import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorageRepository;
+import com.onlydust.marketplace.indexer.postgres.adapters.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -68,5 +67,13 @@ public class DomainConfiguration {
     @Bean
     public IndexingService onDemandIndexer(final RawStorageReader cachedRawStorageReader) {
         return new IndexingService(cachedRawStorageReader);
+    }
+
+    @Bean
+    public RepoIndexingJobService repoIndexingJobService(
+            final PostgresRepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository,
+            final JobScheduler<RepoIndexingJob> scheduler
+    ) {
+        return new RepoIndexingJobService(repoIndexingJobTriggerRepository, scheduler);
     }
 }

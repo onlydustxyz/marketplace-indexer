@@ -1,9 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres;
 
-import com.onlydust.marketplace.indexer.postgres.adapters.JobTriggerEventListener;
-import com.onlydust.marketplace.indexer.postgres.adapters.PostgresInstallationEventListener;
-import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawInstallationEventStorageRepository;
-import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorageRepository;
+import com.onlydust.marketplace.indexer.postgres.adapters.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
@@ -65,5 +62,10 @@ public class PostgresConfiguration {
     public PostgresInstallationEventListener postgresInstallationEventListener(final GithubAccountRepository githubAccountRepository,
                                                                                final GithubRepoRepository githubRepoRepository) {
         return new PostgresInstallationEventListener(githubAccountRepository, githubRepoRepository);
+    }
+
+    @Bean
+    public PostgresRepoIndexingJobTriggerRepository postgresRepoIndexingJobTriggerRepository(final RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository) {
+        return new PostgresRepoIndexingJobTriggerRepository(repoIndexingJobTriggerRepository);
     }
 }
