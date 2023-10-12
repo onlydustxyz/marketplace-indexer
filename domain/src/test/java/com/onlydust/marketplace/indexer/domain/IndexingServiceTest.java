@@ -33,7 +33,7 @@ public class IndexingServiceTest {
     final RawLanguages marketplaceFrontendLanguages = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/languages.json", RawLanguages.class);
     final RawStorageRepositoryStub rawStorageReader = new RawStorageRepositoryStub();
     final RawStorageRepositoryStub rawStorageRepository = new RawStorageRepositoryStub();
-    final IndexingService indexer = new IndexingService(new CacheWriteRawStorageReaderDecorator(rawStorageReader, rawStorageRepository));
+    final IndexingService indexer = new IndexingService(CacheWriteRawStorageReaderDecorator.builder().fetcher(rawStorageReader).cache(rawStorageRepository).build());
 
     @BeforeEach
     void setup() throws IOException {
