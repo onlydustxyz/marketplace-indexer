@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
+import com.onlydust.marketplace.indexer.domain.ports.out.RepoIndexingJobTriggerRepository;
 import com.onlydust.marketplace.indexer.domain.ports.out.UserIndexingJobTriggerRepository;
 import com.onlydust.marketplace.indexer.domain.services.IndexingService;
 import com.onlydust.marketplace.indexer.rest.api.IndexesRestApi;
@@ -29,8 +30,11 @@ public class RestApiConfiguration {
     }
 
     @Bean
-    public IndexesRestApi indexesRestApi(final UserIndexingJobTriggerRepository userIndexingJobTriggerRepository) {
-        return new IndexesRestApi(userIndexingJobTriggerRepository);
+    public IndexesRestApi indexesRestApi(
+            final UserIndexingJobTriggerRepository userIndexingJobTriggerRepository,
+            final RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository
+    ) {
+        return new IndexesRestApi(userIndexingJobTriggerRepository, repoIndexingJobTriggerRepository);
     }
 
     @Bean

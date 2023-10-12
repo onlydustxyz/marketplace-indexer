@@ -11,11 +11,16 @@ public class RepoIndexingJobTriggerRepositoryStub implements RepoIndexingJobTrig
     private final List<RepoIndexingJobTrigger> triggers = new ArrayList<>();
 
     @Override
+    public void add(RepoIndexingJobTrigger trigger) {
+        triggers.add(trigger);
+    }
+
+    @Override
     public List<RepoIndexingJobTrigger> list() {
         return triggers;
     }
 
     public void feedWith(RepoIndexingJobTrigger... triggers) {
-        this.triggers.addAll(Arrays.stream(triggers).toList());
+        Arrays.stream(triggers).forEach(this::add);
     }
 }
