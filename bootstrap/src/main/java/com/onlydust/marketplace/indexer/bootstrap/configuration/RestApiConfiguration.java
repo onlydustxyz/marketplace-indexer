@@ -5,23 +5,24 @@ import com.onlydust.marketplace.indexer.rest.api.IssuesRestApi;
 import com.onlydust.marketplace.indexer.rest.api.PullRequestsRestApi;
 import com.onlydust.marketplace.indexer.rest.api.UsersRestApi;
 import com.onlydust.marketplace.indexer.rest.api.exception.OnlyDustExceptionRestHandler;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RestApiConfiguration {
     @Bean
-    public UsersRestApi usersRestApi(final IndexingService indexingService) {
+    public UsersRestApi usersRestApi(@Qualifier("onDemandIndexer") final IndexingService indexingService) {
         return new UsersRestApi(indexingService);
     }
 
     @Bean
-    public IssuesRestApi issuesRestApi(final IndexingService indexingService) {
+    public IssuesRestApi issuesRestApi(@Qualifier("onDemandIndexer") final IndexingService indexingService) {
         return new IssuesRestApi(indexingService);
     }
 
     @Bean
-    public PullRequestsRestApi pullRequestRestApi(final IndexingService indexingService) {
+    public PullRequestsRestApi pullRequestRestApi(@Qualifier("onDemandIndexer") final IndexingService indexingService) {
         return new PullRequestsRestApi(indexingService);
     }
 

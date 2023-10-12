@@ -40,6 +40,17 @@ public class DomainConfiguration {
                 .build();
     }
 
+    @Bean
+    RawStorageReader rawStorageReader(
+            final GithubRawStorageReader githubRawStorageReader,
+            final PostgresRawStorageRepository postgresRawStorageRepository
+    ) {
+        return CacheWriteRawStorageReaderDecorator.builder()
+                .fetcher(githubRawStorageReader)
+                .cache(postgresRawStorageRepository)
+                .build();
+    }
+
     @Bean(name = "installationEventEventListener")
     public EventListener<InstallationEvent> installationEventEventListener(
             final PostgresInstallationEventListener postgresInstallationEventListener,
@@ -64,9 +75,14 @@ public class DomainConfiguration {
         return new GithubRawStorageReader(githubHttpClient);
     }
 
-    @Bean
+    @Bean(name = "onDemandIndexer")
     public IndexingService onDemandIndexer(final RawStorageReader cachedRawStorageReader) {
         return new IndexingService(cachedRawStorageReader);
+    }
+
+    @Bean(name = "refreshingIndexer")
+    public IndexingService refreshingIndexer(final RawStorageReader rawStorageReader) {
+        return new IndexingService(rawStorageReader);
     }
 
     @Bean
