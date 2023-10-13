@@ -1,0 +1,138 @@
+[
+  {
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/issues/82",
+    "repository_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend",
+    "labels_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/issues/82/labels{/name}",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/issues/82/comments",
+    "events_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/issues/82/events",
+    "html_url": "https://github.com/onlydustxyz/marketplace-frontend/issues/82",
+    "id": 1302028409,
+    "node_id": "I_kwDOHbl-LM5Nm2B5",
+    "number": 82,
+    "title": "change GET /projects parameter to user_address and fetch the contributor_id on BE side",
+    "user": {
+      "login": "AnthonyBuisset",
+      "id": 43467246,
+      "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/AnthonyBuisset",
+      "html_url": "https://github.com/AnthonyBuisset",
+      "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+      "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+      "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+      "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+      "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+      "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+      {
+        "id": 4204558788,
+        "node_id": "LA_kwDOHbl-LM76nHnE",
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/labels/Duration:%20under%20a%20day",
+        "name": "Duration: under a day",
+        "color": "32a852",
+        "default": false,
+        "description": "wil take up to one day"
+      },
+      {
+        "id": 4204558791,
+        "node_id": "LA_kwDOHbl-LM76nHnH",
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/labels/Difficulty:%20easy",
+        "name": "Difficulty: easy",
+        "color": "eb4034",
+        "default": false,
+        "description": "anybody can understand it"
+      },
+      {
+        "id": 4204558792,
+        "node_id": "LA_kwDOHbl-LM76nHnI",
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/labels/Context:%20isolated",
+        "name": "Context: isolated",
+        "color": "fcba03",
+        "default": false,
+        "description": "no previous knowledge of the codebase required"
+      },
+      {
+        "id": 4204558796,
+        "node_id": "LA_kwDOHbl-LM76nHnM",
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/labels/Type:%20feature",
+        "name": "Type: feature",
+        "color": "4287f5",
+        "default": false,
+        "description": "a new feature to implement"
+      },
+      {
+        "id": 4204558798,
+        "node_id": "LA_kwDOHbl-LM76nHnO",
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/labels/State:%20open",
+        "name": "State: open",
+        "color": "ffffff",
+        "default": false,
+        "description": "ready for contribution"
+      },
+      {
+        "id": 4204558800,
+        "node_id": "LA_kwDOHbl-LM76nHnQ",
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/labels/Techno:%20rust",
+        "name": "Techno: rust",
+        "color": "000000",
+        "default": false,
+        "description": "rust"
+      }
+    ],
+    "state": "closed",
+    "locked": false,
+    "assignee": null,
+    "assignees": [
+    ],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2022-07-12T12:58:38Z",
+    "updated_at": "2022-08-05T08:07:46Z",
+    "closed_at": "2022-08-05T08:07:46Z",
+    "author_association": "CONTRIBUTOR",
+    "active_lock_reason": null,
+    "body": null,
+    "closed_by": {
+      "login": "AnthonyBuisset",
+      "id": 43467246,
+      "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/AnthonyBuisset",
+      "html_url": "https://github.com/AnthonyBuisset",
+      "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+      "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+      "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+      "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+      "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+      "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/issues/82/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/issues/82/timeline",
+    "performed_via_github_app": null,
+    "state_reason": "completed"
+  }
+]

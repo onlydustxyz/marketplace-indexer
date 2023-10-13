@@ -1,0 +1,18 @@
+{
+  "request": {
+    "url": "/repositories/498695724/pulls?state=all&sort=updated&per_page=100",
+    "method": "GET",
+    "headers": {
+      "Authorization": {
+        "contains": "Bearer GITHUB_PAT"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "repos/marketplace-frontend/pulls-page-1.json",
+    "headers": {
+      "Link": "<http://localhost:8080/repositories/498695724/pulls?state=all&sort=updated&per_page=100&page=2>; rel=\"next\""
+    }
+  }
+}
