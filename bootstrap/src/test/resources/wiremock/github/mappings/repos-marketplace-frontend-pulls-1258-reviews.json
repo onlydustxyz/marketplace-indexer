@@ -1,0 +1,15 @@
+{
+  "request": {
+    "url": "/repositories/498695724/pulls/1258/reviews",
+    "method": "GET",
+    "headers": {
+      "Authorization": {
+        "contains": "Bearer GITHUB_PAT"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "repos/marketplace-frontend/pulls/1258_reviews.json"
+  }
+}
