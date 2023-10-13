@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.rest.api;
 
-import com.onlydust.marketplace.indexer.domain.services.IndexingService;
+import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.AllArgsConstructor;
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Tags(@Tag(name = "Issues"))
 @AllArgsConstructor
 public class IssuesRestApi implements IssuesApi {
-    private final IndexingService onDemandIndexer;
+    private final IssueIndexer cachedIssueIndexer;
 
     @Override
     public ResponseEntity<Void> indexIssue(String repoOwner, String repoName, Long issueNumber) {
-        onDemandIndexer.indexIssue(repoOwner, repoName, issueNumber);
+        cachedIssueIndexer.indexIssue(repoOwner, repoName, issueNumber);
         return ResponseEntity.noContent().build();
     }
 }

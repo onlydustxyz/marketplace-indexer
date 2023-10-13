@@ -41,7 +41,7 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
           cache: 'maven'
-      - run: ./mvnw test -T 4
+      - run: ./mvnw test -T 6
 
   integration_tests:
     name: Integration tests
@@ -54,4 +54,4 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
           cache: 'maven'
-      - run: ./mvnw integration-test -T 4
+      - run: ./mvnw verify -T 6

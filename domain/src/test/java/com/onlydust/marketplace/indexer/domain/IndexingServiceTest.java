@@ -3,7 +3,11 @@ package com.onlydust.marketplace.indexer.domain;
 import com.onlydust.marketplace.indexer.domain.exception.NotFound;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.CacheWriteRawStorageReaderDecorator;
-import com.onlydust.marketplace.indexer.domain.services.IndexingService;
+import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
+import com.onlydust.marketplace.indexer.domain.services.IssueIndexingService;
+import com.onlydust.marketplace.indexer.domain.services.PullRequestIndexingService;
+import com.onlydust.marketplace.indexer.domain.services.RepoIndexingService;
+import com.onlydust.marketplace.indexer.domain.services.UserIndexingService;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageRepositoryStub;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,29 +35,33 @@ public class IndexingServiceTest {
     final RawCheckRuns pr1257CheckRuns = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_check_runs.json", RawCheckRuns.class);
     final RawRepo marketplaceFrontend = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
     final RawLanguages marketplaceFrontendLanguages = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/languages.json", RawLanguages.class);
-    final RawStorageRepositoryStub rawStorageReader = new RawStorageRepositoryStub();
+    final RawStorageRepositoryStub rawStorageReaderStub = new RawStorageRepositoryStub();
     final RawStorageRepositoryStub rawStorageRepository = new RawStorageRepositoryStub();
-    final IndexingService indexer = new IndexingService(CacheWriteRawStorageReaderDecorator.builder().fetcher(rawStorageReader).cache(rawStorageRepository).build());
+    final RawStorageReader rawStorageReader = CacheWriteRawStorageReaderDecorator.builder().fetcher(rawStorageReaderStub).cache(rawStorageRepository).build();
+    final UserIndexingService userIndexingService = new UserIndexingService(rawStorageReader);
+    final IssueIndexingService issueIndexingService = new IssueIndexingService(rawStorageReader, userIndexingService);
+    final PullRequestIndexingService pullRequestIndexingService = new PullRequestIndexingService(rawStorageReader, userIndexingService, issueIndexingService);
+    final RepoIndexingService repoIndexingService = new RepoIndexingService(rawStorageReader, issueIndexingService, pullRequestIndexingService);
 
     @BeforeEach
     void setup() throws IOException {
-        rawStorageReader.feedWith(marketplaceFrontend);
-        rawStorageReader.feedWith(marketplaceFrontend.getId(), marketplaceFrontendLanguages);
-        rawStorageReader.feedWith(anthony, pierre, olivier);
-        rawStorageReader.feedWith(anthony.getId(), anthonySocialAccounts);
-        rawStorageReader.feedWith(pierre.getId(), pierreSocialAccounts);
-        rawStorageReader.feedWith(olivier.getId(), olivierSocialAccounts);
-        rawStorageReader.feedWith(marketplaceFrontend.getId(), pr1257);
-        rawStorageReader.feedWith(marketplaceFrontend.getId(), issue78);
-        rawStorageReader.feedClosingIssuesWith(pr1257.getId(), issue78);
-        rawStorageReader.feedWith(pr1257.getId(), pr1257Reviews);
-        rawStorageReader.feedWith(pr1257.getId(), pr1257Commits);
-        rawStorageReader.feedWith(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha(), pr1257CheckRuns);
+        rawStorageReaderStub.feedWith(marketplaceFrontend);
+        rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), marketplaceFrontendLanguages);
+        rawStorageReaderStub.feedWith(anthony, pierre, olivier);
+        rawStorageReaderStub.feedWith(anthony.getId(), anthonySocialAccounts);
+        rawStorageReaderStub.feedWith(pierre.getId(), pierreSocialAccounts);
+        rawStorageReaderStub.feedWith(olivier.getId(), olivierSocialAccounts);
+        rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), pr1257);
+        rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), issue78);
+        rawStorageReaderStub.feedClosingIssuesWith(pr1257.getId(), issue78);
+        rawStorageReaderStub.feedWith(pr1257.getId(), pr1257Reviews);
+        rawStorageReaderStub.feedWith(pr1257.getId(), pr1257Commits);
+        rawStorageReaderStub.feedWith(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha(), pr1257CheckRuns);
     }
 
     @Test
     void should_index_user_from_its_id() {
-        final var user = indexer.indexUser(anthony.getId());
+        final var user = userIndexingService.indexUser(anthony.getId());
 
         assertThat(user.id()).isEqualTo(anthony.getId());
         assertThat(user.login()).isEqualTo(anthony.getLogin());
@@ -65,7 +73,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_pull_request() {
-        final var pullRequest = indexer.indexPullRequest("onlydustxyz", "marketplace-frontend", 1257L);
+        final var pullRequest = pullRequestIndexingService.indexPullRequest("onlydustxyz", "marketplace-frontend", 1257L);
 
         assertThat(pullRequest.id()).isEqualTo(1524797398);
         assertThat(pullRequest.author().login()).isEqualTo("AnthonyBuisset");
@@ -104,7 +112,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_issue() {
-        final var issue = indexer.indexIssue("onlydustxyz", "marketplace-frontend", 78L);
+        final var issue = issueIndexingService.indexIssue("onlydustxyz", "marketplace-frontend", 78L);
 
         assertThat(issue.id()).isEqualTo(issue78.getId());
         assertThat(issue.assignees().size()).isEqualTo(1);
@@ -118,7 +126,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_repo() {
-        final var repo = indexer.indexRepo(marketplaceFrontend.getId());
+        final var repo = repoIndexingService.indexRepo(marketplaceFrontend.getId());
 
         assertThat(repo.id()).isEqualTo(marketplaceFrontend.getId());
 
@@ -157,7 +165,7 @@ public class IndexingServiceTest {
     @Test
     void should_throw_when_indexing_non_existing_items() {
         assertThatThrownBy(() -> {
-            indexer.indexUser(0L);
+            userIndexingService.indexUser(0L);
         }).isInstanceOf(NotFound.class)
                 .hasMessageContaining("User not found");
 

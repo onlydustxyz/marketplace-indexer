@@ -2,7 +2,7 @@ package com.onlydust.marketplace.indexer.domain;
 
 import com.onlydust.marketplace.indexer.domain.models.UserIndexingJob;
 import com.onlydust.marketplace.indexer.domain.models.UserIndexingJobTrigger;
-import com.onlydust.marketplace.indexer.domain.services.UserIndexingJobService;
+import com.onlydust.marketplace.indexer.domain.services.UserRefreshJobService;
 import com.onlydust.marketplace.indexer.domain.stubs.JobSchedulerStub;
 import com.onlydust.marketplace.indexer.domain.stubs.UserIndexingJobTriggerRepositoryStub;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserJobServiceTest {
     private final UserIndexingJobTriggerRepositoryStub userIndexingJobTriggerRepositoryStub = new UserIndexingJobTriggerRepositoryStub();
     private final JobSchedulerStub<UserIndexingJob> userIndexingJobSchedulerStub = new JobSchedulerStub<>();
-    private final UserIndexingJobService jobService = new UserIndexingJobService(userIndexingJobTriggerRepositoryStub, userIndexingJobSchedulerStub);
+    private final UserRefreshJobService jobService = new UserRefreshJobService(userIndexingJobTriggerRepositoryStub, userIndexingJobSchedulerStub);
 
     @BeforeEach
     void setup() {

@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.domain.services;
 
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJob;
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
+import com.onlydust.marketplace.indexer.domain.ports.in.RefreshJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.out.JobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.out.RepoIndexingJobTriggerRepository;
 import lombok.AllArgsConstructor;
@@ -13,10 +14,11 @@ import static java.util.stream.Collectors.*;
 
 @AllArgsConstructor
 @Slf4j
-public class RepoIndexingJobService {
+public class RepoRefreshJobService implements RefreshJobScheduler {
     private final RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository;
     private final JobScheduler<RepoIndexingJob> scheduler;
 
+    @Override
     public void scheduleAllJobs() {
         repoIndexingJobTriggerRepository.list()
                 .stream().collect(
