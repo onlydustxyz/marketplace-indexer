@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJob;
 import com.onlydust.marketplace.indexer.domain.models.UserIndexingJob;
 import com.onlydust.marketplace.indexer.domain.models.clean.InstallationEvent;
-import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.RepoIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import com.onlydust.marketplace.indexer.domain.services.*;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
@@ -130,19 +127,19 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public RepoIndexingJobService repoIndexingJobService(
+    public RefreshJobScheduler repoRefreshJobScheduler(
             final PostgresRepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository,
             final JobScheduler<RepoIndexingJob> scheduler
     ) {
-        return new RepoIndexingJobService(repoIndexingJobTriggerRepository, scheduler);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, scheduler);
     }
 
 
     @Bean
-    public UserIndexingJobService userIndexingJobService(
+    public RefreshJobScheduler userRefreshJobScheduler(
             final PostgresUserIndexingJobTriggerRepository userIndexingJobTriggerRepository,
             final JobScheduler<UserIndexingJob> scheduler
     ) {
-        return new UserIndexingJobService(userIndexingJobTriggerRepository, scheduler);
+        return new UserRefreshJobService(userIndexingJobTriggerRepository, scheduler);
     }
 }
