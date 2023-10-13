@@ -10,7 +10,6 @@ import com.onlydust.marketplace.indexer.domain.services.*;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,9 +59,9 @@ public class DomainConfiguration {
 
     @Bean
     public EventProcessorService eventProcessorService(final PostgresRawInstallationEventStorageRepository postgresRawInstallationEventStorageRepository,
-                                                       @Qualifier("installationEventEventListener") final EventListener<InstallationEvent> eventListener,
+                                                       final EventListener<InstallationEvent> installationEventEventListener,
                                                        final RawStorageReader cachedRawStorageReader) {
-        return new EventProcessorService(postgresRawInstallationEventStorageRepository, eventListener, cachedRawStorageReader);
+        return new EventProcessorService(postgresRawInstallationEventStorageRepository, installationEventEventListener, cachedRawStorageReader);
     }
 
     @Bean
