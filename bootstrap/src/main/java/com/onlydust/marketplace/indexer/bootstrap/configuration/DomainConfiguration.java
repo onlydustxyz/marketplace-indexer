@@ -4,11 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJob;
 import com.onlydust.marketplace.indexer.domain.models.UserIndexingJob;
 import com.onlydust.marketplace.indexer.domain.models.clean.InstallationEvent;
+import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.RepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
-import com.onlydust.marketplace.indexer.domain.services.EventProcessorService;
-import com.onlydust.marketplace.indexer.domain.services.IndexingService;
-import com.onlydust.marketplace.indexer.domain.services.RepoIndexingJobService;
-import com.onlydust.marketplace.indexer.domain.services.UserIndexingJobService;
+import com.onlydust.marketplace.indexer.domain.services.*;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
@@ -77,14 +78,55 @@ public class DomainConfiguration {
         return new GithubRawStorageReader(githubHttpClient);
     }
 
-    @Bean(name = "onDemandIndexer")
-    public IndexingService onDemandIndexer(final RawStorageReader cachedRawStorageReader) {
-        return new IndexingService(cachedRawStorageReader);
+    @Bean(name = "cachedUserIndexer")
+    public UserIndexer cachedUserIndexer(final RawStorageReader cachedRawStorageReader) {
+        return new UserIndexingService(cachedRawStorageReader);
     }
 
-    @Bean(name = "refreshingIndexer")
-    public IndexingService refreshingIndexer(final RawStorageReader rawStorageReader) {
-        return new IndexingService(rawStorageReader);
+    @Bean(name = "userIndexer")
+    public UserIndexer refreshingUserIndexer(final RawStorageReader rawStorageReader) {
+        return new UserIndexingService(rawStorageReader);
+    }
+
+    @Bean(name = "cachedIssueIndexer")
+    public IssueIndexer cachedIssueIndexer(final RawStorageReader cachedRawStorageReader, final UserIndexer cachedUserIndexer) {
+        return new IssueIndexingService(cachedRawStorageReader, cachedUserIndexer);
+    }
+
+    @Bean(name = "issueIndexer")
+    public IssueIndexer refreshingIssueIndexer(final RawStorageReader rawStorageReader, final UserIndexer userIndexer) {
+        return new IssueIndexingService(rawStorageReader, userIndexer);
+    }
+
+    @Bean(name = "cachedPullRequestIndexer")
+    public PullRequestIndexer cachedPullRequestIndexer(
+            final RawStorageReader cachedRawStorageReader,
+            final UserIndexer cachedUserIndexer,
+            final IssueIndexer cachedIssueIndexer) {
+        return new PullRequestIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedIssueIndexer);
+    }
+
+    @Bean(name = "pullRequestIndexer")
+    public PullRequestIndexingService pullRequestIndexer(final RawStorageReader rawStorageReader,
+                                                         final UserIndexer userIndexer,
+                                                         final IssueIndexer issueIndexer) {
+        return new PullRequestIndexingService(rawStorageReader, userIndexer, issueIndexer);
+    }
+
+    @Bean(name = "cachedRepoIndexer")
+    public RepoIndexer cachedRepoIndexer(
+            final RawStorageReader cachedRawStorageReader,
+            final IssueIndexer cachedIssueIndexer,
+            final PullRequestIndexer cachedPullRequestIndexer) {
+        return new RepoIndexingService(cachedRawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer);
+    }
+
+    @Bean(name = "repoIndexer")
+    public RepoIndexer repoIndexer(
+            final RawStorageReader rawStorageReader,
+            final IssueIndexer issueIndexer,
+            final PullRequestIndexer pullRequestIndexer) {
+        return new RepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer);
     }
 
     @Bean
