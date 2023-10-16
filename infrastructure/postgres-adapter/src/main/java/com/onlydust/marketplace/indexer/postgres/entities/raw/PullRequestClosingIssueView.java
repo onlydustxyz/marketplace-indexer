@@ -4,10 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 
@@ -17,16 +14,18 @@ import java.time.Instant;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@IdClass(PullRequestClosingIssue.Id.class)
+@IdClass(PullRequestClosingIssueView.Id.class)
 @Table(name = "pull_request_closing_issues", schema = "indexer_raw")
-public class PullRequestClosingIssue {
+public class PullRequestClosingIssueView {
     @javax.persistence.Id
-    @Column(name = "pull_request_id")
-    Long pullRequestId;
+    @ManyToOne
+    @JoinColumn(name = "pull_request_id")
+    PullRequest pullRequest;
 
     @javax.persistence.Id
-    @Column(name = "issue_id")
-    Long issueId;
+    @ManyToOne
+    @JoinColumn(name = "issue_id")
+    Issue issue;
 
     @CreationTimestamp
     @EqualsAndHashCode.Exclude
@@ -38,16 +37,12 @@ public class PullRequestClosingIssue {
     @Column(name = "updated_at", nullable = false)
     Instant updatedAt;
 
-    public static PullRequestClosingIssue of(Long pullRequestId, Long issueId) {
-        return PullRequestClosingIssue.builder().pullRequestId(pullRequestId).issueId(issueId).build();
-    }
-
     @EqualsAndHashCode
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Id implements Serializable {
-        Long pullRequestId;
-        Long issueId;
+        Long pullRequest;
+        Long issue;
     }
 }
 

@@ -25,7 +25,7 @@ public class PullRequest {
     Long id;
 
     @EqualsAndHashCode.Exclude
-    @OneToOne
+    @ManyToOne
     Repo repo;
 
     Long number;

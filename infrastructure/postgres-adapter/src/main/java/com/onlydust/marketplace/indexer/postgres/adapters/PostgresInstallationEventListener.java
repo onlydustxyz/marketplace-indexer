@@ -8,10 +8,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubA
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import lombok.AllArgsConstructor;
 
-import javax.transaction.Transactional;
-
 @AllArgsConstructor
-@Transactional
 public class PostgresInstallationEventListener implements EventListener<InstallationEvent> {
     private final GithubAccountRepository githubAccountRepository;
     private final GithubRepoRepository githubRepoRepository;
