@@ -3,7 +3,7 @@ package com.onlydust.marketplace.indexer.github;
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.URI;
+import java.net.http.HttpResponse;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -21,20 +21,19 @@ public class GithubPage<T> implements Iterator<T> {
     public GithubPage(GithubHttpClient client, String path, Class<T[]> classType) {
         this.client = client;
         this.classType = classType;
-        fetchNextPage(client.buildURI(path));
+        decodeResponse(client.fetch(path));
     }
 
-    private void fetchNextPage(URI uri) {
-        final var httpResponse = client.fetch(uri);
+    private void decodeResponse(HttpResponse<byte[]> httpResponse) {
         switch (httpResponse.statusCode()) {
             case 200:
                 links = httpResponse.headers().firstValue("Link").map(GithubPageLinks::of).orElse(new GithubPageLinks());
-                content.addAll(asList(client.decode(httpResponse.body(), classType)));
+                content.addAll(asList(client.decodeBody(httpResponse.body(), classType)));
                 break;
             case 404:
                 break;
             default:
-                throw OnlyDustException.internalServerError("Received incorrect status (" + httpResponse.statusCode() + ") when fetching github API: " + uri);
+                throw OnlyDustException.internalServerError("Received incorrect status (" + httpResponse.statusCode() + ") when fetching github API");
         }
     }
 
@@ -46,7 +45,7 @@ public class GithubPage<T> implements Iterator<T> {
     @Override
     public T next() {
         if (content.isEmpty()) {
-            fetchNextPage(links.getNext());
+            decodeResponse(client.fetch(links.getNext()));
         }
 
         return content.poll();

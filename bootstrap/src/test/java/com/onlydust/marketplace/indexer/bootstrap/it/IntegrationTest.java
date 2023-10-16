@@ -39,7 +39,7 @@ import static org.testcontainers.utility.MountableFile.forClasspathResource;
 @DirtiesContext
 @Import(SwaggerConfiguration.class)
 @EnableWireMock({
-        @ConfigureWireMock(name = "github", port = 8080, property = "infrastructure.github.baseUri")
+        @ConfigureWireMock(name = "github", property = "infrastructure.github.baseUri")
 })
 public class IntegrationTest {
     @Container
