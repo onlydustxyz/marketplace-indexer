@@ -13,7 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import static java.util.Objects.isNull;
 
 @AllArgsConstructor
 @Slf4j
@@ -36,9 +37,9 @@ public class PullRequestIndexingService implements PullRequestIndexer {
         LOGGER.info("Indexing pull request commits for repo {} and pull request {}", repoId, pullRequestId);
         final var commits = rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber);
         return commits.stream().map(commit -> {
-            final var author = Objects.isNull(commit.getAuthor()) ? commit.getCommitter() : commit.getAuthor();
-            return Objects.isNull(author) ? null : new Commit(commit.getSha(), userIndexer.indexUser(author.getId()));
-        }).filter(commit -> !Objects.isNull(commit)).toList();
+            final var author = isNull(commit.getAuthor()) ? commit.getCommitter() : commit.getAuthor();
+            return isNull(author) ? null : new Commit(commit.getSha(), userIndexer.indexUser(author.getId()));
+        }).filter(commit -> !isNull(commit)).toList();
     }
 
     private List<CheckRun> indexCheckRuns(Long repoId, String sha) {
@@ -64,7 +65,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
         final var codeReviews = indexPullRequestReviews(repo.getId(), pullRequest.getId(), prNumber);
         final var requestedReviewers = pullRequest.getRequestedReviewers().stream().map(reviewer -> userIndexer.indexUser(reviewer.getId())).toList();
         final var commits = indexPullRequestCommits(repo.getId(), pullRequest.getId(), prNumber);
-        final var checkRuns = Objects.isNull(pullRequest.getHead().getRepo()) ? new ArrayList<CheckRun>() : indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
+        final var checkRuns = isNull(pullRequest.getHead().getRepo()) ? new ArrayList<CheckRun>() : indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
         final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName(), pullRequest.getNumber());
         return new PullRequest(pullRequest.getId(), author, codeReviews, requestedReviewers, commits, checkRuns, closingIssues);
     }

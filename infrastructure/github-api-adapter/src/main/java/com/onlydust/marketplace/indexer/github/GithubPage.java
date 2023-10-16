@@ -4,7 +4,12 @@ import com.onlydust.marketplace.indexer.domain.exception.NotFound;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+
+import static java.util.Arrays.asList;
+import static java.util.Objects.isNull;
 
 @Slf4j
 public class GithubPage<T> implements Iterator<T> {
@@ -24,7 +29,7 @@ public class GithubPage<T> implements Iterator<T> {
         switch (httpResponse.statusCode()) {
             case 200:
                 links = httpResponse.headers().firstValue("Link").map(GithubPageLinks::of).orElse(new GithubPageLinks());
-                content.addAll(Arrays.asList(client.decode(httpResponse.body(), classType)));
+                content.addAll(asList(client.decode(httpResponse.body(), classType)));
                 break;
             case 404:
                 break;
@@ -35,7 +40,7 @@ public class GithubPage<T> implements Iterator<T> {
 
     @Override
     public boolean hasNext() {
-        return !content.isEmpty() || !Objects.isNull(links.getNext());
+        return !content.isEmpty() || !isNull(links.getNext());
     }
 
     @Override
