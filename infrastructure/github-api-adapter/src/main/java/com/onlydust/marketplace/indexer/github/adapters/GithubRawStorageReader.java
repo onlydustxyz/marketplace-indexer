@@ -56,7 +56,7 @@ public class GithubRawStorageReader implements RawStorageReader {
     public List<RawSocialAccount> userSocialAccounts(Long userId) {
         return client.get("/user/" + userId + "/social_accounts", RawSocialAccount[].class)
                 .map(Arrays::asList)
-                .orElse(new ArrayList<>());
+                .orElse(List.of());
     }
 
     @Override
@@ -73,14 +73,14 @@ public class GithubRawStorageReader implements RawStorageReader {
     public List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long prNumber) {
         return client.get("/repositories/" + repoId + "/pulls/" + prNumber + "/reviews", RawCodeReview[].class)
                 .map(Arrays::asList)
-                .orElse(new ArrayList<>());
+                .orElse(List.of());
     }
 
     @Override
     public List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long prNumber) {
         return client.get("/repositories/" + repoId + "/pulls/" + prNumber + "/commits", RawCommit[].class)
                 .map(Arrays::asList)
-                .orElse(new ArrayList<>());
+                .orElse(List.of());
     }
 
     @Override

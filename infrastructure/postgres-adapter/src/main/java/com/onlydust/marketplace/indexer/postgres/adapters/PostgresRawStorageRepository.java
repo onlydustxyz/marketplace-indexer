@@ -7,7 +7,6 @@ import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +55,7 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
 
     @Override
     public List<RawSocialAccount> userSocialAccounts(Long userId) {
-        return userSocialAccountsRepository.findById(userId).map(UserSocialAccounts::getData).orElse(new ArrayList<>());
+        return userSocialAccountsRepository.findById(userId).map(UserSocialAccounts::getData).orElse(List.of());
     }
 
     @Override
@@ -71,12 +70,12 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
 
     @Override
     public List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return pullRequestReviewsRepository.findById(pullRequestId).map(PullRequestReview::getData).orElse(new ArrayList<>());
+        return pullRequestReviewsRepository.findById(pullRequestId).map(PullRequestReview::getData).orElse(List.of());
     }
 
     @Override
     public List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return pullRequestCommitsRepository.findById(pullRequestId).map(PullRequestCommits::getData).orElse(new ArrayList<>());
+        return pullRequestCommitsRepository.findById(pullRequestId).map(PullRequestCommits::getData).orElse(List.of());
     }
 
     @Override

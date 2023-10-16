@@ -44,7 +44,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
     private List<CheckRun> indexCheckRuns(Long repoId, String sha) {
         LOGGER.info("Indexing check runs for repo {} and sha {}", repoId, sha);
-        final var checkRuns = rawStorageReader.checkRuns(repoId, sha).map(RawCheckRuns::getCheckRuns).orElse(new ArrayList<>());
+        final var checkRuns = rawStorageReader.checkRuns(repoId, sha).map(RawCheckRuns::getCheckRuns).orElse(List.of());
         return checkRuns.stream().map(checkRun -> {
             return new CheckRun(checkRun.getId());
         }).toList();
@@ -53,7 +53,8 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     private List<Issue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         LOGGER.info("Indexing closing issues for repo {} and pull request {}", repoOwner, pullRequestNumber);
         final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
-        return closingIssues.map(RawPullRequestClosingIssues::issueIdNumbers).orElse(new ArrayList<>()).stream().map(issue -> issueIndexer.indexIssue(repoOwner, repoName, issue.getRight())).toList();
+        return closingIssues.map(RawPullRequestClosingIssues::issueIdNumbers).orElse(List.of())
+                .stream().map(issue -> issueIndexer.indexIssue(repoOwner, repoName, issue.getRight())).toList();
     }
 
     @Override
