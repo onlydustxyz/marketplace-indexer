@@ -36,32 +36,32 @@
         </dependency>
         <dependency>
             <groupId>com.onlydust.marketplace.indexer</groupId>
-            <artifactId>postgres</artifactId>
+            <artifactId>postgres-adapter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.onlydust.marketplace.indexer</groupId>
-            <artifactId>rest.api</artifactId>
+            <artifactId>rest-api-adapter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.onlydust.marketplace.indexer</groupId>
-            <artifactId>rest.github</artifactId>
+            <artifactId>github-app-adapter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.onlydust.marketplace.indexer</groupId>
-            <artifactId>cron</artifactId>
+            <artifactId>cron-adapter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.onlydust.marketplace.indexer</groupId>
-            <artifactId>github</artifactId>
+            <artifactId>github-api-adapter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.onlydust.marketplace.indexer</groupId>
-            <artifactId>quartz</artifactId>
+            <artifactId>quartz-adapter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

@@ -14,9 +14,9 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>rest.api</module>
-        <module>rest.github</module>
-        <module>cron</module>
+        <module>rest-api-adapter</module>
+        <module>github-app-adapter</module>
+        <module>cron-adapter</module>
     </modules>
 
     <properties>

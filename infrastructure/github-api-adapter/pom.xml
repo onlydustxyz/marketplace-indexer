@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>github</artifactId>
+    <artifactId>github-api-adapter</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
