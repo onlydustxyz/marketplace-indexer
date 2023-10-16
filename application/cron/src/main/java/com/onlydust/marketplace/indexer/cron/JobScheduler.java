@@ -13,13 +13,13 @@ public class JobScheduler {
     private final RefreshJobScheduler repoRefreshJobScheduler;
     private final RefreshJobScheduler userRefreshJobScheduler;
 
-    @Scheduled(cron = "0/5 * * * * ?") // every 5 seconds
+    @Scheduled(fixedDelayString = "${application.cron.repo-refresh-job-delay}")
     public void scheduleRepoRefresherJobs() {
         LOGGER.info("Scheduling repo refresh jobs");
         repoRefreshJobScheduler.scheduleAllJobs();
     }
 
-    @Scheduled(cron = "0 0 0 * * ?") // daily
+    @Scheduled(fixedDelayString = "${application.cron.user-refresh-job-delay}")
     public void scheduleUserRefresherJobs() {
         LOGGER.info("Scheduling user refresh jobs");
         userRefreshJobScheduler.scheduleAllJobs();
