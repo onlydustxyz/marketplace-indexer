@@ -15,9 +15,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>postgres</module>
-        <module>github</module>
-        <module>quartz</module>
+        <module>postgres-adapter</module>
+        <module>github-api-adapter</module>
+        <module>quartz-adapter</module>
     </modules>
 
     <properties>

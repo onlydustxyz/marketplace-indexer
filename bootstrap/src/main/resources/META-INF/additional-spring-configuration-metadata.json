@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "application.cron.repo-refresh-job-delay",
+      "type": "java.lang.Integer",
+      "description": "Delay in milliseconds between 2 repository refresh jobs."
+    },
+    {
+      "name": "application.cron.user-refresh-job-delay",
+      "type": "java.lang.Integer",
+      "description": "Delay in milliseconds between 2 user refresh jobs."
+    }
+  ]
+}

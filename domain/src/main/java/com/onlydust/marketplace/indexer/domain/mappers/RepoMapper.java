@@ -9,12 +9,12 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepoMapper {
-    public static Repo map(RawRepo repo) {
+public interface RepoMapper {
+    static Repo map(RawRepo repo) {
         return map(repo, new ArrayList<>(), new ArrayList<>(), new RawLanguages());
     }
 
-    public static Repo map(RawRepo repo, List<PullRequest> pullRequests, List<Issue> issues, RawLanguages languages) {
+    static Repo map(RawRepo repo, List<PullRequest> pullRequests, List<Issue> issues, RawLanguages languages) {
         return new Repo(
                 repo.getId(),
                 repo.getName(),

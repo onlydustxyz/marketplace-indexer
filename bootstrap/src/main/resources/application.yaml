@@ -12,6 +12,9 @@ application:
     github:
       webhook:
         secret: ${GITHUB_WEBHOOK_SECRET}
+  cron:
+    repo-refresh-job-delay: 5000     # 5s
+    user-refresh-job-delay: 86400000 # 24h
 
 spring:
   application:

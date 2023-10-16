@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain;
 
-import com.onlydust.marketplace.indexer.domain.exception.NotFound;
+import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
@@ -166,7 +166,7 @@ public class IndexingServiceTest {
     void should_throw_when_indexing_non_existing_items() {
         assertThatThrownBy(() -> {
             userIndexingService.indexUser(0L);
-        }).isInstanceOf(NotFound.class)
+        }).isInstanceOf(OnlyDustException.class)
                 .hasMessageContaining("User not found");
 
         assertCachedUsersAre();
