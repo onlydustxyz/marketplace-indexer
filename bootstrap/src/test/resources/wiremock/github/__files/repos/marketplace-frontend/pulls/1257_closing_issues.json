@@ -1,0 +1,17 @@
+{
+  "data": {
+    "repository": {
+      "pullRequest": {
+        "databaseId": 1524797398,
+        "closingIssuesReferences": {
+          "nodes": [
+            {
+              "databaseId": 1302028409,
+              "number": 82
+            }
+          ]
+        }
+      }
+    }
+  }
+}

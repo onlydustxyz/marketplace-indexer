@@ -11,7 +11,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
+import javax.transaction.Transactional;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -58,6 +58,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     }
 
     @Override
+    @Transactional
     public PullRequest indexPullRequest(String repoOwner, String repoName, Long prNumber) {
         LOGGER.info("Indexing pull request {} for repo {}/{}", prNumber, repoOwner, repoName);
         final var repo = rawStorageReader.repo(repoOwner, repoName).orElseThrow(() -> OnlyDustException.notFound("Repo not found"));
@@ -66,7 +67,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
         final var codeReviews = indexPullRequestReviews(repo.getId(), pullRequest.getId(), prNumber);
         final var requestedReviewers = pullRequest.getRequestedReviewers().stream().map(reviewer -> userIndexer.indexUser(reviewer.getId())).toList();
         final var commits = indexPullRequestCommits(repo.getId(), pullRequest.getId(), prNumber);
-        final var checkRuns = isNull(pullRequest.getHead().getRepo()) ? new ArrayList<CheckRun>() : indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
+        final List<CheckRun> checkRuns = isNull(pullRequest.getHead().getRepo()) ? List.of() : indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
         final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName(), pullRequest.getNumber());
         return new PullRequest(pullRequest.getId(), author, codeReviews, requestedReviewers, commits, checkRuns, closingIssues);
     }

@@ -1,5 +1,7 @@
 package com.onlydust.marketplace.indexer.github;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import lombok.AllArgsConstructor;
@@ -13,6 +15,7 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -32,19 +35,19 @@ public class GithubHttpClient {
     }
 
     public HttpResponse<byte[]> fetch(String path) {
-        return _fetch(URI.create(config.baseUri + path));
+        return _fetch("GET", URI.create(config.baseUri + path), HttpRequest.BodyPublishers.noBody());
     }
 
     public HttpResponse<byte[]> fetch(URI uri) {
-        return _fetch(overrideHost(uri));
+        return _fetch("GET", overrideHost(uri), HttpRequest.BodyPublishers.noBody());
     }
 
 
-    private HttpResponse<byte[]> _fetch(URI uri) {
+    private HttpResponse<byte[]> _fetch(String method, URI uri, HttpRequest.BodyPublisher bodyPublisher) {
         uri = overrideHost(uri);
-        LOGGER.debug("Fetching {}", uri);
+        LOGGER.debug("Fetching {} {}", method, uri);
         try {
-            final var requestBuilder = HttpRequest.newBuilder().uri(uri).headers("Authorization", "Bearer " + config.personalAccessToken).GET();
+            final var requestBuilder = HttpRequest.newBuilder().uri(uri).headers("Authorization", "Bearer " + config.personalAccessToken).method(method, bodyPublisher);
             return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
         } catch (IOException | InterruptedException e) {
             throw OnlyDustException.internalServerError("Unable to fetch github API:" + uri, e);
@@ -76,6 +79,23 @@ public class GithubHttpClient {
             default ->
                     throw OnlyDustException.internalServerError("Received incorrect status (" + httpResponse.statusCode() + ") when fetching github API: " + path);
         };
+    }
+
+    public Optional<JsonNode> graphql(String query, Object variables) {
+        try {
+            final var body = Map.of("query", query, "variables", variables);
+            final var httpResponse = _fetch("POST", URI.create(config.baseUri + "/graphql"), HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body)));
+            return switch (httpResponse.statusCode()) {
+                case 200 -> Optional.of(objectMapper.readTree(httpResponse.body()));
+                case 403, 404 -> Optional.empty();
+                default ->
+                        throw OnlyDustException.internalServerError("Received incorrect status (" + httpResponse.statusCode() + ") when fetching github graphql API");
+            };
+        } catch (JsonProcessingException e) {
+            throw OnlyDustException.internalServerError("Unable to serialize graphql request body", e);
+        } catch (IOException e) {
+            throw OnlyDustException.internalServerError("Unable to deserialize graphql response body", e);
+        }
     }
 
     @ToString
