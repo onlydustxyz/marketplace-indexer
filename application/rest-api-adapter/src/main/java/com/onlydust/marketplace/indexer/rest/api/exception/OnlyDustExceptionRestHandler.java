@@ -46,8 +46,7 @@ public class OnlyDustExceptionRestHandler {
     @ExceptionHandler(AuthenticationException.class)
     @ResponseBody
     public ResponseEntity<OnlyDustError> unauthorized(AuthenticationException exception) {
-        return handleOnlyDustException(new OnlyDustException(
-                HttpStatus.UNAUTHORIZED.value(),
+        return handleOnlyDustException(OnlyDustException.unAuthorized(
                 "Missing authentication",
                 exception
         ));
@@ -55,8 +54,7 @@ public class OnlyDustExceptionRestHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<OnlyDustError> internalError(final Exception exception) {
-        return handleOnlyDustException(new OnlyDustException(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+        return handleOnlyDustException(OnlyDustException.internalServerError(
                 "Internal error from unexpected runtime exception",
                 exception
         ));

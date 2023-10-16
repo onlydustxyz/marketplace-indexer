@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services;
 
-import com.onlydust.marketplace.indexer.domain.exception.NotFound;
+import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.mappers.RepoMapper;
 import com.onlydust.marketplace.indexer.domain.models.clean.Repo;
 import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
@@ -20,7 +20,7 @@ public class RepoIndexingService implements RepoIndexer {
     @Override
     public Repo indexRepo(Long repoId) {
         LOGGER.info("Indexing repo {}", repoId);
-        final var repo = rawStorageReader.repo(repoId).orElseThrow(() -> new NotFound("Repo not found"));
+        final var repo = rawStorageReader.repo(repoId).orElseThrow(() -> OnlyDustException.notFound("Repo not found"));
         final var pullRequests = rawStorageReader.repoPullRequests(repoId).stream().map(pr -> pullRequestIndexer.indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber())).toList();
         final var issues = rawStorageReader.repoIssues(repoId).stream().map(issue -> issueIndexer.indexIssue(repo.getOwner().getLogin(), repo.getName(), issue.getNumber())).toList();
         final var languages = rawStorageReader.repoLanguages(repoId);

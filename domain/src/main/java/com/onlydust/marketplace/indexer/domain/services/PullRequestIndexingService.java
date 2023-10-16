@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services;
 
-import com.onlydust.marketplace.indexer.domain.exception.NotFound;
+import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.clean.*;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawCheckRuns;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestClosingIssues;
@@ -60,8 +60,8 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     @Override
     public PullRequest indexPullRequest(String repoOwner, String repoName, Long prNumber) {
         LOGGER.info("Indexing pull request {} for repo {}/{}", prNumber, repoOwner, repoName);
-        final var repo = rawStorageReader.repo(repoOwner, repoName).orElseThrow(() -> new NotFound("Repo not found"));
-        final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber).orElseThrow(() -> new NotFound("Pull request not found"));
+        final var repo = rawStorageReader.repo(repoOwner, repoName).orElseThrow(() -> OnlyDustException.notFound("Repo not found"));
+        final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber).orElseThrow(() -> OnlyDustException.notFound("Pull request not found"));
         final var author = userIndexer.indexUser(pullRequest.getAuthor().getId());
         final var codeReviews = indexPullRequestReviews(repo.getId(), pullRequest.getId(), prNumber);
         final var requestedReviewers = pullRequest.getRequestedReviewers().stream().map(reviewer -> userIndexer.indexUser(reviewer.getId())).toList();

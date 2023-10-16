@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services;
 
-import com.onlydust.marketplace.indexer.domain.exception.NotFound;
+import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.mappers.UserMapper;
 import com.onlydust.marketplace.indexer.domain.models.clean.User;
 import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
@@ -16,7 +16,7 @@ public class UserIndexingService implements UserIndexer {
     @Override
     public User indexUser(Long userId) {
         LOGGER.info("Indexing user {}", userId);
-        final var user = rawStorageReader.user(userId).orElseThrow(() -> new NotFound("User not found"));
+        final var user = rawStorageReader.user(userId).orElseThrow(() -> OnlyDustException.notFound("User not found"));
         final var socialAccounts = rawStorageReader.userSocialAccounts(userId);
         return UserMapper.map(user, socialAccounts);
     }

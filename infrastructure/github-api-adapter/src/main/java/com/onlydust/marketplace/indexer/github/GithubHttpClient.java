@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.github;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.marketplace.indexer.domain.exception.NotFound;
+import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
@@ -26,7 +26,7 @@ public class GithubHttpClient {
         try {
             return objectMapper.readValue(data, classType);
         } catch (IOException e) {
-            throw new NotFound("Unable to deserialize github response", e);
+            throw OnlyDustException.internalServerError("Unable to deserialize github response", e);
         }
     }
 
@@ -36,7 +36,7 @@ public class GithubHttpClient {
             final var requestBuilder = HttpRequest.newBuilder().uri(uri).headers("Authorization", "Bearer " + config.personalAccessToken).GET();
             return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
         } catch (IOException | InterruptedException e) {
-            throw new NotFound("Unable to fetch github API:" + uri, e);
+            throw OnlyDustException.internalServerError("Unable to fetch github API:" + uri, e);
         }
     }
 
@@ -45,7 +45,8 @@ public class GithubHttpClient {
         return switch (httpResponse.statusCode()) {
             case 200 -> Optional.of(decode(httpResponse.body(), responseClass));
             case 403, 404 -> Optional.empty();
-            default -> throw new NotFound("Unable to fetch github API: " + path);
+            default ->
+                    throw OnlyDustException.internalServerError("Received incorrect status (" + httpResponse.statusCode() + ") when fetching github API: " + path);
         };
     }
 

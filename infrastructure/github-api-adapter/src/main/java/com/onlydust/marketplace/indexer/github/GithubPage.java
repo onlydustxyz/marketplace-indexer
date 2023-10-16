@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.github;
 
-import com.onlydust.marketplace.indexer.domain.exception.NotFound;
+import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
@@ -34,7 +34,7 @@ public class GithubPage<T> implements Iterator<T> {
             case 404:
                 break;
             default:
-                throw new NotFound("Unable to fetch github API:" + uri);
+                throw OnlyDustException.internalServerError("Received incorrect status (" + httpResponse.statusCode() + ") when fetching github API: " + uri);
         }
     }
 
