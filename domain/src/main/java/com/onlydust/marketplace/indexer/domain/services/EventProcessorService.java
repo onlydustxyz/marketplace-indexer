@@ -22,6 +22,7 @@ public class EventProcessorService {
     public void process(RawInstallationEvent rawEvent) {
         rawInstallationEventRepository.save(rawEvent);
         final var event = InstallationEvent.builder()
+                .action(InstallationEvent.Action.valueOf(rawEvent.getAction().toUpperCase()))
                 .installationId(rawEvent.getInstallation().getId())
                 .account(UserMapper.map(rawEvent.getInstallation().getAccount()))
                 .repos(rawEvent.getRepositories().stream()

@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 @ToString(callSuper = true)
 public class RawInstallationEvent extends JsonDocument {
+    String action;
     RawInstallation installation;
     List<RawRepo> repositories;
 }

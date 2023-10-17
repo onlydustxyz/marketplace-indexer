@@ -10,7 +10,13 @@ import java.util.List;
 @Builder
 @EqualsAndHashCode(callSuper = true)
 public class InstallationEvent extends Event {
+    Action action;
     Long installationId;
     User account;
     List<Repo> repos;
+
+    public enum Action {
+        CREATED,
+        DELETED
+    }
 }

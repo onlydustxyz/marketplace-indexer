@@ -2,6 +2,8 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
 import com.onlydust.marketplace.indexer.domain.ports.out.RepoIndexingJobTriggerRepository;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccount;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountRepository;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import org.junit.jupiter.api.Test;
@@ -18,9 +20,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GithubWebhookIT extends IntegrationTest {
     final Long MARKETPLACE_FRONTEND_ID = 498695724L;
     @Autowired
-    public RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository;
+    RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository;
     @Autowired
     GithubWebhookRestApi.Config config;
+    @Autowired
+    GithubAccountRepository githubAccountRepository;
 
     @Test
     void should_reject_upon_invalid_signature() throws URISyntaxException, IOException {
@@ -50,6 +54,14 @@ public class GithubWebhookIT extends IntegrationTest {
         response.expectStatus().isOk();
 
         assertThat(repoIndexingJobTriggerRepository.list()).containsExactly(new RepoIndexingJobTrigger(42952633L, MARKETPLACE_FRONTEND_ID));
+        assertThat(githubAccountRepository.findAll()).containsExactly(GithubAccount.builder()
+                .id(98735558L)
+                .login("onlydustxyz")
+                .type("Organization")
+                .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
+                .htmlUrl("https://github.com/onlydustxyz")
+                .installationId(42952633L)
+                .build());
     }
 
     @Test
@@ -65,6 +77,14 @@ public class GithubWebhookIT extends IntegrationTest {
         response.expectStatus().isOk();
 
         assertThat(repoIndexingJobTriggerRepository.list()).isEmpty();
+        assertThat(githubAccountRepository.findAll()).containsExactly(GithubAccount.builder()
+                .id(98735558L)
+                .login("onlydustxyz")
+                .type("Organization")
+                .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
+                .htmlUrl("https://github.com/onlydustxyz")
+                .installationId(null)
+                .build());
     }
 
     protected WebTestClient.ResponseSpec post(final String event) {
