@@ -15,12 +15,23 @@ public class JobTriggerEventListener implements EventListener<InstallationEvent>
 
     @Override
     public void onEvent(InstallationEvent event) {
-        repoIndexingJobTriggerRepository.deleteAllByInstallationId(event.getInstallationId());
+        switch (event.getAction()) {
+            case CREATED -> onCreated(event);
+            case DELETED -> onDeleted(event);
+        }
+
+    }
+
+    private void onCreated(InstallationEvent event) {
         repoIndexingJobTriggerRepository.saveAll(event.getRepos().stream()
                 .map(repo -> RepoIndexingJobTriggerEntity.builder()
                         .repoId(repo.id())
                         .installationId(event.getInstallationId())
                         .build())
                 .toList());
+    }
+
+    private void onDeleted(InstallationEvent event) {
+        repoIndexingJobTriggerRepository.deleteAllByInstallationId(event.getInstallationId());
     }
 }
