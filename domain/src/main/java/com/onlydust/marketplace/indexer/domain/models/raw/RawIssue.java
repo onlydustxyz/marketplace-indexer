@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.Value;
 
+import java.util.Date;
 import java.util.List;
 
 @Value
@@ -16,8 +17,18 @@ import java.util.List;
 public class RawIssue extends JsonDocument {
     Long id;
     Long number;
+    String title;
+    @JsonProperty("user")
+    RawAccount author;
+    String state;
+    @JsonProperty("state_reason")
+    String stateReason;
+    @JsonProperty("html_url")
+    String htmlUrl;
+    @JsonProperty("created_at")
+    Date createdAt;
+    @JsonProperty("closed_at")
+    Date closedAt;
+    Integer comments;
     List<RawAccount> assignees;
-
-    @JsonProperty("repository_url")
-    String repositoryUrl;
 }

@@ -5,18 +5,39 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
+import java.util.Date;
 import java.util.List;
 
 @Builder(access = AccessLevel.PRIVATE)
 @Value
 public class CleanIssue {
     Long id;
+    CleanRepo repo;
+    Long number;
+    String title;
+    String state;
+    String stateReason;
+    Date createdAt;
+    Date closedAt;
+    CleanAccount author;
+    String htmlUrl;
     List<CleanAccount> assignees;
+    Integer comments;
 
-    public static CleanIssue of(RawIssue issue, List<CleanAccount> assignees) {
+    public static CleanIssue of(RawIssue issue, CleanRepo repo, CleanAccount author, List<CleanAccount> assignees) {
         return CleanIssue.builder()
                 .id(issue.getId())
+                .repo(repo)
+                .number(issue.getNumber())
+                .title(issue.getTitle())
+                .state(issue.getState())
+                .stateReason(issue.getStateReason())
+                .createdAt(issue.getCreatedAt())
+                .closedAt(issue.getClosedAt())
+                .author(author)
+                .htmlUrl(issue.getHtmlUrl())
                 .assignees(assignees)
+                .comments(issue.getComments())
                 .build();
     }
 }

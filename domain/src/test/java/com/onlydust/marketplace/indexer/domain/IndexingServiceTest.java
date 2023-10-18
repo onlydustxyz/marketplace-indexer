@@ -101,6 +101,7 @@ public class IndexingServiceTest {
                 pierre,  // as code reviewer
                 olivier, // as requested reviewer
                 anthony, // as committer
+                anthony,  // as issue author
                 anthony  // as issue assignee
         );
         assertCachedUserSocialAccountsAre(
@@ -117,10 +118,11 @@ public class IndexingServiceTest {
         assertThat(issue.getId()).isEqualTo(issue78.getId());
         assertThat(issue.getAssignees().size()).isEqualTo(1);
         assertThat(issue.getAssignees().get(0).getLogin()).isEqualTo("AnthonyBuisset");
+        assertThat(issue.getAuthor().getLogin()).isEqualTo("AnthonyBuisset");
 
         assertCachedReposAre(marketplaceFrontend);
         assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(issue78)));
-        assertCachedUsersAre(anthony);
+        assertCachedUsersAre(anthony, anthony);
         assertCachedUserSocialAccountsAre(Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList()));
     }
 
@@ -152,6 +154,8 @@ public class IndexingServiceTest {
                 pierre,  // as code reviewer
                 olivier, // as requested reviewer
                 anthony, // as committer
+                anthony, // as issue author
+                anthony, // as issue author, again...
                 anthony, // as issue assignee
                 anthony  // as issue assignee, again...
         );

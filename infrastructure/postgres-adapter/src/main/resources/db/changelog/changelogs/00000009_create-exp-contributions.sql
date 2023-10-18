@@ -1,4 +1,4 @@
-CREATE TYPE indexer_exp.github_issue_status AS ENUM ('OPEN', 'CLOSED');
+CREATE TYPE indexer_exp.github_issue_status AS ENUM ('OPEN', 'COMPLETED', 'CANCELLED');
 
 CREATE TABLE indexer_exp.github_issues
 (
@@ -55,7 +55,6 @@ AS ENUM ('PENDING', 'COMMENTED', 'APPROVED', 'CHANGES_REQUESTED', 'DISMISSED');
 CREATE TABLE indexer_exp.github_code_reviews
 (
     id              TEXT PRIMARY KEY,
-    repo_id         BIGINT                                       NOT NULL references indexer_exp.github_repos (id),
     pull_request_id BIGINT                                       NOT NULL references indexer_exp.github_pull_requests (id),
     author_id       BIGINT                                       NOT NULL references indexer_exp.github_accounts (id),
     state           indexer_exp.github_pull_request_review_state NOT NULL,
@@ -77,6 +76,7 @@ CREATE TABLE indexer_exp.contributions
     issue_id        BIGINT references indexer_exp.github_issues (id),
     code_review_id  TEXT references indexer_exp.github_code_reviews (id),
     created_at      TIMESTAMP                       NOT NULL,
+    completed_at    TIMESTAMP,
     UNIQUE (contributor_id, repo_id, pull_request_id, issue_id),
     CHECK ((type = 'PULL_REQUEST' AND pull_request_id IS NOT NULL AND issue_id IS NULL AND code_review_id IS NULL)
         OR (type = 'ISSUE' AND pull_request_id IS NULL AND issue_id IS NOT NULL AND code_review_id IS NULL)

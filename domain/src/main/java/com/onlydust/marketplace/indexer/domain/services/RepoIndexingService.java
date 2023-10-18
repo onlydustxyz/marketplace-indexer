@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.services;
 
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
@@ -23,6 +24,12 @@ public class RepoIndexingService implements RepoIndexer {
         final var pullRequests = rawStorageReader.repoPullRequests(repoId).stream().map(pr -> pullRequestIndexer.indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber())).toList();
         final var issues = rawStorageReader.repoIssues(repoId).stream().map(issue -> issueIndexer.indexIssue(repo.getOwner().getLogin(), repo.getName(), issue.getNumber())).toList();
         final var languages = rawStorageReader.repoLanguages(repoId);
-        return CleanRepo.of(repo, pullRequests, issues, languages);
+        return CleanRepo.of(
+                repo,
+                CleanAccount.of(repo.getOwner()),
+                pullRequests,
+                issues,
+                languages
+        );
     }
 }

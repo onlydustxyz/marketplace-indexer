@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.Value;
 
+import java.util.Date;
 import java.util.List;
 
 @Value
@@ -21,6 +22,20 @@ public class RawPullRequest extends JsonDocument {
 
     @JsonProperty("user")
     RawAccount author;
+
+    String title;
+    String state;
+    @JsonProperty("created_at")
+    Date createdAt;
+    @JsonProperty("closed_at")
+    Date closedAt;
+    @JsonProperty("merged_at")
+    Date mergedAt;
+    @JsonProperty("html_url")
+    String htmlUrl;
+    Integer comments;
+    Boolean merged;
+
 
     @JsonProperty("requested_reviewers")
     List<RawAccount> requestedReviewers;

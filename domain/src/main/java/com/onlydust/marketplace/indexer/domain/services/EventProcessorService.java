@@ -21,12 +21,13 @@ public class EventProcessorService {
 
     public void process(RawInstallationEvent rawEvent) {
         rawInstallationEventRepository.save(rawEvent);
+        final var account = CleanAccount.of(rawEvent.getInstallation().getAccount());
         final var event = InstallationEvent.builder()
                 .action(InstallationEvent.Action.valueOf(rawEvent.getAction().toUpperCase()))
                 .installationId(rawEvent.getInstallation().getId())
-                .account(CleanAccount.of(rawEvent.getInstallation().getAccount()))
+                .account(account)
                 .repos(rawEvent.getRepositories().stream()
-                        .map(eventRepo -> rawStorageReader.repo(eventRepo.getId()).map(CleanRepo::of).orElse(null))
+                        .map(eventRepo -> rawStorageReader.repo(eventRepo.getId()).map(repo -> CleanRepo.of(repo, account)).orElse(null))
                         .filter(Objects::nonNull).toList())
                 .build();
         installationEventEventListener.onEvent(event);
