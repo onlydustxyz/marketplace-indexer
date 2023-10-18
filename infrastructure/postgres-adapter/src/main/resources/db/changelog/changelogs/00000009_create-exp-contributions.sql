@@ -14,7 +14,7 @@ CREATE TABLE indexer_exp.github_issues
     comments_count INTEGER                         NOT NULL
 );
 
-CREATE TABLE indexer_exp.issue_assignees
+CREATE TABLE indexer_exp.github_issues_assignees
 (
     issue_id BIGINT references indexer_exp.github_issues (id),
     user_id  BIGINT references indexer_exp.github_accounts (id),
@@ -49,16 +49,16 @@ CREATE TABLE indexer_exp.github_pull_requests_closing_issues
 CREATE INDEX github_pull_requests_closing_issues_issue_id_idx
     ON indexer_exp.github_pull_requests_closing_issues (issue_id, pull_request_id);
 
-CREATE TYPE indexer_exp.github_pull_request_review_state
+CREATE TYPE indexer_exp.github_code_review_state
 AS ENUM ('PENDING', 'COMMENTED', 'APPROVED', 'CHANGES_REQUESTED', 'DISMISSED');
 
 CREATE TABLE indexer_exp.github_code_reviews
 (
     id              TEXT PRIMARY KEY,
-    pull_request_id BIGINT                                       NOT NULL references indexer_exp.github_pull_requests (id),
-    author_id       BIGINT                                       NOT NULL references indexer_exp.github_accounts (id),
-    state           indexer_exp.github_pull_request_review_state NOT NULL,
-    requested_at    TIMESTAMP                                    NOT NULL,
+    pull_request_id BIGINT                               NOT NULL references indexer_exp.github_pull_requests (id),
+    author_id       BIGINT                               NOT NULL references indexer_exp.github_accounts (id),
+    state           indexer_exp.github_code_review_state NOT NULL,
+    requested_at    TIMESTAMP                            NOT NULL,
     submitted_at    TIMESTAMP
 );
 

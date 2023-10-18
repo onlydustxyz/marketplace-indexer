@@ -5,10 +5,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Builder(access = AccessLevel.PRIVATE)
+@Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 @Value
 public class CleanPullRequest {
     Long id;
@@ -23,13 +24,18 @@ public class CleanPullRequest {
     CleanAccount author;
     String htmlUrl;
     Integer comments;
-    List<CleanCodeReview> reviews;
-    List<CleanAccount> requestedReviewers;
-    List<CleanCommit> commits;
-    List<CleanCheckRun> checkRuns;
-    List<CleanIssue> closingIssues;
+    @Builder.Default
+    List<CleanCodeReview> reviews = new ArrayList<>();
+    @Builder.Default
+    List<CleanAccount> requestedReviewers = new ArrayList<>();
+    @Builder.Default
+    List<CleanCommit> commits = new ArrayList<>();
+    @Builder.Default
+    List<CleanCheckRun> checkRuns = new ArrayList<>();
+    @Builder.Default
+    List<CleanIssue> closingIssues = new ArrayList<>();
 
-    public static CleanPullRequest of(RawPullRequest pullRequest, CleanRepo repo, CleanAccount author, List<CleanCodeReview> reviews, List<CleanAccount> requestedReviewers, List<CleanCommit> commits, List<CleanCheckRun> checkRuns, List<CleanIssue> closingIssues) {
+    public static CleanPullRequest of(RawPullRequest pullRequest, CleanRepo repo, CleanAccount author) {
         return CleanPullRequest.builder()
                 .id(pullRequest.getId())
                 .repo(repo)
@@ -43,6 +49,11 @@ public class CleanPullRequest {
                 .htmlUrl(pullRequest.getHtmlUrl())
                 .comments(pullRequest.getComments())
                 .author(author)
+                .build();
+    }
+
+    public static CleanPullRequest of(RawPullRequest pullRequest, CleanRepo repo, CleanAccount author, List<CleanCodeReview> reviews, List<CleanAccount> requestedReviewers, List<CleanCommit> commits, List<CleanCheckRun> checkRuns, List<CleanIssue> closingIssues) {
+        return CleanPullRequest.of(pullRequest, repo, author).toBuilder()
                 .reviews(reviews)
                 .requestedReviewers(requestedReviewers)
                 .commits(commits)

@@ -3,7 +3,6 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.*;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
@@ -21,8 +20,8 @@ public class GithubAccountEntity {
     Long id;
     String login;
     @Enumerated(EnumType.STRING)
-    @Type(type = "github_account_type")
-    GithubAccountType type;
+    @org.hibernate.annotations.Type(type = "github_account_type")
+    GithubAccountEntity.Type type;
     String htmlUrl;
     String avatarUrl;
     Long installationId;
@@ -31,18 +30,17 @@ public class GithubAccountEntity {
         return GithubAccountEntity.builder()
                 .id(account.getId())
                 .login(account.getLogin())
-                .type(GithubAccountType.of(account.getType()))
+                .type(Type.of(account.getType()))
                 .htmlUrl(account.getHtmlUrl())
                 .avatarUrl(account.getAvatarUrl())
                 .installationId(account.getInstallationId())
                 .build();
     }
 
-    public enum GithubAccountType {
-        USER,
-        ORGANIZATION;
+    public enum Type {
+        USER, ORGANIZATION;
 
-        public static GithubAccountType of(GithubAccount.Type type) {
+        public static Type of(GithubAccount.Type type) {
             return switch (type) {
                 case USER -> USER;
                 case ORGANIZATION -> ORGANIZATION;
