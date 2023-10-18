@@ -1,11 +1,11 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
+import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -16,12 +16,12 @@ import java.util.Date;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Table(name = "github_repos", schema = "indexer_exp")
-public class GithubRepo {
+public class GithubRepoEntity {
     @Id
     Long id;
 
-    @OneToOne
-    GithubAccount owner;
+    @ManyToOne
+    GithubAccountEntity owner;
     String name;
     String htmlUrl;
     Date updatedAt;
@@ -29,10 +29,10 @@ public class GithubRepo {
     Long starsCount;
     Long forksCount;
 
-    public static GithubRepo of(Long ownerId, CleanRepo repo) {
-        return GithubRepo.builder()
+    public static GithubRepoEntity of(GithubRepo repo) {
+        return GithubRepoEntity.builder()
                 .id(repo.getId())
-                .owner(GithubAccount.builder().id(ownerId).build())
+                .owner(GithubAccountEntity.of(repo.getOwner()))
                 .name(repo.getName())
                 .htmlUrl(repo.getHtmlUrl())
                 .updatedAt(repo.getUpdatedAt())

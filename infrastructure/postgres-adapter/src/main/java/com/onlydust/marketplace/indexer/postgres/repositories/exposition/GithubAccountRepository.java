@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.postgres.repositories.exposition;
 
-import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccount;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface GithubAccountRepository extends JpaRepository<GithubAccount, Long> {
+public interface GithubAccountRepository extends JpaRepository<GithubAccountEntity, Long> {
 }

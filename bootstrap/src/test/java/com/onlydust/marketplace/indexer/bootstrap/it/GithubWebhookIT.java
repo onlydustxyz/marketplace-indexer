@@ -2,7 +2,7 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
 import com.onlydust.marketplace.indexer.domain.ports.out.RepoIndexingJobTriggerRepository;
-import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccount;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountRepository;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
@@ -54,10 +54,10 @@ public class GithubWebhookIT extends IntegrationTest {
         response.expectStatus().isOk();
 
         assertThat(repoIndexingJobTriggerRepository.list()).containsExactly(new RepoIndexingJobTrigger(42952633L, MARKETPLACE_FRONTEND_ID));
-        assertThat(githubAccountRepository.findAll()).containsExactly(GithubAccount.builder()
+        assertThat(githubAccountRepository.findAll()).containsExactly(GithubAccountEntity.builder()
                 .id(98735558L)
                 .login("onlydustxyz")
-                .type("Organization")
+                .type(GithubAccountEntity.GithubAccountType.ORGANIZATION)
                 .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
                 .htmlUrl("https://github.com/onlydustxyz")
                 .installationId(42952633L)
@@ -77,10 +77,10 @@ public class GithubWebhookIT extends IntegrationTest {
         response.expectStatus().isOk();
 
         assertThat(repoIndexingJobTriggerRepository.list()).isEmpty();
-        assertThat(githubAccountRepository.findAll()).containsExactly(GithubAccount.builder()
+        assertThat(githubAccountRepository.findAll()).containsExactly(GithubAccountEntity.builder()
                 .id(98735558L)
                 .login("onlydustxyz")
-                .type("Organization")
+                .type(GithubAccountEntity.GithubAccountType.ORGANIZATION)
                 .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
                 .htmlUrl("https://github.com/onlydustxyz")
                 .installationId(null)
