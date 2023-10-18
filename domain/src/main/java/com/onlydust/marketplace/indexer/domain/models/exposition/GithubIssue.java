@@ -36,6 +36,7 @@ public class GithubIssue {
                 .author(GithubAccount.of(issue.getAuthor()))
                 .htmlUrl(issue.getHtmlUrl())
                 .commentsCount(issue.getComments())
+                .assignees(issue.getAssignees().stream().map(GithubAccount::of).toList())
                 .build();
     }
 
