@@ -24,11 +24,11 @@ public class PostgresInstallationEventListener implements EventListener<Installa
     }
 
     private void onCreated(InstallationEvent event) {
-        githubAccountRepository.save(GithubAccountEntity.of(GithubAccount.of(event)));
         githubRepoRepository.saveAll(event.getRepos().stream()
                 .map(GithubRepo::of)
                 .map(GithubRepoEntity::of)
                 .toList());
+        githubAccountRepository.save(GithubAccountEntity.of(GithubAccount.of(event)));
     }
 
     private void onDeleted(InstallationEvent event) {

@@ -20,9 +20,9 @@ import java.util.Date;
 public class ContributionEntity {
     @Id
     String id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     GithubRepoEntity repo;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     GithubAccountEntity contributor;
     @Enumerated(EnumType.STRING)
     @org.hibernate.annotations.Type(type = "contribution_type")
@@ -30,11 +30,11 @@ public class ContributionEntity {
     @Enumerated(EnumType.STRING)
     @org.hibernate.annotations.Type(type = "contribution_status")
     Status status;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     GithubPullRequestEntity pullRequest;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     GithubIssueEntity issue;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     GithubCodeReviewEntity codeReview;
     Date createdAt;
     Date completedAt;

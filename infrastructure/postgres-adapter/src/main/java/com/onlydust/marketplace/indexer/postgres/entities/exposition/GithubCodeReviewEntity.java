@@ -21,10 +21,10 @@ public class GithubCodeReviewEntity {
     @Id
     String id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     GithubPullRequestEntity pullRequest;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     GithubAccountEntity author;
 
     @Enumerated(EnumType.STRING)

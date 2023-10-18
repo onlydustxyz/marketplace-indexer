@@ -8,7 +8,8 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -22,7 +23,7 @@ public class GithubPullRequestEntity {
     @Id
     Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     GithubRepoEntity repo;
     Long number;
     String title;
@@ -32,16 +33,17 @@ public class GithubPullRequestEntity {
     Date createdAt;
     Date closedAt;
     Date mergedAt;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     GithubAccountEntity author;
     String htmlUrl;
     Integer commentsCount;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "github_pull_requests_closing_issues",
+            schema = "indexer_exp",
             joinColumns = @JoinColumn(name = "pull_request_id"),
             inverseJoinColumns = @JoinColumn(name = "issue_id"))
-    List<GithubIssueEntity> closingIssues;
+    Set<GithubIssueEntity> closingIssues;
 
     public static GithubPullRequestEntity of(GithubPullRequest pullRequest) {
         return GithubPullRequestEntity.builder()
@@ -56,7 +58,7 @@ public class GithubPullRequestEntity {
                 .author(GithubAccountEntity.of(pullRequest.getAuthor()))
                 .htmlUrl(pullRequest.getHtmlUrl())
                 .commentsCount(pullRequest.getCommentsCount())
-                .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssueEntity::of).toList())
+                .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssueEntity::of).collect(Collectors.toUnmodifiableSet()))
                 .build();
     }
 

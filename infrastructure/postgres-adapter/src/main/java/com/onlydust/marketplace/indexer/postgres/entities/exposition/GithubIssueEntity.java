@@ -22,7 +22,7 @@ public class GithubIssueEntity {
     @Id
     Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     GithubRepoEntity repo;
     Long number;
     String title;
@@ -31,13 +31,14 @@ public class GithubIssueEntity {
     Status status;
     Date createdAt;
     Date closedAt;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     GithubAccountEntity author;
     String htmlUrl;
     Integer commentsCount;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "github_issues_assignees",
+            schema = "indexer_exp",
             joinColumns = @JoinColumn(name = "issue_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     List<GithubAccountEntity> assignees;

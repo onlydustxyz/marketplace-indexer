@@ -3,10 +3,7 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -20,7 +17,7 @@ public class GithubRepoEntity {
     @Id
     Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     GithubAccountEntity owner;
     String name;
     String htmlUrl;
