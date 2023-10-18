@@ -30,7 +30,7 @@ public class GithubPullRequest {
                 .repo(GithubRepo.of(pullRequest.getRepo()))
                 .number(pullRequest.getNumber())
                 .title(pullRequest.getTitle())
-                .status(buildStatus(pullRequest))
+                .status(Status.of(pullRequest))
                 .author(GithubAccount.of(pullRequest.getAuthor()))
                 .htmlUrl(pullRequest.getHtmlUrl())
                 .commentsCount(pullRequest.getComments())
@@ -41,19 +41,20 @@ public class GithubPullRequest {
                 .build();
     }
 
-    private static Status buildStatus(CleanPullRequest pullRequest) {
-        switch (pullRequest.getState()) {
-            case "open":
-                return Status.OPEN;
-            case "closed":
-                return pullRequest.getMerged() ? Status.MERGED : Status.CLOSED;
-        }
-        throw new RuntimeException("Unknown pull request state: " + pullRequest.getState());
-    }
 
     public enum Status {
         OPEN,
         MERGED,
-        CLOSED
+        CLOSED;
+
+        public static Status of(CleanPullRequest pullRequest) {
+            switch (pullRequest.getState()) {
+                case "open":
+                    return Status.OPEN;
+                case "closed":
+                    return pullRequest.getMerged() ? Status.MERGED : Status.CLOSED;
+            }
+            throw new RuntimeException("Unknown pull request state: " + pullRequest.getState());
+        }
     }
 }

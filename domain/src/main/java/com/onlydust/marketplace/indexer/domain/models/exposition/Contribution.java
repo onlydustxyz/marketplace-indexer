@@ -24,7 +24,7 @@ public class Contribution {
                 .repo(pullRequest.getRepo())
                 .contributor(pullRequest.getAuthor())
                 .type(Type.PULL_REQUEST)
-                .status(buildStatus(pullRequest.getStatus()))
+                .status(Status.of(pullRequest.getStatus()))
                 .pullRequest(pullRequest)
                 .createdAt(pullRequest.getCreatedAt())
                 .completedAt(pullRequest.getClosedAt())
@@ -36,7 +36,7 @@ public class Contribution {
                 .repo(issue.getRepo())
                 .contributor(assignee)
                 .type(Type.ISSUE)
-                .status(buildStatus(issue.getStatus()))
+                .status(Status.of(issue.getStatus()))
                 .issue(issue)
                 .createdAt(issue.getCreatedAt())
                 .completedAt(issue.getClosedAt())
@@ -44,7 +44,7 @@ public class Contribution {
     }
 
     public static Contribution of(GithubCodeReview codeReview) {
-        final var status = buildStatus(codeReview.getState());
+        final var status = Status.of(codeReview.getState());
         return Contribution.builder()
                 .repo(codeReview.getPullRequest().getRepo())
                 .contributor(codeReview.getAuthor())
@@ -62,30 +62,6 @@ public class Contribution {
                 .build();
     }
 
-    private static Status buildStatus(GithubPullRequest.Status status) {
-        return switch (status) {
-            case OPEN -> Status.IN_PROGRESS;
-            case CLOSED -> Status.CANCELLED;
-            case MERGED -> Status.COMPLETED;
-        };
-    }
-
-    private static Status buildStatus(GithubIssue.Status status) {
-        return switch (status) {
-            case OPEN -> Status.IN_PROGRESS;
-            case CANCELLED -> Status.CANCELLED;
-            case COMPLETED -> Status.COMPLETED;
-        };
-    }
-
-    private static Status buildStatus(GithubCodeReview.State state) {
-        return switch (state) {
-            case PENDING, COMMENTED -> Status.IN_PROGRESS;
-            case APPROVED, CHANGES_REQUESTED -> Status.COMPLETED;
-            case DISMISSED -> Status.CANCELLED;
-        };
-    }
-
     public enum Type {
         ISSUE,
         PULL_REQUEST,
@@ -95,6 +71,32 @@ public class Contribution {
     public enum Status {
         IN_PROGRESS,
         COMPLETED,
-        CANCELLED
+        CANCELLED;
+
+
+        public static Status of(GithubPullRequest.Status status) {
+            return switch (status) {
+                case OPEN -> Status.IN_PROGRESS;
+                case CLOSED -> Status.CANCELLED;
+                case MERGED -> Status.COMPLETED;
+            };
+        }
+
+        public static Status of(GithubIssue.Status status) {
+            return switch (status) {
+                case OPEN -> Status.IN_PROGRESS;
+                case CANCELLED -> Status.CANCELLED;
+                case COMPLETED -> Status.COMPLETED;
+            };
+        }
+
+        public static Status of(GithubCodeReview.State state) {
+            return switch (state) {
+                case PENDING, COMMENTED -> Status.IN_PROGRESS;
+                case APPROVED, CHANGES_REQUESTED -> Status.COMPLETED;
+                case DISMISSED -> Status.CANCELLED;
+            };
+        }
+
     }
 }

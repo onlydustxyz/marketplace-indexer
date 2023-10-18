@@ -30,7 +30,7 @@ public class GithubIssue {
                 .repo(GithubRepo.of(issue.getRepo()))
                 .number(issue.getNumber())
                 .title(issue.getTitle())
-                .status(buildStatus(issue))
+                .status(Status.of(issue))
                 .createdAt(issue.getCreatedAt())
                 .closedAt(issue.getClosedAt())
                 .author(GithubAccount.of(issue.getAuthor()))
@@ -39,24 +39,25 @@ public class GithubIssue {
                 .build();
     }
 
-    private static Status buildStatus(CleanIssue issue) {
-        switch (issue.getState()) {
-            case "open":
-                return Status.OPEN;
-            case "closed":
-                switch (issue.getStateReason()) {
-                    case "completed":
-                        return Status.COMPLETED;
-                    case "not_planned":
-                        return Status.CANCELLED;
-                }
-        }
-        throw OnlyDustException.internalServerError("Unknown issue state: " + issue.getState() + " " + issue.getStateReason());
-    }
-
     public enum Status {
         OPEN,
         COMPLETED,
-        CANCELLED
+        CANCELLED;
+
+        public static Status of(CleanIssue issue) {
+            switch (issue.getState()) {
+                case "open":
+                    return Status.OPEN;
+                case "closed":
+                    switch (issue.getStateReason()) {
+                        case "completed":
+                            return Status.COMPLETED;
+                        case "not_planned":
+                            return Status.CANCELLED;
+                    }
+            }
+            throw OnlyDustException.internalServerError("Unknown issue state: " + issue.getState() + " " + issue.getStateReason());
+        }
+
     }
 }
