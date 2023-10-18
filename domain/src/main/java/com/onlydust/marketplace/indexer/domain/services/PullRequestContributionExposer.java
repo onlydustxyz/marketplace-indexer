@@ -9,6 +9,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.ContributionStorageRepository;
 import lombok.AllArgsConstructor;
 
+import javax.transaction.Transactional;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
@@ -17,6 +18,7 @@ public class PullRequestContributionExposer implements PullRequestIndexer {
     ContributionStorageRepository expositionRepository;
 
     @Override
+    @Transactional
     public CleanPullRequest indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber) {
         final var pullRequest = indexer.indexPullRequest(repoOwner, repoName, pullRequestNumber);
 
