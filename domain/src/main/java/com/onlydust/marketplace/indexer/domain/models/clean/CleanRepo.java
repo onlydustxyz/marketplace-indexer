@@ -26,7 +26,7 @@ public class CleanRepo {
     @Builder.Default
     Map<String, Long> languages = new HashMap<>();
 
-    public static CleanRepo of(RawRepo repo, CleanAccount account) {
+    public static CleanRepo of(RawRepo repo, CleanAccount owner) {
         return CleanRepo
                 .builder()
                 .id(repo.getId())
@@ -34,7 +34,7 @@ public class CleanRepo {
                 .htmlUrl(repo.getHtmlUrl())
                 .updatedAt(repo.getUpdatedAt())
                 .description(repo.getDescription())
-                .owner(account)
+                .owner(owner)
                 .starsCount(repo.getStargazersCount())
                 .forksCount(repo.getForksCount())
                 .build();

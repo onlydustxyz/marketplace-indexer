@@ -7,7 +7,7 @@ import lombok.Value;
 import java.util.Date;
 
 @Value
-@Builder(access = AccessLevel.PRIVATE)
+@Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 public class Contribution {
     GithubRepo repo;
     GithubAccount contributor;
@@ -53,6 +53,12 @@ public class Contribution {
                 .codeReview(codeReview)
                 .createdAt(codeReview.getRequestedAt())
                 .completedAt(status == Status.IN_PROGRESS ? null : codeReview.getSubmittedAt())
+                .build();
+    }
+
+    public static Contribution of(GithubCommit commit) {
+        return Contribution.of(commit.getPullRequest()).toBuilder()
+                .contributor(commit.getAuthor())
                 .build();
     }
 

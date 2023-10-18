@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.models.exposition;
 
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanCodeReview;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import lombok.AccessLevel;
@@ -24,6 +25,15 @@ public class GithubCodeReview {
                 .state(State.valueOf(codeReview.getState()))
                 .requestedAt(pullRequest.getCreatedAt())
                 .submittedAt(codeReview.getSubmittedAt())
+                .build();
+    }
+
+    public static GithubCodeReview of(CleanAccount reviewer, CleanPullRequest pullRequest) {
+        return GithubCodeReview.builder()
+                .pullRequest(GithubPullRequest.of(pullRequest))
+                .author(GithubAccount.of(reviewer))
+                .state(State.PENDING)
+                .requestedAt(pullRequest.getCreatedAt())
                 .build();
     }
 

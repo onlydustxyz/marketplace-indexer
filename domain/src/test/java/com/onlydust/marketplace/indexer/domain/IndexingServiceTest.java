@@ -1,13 +1,13 @@
 package com.onlydust.marketplace.indexer.domain;
 
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
+import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
-import com.onlydust.marketplace.indexer.domain.services.IssueIndexingService;
-import com.onlydust.marketplace.indexer.domain.services.PullRequestIndexingService;
-import com.onlydust.marketplace.indexer.domain.services.RepoIndexingService;
-import com.onlydust.marketplace.indexer.domain.services.UserIndexingService;
+import com.onlydust.marketplace.indexer.domain.services.*;
+import com.onlydust.marketplace.indexer.domain.stubs.ContributionRepositoryStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageRepositoryStub;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,10 +37,14 @@ public class IndexingServiceTest {
     final RawLanguages marketplaceFrontendLanguages = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/languages.json", RawLanguages.class);
     final RawStorageRepositoryStub rawStorageReaderStub = new RawStorageRepositoryStub();
     final RawStorageRepositoryStub rawStorageRepository = new RawStorageRepositoryStub();
+    final ContributionRepositoryStub contributionRepository = new ContributionRepositoryStub();
     final RawStorageReader rawStorageReader = CacheWriteRawStorageReaderDecorator.builder().fetcher(rawStorageReaderStub).cache(rawStorageRepository).build();
     final UserIndexingService userIndexingService = new UserIndexingService(rawStorageReader);
     final IssueIndexingService issueIndexingService = new IssueIndexingService(rawStorageReader, userIndexingService);
-    final PullRequestIndexingService pullRequestIndexingService = new PullRequestIndexingService(rawStorageReader, userIndexingService, issueIndexingService);
+    final PullRequestIndexer pullRequestIndexingService = new PullRequestContributionExposer(
+            new PullRequestIndexingService(rawStorageReader, userIndexingService, issueIndexingService),
+            contributionRepository
+    );
     final RepoIndexingService repoIndexingService = new RepoIndexingService(rawStorageReader, issueIndexingService, pullRequestIndexingService);
 
     @BeforeEach
@@ -109,6 +113,10 @@ public class IndexingServiceTest {
                         pierre.getId(), Arrays.stream(pierreSocialAccounts).toList(),
                         olivier.getId(), Arrays.stream(olivierSocialAccounts).toList())
         );
+
+        assertThat(contributionRepository.contributions()).hasSize(4);
+        assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.PULL_REQUEST))).hasSize(2);
+        assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.CODE_REVIEW))).hasSize(2);
     }
 
     @Test

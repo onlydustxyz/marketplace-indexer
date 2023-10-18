@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.util.Objects.isNull;
-
 @ControllerAdvice
 @Slf4j
 public class OnlyDustExceptionRestHandler {
@@ -28,11 +26,9 @@ public class OnlyDustExceptionRestHandler {
         onlyDustError.setMessage(httpStatus.name());
         onlyDustError.setId(errorId);
         if (httpStatus.is5xxServerError()) {
-            LOGGER.error(String.format("Error %s returned from the REST API with stacktrace :", errorId),
-                    isNull(exception.getCause()) ? exception : exception.getCause());
+            LOGGER.error("Error {} returned from the REST API with stacktrace: ", errorId, exception);
         } else {
-            LOGGER.warn(String.format("Error %s returned from the REST API with stacktrace :", errorId),
-                    isNull(exception.getCause()) ? exception : exception.getCause());
+            LOGGER.warn("Error {} returned from the REST API with stacktrace: ", errorId, exception);
         }
         return onlyDustError;
     }
