@@ -6,6 +6,8 @@ import lombok.Value;
 
 import java.util.Date;
 
+import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
+
 @Value
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 public class Contribution {
@@ -60,6 +62,18 @@ public class Contribution {
         return Contribution.of(commit.getPullRequest()).toBuilder()
                 .contributor(commit.getAuthor())
                 .build();
+    }
+
+    public String getId() {
+        return sha256Hex(String.format("(%s,%s,%d)", type, getDetailsId(), contributor.getId()));
+    }
+
+    private String getDetailsId() {
+        return switch (type) {
+            case PULL_REQUEST -> pullRequest.getId().toString();
+            case ISSUE -> issue.getId().toString();
+            case CODE_REVIEW -> codeReview.getId();
+        };
     }
 
     public enum Type {

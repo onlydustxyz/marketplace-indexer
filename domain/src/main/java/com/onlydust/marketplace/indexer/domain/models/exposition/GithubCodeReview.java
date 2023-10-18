@@ -9,6 +9,8 @@ import lombok.Value;
 
 import java.util.Date;
 
+import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
+
 @Value
 @Builder(access = AccessLevel.PRIVATE)
 public class GithubCodeReview {
@@ -35,6 +37,10 @@ public class GithubCodeReview {
                 .state(State.PENDING)
                 .requestedAt(pullRequest.getCreatedAt())
                 .build();
+    }
+
+    public String getId() {
+        return sha256Hex(String.format("(%d,%d)", pullRequest.getId(), author.getId()));
     }
 
     public enum State {
