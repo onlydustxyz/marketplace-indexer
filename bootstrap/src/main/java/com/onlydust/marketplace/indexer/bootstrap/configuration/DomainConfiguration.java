@@ -85,28 +85,42 @@ public class DomainConfiguration {
     }
 
     @Bean(name = "cachedIssueIndexer")
-    public IssueIndexer cachedIssueIndexer(final RawStorageReader cachedRawStorageReader, final UserIndexer cachedUserIndexer) {
-        return new IssueIndexingService(cachedRawStorageReader, cachedUserIndexer);
+    public IssueIndexer cachedIssueIndexer(final RawStorageReader cachedRawStorageReader, final UserIndexer cachedUserIndexer, final ContributionStorageRepository contributionStorageRepository) {
+        return new IssueContributionExposer(
+                new IssueIndexingService(cachedRawStorageReader, cachedUserIndexer),
+                contributionStorageRepository
+        );
     }
 
     @Bean(name = "issueIndexer")
-    public IssueIndexer refreshingIssueIndexer(final RawStorageReader rawStorageReader, final UserIndexer userIndexer) {
-        return new IssueIndexingService(rawStorageReader, userIndexer);
+    public IssueIndexer refreshingIssueIndexer(final RawStorageReader rawStorageReader, final UserIndexer userIndexer, final ContributionStorageRepository contributionStorageRepository) {
+        return new IssueContributionExposer(
+                new IssueIndexingService(rawStorageReader, userIndexer),
+                contributionStorageRepository
+        );
     }
 
     @Bean(name = "cachedPullRequestIndexer")
     public PullRequestIndexer cachedPullRequestIndexer(
             final RawStorageReader cachedRawStorageReader,
             final UserIndexer cachedUserIndexer,
-            final IssueIndexer cachedIssueIndexer) {
-        return new PullRequestIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedIssueIndexer);
+            final IssueIndexer cachedIssueIndexer,
+            final ContributionStorageRepository contributionStorageRepository) {
+        return new PullRequestContributionExposer(
+                new PullRequestIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedIssueIndexer),
+                contributionStorageRepository
+        );
     }
 
     @Bean(name = "pullRequestIndexer")
-    public PullRequestIndexingService pullRequestIndexer(final RawStorageReader rawStorageReader,
-                                                         final UserIndexer userIndexer,
-                                                         final IssueIndexer issueIndexer) {
-        return new PullRequestIndexingService(rawStorageReader, userIndexer, issueIndexer);
+    public PullRequestIndexer pullRequestIndexer(final RawStorageReader rawStorageReader,
+                                                 final UserIndexer userIndexer,
+                                                 final IssueIndexer issueIndexer,
+                                                 final ContributionStorageRepository contributionStorageRepository) {
+        return new PullRequestContributionExposer(
+                new PullRequestIndexingService(rawStorageReader, userIndexer, issueIndexer),
+                contributionStorageRepository
+        );
     }
 
     @Bean(name = "cachedRepoIndexer")
