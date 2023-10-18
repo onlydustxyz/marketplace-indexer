@@ -25,6 +25,7 @@ public class RawIssue extends JsonDocument {
     String stateReason;
     @JsonProperty("html_url")
     String htmlUrl;
+    String body;
     @JsonProperty("created_at")
     Date createdAt;
     @JsonProperty("closed_at")

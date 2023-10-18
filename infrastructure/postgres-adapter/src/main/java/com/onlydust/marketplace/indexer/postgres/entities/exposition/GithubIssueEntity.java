@@ -34,6 +34,7 @@ public class GithubIssueEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     GithubAccountEntity author;
     String htmlUrl;
+    String body;
     Integer commentsCount;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -54,6 +55,7 @@ public class GithubIssueEntity {
                 .closedAt(issue.getClosedAt())
                 .author(GithubAccountEntity.of(issue.getAuthor()))
                 .htmlUrl(issue.getHtmlUrl())
+                .body(issue.getBody())
                 .commentsCount(issue.getCommentsCount())
                 .assignees(issue.getAssignees().stream().map(GithubAccountEntity::of).toList())
                 .build();

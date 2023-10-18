@@ -21,3 +21,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000009_create-exp-contributions.sql
   - include:
       file: db/changelog/changelogs/00000010_create-github-account-type-enum.sql
+  - include:
+      file: db/changelog/changelogs/00000011_add-body-columns.sql

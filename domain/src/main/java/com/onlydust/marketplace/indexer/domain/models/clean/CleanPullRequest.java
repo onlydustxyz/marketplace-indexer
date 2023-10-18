@@ -23,6 +23,7 @@ public class CleanPullRequest {
     Boolean merged;
     CleanAccount author;
     String htmlUrl;
+    String body;
     Integer comments;
     @Builder.Default
     List<CleanCodeReview> reviews = new ArrayList<>();
@@ -47,6 +48,7 @@ public class CleanPullRequest {
                 .mergedAt(pullRequest.getMergedAt())
                 .merged(pullRequest.getMerged())
                 .htmlUrl(pullRequest.getHtmlUrl())
+                .body(pullRequest.getBody())
                 .comments(pullRequest.getComments())
                 .author(author)
                 .build();

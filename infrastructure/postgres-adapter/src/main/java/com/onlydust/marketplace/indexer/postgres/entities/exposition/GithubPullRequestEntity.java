@@ -33,6 +33,7 @@ public class GithubPullRequestEntity {
     Date createdAt;
     Date closedAt;
     Date mergedAt;
+    String body;
     @ManyToOne(cascade = CascadeType.ALL)
     GithubAccountEntity author;
     String htmlUrl;
@@ -55,6 +56,7 @@ public class GithubPullRequestEntity {
                 .createdAt(pullRequest.getCreatedAt())
                 .closedAt(pullRequest.getClosedAt())
                 .mergedAt(pullRequest.getMergedAt())
+                .body(pullRequest.getBody())
                 .author(GithubAccountEntity.of(pullRequest.getAuthor()))
                 .htmlUrl(pullRequest.getHtmlUrl())
                 .commentsCount(pullRequest.getCommentsCount())

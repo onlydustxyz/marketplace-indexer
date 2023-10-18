@@ -21,6 +21,7 @@ public class CleanIssue {
     Date closedAt;
     CleanAccount author;
     String htmlUrl;
+    String body;
     List<CleanAccount> assignees;
     Integer comments;
 
@@ -36,6 +37,7 @@ public class CleanIssue {
                 .closedAt(issue.getClosedAt())
                 .author(author)
                 .htmlUrl(issue.getHtmlUrl())
+                .body(issue.getBody())
                 .assignees(assignees)
                 .comments(issue.getComments())
                 .build();

@@ -21,6 +21,7 @@ public class GithubIssue {
     Date closedAt;
     GithubAccount author;
     String htmlUrl;
+    String body;
     Integer commentsCount;
     List<GithubAccount> assignees;
 
@@ -35,6 +36,7 @@ public class GithubIssue {
                 .closedAt(issue.getClosedAt())
                 .author(GithubAccount.of(issue.getAuthor()))
                 .htmlUrl(issue.getHtmlUrl())
+                .body(issue.getBody())
                 .commentsCount(issue.getComments())
                 .assignees(issue.getAssignees().stream().map(GithubAccount::of).toList())
                 .build();

@@ -33,6 +33,7 @@ public class RawPullRequest extends JsonDocument {
     Date mergedAt;
     @JsonProperty("html_url")
     String htmlUrl;
+    String body;
     Integer comments;
     Boolean merged;
 
