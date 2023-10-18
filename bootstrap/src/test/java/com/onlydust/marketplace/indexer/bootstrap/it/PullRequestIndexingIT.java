@@ -1,16 +1,17 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,8 +34,11 @@ public class PullRequestIndexingIT extends IntegrationTest {
     public IssueRepository issueRepository;
     @Autowired
     public PullRequestClosingIssueRepository pullRequestClosingIssueRepository;
+    @Autowired
+    public ContributionRepository contributionRepository;
 
     @Test
+    @Transactional
     public void should_index_pull_request_on_demand() throws IOException {
         // Given
         final var marketplaceFrontend = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend.json"), RawRepo.class);
@@ -42,8 +46,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
         final var pr1257Reviews = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1257_reviews.json"), RawCodeReview[].class));
         final var pr1257Commits = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1257_commits.json"), RawCommit[].class));
         final var pr1257CheckRuns = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1257_check_runs.json"), RawCheckRuns.class);
-        final var issue82 = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/issues/82.json"), RawIssue.class);
-        final var pr1257ClosingIssues = new RawPullRequestClosingIssues(pr1257.getId(), List.of(Pair.of(issue82.getId(), issue82.getNumber())));
+        final var issue78 = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/issues/78.json"), RawIssue.class);
 
         final var anthony = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
         final var pierre = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/pierre.json"), RawAccount.class);
@@ -69,8 +72,18 @@ public class PullRequestIndexingIT extends IntegrationTest {
                 UserSocialAccounts.of(olivier.getId(), olivierSocialAccounts),
                 UserSocialAccounts.of(anthony.getId(), anthonySocialAccounts)
         );
-        assertThat(issueRepository.findAll()).containsExactly(Issue.of(marketplaceFrontend.getId(), issue82));
-        assertThat(pullRequestClosingIssueRepository.findAll()).containsExactly(PullRequestClosingIssue.of(pr1257.getId(), issue82.getId()));
+        assertThat(issueRepository.findAll()).containsExactly(Issue.of(marketplaceFrontend.getId(), issue78));
+        assertThat(pullRequestClosingIssueRepository.findAll()).containsExactly(PullRequestClosingIssue.of(pr1257.getId(), issue78.getId()));
+        /*
+         * Pull request 1257 from anthony (author is same as committer)
+         * Code review from pierre
+         * Code review requested to olivier
+         * Issue 78 closed by pr 1257, assigned to anthony
+         */
+        assertThat(contributionRepository.findAll()).hasSize(4);
+        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST)).hasSize(1);
+        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(2);
+        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE)).hasSize(1);
     }
 
     private WebTestClient.ResponseSpec indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber) {

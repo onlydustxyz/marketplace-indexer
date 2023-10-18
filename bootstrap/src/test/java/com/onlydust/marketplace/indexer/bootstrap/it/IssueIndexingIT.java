@@ -1,13 +1,14 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawIssue;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.Issue;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.Repo;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.User;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.UserSocialAccounts;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.RepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserRepository;
@@ -30,6 +31,8 @@ public class IssueIndexingIT extends IntegrationTest {
     public UserRepository userRepository;
     @Autowired
     public UserSocialAccountsRepository userSocialAccountsRepository;
+    @Autowired
+    public ContributionRepository contributionRepository;
 
     @Test
     public void should_index_issue_on_demand() throws IOException {
@@ -49,6 +52,7 @@ public class IssueIndexingIT extends IntegrationTest {
         assertThat(repoRepository.findAll()).containsExactly(Repo.of(marketplaceFrontend));
         assertThat(userRepository.findAll()).containsExactly(User.of(anthony));
         assertThat(userSocialAccountsRepository.findAll()).containsExactly(UserSocialAccounts.of(anthony.getId(), anthonySocialAccounts));
+        assertThat(contributionRepository.findAll()).hasSize(1);
     }
 
     private WebTestClient.ResponseSpec indexIssue(String repoOwner, String repoName, Long issueNumber) {
