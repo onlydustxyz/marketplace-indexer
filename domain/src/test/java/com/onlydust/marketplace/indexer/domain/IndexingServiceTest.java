@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.domain;
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
@@ -40,12 +41,15 @@ public class IndexingServiceTest {
     final ContributionRepositoryStub contributionRepository = new ContributionRepositoryStub();
     final RawStorageReader rawStorageReader = CacheWriteRawStorageReaderDecorator.builder().fetcher(rawStorageReaderStub).cache(rawStorageRepository).build();
     final UserIndexingService userIndexingService = new UserIndexingService(rawStorageReader);
-    final IssueIndexingService issueIndexingService = new IssueIndexingService(rawStorageReader, userIndexingService);
-    final PullRequestIndexer pullRequestIndexingService = new PullRequestContributionExposer(
-            new PullRequestIndexingService(rawStorageReader, userIndexingService, issueIndexingService),
+    final IssueIndexer issueIndexer = new IssueContributionExposer(
+            new IssueIndexingService(rawStorageReader, userIndexingService),
             contributionRepository
     );
-    final RepoIndexingService repoIndexingService = new RepoIndexingService(rawStorageReader, issueIndexingService, pullRequestIndexingService);
+    final PullRequestIndexer pullRequestIndexer = new PullRequestContributionExposer(
+            new PullRequestIndexingService(rawStorageReader, userIndexingService, issueIndexer),
+            contributionRepository
+    );
+    final RepoIndexingService repoIndexingService = new RepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer);
 
     @BeforeEach
     void setup() throws IOException {
@@ -77,7 +81,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_pull_request() {
-        final var pullRequest = pullRequestIndexingService.indexPullRequest("onlydustxyz", "marketplace-frontend", 1257L);
+        final var pullRequest = pullRequestIndexer.indexPullRequest("onlydustxyz", "marketplace-frontend", 1257L);
 
         assertThat(pullRequest.getId()).isEqualTo(1524797398);
         assertThat(pullRequest.getAuthor().getLogin()).isEqualTo("AnthonyBuisset");
@@ -114,14 +118,15 @@ public class IndexingServiceTest {
                         olivier.getId(), Arrays.stream(olivierSocialAccounts).toList())
         );
 
-        assertThat(contributionRepository.contributions()).hasSize(4);
+        assertThat(contributionRepository.contributions()).hasSize(5);
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.PULL_REQUEST))).hasSize(2);
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.CODE_REVIEW))).hasSize(2);
+        assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.ISSUE))).hasSize(1);
     }
 
     @Test
     void should_index_issue() {
-        final var issue = issueIndexingService.indexIssue("onlydustxyz", "marketplace-frontend", 78L);
+        final var issue = issueIndexer.indexIssue("onlydustxyz", "marketplace-frontend", 78L);
 
         assertThat(issue.getId()).isEqualTo(issue78.getId());
         assertThat(issue.getAssignees().size()).isEqualTo(1);
@@ -132,6 +137,9 @@ public class IndexingServiceTest {
         assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(issue78)));
         assertCachedUsersAre(anthony, anthony);
         assertCachedUserSocialAccountsAre(Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList()));
+
+        assertThat(contributionRepository.contributions()).hasSize(1);
+        assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.ISSUE))).hasSize(1);
     }
 
     @Test

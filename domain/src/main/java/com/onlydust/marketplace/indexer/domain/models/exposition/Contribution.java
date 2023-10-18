@@ -31,10 +31,10 @@ public class Contribution {
                 .build();
     }
 
-    public static Contribution of(GithubIssue issue) {
+    public static Contribution of(GithubIssue issue, GithubAccount assignee) {
         return Contribution.builder()
                 .repo(issue.getRepo())
-                .contributor(issue.getAuthor())
+                .contributor(assignee)
                 .type(Type.ISSUE)
                 .status(buildStatus(issue.getStatus()))
                 .issue(issue)
