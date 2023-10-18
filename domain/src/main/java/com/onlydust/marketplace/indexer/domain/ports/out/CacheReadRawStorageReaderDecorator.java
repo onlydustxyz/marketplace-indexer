@@ -52,7 +52,7 @@ public class CacheReadRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public Optional<RawUser> user(Long userId) {
+    public Optional<RawAccount> user(Long userId) {
         return cache.user(userId).or(() -> fetcher.user(userId));
     }
 

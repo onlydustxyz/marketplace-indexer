@@ -50,7 +50,7 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
     }
 
     @Override
-    public Optional<RawUser> user(Long userId) {
+    public Optional<RawAccount> user(Long userId) {
         return userRepository.findById(userId).map(User::getData);
     }
 
@@ -92,7 +92,7 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
     }
 
     @Override
-    public void saveUser(RawUser user) {
+    public void saveUser(RawAccount user) {
         userRepository.save(User.of(user));
     }
 

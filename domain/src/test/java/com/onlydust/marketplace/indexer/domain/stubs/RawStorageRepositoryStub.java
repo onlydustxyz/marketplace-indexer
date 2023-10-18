@@ -11,7 +11,7 @@ import java.util.*;
 
 public class RawStorageRepositoryStub implements RawStorageRepository {
     final List<RawRepo> repos = new ArrayList<>();
-    final List<RawUser> users = new ArrayList<>();
+    final List<RawAccount> users = new ArrayList<>();
     final Map<Long, List<RawSocialAccount>> userSocialAccounts = new HashMap<>();
     final Map<Long, List<RawCodeReview>> pullRequestReviews = new HashMap<>();
     final Map<Long, List<RawCommit>> pullRequestCommits = new HashMap<>();
@@ -56,7 +56,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public Optional<RawUser> user(Long userId) {
+    public Optional<RawAccount> user(Long userId) {
         return users.stream().filter(user -> user.getId().equals(userId)).findFirst();
     }
 
@@ -111,7 +111,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         saveRepoLanguages(repoId, languages);
     }
 
-    public void feedWith(RawUser... users) {
+    public void feedWith(RawAccount... users) {
         Arrays.stream(users).sequential().forEach(this::saveUser);
     }
 
@@ -145,7 +145,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
 
     @Override
-    public void saveUser(RawUser user) {
+    public void saveUser(RawAccount user) {
         users.add(user);
     }
 
@@ -211,7 +211,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         return repos;
     }
 
-    public List<RawUser> users() {
+    public List<RawAccount> users() {
         return users;
     }
 

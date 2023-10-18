@@ -12,6 +12,6 @@ import lombok.Value;
 @ToString(callSuper = true)
 public class RawCommit extends JsonDocument {
     String sha;
-    RawUser author;
-    RawUser committer;
+    RawAccount author;
+    RawAccount committer;
 }

@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.ports.in;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.Issue;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
 
 public interface IssueIndexer {
-    Issue indexIssue(String repoOwner, String repoName, Long issueNumber);
+    CleanIssue indexIssue(String repoOwner, String repoName, Long issueNumber);
 }

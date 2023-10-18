@@ -22,9 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class IndexingServiceTest {
-    final RawUser anthony = RawStorageRepositoryStub.load("/github/users/anthony.json", RawUser.class);
-    final RawUser pierre = RawStorageRepositoryStub.load("/github/users/pierre.json", RawUser.class);
-    final RawUser olivier = RawStorageRepositoryStub.load("/github/users/olivier.json", RawUser.class);
+    final RawAccount anthony = RawStorageRepositoryStub.load("/github/users/anthony.json", RawAccount.class);
+    final RawAccount pierre = RawStorageRepositoryStub.load("/github/users/pierre.json", RawAccount.class);
+    final RawAccount olivier = RawStorageRepositoryStub.load("/github/users/olivier.json", RawAccount.class);
     final RawSocialAccount[] anthonySocialAccounts = RawStorageRepositoryStub.load("/github/users/anthony_social_accounts.json", RawSocialAccount[].class);
     final RawSocialAccount[] pierreSocialAccounts = RawStorageRepositoryStub.load("/github/users/pierre_social_accounts.json", RawSocialAccount[].class);
     final RawSocialAccount[] olivierSocialAccounts = RawStorageRepositoryStub.load("/github/users/olivier_social_accounts.json", RawSocialAccount[].class);
@@ -63,9 +63,9 @@ public class IndexingServiceTest {
     void should_index_user_from_its_id() {
         final var user = userIndexingService.indexUser(anthony.getId());
 
-        assertThat(user.id()).isEqualTo(anthony.getId());
-        assertThat(user.login()).isEqualTo(anthony.getLogin());
-        assertThat(user.socialAccounts()).containsExactly(anthonySocialAccounts);
+        assertThat(user.getId()).isEqualTo(anthony.getId());
+        assertThat(user.getLogin()).isEqualTo(anthony.getLogin());
+        assertThat(user.getSocialAccounts()).containsExactly(anthonySocialAccounts);
 
         assertCachedUsersAre(anthony);
         assertCachedUserSocialAccountsAre(Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList()));
@@ -75,19 +75,19 @@ public class IndexingServiceTest {
     void should_index_pull_request() {
         final var pullRequest = pullRequestIndexingService.indexPullRequest("onlydustxyz", "marketplace-frontend", 1257L);
 
-        assertThat(pullRequest.id()).isEqualTo(1524797398);
-        assertThat(pullRequest.author().login()).isEqualTo("AnthonyBuisset");
-        assertThat(pullRequest.reviews().get(0).id()).isEqualTo(pr1257Reviews[0].getId());
-        assertThat(pullRequest.reviews().get(0).author().login()).isEqualTo("PierreOucif");
-        assertThat(pullRequest.author().login()).isEqualTo("AnthonyBuisset");
-        assertThat(pullRequest.requestedReviewers().get(0).login()).isEqualTo("ofux");
-        assertThat(pullRequest.commits().size()).isEqualTo(1);
-        assertThat(pullRequest.commits().get(0).sha()).isEqualTo("0addbe7d8cdbe1356fc8fb58e4b896616e7d7592");
-        assertThat(pullRequest.commits().get(0).author().login()).isEqualTo("AnthonyBuisset");
-        assertThat(pullRequest.checkRuns().size()).isEqualTo(17);
-        assertThat(pullRequest.checkRuns().get(0).id()).isEqualTo(17002823375L);
-        assertThat(pullRequest.closingIssues().size()).isEqualTo(1);
-        assertThat(pullRequest.closingIssues().get(0).id()).isEqualTo(issue78.getId());
+        assertThat(pullRequest.getId()).isEqualTo(1524797398);
+        assertThat(pullRequest.getAuthor().getLogin()).isEqualTo("AnthonyBuisset");
+        assertThat(pullRequest.getReviews().get(0).getId()).isEqualTo(pr1257Reviews[0].getId());
+        assertThat(pullRequest.getReviews().get(0).getAuthor().getLogin()).isEqualTo("PierreOucif");
+        assertThat(pullRequest.getAuthor().getLogin()).isEqualTo("AnthonyBuisset");
+        assertThat(pullRequest.getRequestedReviewers().get(0).getLogin()).isEqualTo("ofux");
+        assertThat(pullRequest.getCommits().size()).isEqualTo(1);
+        assertThat(pullRequest.getCommits().get(0).getSha()).isEqualTo("0addbe7d8cdbe1356fc8fb58e4b896616e7d7592");
+        assertThat(pullRequest.getCommits().get(0).getAuthor().getLogin()).isEqualTo("AnthonyBuisset");
+        assertThat(pullRequest.getCheckRuns().size()).isEqualTo(17);
+        assertThat(pullRequest.getCheckRuns().get(0).getId()).isEqualTo(17002823375L);
+        assertThat(pullRequest.getClosingIssues().size()).isEqualTo(1);
+        assertThat(pullRequest.getClosingIssues().get(0).getId()).isEqualTo(issue78.getId());
 
         assertCachedReposAre(marketplaceFrontend, marketplaceFrontend);
         assertCachedRepoPullRequestsAre(Map.of(marketplaceFrontend.getId(), List.of(pr1257)));
@@ -114,9 +114,9 @@ public class IndexingServiceTest {
     void should_index_issue() {
         final var issue = issueIndexingService.indexIssue("onlydustxyz", "marketplace-frontend", 78L);
 
-        assertThat(issue.id()).isEqualTo(issue78.getId());
-        assertThat(issue.assignees().size()).isEqualTo(1);
-        assertThat(issue.assignees().get(0).login()).isEqualTo("AnthonyBuisset");
+        assertThat(issue.getId()).isEqualTo(issue78.getId());
+        assertThat(issue.getAssignees().size()).isEqualTo(1);
+        assertThat(issue.getAssignees().get(0).getLogin()).isEqualTo("AnthonyBuisset");
 
         assertCachedReposAre(marketplaceFrontend);
         assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(issue78)));
@@ -128,13 +128,13 @@ public class IndexingServiceTest {
     void should_index_repo() {
         final var repo = repoIndexingService.indexRepo(marketplaceFrontend.getId());
 
-        assertThat(repo.id()).isEqualTo(marketplaceFrontend.getId());
+        assertThat(repo.getId()).isEqualTo(marketplaceFrontend.getId());
 
-        assertThat(repo.pullRequests().size()).isEqualTo(1);
-        assertThat(repo.pullRequests().get(0).id()).isEqualTo(pr1257.getId());
-        assertThat(repo.issues().size()).isEqualTo(1);
-        assertThat(repo.issues().get(0).id()).isEqualTo(issue78.getId());
-        assertThat(repo.languages().get("TypeScript")).isEqualTo(2761826);
+        assertThat(repo.getPullRequests().size()).isEqualTo(1);
+        assertThat(repo.getPullRequests().get(0).getId()).isEqualTo(pr1257.getId());
+        assertThat(repo.getIssues().size()).isEqualTo(1);
+        assertThat(repo.getIssues().get(0).getId()).isEqualTo(issue78.getId());
+        assertThat(repo.getLanguages().get("TypeScript")).isEqualTo(2761826);
 
         assertCachedReposAre(marketplaceFrontend, marketplaceFrontend, marketplaceFrontend, marketplaceFrontend);
         assertCachedRepoLanguagesAre(Map.of(marketplaceFrontend.getId(), marketplaceFrontendLanguages));
@@ -176,7 +176,7 @@ public class IndexingServiceTest {
         assertThat(rawStorageRepository.repos()).containsExactly(repos);
     }
 
-    private void assertCachedUsersAre(RawUser... users) {
+    private void assertCachedUsersAre(RawAccount... users) {
         assertThat(rawStorageRepository.users()).containsExactly(users);
     }
 

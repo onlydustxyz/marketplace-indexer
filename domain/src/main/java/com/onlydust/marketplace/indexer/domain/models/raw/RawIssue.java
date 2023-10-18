@@ -16,7 +16,7 @@ import java.util.List;
 public class RawIssue extends JsonDocument {
     Long id;
     Long number;
-    List<RawUser> assignees;
+    List<RawAccount> assignees;
 
     @JsonProperty("repository_url")
     String repositoryUrl;

@@ -48,8 +48,8 @@ public class GithubRawStorageReader implements RawStorageReader {
     }
 
     @Override
-    public Optional<RawUser> user(Long userId) {
-        return client.get("/user/" + userId, RawUser.class);
+    public Optional<RawAccount> user(Long userId) {
+        return client.get("/user/" + userId, RawAccount.class);
     }
 
     @Override

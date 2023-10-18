@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.Repo;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -29,16 +29,16 @@ public class GithubRepo {
     Long starsCount;
     Long forksCount;
 
-    public static GithubRepo of(Long ownerId, Repo repo) {
+    public static GithubRepo of(Long ownerId, CleanRepo repo) {
         return GithubRepo.builder()
-                .id(repo.id())
+                .id(repo.getId())
                 .owner(GithubAccount.builder().id(ownerId).build())
-                .name(repo.name())
-                .htmlUrl(repo.htmlUrl())
-                .updatedAt(repo.updatedAt())
-                .description(repo.description())
-                .starsCount(repo.starsCount())
-                .forksCount(repo.forksCount())
+                .name(repo.getName())
+                .htmlUrl(repo.getHtmlUrl())
+                .updatedAt(repo.getUpdatedAt())
+                .description(repo.getDescription())
+                .starsCount(repo.getStarsCount())
+                .forksCount(repo.getForksCount())
                 .build();
     }
 }

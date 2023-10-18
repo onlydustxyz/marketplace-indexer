@@ -20,10 +20,10 @@ public class RawPullRequest extends JsonDocument {
     Head head;
 
     @JsonProperty("user")
-    RawUser author;
+    RawAccount author;
 
     @JsonProperty("requested_reviewers")
-    List<RawUser> requestedReviewers;
+    List<RawAccount> requestedReviewers;
 
     @Value
     @EqualsAndHashCode(callSuper = true)

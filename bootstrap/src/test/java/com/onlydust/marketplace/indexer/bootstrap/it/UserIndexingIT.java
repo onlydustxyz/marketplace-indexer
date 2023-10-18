@@ -3,7 +3,7 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawUser;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.User;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.UserSocialAccounts;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserRepository;
@@ -42,7 +42,7 @@ public class UserIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        final var expectedUser = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawUser.class);
+        final var expectedUser = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
         assertThat(userRepository.findAll()).containsExactly(User.of(expectedUser));
 
         final var expectedUserSocialAccounts = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony_social_accounts.json"), RawSocialAccount[].class);

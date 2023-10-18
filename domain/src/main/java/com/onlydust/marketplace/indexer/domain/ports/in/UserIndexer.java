@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.ports.in;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.User;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 
 public interface UserIndexer {
-    User indexUser(Long userId);
+    CleanAccount indexUser(Long userId);
 }
