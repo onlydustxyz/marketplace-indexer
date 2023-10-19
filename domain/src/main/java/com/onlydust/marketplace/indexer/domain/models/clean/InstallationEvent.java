@@ -12,8 +12,8 @@ import java.util.List;
 public class InstallationEvent extends Event {
     Action action;
     Long installationId;
-    User account;
-    List<Repo> repos;
+    CleanAccount account;
+    List<CleanRepo> repos;
 
     public enum Action {
         CREATED,

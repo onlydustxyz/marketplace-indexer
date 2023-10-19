@@ -1,8 +1,10 @@
 package com.onlydust.marketplace.indexer.postgres;
 
+import com.onlydust.marketplace.indexer.domain.ports.out.ContributionStorageRepository;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobTriggerEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
@@ -75,5 +77,10 @@ public class PostgresConfiguration {
     @Bean
     public PostgresUserIndexingJobTriggerRepository userIndexingJobTriggerRepository(final UserIndexingJobTriggerEntityRepository userIndexingJobTriggerRepository) {
         return new PostgresUserIndexingJobTriggerRepository(userIndexingJobTriggerRepository);
+    }
+
+    @Bean
+    public ContributionStorageRepository contributionStorageRepository(final ContributionRepository contributionRepository) {
+        return new PostgresContributionStorageRepository(contributionRepository);
     }
 }

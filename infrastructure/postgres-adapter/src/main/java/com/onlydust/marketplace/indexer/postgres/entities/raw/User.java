@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawUser;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -30,7 +30,7 @@ public class User {
     String login;
 
     @Type(type = "jsonb")
-    RawUser data;
+    RawAccount data;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -42,7 +42,7 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     Instant updatedAt;
 
-    public static User of(RawUser user) {
+    public static User of(RawAccount user) {
         return User.builder().id(user.getId()).login(user.getLogin()).data(user).build();
     }
 }

@@ -11,7 +11,7 @@ import lombok.Value;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
 @ToString(callSuper = true)
-public class RawUser extends JsonDocument {
+public class RawAccount extends JsonDocument {
     Long id;
     String login;
     String type;

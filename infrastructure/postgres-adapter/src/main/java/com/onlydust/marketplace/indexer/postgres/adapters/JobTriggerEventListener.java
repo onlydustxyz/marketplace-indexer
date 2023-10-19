@@ -25,7 +25,7 @@ public class JobTriggerEventListener implements EventListener<InstallationEvent>
     private void onCreated(InstallationEvent event) {
         repoIndexingJobTriggerRepository.saveAll(event.getRepos().stream()
                 .map(repo -> RepoIndexingJobTriggerEntity.builder()
-                        .repoId(repo.id())
+                        .repoId(repo.getId())
                         .installationId(event.getInstallationId())
                         .build())
                 .toList());

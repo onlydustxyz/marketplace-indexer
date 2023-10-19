@@ -47,7 +47,7 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public Optional<RawUser> user(Long userId) {
+    public Optional<RawAccount> user(Long userId) {
         final var user = fetcher.user(userId);
         user.ifPresent(cache::saveUser);
         return user;

@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.ports.in;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.Repo;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 
 public interface RepoIndexer {
-    Repo indexRepo(Long repoId);
+    CleanRepo indexRepo(Long repoId);
 }

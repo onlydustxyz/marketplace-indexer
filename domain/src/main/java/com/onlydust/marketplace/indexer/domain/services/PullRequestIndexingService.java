@@ -24,33 +24,31 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     private final IssueIndexer issueIndexer;
 
 
-    private List<CodeReview> indexPullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+    private List<CleanCodeReview> indexPullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         LOGGER.info("Indexing pull request reviews for repo {} and pull request {}", repoId, pullRequestId);
         final var codeReviews = rawStorageReader.pullRequestReviews(repoId, pullRequestId, pullRequestNumber);
         return codeReviews.stream().map(review -> {
             final var author = userIndexer.indexUser(review.getAuthor().getId());
-            return new CodeReview(review.getId(), author);
+            return CleanCodeReview.of(review, author);
         }).toList();
     }
 
-    private List<Commit> indexPullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+    private List<CleanCommit> indexPullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         LOGGER.info("Indexing pull request commits for repo {} and pull request {}", repoId, pullRequestId);
         final var commits = rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber);
         return commits.stream().map(commit -> {
             final var author = isNull(commit.getAuthor()) ? commit.getCommitter() : commit.getAuthor();
-            return isNull(author) ? null : new Commit(commit.getSha(), userIndexer.indexUser(author.getId()));
+            return isNull(author) ? null : CleanCommit.of(commit, userIndexer.indexUser(author.getId()));
         }).filter(commit -> !isNull(commit)).toList();
     }
 
-    private List<CheckRun> indexCheckRuns(Long repoId, String sha) {
+    private List<CleanCheckRun> indexCheckRuns(Long repoId, String sha) {
         LOGGER.info("Indexing check runs for repo {} and sha {}", repoId, sha);
         final var checkRuns = rawStorageReader.checkRuns(repoId, sha).map(RawCheckRuns::getCheckRuns).orElse(List.of());
-        return checkRuns.stream().map(checkRun -> {
-            return new CheckRun(checkRun.getId());
-        }).toList();
+        return checkRuns.stream().map(CleanCheckRun::of).toList();
     }
 
-    private List<Issue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
+    private List<CleanIssue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         LOGGER.info("Indexing closing issues for repo {} and pull request {}", repoOwner, pullRequestNumber);
         final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
         return closingIssues.map(RawPullRequestClosingIssues::issueIdNumbers).orElse(List.of())
@@ -59,7 +57,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
     @Override
     @Transactional
-    public PullRequest indexPullRequest(String repoOwner, String repoName, Long prNumber) {
+    public CleanPullRequest indexPullRequest(String repoOwner, String repoName, Long prNumber) {
         LOGGER.info("Indexing pull request {} for repo {}/{}", prNumber, repoOwner, repoName);
         final var repo = rawStorageReader.repo(repoOwner, repoName).orElseThrow(() -> OnlyDustException.notFound("Repo not found"));
         final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber).orElseThrow(() -> OnlyDustException.notFound("Pull request not found"));
@@ -67,9 +65,18 @@ public class PullRequestIndexingService implements PullRequestIndexer {
         final var codeReviews = indexPullRequestReviews(repo.getId(), pullRequest.getId(), prNumber);
         final var requestedReviewers = pullRequest.getRequestedReviewers().stream().map(reviewer -> userIndexer.indexUser(reviewer.getId())).toList();
         final var commits = indexPullRequestCommits(repo.getId(), pullRequest.getId(), prNumber);
-        final List<CheckRun> checkRuns = isNull(pullRequest.getHead().getRepo()) ? List.of() : indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
+        final List<CleanCheckRun> checkRuns = isNull(pullRequest.getHead().getRepo()) ? List.of() : indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
         final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName(), pullRequest.getNumber());
-        return new PullRequest(pullRequest.getId(), author, codeReviews, requestedReviewers, commits, checkRuns, closingIssues);
+        return CleanPullRequest.of(
+                pullRequest,
+                CleanRepo.of(repo, CleanAccount.of(repo.getOwner())),
+                author,
+                codeReviews,
+                requestedReviewers,
+                commits,
+                checkRuns,
+                closingIssues
+        );
     }
 
 }
