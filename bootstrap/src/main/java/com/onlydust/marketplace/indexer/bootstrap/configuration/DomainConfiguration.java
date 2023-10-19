@@ -70,7 +70,7 @@ public class DomainConfiguration {
         return new UserIndexingService(cachedRawStorageReader);
     }
 
-    @Bean(name = "userIndexer")
+    @Bean(name = "refreshingUserIndexer")
     public UserIndexer refreshingUserIndexer(final RawStorageReader rawStorageReader) {
         return new UserIndexingService(rawStorageReader);
     }
@@ -83,10 +83,10 @@ public class DomainConfiguration {
         );
     }
 
-    @Bean(name = "issueIndexer")
-    public IssueIndexer refreshingIssueIndexer(final RawStorageReader rawStorageReader, final UserIndexer userIndexer, final ContributionStorageRepository contributionStorageRepository) {
+    @Bean(name = "refreshingIssueIndexer")
+    public IssueIndexer refreshingIssueIndexer(final RawStorageReader rawStorageReader, final UserIndexer refreshingUserIndexer, final ContributionStorageRepository contributionStorageRepository) {
         return new IssueContributionExposer(
-                new IssueIndexingService(rawStorageReader, userIndexer),
+                new IssueIndexingService(rawStorageReader, refreshingUserIndexer),
                 contributionStorageRepository
         );
     }
@@ -103,13 +103,13 @@ public class DomainConfiguration {
         );
     }
 
-    @Bean(name = "pullRequestIndexer")
-    public PullRequestIndexer pullRequestIndexer(final RawStorageReader rawStorageReader,
-                                                 final UserIndexer userIndexer,
-                                                 final IssueIndexer issueIndexer,
-                                                 final ContributionStorageRepository contributionStorageRepository) {
+    @Bean(name = "refreshingPullRequestIndexer")
+    public PullRequestIndexer refreshingPullRequestIndexer(final RawStorageReader rawStorageReader,
+                                                           final UserIndexer refreshingUserIndexer,
+                                                           final IssueIndexer refreshingIssueIndexer,
+                                                           final ContributionStorageRepository contributionStorageRepository) {
         return new PullRequestContributionExposer(
-                new PullRequestIndexingService(rawStorageReader, userIndexer, issueIndexer),
+                new PullRequestIndexingService(rawStorageReader, refreshingUserIndexer, refreshingIssueIndexer),
                 contributionStorageRepository
         );
     }
@@ -122,28 +122,28 @@ public class DomainConfiguration {
         return new RepoIndexingService(cachedRawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer);
     }
 
-    @Bean(name = "repoIndexer")
-    public RepoIndexer repoIndexer(
+    @Bean(name = "refreshingRepoIndexer")
+    public RepoIndexer refreshingRepoIndexer(
             final RawStorageReader rawStorageReader,
-            final IssueIndexer issueIndexer,
-            final PullRequestIndexer pullRequestIndexer) {
-        return new RepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer);
+            final IssueIndexer refreshingIssueIndexer,
+            final PullRequestIndexer refreshingPullRequestIndexer) {
+        return new RepoIndexingService(rawStorageReader, refreshingIssueIndexer, refreshingPullRequestIndexer);
     }
 
     @Bean
     public RepoRefreshJobManager repoRefreshJobScheduler(
             final PostgresRepoIndexingJobRepository repoIndexingJobTriggerRepository,
-            final RepoIndexer repoIndexer
+            final RepoIndexer refreshingRepoIndexer
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, repoIndexer);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, refreshingRepoIndexer);
     }
 
 
     @Bean
     public UserRefreshJobManager userRefreshJobScheduler(
             final PostgresUserIndexingJobRepository userIndexingJobTriggerRepository,
-            final UserIndexer userIndexer
+            final UserIndexer refreshingUserIndexer
     ) {
-        return new UserRefreshJobService(userIndexingJobTriggerRepository, userIndexer);
+        return new UserRefreshJobService(userIndexingJobTriggerRepository, refreshingUserIndexer);
     }
 }
