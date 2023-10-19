@@ -7,21 +7,21 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
-import com.onlydust.marketplace.indexer.domain.ports.out.GithubRepoRepository;
-import com.onlydust.marketplace.indexer.domain.ports.out.RawInstallationEventRepository;
-import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
-import com.onlydust.marketplace.indexer.domain.ports.out.RepoIndexingJobRepository;
+import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.transaction.Transactional;
 import java.util.Objects;
 
 @AllArgsConstructor
 @Slf4j
+@Transactional
 public class InstallationEventProcessorService {
     private final RawInstallationEventRepository rawInstallationEventRepository;
     private final RawStorageReader rawStorageReader;
     private final GithubRepoRepository githubRepoRepository;
+    private final GithubAccountRepository githubAccountRepository;
     private final RepoIndexingJobRepository repoIndexingJobRepository;
 
     public void process(RawInstallationEvent rawEvent) {
@@ -35,10 +35,8 @@ public class InstallationEventProcessorService {
     }
 
     private void onDeleted(InstallationEvent event) {
-        githubRepoRepository.deleteAll(event.getRepos().stream()
-                .map(CleanRepo::getId)
-                .toList());
         repoIndexingJobRepository.deleteAll(event.getInstallationId());
+        githubAccountRepository.removeInstallation(event.getAccount().getId());
     }
 
     private void onCreated(InstallationEvent event) {

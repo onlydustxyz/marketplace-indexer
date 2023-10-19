@@ -16,9 +16,4 @@ public class PostgresGithubRepoRepository implements GithubRepoRepository {
     public void saveAll(List<GithubRepo> repos) {
         githubRepoRepository.saveAll(repos.stream().map(GithubRepoEntity::of).toList());
     }
-
-    @Override
-    public void deleteAll(List<Long> repoIds) {
-        githubRepoRepository.deleteAllById(repoIds);
-    }
 }

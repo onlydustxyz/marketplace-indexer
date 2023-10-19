@@ -14,11 +14,6 @@ public class GithubRepoRepositoryStub implements GithubRepoRepository {
         this.repos.addAll(repos);
     }
 
-    @Override
-    public void deleteAll(List<Long> repoIds) {
-        repos.removeIf(repo -> repoIds.contains(repo.getId()));
-    }
-
     public List<GithubRepo> repos() {
         return repos;
     }

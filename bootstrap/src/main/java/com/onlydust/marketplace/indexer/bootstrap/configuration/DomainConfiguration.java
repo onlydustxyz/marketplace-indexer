@@ -1,8 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.indexer.infrastructure.quartz.adapters.QuartzRepoRefresherJob;
-import com.onlydust.indexer.infrastructure.quartz.adapters.QuartzUserRefresherJob;
 import com.onlydust.marketplace.indexer.domain.ports.in.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import com.onlydust.marketplace.indexer.domain.services.*;
@@ -52,8 +50,9 @@ public class DomainConfiguration {
     public InstallationEventProcessorService eventProcessorService(final PostgresRawInstallationEventStorageRepository postgresRawInstallationEventStorageRepository,
                                                                    final RawStorageReader cachedRawStorageReader,
                                                                    final PostgresGithubRepoRepository postgresGithubRepoRepository,
+                                                                   final PostgresGithubAccountRepository postgresGithubAccountRepository,
                                                                    final RepoIndexingJobRepository repoIndexingJobRepository) {
-        return new InstallationEventProcessorService(postgresRawInstallationEventStorageRepository, cachedRawStorageReader, postgresGithubRepoRepository, repoIndexingJobRepository);
+        return new InstallationEventProcessorService(postgresRawInstallationEventStorageRepository, cachedRawStorageReader, postgresGithubRepoRepository, postgresGithubAccountRepository, repoIndexingJobRepository);
     }
 
     @Bean
@@ -134,17 +133,17 @@ public class DomainConfiguration {
     @Bean
     public RepoRefreshJobManager repoRefreshJobScheduler(
             final PostgresRepoIndexingJobRepository repoIndexingJobTriggerRepository,
-            final QuartzRepoRefresherJob repoRefresher
+            final RepoIndexer repoIndexer
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, repoRefresher);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, repoIndexer);
     }
 
 
     @Bean
     public UserRefreshJobManager userRefreshJobScheduler(
             final PostgresUserIndexingJobRepository userIndexingJobTriggerRepository,
-            final QuartzUserRefresherJob userRefresher
+            final UserIndexer userIndexer
     ) {
-        return new UserRefreshJobService(userIndexingJobTriggerRepository, userRefresher);
+        return new UserRefreshJobService(userIndexingJobTriggerRepository, userIndexer);
     }
 }

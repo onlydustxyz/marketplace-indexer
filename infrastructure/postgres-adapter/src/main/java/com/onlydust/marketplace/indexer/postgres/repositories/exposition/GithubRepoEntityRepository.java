@@ -4,4 +4,5 @@ import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoE
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GithubRepoEntityRepository extends JpaRepository<GithubRepoEntity, Long> {
+
 }

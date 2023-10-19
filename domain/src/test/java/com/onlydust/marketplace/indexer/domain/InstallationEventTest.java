@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.domain;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
+import com.onlydust.marketplace.indexer.domain.ports.out.GithubAccountRepository;
 import com.onlydust.marketplace.indexer.domain.services.InstallationEventProcessorService;
 import com.onlydust.marketplace.indexer.domain.stubs.GithubRepoRepositoryStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawInstallationEventRepositoryStub;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class InstallationEventTest {
     final RawRepo marketplaceFrontend = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
@@ -18,8 +20,10 @@ public class InstallationEventTest {
     private final RawInstallationEvent newInstallationEvent = RawStorageRepositoryStub.load("/github/events/new_installation.json", RawInstallationEvent.class);
     private final RawStorageRepositoryStub rawStorageRepositoryStub = new RawStorageRepositoryStub();
     private final GithubRepoRepositoryStub githubRepoRepositoryStub = new GithubRepoRepositoryStub();
+    private final GithubAccountRepository githubAccountRepository = mock(GithubAccountRepository.class);
     private final RepoIndexingJobRepositoryStub repoIndexingJobRepositoryStub = new RepoIndexingJobRepositoryStub();
-    private final InstallationEventProcessorService eventProcessorService = new InstallationEventProcessorService(rawInstallationEventRepositoryStub, rawStorageRepositoryStub, githubRepoRepositoryStub, repoIndexingJobRepositoryStub);
+    private final InstallationEventProcessorService eventProcessorService = new InstallationEventProcessorService(
+            rawInstallationEventRepositoryStub, rawStorageRepositoryStub, githubRepoRepositoryStub, githubAccountRepository, repoIndexingJobRepositoryStub);
 
     @BeforeEach
     void setup() {

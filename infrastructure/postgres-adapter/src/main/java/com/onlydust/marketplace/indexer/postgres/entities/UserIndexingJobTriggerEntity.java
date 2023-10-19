@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.postgres.entities;
 
-import com.onlydust.marketplace.indexer.domain.models.UserIndexingJobTrigger;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -17,10 +16,4 @@ import javax.persistence.Table;
 public class UserIndexingJobTriggerEntity {
     @Id
     Long userId;
-
-    public static UserIndexingJobTriggerEntity of(UserIndexingJobTrigger trigger) {
-        return UserIndexingJobTriggerEntity.builder()
-                .userId(trigger.userId())
-                .build();
-    }
 }

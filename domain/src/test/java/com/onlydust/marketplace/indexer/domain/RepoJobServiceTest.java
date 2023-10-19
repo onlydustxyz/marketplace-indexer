@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.domain;
 
-import com.onlydust.marketplace.indexer.domain.ports.out.RepoRefresher;
+import com.onlydust.marketplace.indexer.domain.jobs.Job;
+import com.onlydust.marketplace.indexer.domain.ports.in.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.RepoRefreshJobService;
 import com.onlydust.marketplace.indexer.domain.stubs.RepoIndexingJobRepositoryStub;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +15,8 @@ import static org.mockito.Mockito.verify;
 
 public class RepoJobServiceTest {
     private final RepoIndexingJobRepositoryStub repoIndexingJobRepositoryStub = new RepoIndexingJobRepositoryStub();
-    private final RepoRefresher repoRefresher = mock(RepoRefresher.class);
-    private final RepoRefreshJobService jobService = new RepoRefreshJobService(repoIndexingJobRepositoryStub, repoRefresher);
+    private final RepoIndexer repoIndexer = mock(RepoIndexer.class);
+    private final RepoRefreshJobService jobService = new RepoRefreshJobService(repoIndexingJobRepositoryStub, repoIndexer);
 
     @BeforeEach
     void setup() {
@@ -27,8 +28,12 @@ public class RepoJobServiceTest {
 
     @Test
     public void should_triggers_all_jobs() {
-        jobService.runAllJobs();
-        verify(repoRefresher).refreshRepos(1L, Set.of(1L, 2L, 3L));
-        verify(repoRefresher).refreshRepos(2L, Set.of(4L, 5L, 6L));
+        jobService.allJobs().forEach(Job::execute);
+        verify(repoIndexer).indexRepo(1L);
+        verify(repoIndexer).indexRepo(2L);
+        verify(repoIndexer).indexRepo(3L);
+        verify(repoIndexer).indexRepo(4L);
+        verify(repoIndexer).indexRepo(5L);
+        verify(repoIndexer).indexRepo(6L);
     }
 }

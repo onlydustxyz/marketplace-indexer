@@ -12,6 +12,6 @@ public interface RepoIndexingJobTriggerEntityRepository extends JpaRepository<Re
     @Query("SELECT DISTINCT installationId FROM RepoIndexingJobTriggerEntity")
     Set<Long> listDistinctInstallationIds();
 
-    @Query("SELECT DISTINCT repoId FROM RepoIndexingJobTriggerEntity WHERE installationId = ?1")
+    @Query("SELECT DISTINCT repoId FROM RepoIndexingJobTriggerEntity WHERE (:installationId IS NULL AND installationId IS NULL) OR (:installationId IS NOT NULL AND installationId = :installationId)")
     Set<Long> findDistinctRepoIdsByInstallationId(Long installationId);
 }
