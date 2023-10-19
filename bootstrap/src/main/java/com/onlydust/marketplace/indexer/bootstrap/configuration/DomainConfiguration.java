@@ -1,9 +1,8 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJob;
-import com.onlydust.marketplace.indexer.domain.models.UserIndexingJob;
-import com.onlydust.marketplace.indexer.domain.models.clean.InstallationEvent;
+import com.onlydust.indexer.infrastructure.quartz.adapters.QuartzRepoRefresherJob;
+import com.onlydust.indexer.infrastructure.quartz.adapters.QuartzUserRefresherJob;
 import com.onlydust.marketplace.indexer.domain.ports.in.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import com.onlydust.marketplace.indexer.domain.services.*;
@@ -15,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.net.http.HttpClient;
-import java.util.List;
 
 @Configuration
 public class DomainConfiguration {
@@ -50,18 +48,12 @@ public class DomainConfiguration {
                 .build();
     }
 
-    @Bean(name = "installationEventEventListener")
-    public EventListener<InstallationEvent> installationEventEventListener(
-            final PostgresInstallationEventListener postgresInstallationEventListener,
-            final JobTriggerEventListener jobTriggerEventListener) {
-        return new EventListenerComposite<>(List.of(postgresInstallationEventListener, jobTriggerEventListener));
-    }
-
     @Bean
-    public EventProcessorService eventProcessorService(final PostgresRawInstallationEventStorageRepository postgresRawInstallationEventStorageRepository,
-                                                       final EventListener<InstallationEvent> installationEventEventListener,
-                                                       final RawStorageReader cachedRawStorageReader) {
-        return new EventProcessorService(postgresRawInstallationEventStorageRepository, installationEventEventListener, cachedRawStorageReader);
+    public InstallationEventProcessorService eventProcessorService(final PostgresRawInstallationEventStorageRepository postgresRawInstallationEventStorageRepository,
+                                                                   final RawStorageReader cachedRawStorageReader,
+                                                                   final PostgresGithubRepoRepository postgresGithubRepoRepository,
+                                                                   final RepoIndexingJobRepository repoIndexingJobRepository) {
+        return new InstallationEventProcessorService(postgresRawInstallationEventStorageRepository, cachedRawStorageReader, postgresGithubRepoRepository, repoIndexingJobRepository);
     }
 
     @Bean
@@ -140,19 +132,19 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public RefreshJobScheduler repoRefreshJobScheduler(
-            final PostgresRepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository,
-            final JobScheduler<RepoIndexingJob> scheduler
+    public RepoRefreshJobManager repoRefreshJobScheduler(
+            final PostgresRepoIndexingJobRepository repoIndexingJobTriggerRepository,
+            final QuartzRepoRefresherJob repoRefresher
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, scheduler);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, repoRefresher);
     }
 
 
     @Bean
-    public RefreshJobScheduler userRefreshJobScheduler(
-            final PostgresUserIndexingJobTriggerRepository userIndexingJobTriggerRepository,
-            final JobScheduler<UserIndexingJob> scheduler
+    public UserRefreshJobManager userRefreshJobScheduler(
+            final PostgresUserIndexingJobRepository userIndexingJobTriggerRepository,
+            final QuartzUserRefresherJob userRefresher
     ) {
-        return new UserRefreshJobService(userIndexingJobTriggerRepository, scheduler);
+        return new UserRefreshJobService(userIndexingJobTriggerRepository, userRefresher);
     }
 }

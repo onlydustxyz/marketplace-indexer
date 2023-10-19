@@ -1,8 +1,8 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
-import com.onlydust.marketplace.indexer.domain.ports.out.RepoIndexingJobTriggerRepository;
+import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTriggerEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountRepository;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GithubWebhookIT extends IntegrationTest {
     final Long MARKETPLACE_FRONTEND_ID = 498695724L;
     @Autowired
-    RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository;
+    RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository;
     @Autowired
     GithubWebhookRestApi.Config config;
     @Autowired
@@ -53,7 +53,7 @@ public class GithubWebhookIT extends IntegrationTest {
         // Then
         response.expectStatus().isOk();
 
-        assertThat(repoIndexingJobTriggerRepository.list()).containsExactly(new RepoIndexingJobTrigger(42952633L, MARKETPLACE_FRONTEND_ID));
+        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobTriggerEntity(42952633L, MARKETPLACE_FRONTEND_ID));
         assertThat(githubAccountRepository.findAll()).containsExactly(GithubAccountEntity.builder()
                 .id(98735558L)
                 .login("onlydustxyz")
@@ -67,7 +67,7 @@ public class GithubWebhookIT extends IntegrationTest {
     @Test
     void should_remove_repository_upon_installation_deleted_event() throws URISyntaxException, IOException {
         // Given
-        repoIndexingJobTriggerRepository.add(new RepoIndexingJobTrigger(42952633L, MARKETPLACE_FRONTEND_ID));
+        repoIndexingJobTriggerRepository.save(new RepoIndexingJobTriggerEntity(42952633L, MARKETPLACE_FRONTEND_ID));
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_deleted.json").toURI()));
 
         // When
@@ -76,7 +76,7 @@ public class GithubWebhookIT extends IntegrationTest {
         // Then
         response.expectStatus().isOk();
 
-        assertThat(repoIndexingJobTriggerRepository.list()).isEmpty();
+        assertThat(repoIndexingJobTriggerRepository.findAll()).isEmpty();
         assertThat(githubAccountRepository.findAll()).containsExactly(GithubAccountEntity.builder()
                 .id(98735558L)
                 .login("onlydustxyz")
