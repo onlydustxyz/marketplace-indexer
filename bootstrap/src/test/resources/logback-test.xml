@@ -1,12 +1,8 @@
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%date %highlight(%-5level) [%12.12thread] %cyan(%-40.40logger{40}) : %msg %n</pattern>
-        </encoder>
-    </appender>
-
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
     <root level="info">
-        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="CONSOLE"/>
     </root>
 
     <logger name="org.testcontainers" level="INFO"/>
