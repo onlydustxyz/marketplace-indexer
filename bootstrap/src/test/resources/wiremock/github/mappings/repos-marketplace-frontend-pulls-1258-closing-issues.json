@@ -1,0 +1,29 @@
+{
+  "request": {
+    "url": "/graphql",
+    "method": "POST",
+    "headers": {
+      "Authorization": {
+        "contains": "Bearer GITHUB_PAT"
+      }
+    },
+    "bodyPatterns": [
+      {
+        "equalToJson": {
+          "query": "query GetClosingIssues($owner: String!, $name: String!, $number: Int!) { repository(owner: $owner, name: $name) { pullRequest(number: $number) { databaseId closingIssuesReferences(first: 10) { nodes { databaseId number } } } } }",
+          "variables": {
+            "owner": "onlydustxyz",
+            "name": "marketplace-frontend",
+            "number": 1258
+          }
+        },
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "repos/marketplace-frontend/pulls/1257_closing_issues.json"
+  }
+}
