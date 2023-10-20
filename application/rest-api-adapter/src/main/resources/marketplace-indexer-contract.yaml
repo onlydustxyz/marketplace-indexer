@@ -64,6 +64,23 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
+  /api/v1/indexes/refresh:
+    post:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Indexes
+      summary: Refresh all expositions from indexed data
+      operationId: refreshExpositions
+      description: |
+        Re-project all expositions data based on raw data already indexed.
+      responses:
+        "204":
+          description: 'The refresh process has started'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
 
   /api/v1/users/{userId}:
     put:

@@ -65,17 +65,17 @@ public class DomainConfiguration {
         return new GithubRawStorageReader(githubHttpClient);
     }
 
-    @Bean(name = "cachedUserIndexer")
+    @Bean
     public UserIndexer cachedUserIndexer(final RawStorageReader cachedRawStorageReader) {
         return new UserIndexingService(cachedRawStorageReader);
     }
 
-    @Bean(name = "refreshingUserIndexer")
+    @Bean
     public UserIndexer refreshingUserIndexer(final RawStorageReader rawStorageReader) {
         return new UserIndexingService(rawStorageReader);
     }
 
-    @Bean(name = "cachedIssueIndexer")
+    @Bean
     public IssueIndexer cachedIssueIndexer(final RawStorageReader cachedRawStorageReader, final UserIndexer cachedUserIndexer, final ContributionStorageRepository contributionStorageRepository) {
         return new IssueContributionExposer(
                 new IssueIndexingService(cachedRawStorageReader, cachedUserIndexer),
@@ -83,7 +83,7 @@ public class DomainConfiguration {
         );
     }
 
-    @Bean(name = "refreshingIssueIndexer")
+    @Bean
     public IssueIndexer refreshingIssueIndexer(final RawStorageReader rawStorageReader, final UserIndexer refreshingUserIndexer, final ContributionStorageRepository contributionStorageRepository) {
         return new IssueContributionExposer(
                 new IssueIndexingService(rawStorageReader, refreshingUserIndexer),
@@ -91,7 +91,7 @@ public class DomainConfiguration {
         );
     }
 
-    @Bean(name = "cachedPullRequestIndexer")
+    @Bean
     public PullRequestIndexer cachedPullRequestIndexer(
             final RawStorageReader cachedRawStorageReader,
             final UserIndexer cachedUserIndexer,
@@ -103,7 +103,7 @@ public class DomainConfiguration {
         );
     }
 
-    @Bean(name = "refreshingPullRequestIndexer")
+    @Bean
     public PullRequestIndexer refreshingPullRequestIndexer(final RawStorageReader rawStorageReader,
                                                            final UserIndexer refreshingUserIndexer,
                                                            final IssueIndexer refreshingIssueIndexer,
@@ -114,7 +114,7 @@ public class DomainConfiguration {
         );
     }
 
-    @Bean(name = "cachedRepoIndexer")
+    @Bean
     public RepoIndexer cachedRepoIndexer(
             final RawStorageReader cachedRawStorageReader,
             final IssueIndexer cachedIssueIndexer,
@@ -122,7 +122,7 @@ public class DomainConfiguration {
         return new RepoIndexingService(cachedRawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer);
     }
 
-    @Bean(name = "refreshingRepoIndexer")
+    @Bean
     public RepoIndexer refreshingRepoIndexer(
             final RawStorageReader rawStorageReader,
             final IssueIndexer refreshingIssueIndexer,
@@ -138,6 +138,13 @@ public class DomainConfiguration {
         return new RepoRefreshJobService(repoIndexingJobTriggerRepository, refreshingRepoIndexer);
     }
 
+    @Bean
+    public RepoRefreshJobManager repoCacheRefreshJobScheduler(
+            final PostgresRepoIndexingJobRepository repoIndexingJobTriggerRepository,
+            final RepoIndexer cachedRepoIndexer
+    ) {
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cachedRepoIndexer);
+    }
 
     @Bean
     public UserRefreshJobManager userRefreshJobScheduler(
@@ -145,5 +152,13 @@ public class DomainConfiguration {
             final UserIndexer refreshingUserIndexer
     ) {
         return new UserRefreshJobService(userIndexingJobTriggerRepository, refreshingUserIndexer);
+    }
+
+    @Bean
+    public UserRefreshJobManager userCacheRefreshJobScheduler(
+            final PostgresUserIndexingJobRepository userIndexingJobTriggerRepository,
+            final UserIndexer cachedUserIndexer
+    ) {
+        return new UserRefreshJobService(userIndexingJobTriggerRepository, cachedUserIndexer);
     }
 }
