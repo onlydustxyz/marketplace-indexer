@@ -1,34 +1,49 @@
 package com.onlydust.marketplace.indexer.domain;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.InstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
-import com.onlydust.marketplace.indexer.domain.ports.out.EventListener;
-import com.onlydust.marketplace.indexer.domain.ports.out.EventListenerComposite;
-import com.onlydust.marketplace.indexer.domain.services.EventProcessorService;
-import com.onlydust.marketplace.indexer.domain.stubs.EventListenerStub;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
+import com.onlydust.marketplace.indexer.domain.ports.out.GithubAccountRepository;
+import com.onlydust.marketplace.indexer.domain.services.InstallationEventProcessorService;
+import com.onlydust.marketplace.indexer.domain.stubs.GithubRepoRepositoryStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawInstallationEventRepositoryStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageRepositoryStub;
+import com.onlydust.marketplace.indexer.domain.stubs.RepoIndexingJobRepositoryStub;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class InstallationEventTest {
+    final RawRepo marketplaceFrontend = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
     private final RawInstallationEventRepositoryStub rawInstallationEventRepositoryStub = new RawInstallationEventRepositoryStub();
     private final RawInstallationEvent newInstallationEvent = RawStorageRepositoryStub.load("/github/events/new_installation.json", RawInstallationEvent.class);
-    private final EventListenerStub<InstallationEvent> installationEventEventListenerStub = new EventListenerStub<>();
     private final RawStorageRepositoryStub rawStorageRepositoryStub = new RawStorageRepositoryStub();
-    private final EventListener<InstallationEvent> eventListener = new EventListenerComposite<>(List.of(installationEventEventListenerStub, installationEventEventListenerStub));
-    private final EventProcessorService eventProcessorService = new EventProcessorService(rawInstallationEventRepositoryStub, eventListener, rawStorageRepositoryStub);
+    private final GithubRepoRepositoryStub githubRepoRepositoryStub = new GithubRepoRepositoryStub();
+    private final GithubAccountRepository githubAccountRepository = mock(GithubAccountRepository.class);
+    private final RepoIndexingJobRepositoryStub repoIndexingJobRepositoryStub = new RepoIndexingJobRepositoryStub();
+    private final InstallationEventProcessorService eventProcessorService = new InstallationEventProcessorService(
+            rawInstallationEventRepositoryStub, rawStorageRepositoryStub, githubRepoRepositoryStub, githubAccountRepository, repoIndexingJobRepositoryStub);
 
+    @BeforeEach
+    void setup() {
+        rawStorageRepositoryStub.feedWith(marketplaceFrontend);
+    }
 
     @Test
     public void should_store_raw_events() {
         eventProcessorService.process(newInstallationEvent);
 
         assertCachedEventsAre(newInstallationEvent);
-        assertThat(installationEventEventListenerStub.events()).hasSize(2);
+
+        final var repos = githubRepoRepositoryStub.repos();
+        assertThat(repos).hasSize(1);
+        final var repo = repos.get(0);
+        assertThat(repo.getId()).isEqualTo(marketplaceFrontend.getId());
+        assertThat(repo.getOwner().getInstallationId()).isEqualTo(newInstallationEvent.getInstallation().getId());
+
+        assertThat(repoIndexingJobRepositoryStub.installationIds()).containsExactly(newInstallationEvent.getInstallation().getId());
+        assertThat(repoIndexingJobRepositoryStub.repos(newInstallationEvent.getInstallation().getId())).containsExactly(marketplaceFrontend.getId());
     }
 
     private void assertCachedEventsAre(RawInstallationEvent... events) {

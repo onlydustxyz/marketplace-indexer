@@ -1,7 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.domain.models.UserIndexingJobTrigger;
-import com.onlydust.marketplace.indexer.domain.ports.out.UserIndexingJobTriggerRepository;
+import com.onlydust.marketplace.indexer.domain.ports.out.UserIndexingJobRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -12,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserJobIndexingIT extends IntegrationTest {
     @Autowired
-    public UserIndexingJobTriggerRepository userIndexingJobTriggerRepository;
+    public UserIndexingJobRepository userIndexingJobRepository;
 
     @Test
     public void should_index_user_on_demand() throws IOException {
@@ -25,7 +24,7 @@ public class UserJobIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        assertThat(userIndexingJobTriggerRepository.list()).containsExactly(new UserIndexingJobTrigger(ANTHONY));
+        assertThat(userIndexingJobRepository.users()).containsExactly(ANTHONY);
     }
 
     private WebTestClient.ResponseSpec indexUser(Long userId) {

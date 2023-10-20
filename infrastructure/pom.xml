@@ -17,7 +17,6 @@
     <modules>
         <module>postgres-adapter</module>
         <module>github-api-adapter</module>
-        <module>quartz-adapter</module>
     </modules>
 
     <properties>

@@ -1,12 +1,15 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
-import com.onlydust.marketplace.indexer.domain.ports.out.RepoIndexingJobTriggerRepository;
+import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTriggerEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -17,14 +20,15 @@ import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GithubWebhookIT extends IntegrationTest {
     final Long MARKETPLACE_FRONTEND_ID = 498695724L;
     @Autowired
-    RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository;
+    RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository;
     @Autowired
     GithubWebhookRestApi.Config config;
     @Autowired
-    GithubAccountRepository githubAccountRepository;
+    GithubAccountEntityRepository githubAccountRepository;
 
     @Test
     void should_reject_upon_invalid_signature() throws URISyntaxException, IOException {
@@ -43,6 +47,7 @@ public class GithubWebhookIT extends IntegrationTest {
     }
 
     @Test
+    @Order(1)
     void should_index_repository_upon_installation_created_event() throws URISyntaxException, IOException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_created.json").toURI()));
@@ -53,7 +58,7 @@ public class GithubWebhookIT extends IntegrationTest {
         // Then
         response.expectStatus().isOk();
 
-        assertThat(repoIndexingJobTriggerRepository.list()).containsExactly(new RepoIndexingJobTrigger(42952633L, MARKETPLACE_FRONTEND_ID));
+        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, 42952633L));
         assertThat(githubAccountRepository.findAll()).containsExactly(GithubAccountEntity.builder()
                 .id(98735558L)
                 .login("onlydustxyz")
@@ -65,9 +70,9 @@ public class GithubWebhookIT extends IntegrationTest {
     }
 
     @Test
+    @Order(2)
     void should_remove_repository_upon_installation_deleted_event() throws URISyntaxException, IOException {
         // Given
-        repoIndexingJobTriggerRepository.add(new RepoIndexingJobTrigger(42952633L, MARKETPLACE_FRONTEND_ID));
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_deleted.json").toURI()));
 
         // When
@@ -76,7 +81,7 @@ public class GithubWebhookIT extends IntegrationTest {
         // Then
         response.expectStatus().isOk();
 
-        assertThat(repoIndexingJobTriggerRepository.list()).isEmpty();
+        assertThat(repoIndexingJobTriggerRepository.findAll()).isEmpty();
         assertThat(githubAccountRepository.findAll()).containsExactly(GithubAccountEntity.builder()
                 .id(98735558L)
                 .login("onlydustxyz")

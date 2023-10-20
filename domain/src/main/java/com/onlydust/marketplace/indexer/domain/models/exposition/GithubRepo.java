@@ -20,9 +20,13 @@ public class GithubRepo {
     Long forksCount;
 
     public static GithubRepo of(CleanRepo repo) {
+        return of(repo, GithubAccount.of(repo.getOwner()));
+    }
+
+    public static GithubRepo of(CleanRepo repo, GithubAccount owner) {
         return GithubRepo.builder()
                 .id(repo.getId())
-                .owner(GithubAccount.of(repo.getOwner()))
+                .owner(owner)
                 .name(repo.getName())
                 .htmlUrl(repo.getHtmlUrl())
                 .updatedAt(repo.getUpdatedAt())

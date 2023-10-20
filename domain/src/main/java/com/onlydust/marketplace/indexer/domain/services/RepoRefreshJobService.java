@@ -1,34 +1,34 @@
 package com.onlydust.marketplace.indexer.domain.services;
 
-import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJob;
-import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
-import com.onlydust.marketplace.indexer.domain.ports.in.RefreshJobScheduler;
-import com.onlydust.marketplace.indexer.domain.ports.out.JobScheduler;
-import com.onlydust.marketplace.indexer.domain.ports.out.RepoIndexingJobTriggerRepository;
+import com.onlydust.marketplace.indexer.domain.jobs.Job;
+import com.onlydust.marketplace.indexer.domain.jobs.RepoIndexerJob;
+import com.onlydust.marketplace.indexer.domain.ports.in.RepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.RepoRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.out.RepoIndexingJobRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Set;
-
-import static java.util.stream.Collectors.*;
+import java.util.List;
 
 @AllArgsConstructor
 @Slf4j
-public class RepoRefreshJobService implements RefreshJobScheduler {
-    private final RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository;
-    private final JobScheduler<RepoIndexingJob> scheduler;
+public class RepoRefreshJobService implements RepoRefreshJobManager {
+    private final RepoIndexingJobRepository repoIndexingJobRepository;
+
+    private final RepoIndexer repoIndexer;
 
     @Override
-    public void scheduleAllJobs() {
-        repoIndexingJobTriggerRepository.list()
-                .stream().collect(
-                        groupingBy( // group triggers by installationId
-                                RepoIndexingJobTrigger::installationId,
-                                mapping(RepoIndexingJobTrigger::repoId, toSet())))
-                .forEach(this::scheduleJob);
+    public void addRepoToRefresh(Long repoId) {
+        repoIndexingJobRepository.add(0L, repoId);
     }
 
-    private void scheduleJob(Long installationId, Set<Long> repos) {
-        scheduler.scheduleJob(RepoIndexingJob.builder().installationId(installationId).repos(repos).build());
+    @Override
+    public List<Job> allJobs() {
+        return repoIndexingJobRepository.installationIds().stream().map(this::createJobForInstallationId).toList();
+    }
+
+    private Job createJobForInstallationId(Long installationId) {
+        final var repos = repoIndexingJobRepository.repos(installationId);
+        return new RepoIndexerJob(repoIndexer, installationId, repos);
     }
 }

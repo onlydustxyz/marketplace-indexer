@@ -5,8 +5,8 @@ import com.onlydust.marketplace.indexer.postgres.adapters.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -59,28 +59,27 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public JobTriggerEventListener jobTriggerEventListener(final RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository) {
-        return new JobTriggerEventListener(repoIndexingJobTriggerRepository);
+    public PostgresRepoIndexingJobRepository postgresRepoIndexingJobTriggerRepository(final RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository) {
+        return new PostgresRepoIndexingJobRepository(repoIndexingJobTriggerRepository);
     }
 
     @Bean
-    public PostgresInstallationEventListener postgresInstallationEventListener(final GithubAccountRepository githubAccountRepository,
-                                                                               final GithubRepoRepository githubRepoRepository) {
-        return new PostgresInstallationEventListener(githubAccountRepository, githubRepoRepository);
-    }
-
-    @Bean
-    public PostgresRepoIndexingJobTriggerRepository postgresRepoIndexingJobTriggerRepository(final RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository) {
-        return new PostgresRepoIndexingJobTriggerRepository(repoIndexingJobTriggerRepository);
-    }
-
-    @Bean
-    public PostgresUserIndexingJobTriggerRepository userIndexingJobTriggerRepository(final UserIndexingJobTriggerEntityRepository userIndexingJobTriggerRepository) {
-        return new PostgresUserIndexingJobTriggerRepository(userIndexingJobTriggerRepository);
+    public PostgresUserIndexingJobRepository userIndexingJobTriggerRepository(final UserIndexingJobTriggerEntityRepository userIndexingJobTriggerRepository) {
+        return new PostgresUserIndexingJobRepository(userIndexingJobTriggerRepository);
     }
 
     @Bean
     public ContributionStorageRepository contributionStorageRepository(final ContributionRepository contributionRepository) {
         return new PostgresContributionStorageRepository(contributionRepository);
+    }
+
+    @Bean
+    public PostgresGithubRepoRepository postgresGithubRepoRepository(final GithubRepoEntityRepository githubRepoRepository) {
+        return new PostgresGithubRepoRepository(githubRepoRepository);
+    }
+
+    @Bean
+    public PostgresGithubAccountRepository postgresGithubAccountRepository(final GithubAccountEntityRepository githubAccountEntityRepository) {
+        return new PostgresGithubAccountRepository(githubAccountEntityRepository);
     }
 }

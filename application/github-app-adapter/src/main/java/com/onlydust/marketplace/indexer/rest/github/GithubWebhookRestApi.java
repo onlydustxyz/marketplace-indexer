@@ -2,7 +2,7 @@ package com.onlydust.marketplace.indexer.rest.github;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
-import com.onlydust.marketplace.indexer.domain.services.EventProcessorService;
+import com.onlydust.marketplace.indexer.domain.services.InstallationEventProcessorService;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +23,7 @@ public class GithubWebhookRestApi {
     private static final String X_HUB_SIGNATURE_256 = "X-Hub-Signature-256";
     private final ObjectMapper objectMapper;
     private final Config config;
-    private final EventProcessorService eventProcessorService;
+    private final InstallationEventProcessorService eventProcessorService;
 
     @PostMapping("/github-app/webhook")
     public ResponseEntity<Void> consumeWebhook(final @RequestBody byte[] event,

@@ -1,8 +1,8 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
-import com.onlydust.marketplace.indexer.domain.ports.out.RepoIndexingJobTriggerRepository;
+import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTriggerEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.PullRequestRepository;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RepoJobIndexingIT extends IntegrationTest {
     @Autowired
-    public RepoIndexingJobTriggerRepository repoIndexingJobTriggerRepository;
+    public RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository;
     @Autowired
     public RepoRepository repoRepository;
     @Autowired
@@ -40,7 +40,7 @@ public class RepoJobIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        assertThat(repoIndexingJobTriggerRepository.list()).containsExactly(new RepoIndexingJobTrigger(0L, MARKETPLACE));
+        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobTriggerEntity(MARKETPLACE, 0L));
 
         // Wait for the job to finish
         waitForJobToFinish();
