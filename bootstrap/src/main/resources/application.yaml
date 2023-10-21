@@ -64,3 +64,4 @@ management:
     export:
       datadog:
         api-key: ${DD_API_KEY}
+        uri: https://api.datadoghq.eu
