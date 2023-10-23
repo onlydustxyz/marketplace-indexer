@@ -8,6 +8,7 @@ import org.assertj.core.groups.Tuple;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class RawStorageRepositoryStub implements RawStorageRepository {
     final List<RawRepo> repos = new ArrayList<>();
@@ -41,13 +42,13 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public List<RawPullRequest> repoPullRequests(Long repoId) {
-        return repoPullRequests.getOrDefault(repoId, new ArrayList<>());
+    public Stream<RawPullRequest> repoPullRequests(Long repoId) {
+        return repoPullRequests.getOrDefault(repoId, new ArrayList<>()).stream();
     }
 
     @Override
-    public List<RawIssue> repoIssues(Long repoId) {
-        return repoIssues.getOrDefault(repoId, new ArrayList<>());
+    public Stream<RawIssue> repoIssues(Long repoId) {
+        return repoIssues.getOrDefault(repoId, new ArrayList<>()).stream();
     }
 
     @Override
@@ -128,11 +129,11 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     public void feedWith(Long repoId, RawPullRequest... pullRequests) {
-        saveRepoPullRequests(repoId, Arrays.stream(pullRequests).toList());
+        Arrays.stream(pullRequests).forEach(pullRequest -> savePullRequest(repoId, pullRequest));
     }
 
     public void feedWith(Long repoId, RawIssue... issues) {
-        saveRepoIssues(repoId, Arrays.stream(issues).toList());
+        Arrays.stream(issues).forEach(issue -> saveIssue(repoId, issue));
     }
 
     public void feedWith(Long repoId, String sha, RawCheckRuns checkRuns) {
@@ -185,16 +186,6 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     @Override
     public void saveRepo(RawRepo repo) {
         repos.add(repo);
-    }
-
-    @Override
-    public void saveRepoPullRequests(Long repoId, List<RawPullRequest> pullRequests) {
-        pullRequests.forEach(pullRequest -> savePullRequest(repoId, pullRequest));
-    }
-
-    @Override
-    public void saveRepoIssues(Long repoId, List<RawIssue> issues) {
-        issues.forEach(issue -> saveIssue(repoId, issue));
     }
 
     @Override

@@ -88,6 +88,11 @@
                 <artifactId>jjwt</artifactId>
                 <version>${jjwt.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-core</artifactId>
+                <version>1.11.2</version>
+            </dependency>
             <!-- AWS Dependencies -->
             <dependency>
                 <groupId>com.amazonaws</groupId>

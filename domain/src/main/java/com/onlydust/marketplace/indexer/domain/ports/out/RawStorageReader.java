@@ -4,15 +4,16 @@ import com.onlydust.marketplace.indexer.domain.models.raw.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface RawStorageReader {
     Optional<RawRepo> repo(Long repoId);
 
     Optional<RawRepo> repo(String repoOwner, String repoName);
 
-    List<RawPullRequest> repoPullRequests(Long repoId);
+    Stream<RawPullRequest> repoPullRequests(Long repoId);
 
-    List<RawIssue> repoIssues(Long repoId);
+    Stream<RawIssue> repoIssues(Long repoId);
 
     RawLanguages repoLanguages(Long repoId);
 

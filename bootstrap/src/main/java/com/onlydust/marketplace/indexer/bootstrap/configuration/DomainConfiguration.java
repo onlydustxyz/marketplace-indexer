@@ -4,9 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.ports.in.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import com.onlydust.marketplace.indexer.domain.services.*;
+import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
+import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredRepoIndexer;
+import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
+import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +25,17 @@ public class DomainConfiguration {
     @ConfigurationProperties("infrastructure.github")
     GithubHttpClient.Config githubConfig() {
         return new GithubHttpClient.Config();
+    }
+
+    @Bean
+    @ConfigurationProperties("infrastructure.github.rate-limit")
+    GithubRateLimitServiceAdapter.Config githubrateLimitConfig() {
+        return new GithubRateLimitServiceAdapter.Config();
+    }
+
+    @Bean
+    GithubRateLimitServiceAdapter githubRateLimitServiceAdapter(final GithubHttpClient githubHttpClient) {
+        return new GithubRateLimitServiceAdapter(githubHttpClient);
     }
 
     @Bean
@@ -71,8 +88,11 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public UserIndexer refreshingUserIndexer(final RawStorageReader rawStorageReader) {
-        return new UserIndexingService(rawStorageReader);
+    public UserIndexer refreshingUserIndexer(final RawStorageReader rawStorageReader, final MeterRegistry registry) {
+        return new MonitoredUserIndexer(
+                new UserIndexingService(rawStorageReader),
+                registry
+        );
     }
 
     @Bean
@@ -84,10 +104,16 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public IssueIndexer refreshingIssueIndexer(final RawStorageReader rawStorageReader, final UserIndexer refreshingUserIndexer, final ContributionStorageRepository contributionStorageRepository) {
-        return new IssueContributionExposer(
-                new IssueIndexingService(rawStorageReader, refreshingUserIndexer),
-                contributionStorageRepository
+    public IssueIndexer refreshingIssueIndexer(final RawStorageReader rawStorageReader,
+                                               final UserIndexer refreshingUserIndexer,
+                                               final ContributionStorageRepository contributionStorageRepository,
+                                               final MeterRegistry registry) {
+        return new MonitoredIssueIndexer(
+                new IssueContributionExposer(
+                        new IssueIndexingService(rawStorageReader, refreshingUserIndexer),
+                        contributionStorageRepository
+                ),
+                registry
         );
     }
 
@@ -107,10 +133,14 @@ public class DomainConfiguration {
     public PullRequestIndexer refreshingPullRequestIndexer(final RawStorageReader rawStorageReader,
                                                            final UserIndexer refreshingUserIndexer,
                                                            final IssueIndexer refreshingIssueIndexer,
-                                                           final ContributionStorageRepository contributionStorageRepository) {
-        return new PullRequestContributionExposer(
-                new PullRequestIndexingService(rawStorageReader, refreshingUserIndexer, refreshingIssueIndexer),
-                contributionStorageRepository
+                                                           final ContributionStorageRepository contributionStorageRepository,
+                                                           final MeterRegistry registry) {
+        return new MonitoredPullRequestIndexer(
+                new PullRequestContributionExposer(
+                        new PullRequestIndexingService(rawStorageReader, refreshingUserIndexer, refreshingIssueIndexer),
+                        contributionStorageRepository
+                ),
+                registry
         );
     }
 
@@ -126,8 +156,19 @@ public class DomainConfiguration {
     public RepoIndexer refreshingRepoIndexer(
             final RawStorageReader rawStorageReader,
             final IssueIndexer refreshingIssueIndexer,
-            final PullRequestIndexer refreshingPullRequestIndexer) {
-        return new RepoIndexingService(rawStorageReader, refreshingIssueIndexer, refreshingPullRequestIndexer);
+            final PullRequestIndexer refreshingPullRequestIndexer,
+            final MeterRegistry registry,
+            final GithubRateLimitServiceAdapter rateLimitService,
+            final GithubRateLimitServiceAdapter.Config githubrateLimitConfig) {
+        return new RateLimitGuardedRepoIndexer(
+                new MonitoredRepoIndexer(
+                        new RepoIndexingService(rawStorageReader, refreshingIssueIndexer, refreshingPullRequestIndexer),
+                        registry
+                ),
+                rateLimitService,
+                githubrateLimitConfig,
+                registry
+        );
     }
 
     @Bean

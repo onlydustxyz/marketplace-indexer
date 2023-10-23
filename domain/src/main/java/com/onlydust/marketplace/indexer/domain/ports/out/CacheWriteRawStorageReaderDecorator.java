@@ -5,6 +5,7 @@ import lombok.Builder;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Builder
 public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
@@ -26,17 +27,13 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public List<RawPullRequest> repoPullRequests(Long repoId) {
-        final var pullRequests = fetcher.repoPullRequests(repoId);
-        cache.saveRepoPullRequests(repoId, pullRequests);
-        return pullRequests;
+    public Stream<RawPullRequest> repoPullRequests(Long repoId) {
+        return fetcher.repoPullRequests(repoId).peek(pr -> cache.savePullRequest(repoId, pr));
     }
 
     @Override
-    public List<RawIssue> repoIssues(Long repoId) {
-        final var issues = fetcher.repoIssues(repoId);
-        cache.saveRepoIssues(repoId, issues);
-        return issues;
+    public Stream<RawIssue> repoIssues(Long repoId) {
+        return fetcher.repoIssues(repoId).peek(i -> cache.saveIssue(repoId, i));
     }
 
     @Override
