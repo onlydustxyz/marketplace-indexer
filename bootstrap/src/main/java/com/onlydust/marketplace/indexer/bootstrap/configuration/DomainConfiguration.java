@@ -9,6 +9,7 @@ import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPull
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
+import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -24,6 +25,17 @@ public class DomainConfiguration {
     @ConfigurationProperties("infrastructure.github")
     GithubHttpClient.Config githubConfig() {
         return new GithubHttpClient.Config();
+    }
+
+    @Bean
+    @ConfigurationProperties("infrastructure.github.rate-limit")
+    GithubRateLimitServiceAdapter.Config githubrateLimitConfig() {
+        return new GithubRateLimitServiceAdapter.Config();
+    }
+
+    @Bean
+    GithubRateLimitServiceAdapter githubRateLimitServiceAdapter(final GithubHttpClient githubHttpClient) {
+        return new GithubRateLimitServiceAdapter(githubHttpClient);
     }
 
     @Bean
@@ -145,9 +157,16 @@ public class DomainConfiguration {
             final RawStorageReader rawStorageReader,
             final IssueIndexer refreshingIssueIndexer,
             final PullRequestIndexer refreshingPullRequestIndexer,
-            final MeterRegistry registry) {
-        return new MonitoredRepoIndexer(
-                new RepoIndexingService(rawStorageReader, refreshingIssueIndexer, refreshingPullRequestIndexer),
+            final MeterRegistry registry,
+            final GithubRateLimitServiceAdapter rateLimitService,
+            final GithubRateLimitServiceAdapter.Config githubrateLimitConfig) {
+        return new RateLimitGuardedRepoIndexer(
+                new MonitoredRepoIndexer(
+                        new RepoIndexingService(rawStorageReader, refreshingIssueIndexer, refreshingPullRequestIndexer),
+                        registry
+                ),
+                rateLimitService,
+                githubrateLimitConfig,
                 registry
         );
     }
