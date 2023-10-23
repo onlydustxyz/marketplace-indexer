@@ -65,3 +65,6 @@ management:
       datadog:
         api-key: ${DD_API_KEY}
         uri: https://api.datadoghq.eu
+    tags:
+      environment: ${ENV}
+      service: indexer
