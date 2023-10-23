@@ -148,10 +148,6 @@ public class IndexingServiceTest {
 
         assertThat(repo.getId()).isEqualTo(marketplaceFrontend.getId());
 
-        assertThat(repo.getPullRequests().size()).isEqualTo(1);
-        assertThat(repo.getPullRequests().get(0).getId()).isEqualTo(pr1257.getId());
-        assertThat(repo.getIssues().size()).isEqualTo(1);
-        assertThat(repo.getIssues().get(0).getId()).isEqualTo(issue78.getId());
         assertThat(repo.getLanguages().get("TypeScript")).isEqualTo(2761826);
 
         assertCachedReposAre(marketplaceFrontend, marketplaceFrontend, marketplaceFrontend, marketplaceFrontend);

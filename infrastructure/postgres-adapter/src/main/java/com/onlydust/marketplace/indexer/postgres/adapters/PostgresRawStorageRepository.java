@@ -9,6 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @AllArgsConstructor
 public class PostgresRawStorageRepository implements RawStorageRepository {
@@ -35,13 +36,13 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
     }
 
     @Override
-    public List<RawPullRequest> repoPullRequests(Long repoId) {
-        return pullRequestRepository.findAllByRepoId(repoId).stream().map(PullRequest::getData).toList();
+    public Stream<RawPullRequest> repoPullRequests(Long repoId) {
+        return pullRequestRepository.findAllByRepoId(repoId).stream().map(PullRequest::getData);
     }
 
     @Override
-    public List<RawIssue> repoIssues(Long repoId) {
-        return issueRepository.findAllByRepoId(repoId).stream().map(Issue::getData).toList();
+    public Stream<RawIssue> repoIssues(Long repoId) {
+        return issueRepository.findAllByRepoId(repoId).stream().map(Issue::getData);
     }
 
     @Override
@@ -129,16 +130,6 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
     @Override
     public void saveRepo(RawRepo repo) {
         repoRepository.save(Repo.of(repo));
-    }
-
-    @Override
-    public void saveRepoPullRequests(Long repoId, List<RawPullRequest> pullRequests) {
-        pullRequestRepository.saveAll(pullRequests.stream().map(pr -> PullRequest.of(repoId, pr)).toList());
-    }
-
-    @Override
-    public void saveRepoIssues(Long repoId, List<RawIssue> issues) {
-        issueRepository.saveAll(issues.stream().map(issue -> Issue.of(repoId, issue)).toList());
     }
 
     @Override

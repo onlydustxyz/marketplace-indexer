@@ -6,7 +6,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 @Value
@@ -19,10 +21,6 @@ public class CleanRepo {
     CleanAccount owner;
     Long starsCount;
     Long forksCount;
-    @Builder.Default
-    List<CleanPullRequest> pullRequests = new ArrayList<>();
-    @Builder.Default
-    List<CleanIssue> issues = new ArrayList<>();
     @Builder.Default
     Map<String, Long> languages = new HashMap<>();
 
@@ -40,10 +38,8 @@ public class CleanRepo {
                 .build();
     }
 
-    public static CleanRepo of(RawRepo repo, CleanAccount owner, List<CleanPullRequest> pullRequests, List<CleanIssue> issues, RawLanguages languages) {
+    public static CleanRepo of(RawRepo repo, CleanAccount owner, RawLanguages languages) {
         return CleanRepo.of(repo, owner).toBuilder()
-                .pullRequests(pullRequests)
-                .issues(issues)
                 .languages(languages.get())
                 .build();
     }

@@ -21,14 +21,12 @@ public class RepoIndexingService implements RepoIndexer {
     public CleanRepo indexRepo(Long repoId) {
         LOGGER.info("Indexing repo {}", repoId);
         final var repo = rawStorageReader.repo(repoId).orElseThrow(() -> OnlyDustException.notFound("Repo not found"));
-        final var pullRequests = rawStorageReader.repoPullRequests(repoId).stream().map(pr -> pullRequestIndexer.indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber())).toList();
-        final var issues = rawStorageReader.repoIssues(repoId).stream().map(issue -> issueIndexer.indexIssue(repo.getOwner().getLogin(), repo.getName(), issue.getNumber())).toList();
         final var languages = rawStorageReader.repoLanguages(repoId);
+        rawStorageReader.repoPullRequests(repoId).forEach(pr -> pullRequestIndexer.indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber()));
+        rawStorageReader.repoIssues(repoId).forEach(issue -> issueIndexer.indexIssue(repo.getOwner().getLogin(), repo.getName(), issue.getNumber()));
         return CleanRepo.of(
                 repo,
                 CleanAccount.of(repo.getOwner()),
-                pullRequests,
-                issues,
                 languages
         );
     }

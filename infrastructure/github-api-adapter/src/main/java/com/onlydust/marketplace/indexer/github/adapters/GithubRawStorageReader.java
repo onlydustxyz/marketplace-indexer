@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Slf4j
@@ -26,19 +28,15 @@ public class GithubRawStorageReader implements RawStorageReader {
     }
 
     @Override
-    public List<RawPullRequest> repoPullRequests(Long repoId) {
+    public Stream<RawPullRequest> repoPullRequests(Long repoId) {
         final var page = new GithubPage<>(client, "/repositories/" + repoId + "/pulls?state=all&sort=updated&per_page=100", RawPullRequest[].class);
-        List<RawPullRequest> pullRequests = new ArrayList<>();
-        page.forEachRemaining(pullRequests::add);
-        return pullRequests;
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false);
     }
 
     @Override
-    public List<RawIssue> repoIssues(Long repoId) {
+    public Stream<RawIssue> repoIssues(Long repoId) {
         final var page = new GithubPage<>(client, "/repositories/" + repoId + "/issues?state=all&sort=updated&per_page=100", RawIssue[].class);
-        List<RawIssue> issues = new ArrayList<>();
-        page.forEachRemaining(issues::add);
-        return issues;
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false);
     }
 
     @Override
