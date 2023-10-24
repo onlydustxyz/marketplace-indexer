@@ -16,7 +16,7 @@ import java.util.Date;
 public class RawRepo extends JsonDocument {
     Long id;
     String name;
-    RawAccount owner;
+    RawShortAccount owner;
     @JsonProperty("html_url")
     String htmlUrl;
     String description;

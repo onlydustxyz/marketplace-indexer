@@ -20,5 +20,5 @@ public class RawCodeReview extends JsonDocument {
     Date submittedAt;
 
     @JsonProperty("user")
-    RawAccount author;
+    RawShortAccount author;
 }

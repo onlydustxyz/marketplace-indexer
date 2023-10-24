@@ -2,8 +2,8 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.User;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.UserSocialAccounts;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserRepository;

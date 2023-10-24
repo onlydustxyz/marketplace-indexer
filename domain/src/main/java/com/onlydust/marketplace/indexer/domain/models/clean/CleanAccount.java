@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.models.clean;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
@@ -17,6 +17,7 @@ public class CleanAccount {
     String type;
     String htmlUrl;
     String avatarUrl;
+    String name;
     @Builder.Default
     List<RawSocialAccount> socialAccounts = new ArrayList<>();
 
@@ -27,6 +28,7 @@ public class CleanAccount {
                 .type(account.getType())
                 .htmlUrl(account.getHtmlUrl())
                 .avatarUrl(account.getAvatarUrl())
+                .name(account.getName())
                 .build();
     }
 

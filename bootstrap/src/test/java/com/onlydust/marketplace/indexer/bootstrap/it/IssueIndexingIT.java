@@ -19,6 +19,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,6 +41,7 @@ public class IssueIndexingIT extends IntegrationTest {
         final var marketplaceFrontend = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend.json"), RawRepo.class);
         final var issue78 = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/issues/78.json"), RawIssue.class);
         final var anthony = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
+        final var onlyDust = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/onlyDust.json"), RawAccount.class);
         final var anthonySocialAccounts = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony_social_accounts.json"), RawSocialAccount[].class));
 
         // When
@@ -50,8 +52,11 @@ public class IssueIndexingIT extends IntegrationTest {
 
         assertThat(issueRepository.findAll()).containsExactly(Issue.of(marketplaceFrontend.getId(), issue78));
         assertThat(repoRepository.findAll()).containsExactly(Repo.of(marketplaceFrontend));
-        assertThat(userRepository.findAll()).containsExactly(User.of(anthony));
-        assertThat(userSocialAccountsRepository.findAll()).containsExactly(UserSocialAccounts.of(anthony.getId(), anthonySocialAccounts));
+        assertThat(userRepository.findAll()).containsExactly(User.of(anthony), User.of(onlyDust));
+        assertThat(userSocialAccountsRepository.findAll()).containsExactly(
+                UserSocialAccounts.of(anthony.getId(), anthonySocialAccounts),
+                UserSocialAccounts.of(onlyDust.getId(), List.of())
+        );
         assertThat(contributionRepository.findAll()).hasSize(1);
     }
 

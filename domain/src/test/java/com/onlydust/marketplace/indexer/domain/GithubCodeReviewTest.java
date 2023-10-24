@@ -23,7 +23,7 @@ public class GithubCodeReviewTest {
     public void should_return_correct_id() {
         // WARNING: Modifying this test means that all existing ids in database must be updated
         final var reviewer = CleanAccount.of(pierre);
-        final var pullRequest = CleanPullRequest.of(pr1257, CleanRepo.of(pr1257.getBase().getRepo(), CleanAccount.of(pr1257.getBase().getRepo().getOwner())), CleanAccount.of(anthony));
+        final var pullRequest = CleanPullRequest.of(pr1257, CleanRepo.of(pr1257.getBase().getRepo(), CleanAccount.of(anthony)), CleanAccount.of(anthony));
         final var codeReview = CleanCodeReview.of(pr1257Reviews[0], reviewer);
 
         assertThat(GithubCodeReview.of(codeReview, pullRequest).getId()).isEqualTo("eada5d9c5fee512cf4c4a2d6af5125d6b5930f40ae84a59026d523ee8849e197");

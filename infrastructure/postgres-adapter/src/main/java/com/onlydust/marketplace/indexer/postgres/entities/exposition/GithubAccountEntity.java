@@ -24,7 +24,7 @@ public class GithubAccountEntity {
     GithubAccountEntity.Type type;
     String htmlUrl;
     String avatarUrl;
-    Long installationId;
+    String name;
 
     public static GithubAccountEntity of(GithubAccount account) {
         return GithubAccountEntity.builder()
@@ -33,7 +33,7 @@ public class GithubAccountEntity {
                 .type(Type.of(account.getType()))
                 .htmlUrl(account.getHtmlUrl())
                 .avatarUrl(account.getAvatarUrl())
-                .installationId(account.getInstallationId())
+                .name(account.getName())
                 .build();
     }
 

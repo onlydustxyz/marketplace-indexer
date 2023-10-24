@@ -67,9 +67,10 @@ public class PullRequestIndexingService implements PullRequestIndexer {
         final var commits = indexPullRequestCommits(repo.getId(), pullRequest.getId(), prNumber);
         final List<CleanCheckRun> checkRuns = isNull(pullRequest.getHead().getRepo()) ? List.of() : indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
         final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName(), pullRequest.getNumber());
+        final var repoOwnerAccount = userIndexer.indexUser(repo.getOwner().getId());
         return CleanPullRequest.of(
                 pullRequest,
-                CleanRepo.of(repo, CleanAccount.of(repo.getOwner())),
+                CleanRepo.of(repo, repoOwnerAccount),
                 author,
                 codeReviews,
                 requestedReviewers,

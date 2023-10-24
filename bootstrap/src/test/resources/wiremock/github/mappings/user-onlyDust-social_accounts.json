@@ -1,0 +1,15 @@
+{
+  "request": {
+    "url": "/user/98735558/social_accounts",
+    "method": "GET",
+    "headers": {
+      "Authorization": {
+        "contains": "Bearer GITHUB_PAT"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": "[]"
+  }
+}
