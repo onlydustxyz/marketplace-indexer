@@ -12,6 +12,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,6 +52,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
         final var anthony = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
         final var pierre = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/pierre.json"), RawAccount.class);
         final var olivier = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/olivier.json"), RawAccount.class);
+        final var onlyDust = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/onlyDust.json"), RawAccount.class);
         final var anthonySocialAccounts = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony_social_accounts.json"), RawSocialAccount[].class));
         final var pierreSocialAccounts = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/pierre_social_accounts.json"), RawSocialAccount[].class));
         final var olivierSocialAccounts = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/olivier_social_accounts.json"), RawSocialAccount[].class));
@@ -66,11 +68,12 @@ public class PullRequestIndexingIT extends IntegrationTest {
         assertThat(pullRequestReviewsRepository.findAll()).containsExactly(PullRequestReview.of(pr1257.getId(), pr1257Reviews));
         assertThat(pullRequestsCommitsRepository.findAll()).containsExactly(PullRequestCommits.of(pr1257.getId(), pr1257Commits));
         assertThat(repoCheckRunsRepository.findAll()).containsExactly(RepoCheckRuns.of(marketplaceFrontend.getId(), pr1257.getHead().getSha(), pr1257CheckRuns));
-        assertThat(userRepository.findAll()).containsExactlyInAnyOrder(User.of(pierre), User.of(olivier), User.of(anthony));
+        assertThat(userRepository.findAll()).containsExactlyInAnyOrder(User.of(pierre), User.of(olivier), User.of(anthony), User.of(onlyDust));
         assertThat(userSocialAccountsRepository.findAll()).containsExactlyInAnyOrder(
                 UserSocialAccounts.of(pierre.getId(), pierreSocialAccounts),
                 UserSocialAccounts.of(olivier.getId(), olivierSocialAccounts),
-                UserSocialAccounts.of(anthony.getId(), anthonySocialAccounts)
+                UserSocialAccounts.of(anthony.getId(), anthonySocialAccounts),
+                UserSocialAccounts.of(onlyDust.getId(), List.of())
         );
         assertThat(issueRepository.findAll()).containsExactly(Issue.of(marketplaceFrontend.getId(), issue78));
         assertThat(pullRequestClosingIssueRepository.findAll()).containsExactly(PullRequestClosingIssue.of(pr1257.getId(), issue78.getId()));

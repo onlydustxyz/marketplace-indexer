@@ -19,4 +19,5 @@ public class RawAccount extends JsonDocument {
     String htmlUrl;
     @JsonProperty("avatar_url")
     String avatarUrl;
+    String name;
 }

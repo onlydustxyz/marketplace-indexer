@@ -5,6 +5,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.*;
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class IndexingServiceTest {
+    final RawAccount onlyDust = RawStorageRepositoryStub.load("/github/users/onlyDust.json", RawAccount.class);
     final RawAccount anthony = RawStorageRepositoryStub.load("/github/users/anthony.json", RawAccount.class);
     final RawAccount pierre = RawStorageRepositoryStub.load("/github/users/pierre.json", RawAccount.class);
     final RawAccount olivier = RawStorageRepositoryStub.load("/github/users/olivier.json", RawAccount.class);
@@ -49,13 +51,14 @@ public class IndexingServiceTest {
             new PullRequestIndexingService(rawStorageReader, userIndexingService, issueIndexer),
             contributionRepository
     );
-    final RepoIndexingService repoIndexingService = new RepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer);
+    final UserIndexer userIndexer = new UserIndexingService(rawStorageReader);
+    final RepoIndexingService repoIndexingService = new RepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer, userIndexer);
 
     @BeforeEach
     void setup() throws IOException {
         rawStorageReaderStub.feedWith(marketplaceFrontend);
         rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), marketplaceFrontendLanguages);
-        rawStorageReaderStub.feedWith(anthony, pierre, olivier);
+        rawStorageReaderStub.feedWith(anthony, pierre, olivier, onlyDust);
         rawStorageReaderStub.feedWith(anthony.getId(), anthonySocialAccounts);
         rawStorageReaderStub.feedWith(pierre.getId(), pierreSocialAccounts);
         rawStorageReaderStub.feedWith(olivier.getId(), olivierSocialAccounts);
@@ -109,13 +112,16 @@ public class IndexingServiceTest {
                 pierre,  // as code reviewer
                 olivier, // as requested reviewer
                 anthony, // as committer
-                anthony,  // as issue author
-                anthony  // as issue assignee
+                anthony, // as issue author
+                onlyDust,// as issue repo owner
+                anthony, // as issue assignee
+                onlyDust // as PR repo owner
         );
         assertCachedUserSocialAccountsAre(
                 Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(),
                         pierre.getId(), Arrays.stream(pierreSocialAccounts).toList(),
-                        olivier.getId(), Arrays.stream(olivierSocialAccounts).toList())
+                        olivier.getId(), Arrays.stream(olivierSocialAccounts).toList(),
+                        onlyDust.getId(), List.of())
         );
 
         assertThat(contributionRepository.contributions()).hasSize(5);
@@ -135,8 +141,8 @@ public class IndexingServiceTest {
 
         assertCachedReposAre(marketplaceFrontend);
         assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(issue78)));
-        assertCachedUsersAre(anthony, anthony);
-        assertCachedUserSocialAccountsAre(Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList()));
+        assertCachedUsersAre(anthony, onlyDust, anthony);
+        assertCachedUserSocialAccountsAre(Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(), onlyDust.getId(), List.of()));
 
         assertThat(contributionRepository.contributions()).hasSize(1);
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.ISSUE))).hasSize(1);
@@ -167,14 +173,19 @@ public class IndexingServiceTest {
                 olivier, // as requested reviewer
                 anthony, // as committer
                 anthony, // as issue author
+                onlyDust,// as issue repo owner
                 anthony, // as issue author, again...
+                onlyDust,// as issue repo owner
                 anthony, // as issue assignee
-                anthony  // as issue assignee, again...
+                onlyDust,// as issue repo owner
+                anthony, // as issue assignee, again...
+                onlyDust // as PR repo owner
         );
         assertCachedUserSocialAccountsAre(
                 Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(),
                         pierre.getId(), Arrays.stream(pierreSocialAccounts).toList(),
-                        olivier.getId(), Arrays.stream(olivierSocialAccounts).toList())
+                        olivier.getId(), Arrays.stream(olivierSocialAccounts).toList(),
+                        onlyDust.getId(), List.of())
         );
     }
 

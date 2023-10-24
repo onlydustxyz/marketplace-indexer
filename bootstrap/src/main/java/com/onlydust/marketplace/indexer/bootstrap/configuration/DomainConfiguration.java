@@ -67,9 +67,15 @@ public class DomainConfiguration {
     public InstallationEventProcessorService eventProcessorService(final PostgresRawInstallationEventStorageRepository postgresRawInstallationEventStorageRepository,
                                                                    final RawStorageReader cachedRawStorageReader,
                                                                    final PostgresGithubRepoRepository postgresGithubRepoRepository,
-                                                                   final PostgresGithubAccountRepository postgresGithubAccountRepository,
-                                                                   final RepoIndexingJobRepository repoIndexingJobRepository) {
-        return new InstallationEventProcessorService(postgresRawInstallationEventStorageRepository, cachedRawStorageReader, postgresGithubRepoRepository, postgresGithubAccountRepository, repoIndexingJobRepository);
+                                                                   final RepoIndexingJobRepository repoIndexingJobRepository,
+                                                                   final UserIndexer cachedUserIndexer,
+                                                                   final GithubAppInstallationRepository githubAppInstallationRepository) {
+        return new InstallationEventProcessorService(postgresRawInstallationEventStorageRepository,
+                cachedRawStorageReader,
+                postgresGithubRepoRepository,
+                repoIndexingJobRepository,
+                cachedUserIndexer,
+                githubAppInstallationRepository);
     }
 
     @Bean
@@ -148,8 +154,9 @@ public class DomainConfiguration {
     public RepoIndexer cachedRepoIndexer(
             final RawStorageReader cachedRawStorageReader,
             final IssueIndexer cachedIssueIndexer,
-            final PullRequestIndexer cachedPullRequestIndexer) {
-        return new RepoIndexingService(cachedRawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer);
+            final PullRequestIndexer cachedPullRequestIndexer,
+            final UserIndexer cachedUserIndexer) {
+        return new RepoIndexingService(cachedRawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer, cachedUserIndexer);
     }
 
     @Bean
@@ -157,12 +164,13 @@ public class DomainConfiguration {
             final RawStorageReader rawStorageReader,
             final IssueIndexer refreshingIssueIndexer,
             final PullRequestIndexer refreshingPullRequestIndexer,
+            final UserIndexer refreshingUserIndexer,
             final MeterRegistry registry,
             final GithubRateLimitServiceAdapter rateLimitService,
             final GithubRateLimitServiceAdapter.Config githubrateLimitConfig) {
         return new RateLimitGuardedRepoIndexer(
                 new MonitoredRepoIndexer(
-                        new RepoIndexingService(rawStorageReader, refreshingIssueIndexer, refreshingPullRequestIndexer),
+                        new RepoIndexingService(rawStorageReader, refreshingIssueIndexer, refreshingPullRequestIndexer, refreshingUserIndexer),
                         registry
                 ),
                 rateLimitService,

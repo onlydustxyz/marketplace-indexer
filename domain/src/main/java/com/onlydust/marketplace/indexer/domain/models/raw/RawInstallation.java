@@ -11,5 +11,5 @@ import lombok.Value;
 @ToString(callSuper = true)
 public class RawInstallation extends JsonDocument {
     Long id;
-    RawAccount account;
+    RawShortAccount account;
 }

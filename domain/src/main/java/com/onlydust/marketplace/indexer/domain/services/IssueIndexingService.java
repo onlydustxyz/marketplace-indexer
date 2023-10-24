@@ -1,7 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services;
 
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
@@ -22,9 +21,11 @@ public class IssueIndexingService implements IssueIndexer {
         final var repo = rawStorageReader.repo(repoOwner, repoName).orElseThrow(() -> OnlyDustException.notFound("Repo not found"));
         final var issue = rawStorageReader.issue(repo.getId(), issueNumber).orElseThrow(() -> OnlyDustException.notFound("Issue not found"));
         final var assignees = issue.getAssignees().stream().map(assignee -> userIndexer.indexUser(assignee.getId())).toList();
+        final var repoOwnerAccount = userIndexer.indexUser(repo.getOwner().getId());
+
         return CleanIssue.of(
                 issue,
-                CleanRepo.of(repo, CleanAccount.of(repo.getOwner())),
+                CleanRepo.of(repo, repoOwnerAccount),
                 userIndexer.indexUser(issue.getAuthor().getId()),
                 assignees
         );

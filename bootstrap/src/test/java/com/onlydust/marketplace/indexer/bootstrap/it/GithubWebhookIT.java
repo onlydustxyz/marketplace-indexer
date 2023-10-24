@@ -2,8 +2,10 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTriggerEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAppInstallationEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import org.junit.jupiter.api.MethodOrderer;
@@ -29,6 +31,8 @@ public class GithubWebhookIT extends IntegrationTest {
     GithubWebhookRestApi.Config config;
     @Autowired
     GithubAccountEntityRepository githubAccountRepository;
+    @Autowired
+    GithubAppInstallationEntityRepository githubAppInstallationEntityRepository;
 
     @Test
     void should_reject_upon_invalid_signature() throws URISyntaxException, IOException {
@@ -59,13 +63,17 @@ public class GithubWebhookIT extends IntegrationTest {
         response.expectStatus().isOk();
 
         assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, 42952633L));
-        assertThat(githubAccountRepository.findAll()).containsExactly(GithubAccountEntity.builder()
+        final var account = GithubAccountEntity.builder()
                 .id(98735558L)
                 .login("onlydustxyz")
                 .type(GithubAccountEntity.Type.ORGANIZATION)
                 .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
                 .htmlUrl("https://github.com/onlydustxyz")
-                .installationId(42952633L)
+                .name("OnlyDust")
+                .build();
+        assertThat(githubAppInstallationEntityRepository.findAll()).containsExactly(GithubAppInstallationEntity.builder()
+                .id(42952633L)
+                .account(account)
                 .build());
     }
 
@@ -88,8 +96,9 @@ public class GithubWebhookIT extends IntegrationTest {
                 .type(GithubAccountEntity.Type.ORGANIZATION)
                 .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
                 .htmlUrl("https://github.com/onlydustxyz")
-                .installationId(null)
+                .name("OnlyDust")
                 .build());
+        assertThat(githubAppInstallationEntityRepository.findAll()).isEmpty();
     }
 
     protected WebTestClient.ResponseSpec post(final String event) {

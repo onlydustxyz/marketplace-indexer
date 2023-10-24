@@ -43,7 +43,7 @@ public class RepoJobIndexingIT extends IntegrationTest {
         assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobTriggerEntity(MARKETPLACE, 0L));
 
         // Wait for the job to finish
-        waitForJobToFinish();
+        waitForJobToFinish(1, 2, 2);
 
         assertThat(repoRepository.findAll()).hasSize(1);
         assertThat(pullRequestsRepository.findAll()).hasSize(2);
@@ -62,16 +62,16 @@ public class RepoJobIndexingIT extends IntegrationTest {
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE)).hasSize(1);
     }
 
-    private void waitForJobToFinish() throws InterruptedException {
-        for (int i = 0; i < 10 && isJobRunning(); i++) {
+    private void waitForJobToFinish(int minRepoCount, int minPullRequestCount, int minIssueCount) throws InterruptedException {
+        for (int i = 0; i < 10 && isJobRunning(minRepoCount, minPullRequestCount, minIssueCount); i++) {
             Thread.sleep(1000);
         }
     }
 
-    private boolean isJobRunning() {
-        return repoRepository.findAll().isEmpty() ||
-                pullRequestsRepository.findAll().isEmpty() ||
-                issuesRepository.findAll().isEmpty();
+    private boolean isJobRunning(int minRepoCount, int minPullRequestCount, int minIssueCount) {
+        return repoRepository.findAll().size() < minRepoCount ||
+                pullRequestsRepository.findAll().size() < minPullRequestCount ||
+                issuesRepository.findAll().size() < minIssueCount;
     }
 
     private WebTestClient.ResponseSpec indexRepo(Long repoId) {

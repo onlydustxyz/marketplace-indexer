@@ -19,7 +19,7 @@ public class RawIssue extends JsonDocument {
     Long number;
     String title;
     @JsonProperty("user")
-    RawAccount author;
+    RawShortAccount author;
     String state;
     @JsonProperty("state_reason")
     String stateReason;
@@ -31,5 +31,5 @@ public class RawIssue extends JsonDocument {
     @JsonProperty("closed_at")
     Date closedAt;
     Integer comments;
-    List<RawAccount> assignees;
+    List<RawShortAccount> assignees;
 }

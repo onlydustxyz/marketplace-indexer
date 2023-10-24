@@ -1,11 +1,11 @@
 package com.onlydust.marketplace.indexer.domain.services;
 
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.RepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,7 @@ public class RepoIndexingService implements RepoIndexer {
     private final RawStorageReader rawStorageReader;
     private final IssueIndexer issueIndexer;
     private final PullRequestIndexer pullRequestIndexer;
+    private final UserIndexer userIndexer;
 
     @Override
     public CleanRepo indexRepo(Long repoId) {
@@ -24,9 +25,10 @@ public class RepoIndexingService implements RepoIndexer {
         final var languages = rawStorageReader.repoLanguages(repoId);
         rawStorageReader.repoPullRequests(repoId).forEach(pr -> pullRequestIndexer.indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber()));
         rawStorageReader.repoIssues(repoId).forEach(issue -> issueIndexer.indexIssue(repo.getOwner().getLogin(), repo.getName(), issue.getNumber()));
+        final var repoOwnerAccount = userIndexer.indexUser(repo.getOwner().getId());
         return CleanRepo.of(
                 repo,
-                CleanAccount.of(repo.getOwner()),
+                repoOwnerAccount,
                 languages
         );
     }

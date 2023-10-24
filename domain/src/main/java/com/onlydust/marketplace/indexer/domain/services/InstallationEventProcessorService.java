@@ -1,12 +1,13 @@
 package com.onlydust.marketplace.indexer.domain.services;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 import com.onlydust.marketplace.indexer.domain.models.clean.InstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
+import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstallation;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
+import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +22,9 @@ public class InstallationEventProcessorService {
     private final RawInstallationEventRepository rawInstallationEventRepository;
     private final RawStorageReader rawStorageReader;
     private final GithubRepoRepository githubRepoRepository;
-    private final GithubAccountRepository githubAccountRepository;
     private final RepoIndexingJobRepository repoIndexingJobRepository;
+    private final UserIndexer userIndexer;
+    private final GithubAppInstallationRepository githubAppInstallationRepository;
 
     public void process(RawInstallationEvent rawEvent) {
         rawInstallationEventRepository.save(rawEvent);
@@ -36,21 +38,22 @@ public class InstallationEventProcessorService {
 
     private void onDeleted(InstallationEvent event) {
         repoIndexingJobRepository.deleteAll(event.getInstallationId());
-        githubAccountRepository.removeInstallation(event.getAccount().getId());
+        githubAppInstallationRepository.delete(event.getInstallationId());
     }
 
     private void onCreated(InstallationEvent event) {
-        final var owner = GithubAccount.of(event);
+        final var owner = GithubAccount.of(event.getAccount());
         githubRepoRepository.saveAll(event.getRepos().stream()
                 .map(repo -> GithubRepo.of(repo, owner))
                 .toList());
         repoIndexingJobRepository.add(event.getInstallationId(), event.getRepos().stream()
                 .map(CleanRepo::getId)
                 .toArray(Long[]::new));
+        githubAppInstallationRepository.save(GithubAppInstallation.of(event, owner));
     }
 
     private InstallationEvent mapRawEvent(RawInstallationEvent rawEvent) {
-        final var account = CleanAccount.of(rawEvent.getInstallation().getAccount());
+        final var account = userIndexer.indexUser(rawEvent.getInstallation().getAccount().getId());
         final var repos = rawEvent.getRepositories().stream()
                 .map(this::tryReadRepo)
                 .filter(Objects::nonNull)

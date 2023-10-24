@@ -1,7 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.models.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
-import com.onlydust.marketplace.indexer.domain.models.clean.InstallationEvent;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
@@ -14,7 +13,7 @@ public class GithubAccount {
     Type type;
     String htmlUrl;
     String avatarUrl;
-    Long installationId;
+    String name;
 
     public static GithubAccount of(CleanAccount account) {
         return GithubAccount.builder()
@@ -23,12 +22,7 @@ public class GithubAccount {
                 .type(Type.valueOf(account.getType().toUpperCase()))
                 .htmlUrl(account.getHtmlUrl())
                 .avatarUrl(account.getAvatarUrl())
-                .build();
-    }
-
-    public static GithubAccount of(InstallationEvent event) {
-        return GithubAccount.of(event.getAccount()).toBuilder()
-                .installationId(event.getInstallationId())
+                .name(account.getName())
                 .build();
     }
 
