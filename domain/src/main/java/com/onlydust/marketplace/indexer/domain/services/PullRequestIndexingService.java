@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawCheckRuns;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestClosingIssues;
 import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ import static java.util.Objects.isNull;
 public class PullRequestIndexingService implements PullRequestIndexer {
     private final RawStorageReader rawStorageReader;
     private final UserIndexer userIndexer;
+    private final RepoIndexer repoIndexer;
     private final IssueIndexer issueIndexer;
 
 
@@ -59,7 +61,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     @Transactional
     public CleanPullRequest indexPullRequest(String repoOwner, String repoName, Long prNumber) {
         LOGGER.info("Indexing pull request {} for repo {}/{}", prNumber, repoOwner, repoName);
-        final var repo = rawStorageReader.repo(repoOwner, repoName).orElseThrow(() -> OnlyDustException.notFound("Repo not found"));
+        final var repo = repoIndexer.indexRepo(repoOwner, repoName);
         final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber).orElseThrow(() -> OnlyDustException.notFound("Pull request not found"));
         final var author = userIndexer.indexUser(pullRequest.getAuthor().getId());
         final var codeReviews = indexPullRequestReviews(repo.getId(), pullRequest.getId(), prNumber);
@@ -67,10 +69,9 @@ public class PullRequestIndexingService implements PullRequestIndexer {
         final var commits = indexPullRequestCommits(repo.getId(), pullRequest.getId(), prNumber);
         final List<CleanCheckRun> checkRuns = isNull(pullRequest.getHead().getRepo()) ? List.of() : indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
         final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName(), pullRequest.getNumber());
-        final var repoOwnerAccount = userIndexer.indexUser(repo.getOwner().getId());
         return CleanPullRequest.of(
                 pullRequest,
-                CleanRepo.of(repo, repoOwnerAccount),
+                repo,
                 author,
                 codeReviews,
                 requestedReviewers,

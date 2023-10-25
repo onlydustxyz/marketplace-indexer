@@ -26,4 +26,7 @@ public class RawRepo extends JsonDocument {
     Long stargazersCount;
     @JsonProperty("forks_count")
     Long forksCount;
+    @JsonProperty("has_issues")
+    Boolean hasIssues;
+    RawRepo parent;
 }

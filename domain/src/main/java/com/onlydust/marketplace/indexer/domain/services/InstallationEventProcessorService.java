@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstal
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
+import com.onlydust.marketplace.indexer.domain.ports.in.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class InstallationEventProcessorService {
     private final GithubRepoRepository githubRepoRepository;
     private final RepoIndexingJobRepository repoIndexingJobRepository;
     private final UserIndexer userIndexer;
+    private final RepoIndexer repoIndexer;
     private final GithubAppInstallationRepository githubAppInstallationRepository;
 
     public void process(RawInstallationEvent rawEvent) {
@@ -57,7 +59,7 @@ public class InstallationEventProcessorService {
         final var repos = rawEvent.getRepositories().stream()
                 .map(this::tryReadRepo)
                 .filter(Objects::nonNull)
-                .map(repo -> CleanRepo.of(repo, account))
+                .map(repo -> repoIndexer.indexRepo(repo.getId()))
                 .toList();
 
         return InstallationEvent.of(rawEvent, account, repos);

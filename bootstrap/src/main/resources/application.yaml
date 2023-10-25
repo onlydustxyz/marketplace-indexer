@@ -3,7 +3,8 @@ infrastructure:
     personal-access-token: ${GITHUB_PAT}
     base-uri: ${GITHUB_BASE_URL}
     rate-limit:
-      repo-threshold: 500
+      repo-threshold: 3
+      full-repo-threshold: 500
 
 application:
   web:

@@ -9,5 +9,6 @@ public interface RateLimitService {
     @Data
     class Config {
         Integer repoThreshold;
+        Integer fullRepoThreshold;
     }
 }

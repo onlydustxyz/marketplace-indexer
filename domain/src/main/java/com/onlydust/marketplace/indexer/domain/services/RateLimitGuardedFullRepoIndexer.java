@@ -3,7 +3,7 @@ package com.onlydust.marketplace.indexer.domain.services;
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.RateLimit;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
-import com.onlydust.marketplace.indexer.domain.ports.in.RepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.FullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
@@ -12,25 +12,25 @@ import java.time.Duration;
 import java.time.Instant;
 
 @Slf4j
-public class RateLimitGuardedRepoIndexer implements RepoIndexer {
-    final RepoIndexer indexer;
+public class RateLimitGuardedFullRepoIndexer implements FullRepoIndexer {
+    final FullRepoIndexer indexer;
     final RateLimitService rateLimitService;
     final RateLimitService.Config config;
     RateLimit rateLimit;
 
-    public RateLimitGuardedRepoIndexer(RepoIndexer indexer, RateLimitService rateLimitService, RateLimitService.Config config, MeterRegistry meterRegistry) {
+    public RateLimitGuardedFullRepoIndexer(FullRepoIndexer indexer, RateLimitService rateLimitService, RateLimitService.Config config, MeterRegistry meterRegistry) {
         this.indexer = indexer;
         this.rateLimitService = rateLimitService;
         this.config = config;
-        meterRegistry.gauge("indexer.rate_limit.remaining", this, RateLimitGuardedRepoIndexer::remainingRateLimit);
+        meterRegistry.gauge("indexer.rate_limit.remaining", this, RateLimitGuardedFullRepoIndexer::remainingRateLimit);
     }
 
     @Override
-    public CleanRepo indexRepo(Long repoId) {
-        if (remainingRateLimit() < config.getRepoThreshold()) {
+    public CleanRepo indexFullRepo(Long repoId) {
+        if (remainingRateLimit() < config.getFullRepoThreshold()) {
             sleepUntilReset();
         }
-        return indexer.indexRepo(repoId);
+        return indexer.indexFullRepo(repoId);
     }
 
     private Integer remainingRateLimit() {

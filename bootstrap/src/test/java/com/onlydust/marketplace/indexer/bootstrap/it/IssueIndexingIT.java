@@ -52,8 +52,8 @@ public class IssueIndexingIT extends IntegrationTest {
 
         assertThat(issueRepository.findAll()).containsExactly(Issue.of(marketplaceFrontend.getId(), issue78));
         assertThat(repoRepository.findAll()).containsExactly(Repo.of(marketplaceFrontend));
-        assertThat(userRepository.findAll()).containsExactly(User.of(anthony), User.of(onlyDust));
-        assertThat(userSocialAccountsRepository.findAll()).containsExactly(
+        assertThat(userRepository.findAll()).containsExactlyInAnyOrder(User.of(anthony), User.of(onlyDust));
+        assertThat(userSocialAccountsRepository.findAll()).containsExactlyInAnyOrder(
                 UserSocialAccounts.of(anthony.getId(), anthonySocialAccounts),
                 UserSocialAccounts.of(onlyDust.getId(), List.of())
         );
