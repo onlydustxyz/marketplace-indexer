@@ -5,9 +5,6 @@ import com.onlydust.marketplace.indexer.domain.ports.in.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import com.onlydust.marketplace.indexer.domain.services.*;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredFullRepoIndexer;
-import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
-import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
-import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
@@ -96,14 +93,6 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public UserIndexer refreshingUserIndexer(final RawStorageReader rawStorageReader, final MeterRegistry registry) {
-        return new MonitoredUserIndexer(
-                new UserIndexingService(rawStorageReader),
-                registry
-        );
-    }
-
-    @Bean
     public IssueIndexer cachedIssueIndexer(final RawStorageReader cachedRawStorageReader,
                                            final UserIndexer cachedUserIndexer,
                                            final RepoIndexer cachedRepoIndexer,
@@ -114,20 +103,6 @@ public class DomainConfiguration {
         );
     }
 
-    @Bean
-    public IssueIndexer refreshingIssueIndexer(final RawStorageReader rawStorageReader,
-                                               final UserIndexer refreshingUserIndexer,
-                                               final RepoIndexer refreshingRepoIndexer,
-                                               final ContributionStorageRepository contributionStorageRepository,
-                                               final MeterRegistry registry) {
-        return new MonitoredIssueIndexer(
-                new IssueContributionExposer(
-                        new IssueIndexingService(rawStorageReader, refreshingUserIndexer, refreshingRepoIndexer),
-                        contributionStorageRepository
-                ),
-                registry
-        );
-    }
 
     @Bean
     public PullRequestIndexer cachedPullRequestIndexer(
@@ -143,33 +118,10 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public PullRequestIndexer refreshingPullRequestIndexer(final RawStorageReader rawStorageReader,
-                                                           final UserIndexer refreshingUserIndexer,
-                                                           final RepoIndexer refreshingRepoIndexer,
-                                                           final IssueIndexer refreshingIssueIndexer,
-                                                           final ContributionStorageRepository contributionStorageRepository,
-                                                           final MeterRegistry registry) {
-        return new MonitoredPullRequestIndexer(
-                new PullRequestContributionExposer(
-                        new PullRequestIndexingService(rawStorageReader, refreshingUserIndexer, refreshingRepoIndexer, refreshingIssueIndexer),
-                        contributionStorageRepository
-                ),
-                registry
-        );
-    }
-
-    @Bean
     public RepoIndexer cachedRepoIndexer(
             final RawStorageReader cachedRawStorageReader,
             final UserIndexer cachedUserIndexer) {
         return new RepoIndexingService(cachedRawStorageReader, cachedUserIndexer);
-    }
-
-    @Bean
-    public RepoIndexer refreshingRepoIndexer(
-            final RawStorageReader rawStorageReader,
-            final UserIndexer refreshingUserIndexer) {
-        return new RepoIndexingService(rawStorageReader, refreshingUserIndexer);
     }
 
     @Bean
@@ -184,15 +136,15 @@ public class DomainConfiguration {
     @Bean
     public FullRepoIndexer refreshingFullRepoIndexer(
             final RawStorageReader rawStorageReader,
-            final IssueIndexer refreshingIssueIndexer,
-            final PullRequestIndexer refreshingPullRequestIndexer,
-            final RepoIndexer refreshingRepoIndexer,
+            final IssueIndexer cachedIssueIndexer,
+            final PullRequestIndexer cachedPullRequestIndexer,
+            final RepoIndexer cachedRepoIndexer,
             final MeterRegistry registry,
             final GithubRateLimitServiceAdapter rateLimitService,
             final GithubRateLimitServiceAdapter.Config githubrateLimitConfig) {
         return new RateLimitGuardedFullRepoIndexer(
                 new MonitoredFullRepoIndexer(
-                        new FullRepoIndexingService(rawStorageReader, refreshingIssueIndexer, refreshingPullRequestIndexer, refreshingRepoIndexer),
+                        new FullRepoIndexingService(rawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer, cachedRepoIndexer),
                         registry
                 ),
                 rateLimitService,
