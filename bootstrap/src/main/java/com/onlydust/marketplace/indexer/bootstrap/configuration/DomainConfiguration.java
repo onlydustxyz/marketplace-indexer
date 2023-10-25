@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.ports.in.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import com.onlydust.marketplace.indexer.domain.services.*;
+import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredFullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
-import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;
@@ -69,12 +69,14 @@ public class DomainConfiguration {
                                                                    final PostgresGithubRepoRepository postgresGithubRepoRepository,
                                                                    final RepoIndexingJobRepository repoIndexingJobRepository,
                                                                    final UserIndexer cachedUserIndexer,
+                                                                   final RepoIndexer cachedRepoIndexer,
                                                                    final GithubAppInstallationRepository githubAppInstallationRepository) {
         return new InstallationEventProcessorService(postgresRawInstallationEventStorageRepository,
                 cachedRawStorageReader,
                 postgresGithubRepoRepository,
                 repoIndexingJobRepository,
                 cachedUserIndexer,
+                cachedRepoIndexer,
                 githubAppInstallationRepository);
     }
 
@@ -102,9 +104,12 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public IssueIndexer cachedIssueIndexer(final RawStorageReader cachedRawStorageReader, final UserIndexer cachedUserIndexer, final ContributionStorageRepository contributionStorageRepository) {
+    public IssueIndexer cachedIssueIndexer(final RawStorageReader cachedRawStorageReader,
+                                           final UserIndexer cachedUserIndexer,
+                                           final RepoIndexer cachedRepoIndexer,
+                                           final ContributionStorageRepository contributionStorageRepository) {
         return new IssueContributionExposer(
-                new IssueIndexingService(cachedRawStorageReader, cachedUserIndexer),
+                new IssueIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer),
                 contributionStorageRepository
         );
     }
@@ -112,11 +117,12 @@ public class DomainConfiguration {
     @Bean
     public IssueIndexer refreshingIssueIndexer(final RawStorageReader rawStorageReader,
                                                final UserIndexer refreshingUserIndexer,
+                                               final RepoIndexer refreshingRepoIndexer,
                                                final ContributionStorageRepository contributionStorageRepository,
                                                final MeterRegistry registry) {
         return new MonitoredIssueIndexer(
                 new IssueContributionExposer(
-                        new IssueIndexingService(rawStorageReader, refreshingUserIndexer),
+                        new IssueIndexingService(rawStorageReader, refreshingUserIndexer, refreshingRepoIndexer),
                         contributionStorageRepository
                 ),
                 registry
@@ -127,10 +133,11 @@ public class DomainConfiguration {
     public PullRequestIndexer cachedPullRequestIndexer(
             final RawStorageReader cachedRawStorageReader,
             final UserIndexer cachedUserIndexer,
+            final RepoIndexer cachedRepoIndexer,
             final IssueIndexer cachedIssueIndexer,
             final ContributionStorageRepository contributionStorageRepository) {
         return new PullRequestContributionExposer(
-                new PullRequestIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedIssueIndexer),
+                new PullRequestIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer),
                 contributionStorageRepository
         );
     }
@@ -138,12 +145,13 @@ public class DomainConfiguration {
     @Bean
     public PullRequestIndexer refreshingPullRequestIndexer(final RawStorageReader rawStorageReader,
                                                            final UserIndexer refreshingUserIndexer,
+                                                           final RepoIndexer refreshingRepoIndexer,
                                                            final IssueIndexer refreshingIssueIndexer,
                                                            final ContributionStorageRepository contributionStorageRepository,
                                                            final MeterRegistry registry) {
         return new MonitoredPullRequestIndexer(
                 new PullRequestContributionExposer(
-                        new PullRequestIndexingService(rawStorageReader, refreshingUserIndexer, refreshingIssueIndexer),
+                        new PullRequestIndexingService(rawStorageReader, refreshingUserIndexer, refreshingRepoIndexer, refreshingIssueIndexer),
                         contributionStorageRepository
                 ),
                 registry
@@ -153,24 +161,38 @@ public class DomainConfiguration {
     @Bean
     public RepoIndexer cachedRepoIndexer(
             final RawStorageReader cachedRawStorageReader,
-            final IssueIndexer cachedIssueIndexer,
-            final PullRequestIndexer cachedPullRequestIndexer,
             final UserIndexer cachedUserIndexer) {
-        return new RepoIndexingService(cachedRawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer, cachedUserIndexer);
+        return new RepoIndexingService(cachedRawStorageReader, cachedUserIndexer);
     }
 
     @Bean
     public RepoIndexer refreshingRepoIndexer(
             final RawStorageReader rawStorageReader,
+            final UserIndexer refreshingUserIndexer) {
+        return new RepoIndexingService(rawStorageReader, refreshingUserIndexer);
+    }
+
+    @Bean
+    public FullRepoIndexer cachedFullRepoIndexer(
+            final RawStorageReader cachedRawStorageReader,
+            final IssueIndexer cachedIssueIndexer,
+            final PullRequestIndexer cachedPullRequestIndexer,
+            final RepoIndexer cachedRepoIndexer) {
+        return new FullRepoIndexingService(cachedRawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer, cachedRepoIndexer);
+    }
+
+    @Bean
+    public FullRepoIndexer refreshingFullRepoIndexer(
+            final RawStorageReader rawStorageReader,
             final IssueIndexer refreshingIssueIndexer,
             final PullRequestIndexer refreshingPullRequestIndexer,
-            final UserIndexer refreshingUserIndexer,
+            final RepoIndexer refreshingRepoIndexer,
             final MeterRegistry registry,
             final GithubRateLimitServiceAdapter rateLimitService,
             final GithubRateLimitServiceAdapter.Config githubrateLimitConfig) {
-        return new RateLimitGuardedRepoIndexer(
-                new MonitoredRepoIndexer(
-                        new RepoIndexingService(rawStorageReader, refreshingIssueIndexer, refreshingPullRequestIndexer, refreshingUserIndexer),
+        return new RateLimitGuardedFullRepoIndexer(
+                new MonitoredFullRepoIndexer(
+                        new FullRepoIndexingService(rawStorageReader, refreshingIssueIndexer, refreshingPullRequestIndexer, refreshingRepoIndexer),
                         registry
                 ),
                 rateLimitService,
@@ -182,17 +204,17 @@ public class DomainConfiguration {
     @Bean
     public RepoRefreshJobManager repoRefreshJobScheduler(
             final PostgresRepoIndexingJobRepository repoIndexingJobTriggerRepository,
-            final RepoIndexer refreshingRepoIndexer
+            final FullRepoIndexer refreshingFullRepoIndexer
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, refreshingRepoIndexer);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, refreshingFullRepoIndexer);
     }
 
     @Bean
     public RepoRefreshJobManager repoCacheRefreshJobScheduler(
             final PostgresRepoIndexingJobRepository repoIndexingJobTriggerRepository,
-            final RepoIndexer cachedRepoIndexer
+            final FullRepoIndexer cachedFullRepoIndexer
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cachedRepoIndexer);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cachedFullRepoIndexer);
     }
 
     @Bean

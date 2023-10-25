@@ -5,7 +5,6 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.*;
@@ -38,26 +37,30 @@ public class IndexingServiceTest {
     final RawCheckRuns pr1257CheckRuns = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_check_runs.json", RawCheckRuns.class);
     final RawRepo marketplaceFrontend = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
     final RawLanguages marketplaceFrontendLanguages = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/languages.json", RawLanguages.class);
+    final RawRepo marketplaceBackend = RawStorageRepositoryStub.load("/github/repos/marketplace-backend.json", RawRepo.class);
+    final RawLanguages marketplaceBackendLanguages = RawStorageRepositoryStub.load("/github/repos/marketplace-backend/languages.json", RawLanguages.class);
     final RawStorageRepositoryStub rawStorageReaderStub = new RawStorageRepositoryStub();
     final RawStorageRepositoryStub rawStorageRepository = new RawStorageRepositoryStub();
     final ContributionRepositoryStub contributionRepository = new ContributionRepositoryStub();
     final RawStorageReader rawStorageReader = CacheWriteRawStorageReaderDecorator.builder().fetcher(rawStorageReaderStub).cache(rawStorageRepository).build();
     final UserIndexingService userIndexingService = new UserIndexingService(rawStorageReader);
+    final RepoIndexingService repoIndexingService = new RepoIndexingService(rawStorageReader, userIndexingService);
     final IssueIndexer issueIndexer = new IssueContributionExposer(
-            new IssueIndexingService(rawStorageReader, userIndexingService),
+            new IssueIndexingService(rawStorageReader, userIndexingService, repoIndexingService),
             contributionRepository
     );
     final PullRequestIndexer pullRequestIndexer = new PullRequestContributionExposer(
-            new PullRequestIndexingService(rawStorageReader, userIndexingService, issueIndexer),
+            new PullRequestIndexingService(rawStorageReader, userIndexingService, repoIndexingService, issueIndexer),
             contributionRepository
     );
-    final UserIndexer userIndexer = new UserIndexingService(rawStorageReader);
-    final RepoIndexingService repoIndexingService = new RepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer, userIndexer);
+    final FullRepoIndexingService fullRepoIndexingService = new FullRepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer, repoIndexingService);
 
     @BeforeEach
     void setup() throws IOException {
         rawStorageReaderStub.feedWith(marketplaceFrontend);
         rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), marketplaceFrontendLanguages);
+        rawStorageReaderStub.feedWith(marketplaceBackend);
+        rawStorageReaderStub.feedWith(marketplaceBackend.getId(), marketplaceBackendLanguages);
         rawStorageReaderStub.feedWith(anthony, pierre, olivier, onlyDust);
         rawStorageReaderStub.feedWith(anthony.getId(), anthonySocialAccounts);
         rawStorageReaderStub.feedWith(pierre.getId(), pierreSocialAccounts);
@@ -108,14 +111,14 @@ public class IndexingServiceTest {
         assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
         assertCachedCheckRunsAre(Map.of(Tuple.tuple(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha()), pr1257CheckRuns));
         assertCachedUsersAre(
+                onlyDust, // as PR repo owner
                 anthony, // as PR author
                 pierre,  // as code reviewer
                 olivier, // as requested reviewer
                 anthony, // as committer
-                anthony, // as issue author
                 onlyDust,// as issue repo owner
-                anthony, // as issue assignee
-                onlyDust // as PR repo owner
+                anthony, // as issue author
+                anthony // as issue assignee
         );
         assertCachedUserSocialAccountsAre(
                 Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(),
@@ -141,7 +144,7 @@ public class IndexingServiceTest {
 
         assertCachedReposAre(marketplaceFrontend);
         assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(issue78)));
-        assertCachedUsersAre(anthony, onlyDust, anthony);
+        assertCachedUsersAre(onlyDust, anthony, anthony);
         assertCachedUserSocialAccountsAre(Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(), onlyDust.getId(), List.of()));
 
         assertThat(contributionRepository.contributions()).hasSize(1);
@@ -150,7 +153,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_repo() {
-        final var repo = repoIndexingService.indexRepo(marketplaceFrontend.getId());
+        final var repo = fullRepoIndexingService.indexFullRepo(marketplaceFrontend.getId());
 
         assertThat(repo.getId()).isEqualTo(marketplaceFrontend.getId());
 
@@ -168,18 +171,18 @@ public class IndexingServiceTest {
         assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
         assertCachedCheckRunsAre(Map.of(Tuple.tuple(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha()), pr1257CheckRuns));
         assertCachedUsersAre(
+                onlyDust,// as repo owner
+                onlyDust,// as PR repo owner
                 anthony, // as PR author
                 pierre,  // as code reviewer
                 olivier, // as requested reviewer
                 anthony, // as committer
-                anthony, // as issue author
                 onlyDust,// as issue repo owner
+                anthony, // as issue author
                 anthony, // as issue author, again...
                 onlyDust,// as issue repo owner
                 anthony, // as issue assignee
-                onlyDust,// as issue repo owner
-                anthony, // as issue assignee, again...
-                onlyDust // as PR repo owner
+                anthony // as issue assignee, again...
         );
         assertCachedUserSocialAccountsAre(
                 Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(),
@@ -187,6 +190,29 @@ public class IndexingServiceTest {
                         olivier.getId(), Arrays.stream(olivierSocialAccounts).toList(),
                         onlyDust.getId(), List.of())
         );
+    }
+
+    @Test
+    void should_index_parent_repo() {
+        final var repo = fullRepoIndexingService.indexFullRepo(marketplaceBackend.getId());
+
+        assertThat(repo.getId()).isEqualTo(marketplaceBackend.getId());
+
+        assertThat(repo.getLanguages().get("Rust")).isEqualTo(817684);
+
+        assertCachedReposAre(marketplaceBackend, marketplaceFrontend);
+        assertCachedRepoLanguagesAre(Map.of(marketplaceFrontend.getId(), marketplaceFrontendLanguages, marketplaceBackend.getId(), marketplaceBackendLanguages));
+        assertCachedRepoPullRequestsAre(Map.of());
+        assertCachedRepoIssuesAre(Map.of());
+        assertCachedClosingIssuesAre(Map.of());
+        assertCachedCodeReviewsAre(Map.of());
+        assertCachedCommitsAre(Map.of());
+        assertCachedCheckRunsAre(Map.of());
+        assertCachedUsersAre(
+                onlyDust, // as repo owner
+                onlyDust  // as parent repo owner
+        );
+        assertCachedUserSocialAccountsAre(Map.of(onlyDust.getId(), List.of()));
     }
 
     @Test

@@ -21,10 +21,12 @@ public class CleanRepo {
     CleanAccount owner;
     Long starsCount;
     Long forksCount;
+    Boolean hasIssues;
     @Builder.Default
     Map<String, Long> languages = new HashMap<>();
+    CleanRepo parent;
 
-    public static CleanRepo of(RawRepo repo, CleanAccount owner) {
+    public static CleanRepo of(RawRepo repo, CleanAccount owner, RawLanguages languages, CleanRepo parent) {
         return CleanRepo
                 .builder()
                 .id(repo.getId())
@@ -35,11 +37,8 @@ public class CleanRepo {
                 .owner(owner)
                 .starsCount(repo.getStargazersCount())
                 .forksCount(repo.getForksCount())
-                .build();
-    }
-
-    public static CleanRepo of(RawRepo repo, CleanAccount owner, RawLanguages languages) {
-        return CleanRepo.of(repo, owner).toBuilder()
+                .hasIssues(repo.getHasIssues())
+                .parent(parent)
                 .languages(languages.get())
                 .build();
     }

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Value;
 
 import java.util.Date;
+import java.util.Map;
 
 @Value
 @Builder(access = AccessLevel.PRIVATE)
@@ -18,6 +19,10 @@ public class GithubRepo {
     String description;
     Long starsCount;
     Long forksCount;
+    Boolean hasIssues;
+    Map<String, Long> languages;
+    GithubRepo parent;
+
 
     public static GithubRepo of(CleanRepo repo) {
         return of(repo, GithubAccount.of(repo.getOwner()));
@@ -33,6 +38,9 @@ public class GithubRepo {
                 .description(repo.getDescription())
                 .starsCount(repo.getStarsCount())
                 .forksCount(repo.getForksCount())
+                .hasIssues(repo.getHasIssues())
+                .languages(repo.getLanguages())
+                .parent(repo.getParent() == null ? null : GithubRepo.of(repo.getParent()))
                 .build();
     }
 }

@@ -3,8 +3,10 @@ package com.onlydust.marketplace.indexer.domain;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
+import com.onlydust.marketplace.indexer.domain.ports.in.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.services.InstallationEventProcessorService;
+import com.onlydust.marketplace.indexer.domain.services.RepoIndexingService;
 import com.onlydust.marketplace.indexer.domain.services.UserIndexingService;
 import com.onlydust.marketplace.indexer.domain.stubs.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +20,13 @@ public class InstallationEventTest {
     private final RawInstallationEventRepositoryStub rawInstallationEventRepositoryStub = new RawInstallationEventRepositoryStub();
     private final RawInstallationEvent newInstallationEvent = RawStorageRepositoryStub.load("/github/events/new_installation.json", RawInstallationEvent.class);
     private final RawStorageRepositoryStub rawStorageRepositoryStub = new RawStorageRepositoryStub();
+    final UserIndexer userIndexer = new UserIndexingService(rawStorageRepositoryStub);
+    final RepoIndexer repoIndexer = new RepoIndexingService(rawStorageRepositoryStub, userIndexer);
     private final GithubRepoRepositoryStub githubRepoRepositoryStub = new GithubRepoRepositoryStub();
     private final RepoIndexingJobRepositoryStub repoIndexingJobRepositoryStub = new RepoIndexingJobRepositoryStub();
     private final InstallationRepositoryStub installationEventRepositoryStub = new InstallationRepositoryStub();
-    final UserIndexer userIndexer = new UserIndexingService(rawStorageRepositoryStub);
     private final InstallationEventProcessorService eventProcessorService = new InstallationEventProcessorService(
-            rawInstallationEventRepositoryStub, rawStorageRepositoryStub, githubRepoRepositoryStub, repoIndexingJobRepositoryStub, userIndexer, installationEventRepositoryStub);
+            rawInstallationEventRepositoryStub, rawStorageRepositoryStub, githubRepoRepositoryStub, repoIndexingJobRepositoryStub, userIndexer, repoIndexer, installationEventRepositoryStub);
 
     @BeforeEach
     void setup() {
