@@ -28,12 +28,12 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
 
     @Override
     public Stream<RawPullRequest> repoPullRequests(Long repoId) {
-        return fetcher.repoPullRequests(repoId).peek(pr -> cache.savePullRequest(repoId, pr));
+        return fetcher.repoPullRequests(repoId);
     }
 
     @Override
     public Stream<RawIssue> repoIssues(Long repoId) {
-        return fetcher.repoIssues(repoId).peek(i -> cache.saveIssue(repoId, i));
+        return fetcher.repoIssues(repoId);
     }
 
     @Override

@@ -161,10 +161,10 @@ public class IndexingServiceTest {
 
         assertCachedReposAre(marketplaceFrontend, marketplaceFrontend, marketplaceFrontend, marketplaceFrontend);
         assertCachedRepoLanguagesAre(Map.of(marketplaceFrontend.getId(), marketplaceFrontendLanguages));
-        assertCachedRepoPullRequestsAre(Map.of(marketplaceFrontend.getId(), List.of(pr1257, pr1257)));
+        assertCachedRepoPullRequestsAre(Map.of(marketplaceFrontend.getId(), List.of(pr1257)));
         assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(
                 issue78, // as pr 1257 closing issue
-                issue78, issue78  // as repo issue
+                issue78  // as repo issue
         )));
         assertCachedClosingIssuesAre(Map.of(pr1257.getId(), List.of(issue78.getId())));
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
