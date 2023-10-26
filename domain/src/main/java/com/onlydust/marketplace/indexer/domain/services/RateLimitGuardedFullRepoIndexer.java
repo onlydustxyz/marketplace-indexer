@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 
 @Slf4j
 public class RateLimitGuardedFullRepoIndexer implements FullRepoIndexer {
@@ -26,7 +27,7 @@ public class RateLimitGuardedFullRepoIndexer implements FullRepoIndexer {
     }
 
     @Override
-    public CleanRepo indexFullRepo(Long repoId) {
+    public Optional<CleanRepo> indexFullRepo(Long repoId) {
         if (remainingRateLimit() < config.getFullRepoThreshold()) {
             sleepUntilReset();
         }

@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.domain;
 
-import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class IndexingServiceTest {
     final RawAccount onlyDust = RawStorageRepositoryStub.load("/github/users/onlyDust.json", RawAccount.class);
@@ -75,7 +73,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_user_from_its_id() {
-        final var user = userIndexingService.indexUser(anthony.getId());
+        final var user = userIndexingService.indexUser(anthony.getId()).orElseThrow();
 
         assertThat(user.getId()).isEqualTo(anthony.getId());
         assertThat(user.getLogin()).isEqualTo(anthony.getLogin());
@@ -87,7 +85,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_pull_request() {
-        final var pullRequest = pullRequestIndexer.indexPullRequest("onlydustxyz", "marketplace-frontend", 1257L);
+        final var pullRequest = pullRequestIndexer.indexPullRequest("onlydustxyz", "marketplace-frontend", 1257L).orElseThrow();
 
         assertThat(pullRequest.getId()).isEqualTo(1524797398);
         assertThat(pullRequest.getAuthor().getLogin()).isEqualTo("AnthonyBuisset");
@@ -135,7 +133,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_issue() {
-        final var issue = issueIndexer.indexIssue("onlydustxyz", "marketplace-frontend", 78L);
+        final var issue = issueIndexer.indexIssue("onlydustxyz", "marketplace-frontend", 78L).orElseThrow();
 
         assertThat(issue.getId()).isEqualTo(issue78.getId());
         assertThat(issue.getAssignees().size()).isEqualTo(1);
@@ -153,7 +151,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_repo() {
-        final var repo = fullRepoIndexingService.indexFullRepo(marketplaceFrontend.getId());
+        final var repo = fullRepoIndexingService.indexFullRepo(marketplaceFrontend.getId()).orElseThrow();
 
         assertThat(repo.getId()).isEqualTo(marketplaceFrontend.getId());
 
@@ -194,7 +192,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_parent_repo() {
-        final var repo = fullRepoIndexingService.indexFullRepo(marketplaceBackend.getId());
+        final var repo = fullRepoIndexingService.indexFullRepo(marketplaceBackend.getId()).orElseThrow();
 
         assertThat(repo.getId()).isEqualTo(marketplaceBackend.getId());
 
@@ -216,12 +214,8 @@ public class IndexingServiceTest {
     }
 
     @Test
-    void should_throw_when_indexing_non_existing_items() {
-        assertThatThrownBy(() -> {
-            userIndexingService.indexUser(0L);
-        }).isInstanceOf(OnlyDustException.class)
-                .hasMessageContaining("User not found");
-
+    void should_not_throw_when_indexing_non_existing_items() {
+        assertThat(userIndexingService.indexUser(0L)).isEmpty();
         assertCachedUsersAre();
     }
 

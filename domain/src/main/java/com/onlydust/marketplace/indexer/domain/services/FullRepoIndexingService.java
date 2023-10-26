@@ -9,6 +9,8 @@ import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Optional;
+
 @AllArgsConstructor
 @Slf4j
 public class FullRepoIndexingService implements FullRepoIndexer {
@@ -18,11 +20,12 @@ public class FullRepoIndexingService implements FullRepoIndexer {
     private final RepoIndexer repoIndexer;
 
     @Override
-    public CleanRepo indexFullRepo(Long repoId) {
+    public Optional<CleanRepo> indexFullRepo(Long repoId) {
         LOGGER.info("Indexing full repo {}", repoId);
-        final var repo = repoIndexer.indexRepo(repoId);
-        rawStorageReader.repoPullRequests(repoId).forEach(pr -> pullRequestIndexer.indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber()));
-        rawStorageReader.repoIssues(repoId).forEach(issue -> issueIndexer.indexIssue(repo.getOwner().getLogin(), repo.getName(), issue.getNumber()));
-        return repo;
+        return repoIndexer.indexRepo(repoId).map(repo -> {
+            rawStorageReader.repoPullRequests(repoId).forEach(pr -> pullRequestIndexer.indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber()));
+            rawStorageReader.repoIssues(repoId).forEach(issue -> issueIndexer.indexIssue(repo.getOwner().getLogin(), repo.getName(), issue.getNumber()));
+            return repo;
+        });
     }
 }

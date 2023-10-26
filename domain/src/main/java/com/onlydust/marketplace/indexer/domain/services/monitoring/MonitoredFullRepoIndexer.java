@@ -6,6 +6,8 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.MeterRegistry;
 
+import java.util.Optional;
+
 public class MonitoredFullRepoIndexer implements FullRepoIndexer {
     final FullRepoIndexer indexer;
     final LongTaskTimer timer;
@@ -18,7 +20,7 @@ public class MonitoredFullRepoIndexer implements FullRepoIndexer {
     }
 
     @Override
-    public CleanRepo indexFullRepo(Long repoId) {
+    public Optional<CleanRepo> indexFullRepo(Long repoId) {
         counter.increment();
         return timer.record(() -> indexer.indexFullRepo(repoId));
     }

@@ -6,6 +6,8 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.MeterRegistry;
 
+import java.util.Optional;
+
 public class MonitoredUserIndexer implements UserIndexer {
     final UserIndexer indexer;
     final LongTaskTimer timer;
@@ -18,7 +20,7 @@ public class MonitoredUserIndexer implements UserIndexer {
     }
 
     @Override
-    public CleanAccount indexUser(Long userId) {
+    public Optional<CleanAccount> indexUser(Long userId) {
         counter.increment();
         return timer.record(() -> indexer.indexUser(userId));
     }

@@ -6,6 +6,8 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.MeterRegistry;
 
+import java.util.Optional;
+
 public class MonitoredIssueIndexer implements IssueIndexer {
     final IssueIndexer indexer;
     final LongTaskTimer timer;
@@ -18,7 +20,7 @@ public class MonitoredIssueIndexer implements IssueIndexer {
     }
 
     @Override
-    public CleanIssue indexIssue(String repoOwner, String repoName, Long issueNumber) {
+    public Optional<CleanIssue> indexIssue(String repoOwner, String repoName, Long issueNumber) {
         counter.increment();
         return timer.record(() -> indexer.indexIssue(repoOwner, repoName, issueNumber));
     }
