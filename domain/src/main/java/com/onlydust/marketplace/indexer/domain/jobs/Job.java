@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
+import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
@@ -19,7 +20,7 @@ public abstract class Job implements Runnable {
         try {
             start();
         } catch (Exception e) {
-            LOGGER.error("Job {} failed", name(), e);
+            LOGGER.error("Job {} failed", name(), OnlyDustException.internalServerError("Job " + name() + " failed", e));
         } finally {
             stop();
         }
