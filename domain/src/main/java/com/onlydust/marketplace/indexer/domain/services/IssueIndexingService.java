@@ -9,6 +9,9 @@ import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+import java.util.Optional;
+
 @AllArgsConstructor
 @Slf4j
 public class IssueIndexingService implements IssueIndexer {
@@ -17,17 +20,23 @@ public class IssueIndexingService implements IssueIndexer {
     private final RepoIndexer repoIndexer;
 
     @Override
-    public CleanIssue indexIssue(String repoOwner, String repoName, Long issueNumber) {
+    public Optional<CleanIssue> indexIssue(String repoOwner, String repoName, Long issueNumber) {
         LOGGER.info("Indexing issue {} for repo {}/{}", issueNumber, repoOwner, repoName);
-        final var repo = repoIndexer.indexRepo(repoOwner, repoName);
-        final var issue = rawStorageReader.issue(repo.getId(), issueNumber).orElseThrow(() -> OnlyDustException.notFound("Issue not found"));
-        final var assignees = issue.getAssignees().stream().map(assignee -> userIndexer.indexUser(assignee.getId())).toList();
+        return repoIndexer.indexRepo(repoOwner, repoName).flatMap(repo -> {
+            final var issue = rawStorageReader.issue(repo.getId(), issueNumber).orElseThrow(() -> OnlyDustException.notFound("Issue not found"));
+            return userIndexer.indexUser(issue.getAuthor().getId()).map(author -> {
+                final var assignees = issue.getAssignees().stream().map(assignee -> userIndexer.indexUser(assignee.getId()).orElseGet(() -> {
+                    LOGGER.warn("User {} not found, skipping assignee {}", assignee.getId(), assignee.getLogin());
+                    return null;
+                })).filter(Objects::nonNull).toList();
 
-        return CleanIssue.of(
-                issue,
-                repo,
-                userIndexer.indexUser(issue.getAuthor().getId()),
-                assignees
-        );
+                return CleanIssue.of(
+                        issue,
+                        repo,
+                        author,
+                        assignees
+                );
+            });
+        });
     }
 }

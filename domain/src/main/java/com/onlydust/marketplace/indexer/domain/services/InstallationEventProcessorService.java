@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services;
 
+import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 import com.onlydust.marketplace.indexer.domain.models.clean.InstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.transaction.Transactional;
 import java.util.Objects;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Slf4j
@@ -55,17 +57,18 @@ public class InstallationEventProcessorService {
     }
 
     private InstallationEvent mapRawEvent(RawInstallationEvent rawEvent) {
-        final var account = userIndexer.indexUser(rawEvent.getInstallation().getAccount().getId());
+        final var account = userIndexer.indexUser(rawEvent.getInstallation().getAccount().getId())
+                .orElseThrow(() -> OnlyDustException.notFound("User not found"));
+
         final var repos = rawEvent.getRepositories().stream()
-                .map(this::tryReadRepo)
+                .map(rawRepo -> tryReadRepo(rawRepo).flatMap(repo -> repoIndexer.indexRepo(repo.getId())).orElse(null))
                 .filter(Objects::nonNull)
-                .map(repo -> repoIndexer.indexRepo(repo.getId()))
                 .toList();
 
         return InstallationEvent.of(rawEvent, account, repos);
     }
 
-    private RawRepo tryReadRepo(RawRepo eventRepo) {
-        return rawStorageReader.repo(eventRepo.getId()).orElse(null);
+    private Optional<RawRepo> tryReadRepo(RawRepo eventRepo) {
+        return rawStorageReader.repo(eventRepo.getId());
     }
 }
