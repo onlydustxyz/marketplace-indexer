@@ -7,7 +7,7 @@ import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.entities.RateLimitResponse;
 import lombok.AllArgsConstructor;
 
-import java.util.Date;
+import java.time.Instant;
 
 @AllArgsConstructor
 public class GithubRateLimitServiceAdapter implements RateLimitService {
@@ -17,7 +17,7 @@ public class GithubRateLimitServiceAdapter implements RateLimitService {
     public RateLimit rateLimit() {
         final var response = client.get("/rate_limit", RateLimitResponse.class)
                 .orElseThrow(() -> OnlyDustException.internalServerError("Unable to fetch rate limit"));
-        return new RateLimit(response.rate().remaining(), new Date(response.rate().reset()));
+        return new RateLimit(response.rate().remaining(), Instant.ofEpochSecond(response.rate().reset()));
     }
 }
 

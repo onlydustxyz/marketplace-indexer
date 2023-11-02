@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.models;
 
-import java.util.Date;
+import java.time.Instant;
 
-public record RateLimit(Integer remaining, Date resetAt) {
+public record RateLimit(Integer remaining, Instant resetAt) {
 }
