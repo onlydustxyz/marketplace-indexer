@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +38,6 @@ public class PullRequestIndexingIT extends IntegrationTest {
     public ContributionRepository contributionRepository;
 
     @Test
-    @Transactional
     public void should_index_pull_request_on_demand() throws IOException {
         // Given
         final var marketplaceFrontend = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend.json"), RawRepo.class);
