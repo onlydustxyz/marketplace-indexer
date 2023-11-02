@@ -40,9 +40,8 @@ public class GithubRawStorageReader implements RawStorageReader {
     }
 
     @Override
-    public RawLanguages repoLanguages(Long repoId) {
-        return client.get("/repositories/" + repoId + "/languages", RawLanguages.class)
-                .orElse(new RawLanguages());
+    public Optional<RawLanguages> repoLanguages(Long repoId) {
+        return client.get("/repositories/" + repoId + "/languages", RawLanguages.class);
     }
 
     @Override
@@ -51,10 +50,8 @@ public class GithubRawStorageReader implements RawStorageReader {
     }
 
     @Override
-    public List<RawSocialAccount> userSocialAccounts(Long userId) {
-        return client.get("/user/" + userId + "/social_accounts", RawSocialAccount[].class)
-                .map(Arrays::asList)
-                .orElse(List.of());
+    public Optional<List<RawSocialAccount>> userSocialAccounts(Long userId) {
+        return client.get("/user/" + userId + "/social_accounts", RawSocialAccount[].class).map(Arrays::asList);
     }
 
     @Override
@@ -68,17 +65,15 @@ public class GithubRawStorageReader implements RawStorageReader {
     }
 
     @Override
-    public List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long prNumber) {
+    public Optional<List<RawCodeReview>> pullRequestReviews(Long repoId, Long pullRequestId, Long prNumber) {
         return client.get("/repositories/" + repoId + "/pulls/" + prNumber + "/reviews", RawCodeReview[].class)
-                .map(Arrays::asList)
-                .orElse(List.of());
+                .map(Arrays::asList);
     }
 
     @Override
-    public List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long prNumber) {
+    public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long prNumber) {
         return client.get("/repositories/" + repoId + "/pulls/" + prNumber + "/commits", RawCommit[].class)
-                .map(Arrays::asList)
-                .orElse(List.of());
+                .map(Arrays::asList);
     }
 
     @Override

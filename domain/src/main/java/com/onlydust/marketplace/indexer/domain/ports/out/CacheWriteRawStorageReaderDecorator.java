@@ -37,9 +37,9 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public RawLanguages repoLanguages(Long repoId) {
+    public Optional<RawLanguages> repoLanguages(Long repoId) {
         final var languages = fetcher.repoLanguages(repoId);
-        cache.saveRepoLanguages(repoId, languages);
+        languages.ifPresent(l -> cache.saveRepoLanguages(repoId, l));
         return languages;
     }
 
@@ -51,9 +51,9 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public List<RawSocialAccount> userSocialAccounts(Long userId) {
+    public Optional<List<RawSocialAccount>> userSocialAccounts(Long userId) {
         final var socialAccounts = fetcher.userSocialAccounts(userId);
-        cache.saveUserSocialAccounts(userId, socialAccounts);
+        socialAccounts.ifPresent(accounts -> cache.saveUserSocialAccounts(userId, accounts));
         return socialAccounts;
     }
 
@@ -72,16 +72,16 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+    public Optional<List<RawCodeReview>> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         final var reviews = fetcher.pullRequestReviews(repoId, pullRequestId, pullRequestNumber);
-        cache.savePullRequestReviews(pullRequestId, reviews);
+        reviews.ifPresent(r -> cache.savePullRequestReviews(pullRequestId, r));
         return reviews;
     }
 
     @Override
-    public List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+    public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         final var commits = fetcher.pullRequestCommits(repoId, pullRequestId, pullRequestNumber);
-        cache.savePullRequestCommits(pullRequestId, commits);
+        commits.ifPresent(c -> cache.savePullRequestCommits(pullRequestId, c));
         return commits;
     }
 

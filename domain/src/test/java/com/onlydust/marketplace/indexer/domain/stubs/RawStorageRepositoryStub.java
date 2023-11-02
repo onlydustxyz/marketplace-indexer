@@ -52,8 +52,8 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public RawLanguages repoLanguages(Long repoId) {
-        return repoLanguages.getOrDefault(repoId, new RawLanguages());
+    public Optional<RawLanguages> repoLanguages(Long repoId) {
+        return Optional.of(repoLanguages.getOrDefault(repoId, new RawLanguages()));
     }
 
     @Override
@@ -62,8 +62,8 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public List<RawSocialAccount> userSocialAccounts(Long userId) {
-        return userSocialAccounts.getOrDefault(userId, new ArrayList<>());
+    public Optional<List<RawSocialAccount>> userSocialAccounts(Long userId) {
+        return Optional.of(userSocialAccounts.getOrDefault(userId, List.of()));
     }
 
     @Override
@@ -81,13 +81,13 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return pullRequestReviews.getOrDefault(pullRequestId, new ArrayList<>());
+    public Optional<List<RawCodeReview>> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        return Optional.of(pullRequestReviews.getOrDefault(pullRequestId, new ArrayList<>()));
     }
 
     @Override
-    public List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return pullRequestCommits.getOrDefault(pullRequestId, new ArrayList<>());
+    public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        return Optional.of(pullRequestCommits.getOrDefault(pullRequestId, new ArrayList<>()));
     }
 
     @Override

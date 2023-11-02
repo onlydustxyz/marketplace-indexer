@@ -41,13 +41,8 @@ public class CacheReadRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public RawLanguages repoLanguages(Long repoId) {
-        final var languages = cache.repoLanguages(repoId);
-        if (!languages.isEmpty()) {
-            return languages;
-        } else {
-            return fetcher.repoLanguages(repoId);
-        }
+    public Optional<RawLanguages> repoLanguages(Long repoId) {
+        return cache.repoLanguages(repoId).or(() -> fetcher.repoLanguages(repoId));
     }
 
     @Override
@@ -56,13 +51,8 @@ public class CacheReadRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public List<RawSocialAccount> userSocialAccounts(Long userId) {
-        final var socialAccounts = cache.userSocialAccounts(userId);
-        if (!socialAccounts.isEmpty()) {
-            return socialAccounts;
-        } else {
-            return fetcher.userSocialAccounts(userId);
-        }
+    public Optional<List<RawSocialAccount>> userSocialAccounts(Long userId) {
+        return cache.userSocialAccounts(userId).or(() -> fetcher.userSocialAccounts(userId));
     }
 
     @Override
@@ -76,23 +66,13 @@ public class CacheReadRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        final var reviews = cache.pullRequestReviews(repoId, pullRequestId, pullRequestNumber);
-        if (!reviews.isEmpty()) {
-            return reviews;
-        } else {
-            return fetcher.pullRequestReviews(repoId, pullRequestId, pullRequestNumber);
-        }
+    public Optional<List<RawCodeReview>> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        return cache.pullRequestReviews(repoId, pullRequestId, pullRequestNumber).or(() -> fetcher.pullRequestReviews(repoId, pullRequestId, pullRequestNumber));
     }
 
     @Override
-    public List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        final var commits = cache.pullRequestCommits(repoId, pullRequestId, pullRequestNumber);
-        if (!commits.isEmpty()) {
-            return commits;
-        } else {
-            return fetcher.pullRequestCommits(repoId, pullRequestId, pullRequestNumber);
-        }
+    public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        return cache.pullRequestCommits(repoId, pullRequestId, pullRequestNumber).or(() -> fetcher.pullRequestCommits(repoId, pullRequestId, pullRequestNumber));
     }
 
     @Override

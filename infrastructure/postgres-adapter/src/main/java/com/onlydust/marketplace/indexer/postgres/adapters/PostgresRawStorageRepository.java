@@ -46,8 +46,8 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
     }
 
     @Override
-    public RawLanguages repoLanguages(Long repoId) {
-        return repoLanguagesRepository.findById(repoId).map(RepoLanguages::getData).orElse(new RawLanguages());
+    public Optional<RawLanguages> repoLanguages(Long repoId) {
+        return repoLanguagesRepository.findById(repoId).map(RepoLanguages::getData);
     }
 
     @Override
@@ -56,8 +56,8 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
     }
 
     @Override
-    public List<RawSocialAccount> userSocialAccounts(Long userId) {
-        return userSocialAccountsRepository.findById(userId).map(UserSocialAccounts::getData).orElse(List.of());
+    public Optional<List<RawSocialAccount>> userSocialAccounts(Long userId) {
+        return userSocialAccountsRepository.findById(userId).map(UserSocialAccounts::getData);
     }
 
     @Override
@@ -71,13 +71,13 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
     }
 
     @Override
-    public List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return pullRequestReviewsRepository.findById(pullRequestId).map(PullRequestReview::getData).orElse(List.of());
+    public Optional<List<RawCodeReview>> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        return pullRequestReviewsRepository.findById(pullRequestId).map(PullRequestReview::getData);
     }
 
     @Override
-    public List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return pullRequestCommitsRepository.findById(pullRequestId).map(PullRequestCommits::getData).orElse(List.of());
+    public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        return pullRequestCommitsRepository.findById(pullRequestId).map(PullRequestCommits::getData);
     }
 
     @Override

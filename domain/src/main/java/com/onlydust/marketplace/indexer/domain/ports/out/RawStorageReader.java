@@ -15,19 +15,19 @@ public interface RawStorageReader {
 
     Stream<RawIssue> repoIssues(Long repoId);
 
-    RawLanguages repoLanguages(Long repoId);
+    Optional<RawLanguages> repoLanguages(Long repoId);
 
     Optional<RawAccount> user(Long userId);
 
-    List<RawSocialAccount> userSocialAccounts(Long userId);
+    Optional<List<RawSocialAccount>> userSocialAccounts(Long userId);
 
     Optional<RawPullRequest> pullRequest(Long repoId, Long prNumber);
 
     Optional<RawIssue> issue(Long repoId, Long issueNumber);
 
-    List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber);
+    Optional<List<RawCodeReview>> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber);
 
-    List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber);
+    Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber);
 
     Optional<RawCheckRuns> checkRuns(Long repoId, String sha);
 

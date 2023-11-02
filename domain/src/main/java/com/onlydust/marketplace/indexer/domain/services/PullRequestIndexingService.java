@@ -30,7 +30,11 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
     private List<CleanCodeReview> indexPullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         LOGGER.info("Indexing pull request reviews for repo {} and pull request {}", repoId, pullRequestId);
-        final var codeReviews = rawStorageReader.pullRequestReviews(repoId, pullRequestId, pullRequestNumber);
+        final var codeReviews = rawStorageReader.pullRequestReviews(repoId, pullRequestId, pullRequestNumber)
+                .orElseGet(() -> {
+                    LOGGER.warn("Unable to fetch pull request reviews");
+                    return List.of();
+                });
         return codeReviews.stream()
                 .filter(review -> review.getAuthor() != null && review.getAuthor().getId() != null)
                 .map(review ->
@@ -45,14 +49,18 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
     private List<CleanCommit> indexPullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         LOGGER.info("Indexing pull request commits for repo {} and pull request {}", repoId, pullRequestId);
-        final var commits = rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber);
+        final var commits = rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber)
+                .orElseGet(() -> {
+                    LOGGER.warn("Unable to fetch pull request commits");
+                    return List.of();
+                });
         return commits.stream().map(commit -> Optional.ofNullable(commit.getAuthor())
                 .or(() -> Optional.ofNullable(commit.getCommitter()))
                 .filter(user -> user.getId() != null)
                 .flatMap(user -> userIndexer.indexUser(user.getId()))
                 .map(user -> CleanCommit.of(commit, user))
                 .orElseGet(() -> {
-                    LOGGER.warn("Unable to index commit {}", commit.getSha());
+                    LOGGER.warn("Unable to index commit {} for pull request {}/{}", commit.getSha(), repoId, pullRequestNumber);
                     return null;
                 })).filter(Objects::nonNull).toList();
     }
