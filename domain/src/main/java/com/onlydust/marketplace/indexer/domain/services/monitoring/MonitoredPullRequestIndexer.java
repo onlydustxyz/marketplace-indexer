@@ -6,7 +6,6 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.MeterRegistry;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 public class MonitoredPullRequestIndexer implements PullRequestIndexer {
@@ -21,7 +20,6 @@ public class MonitoredPullRequestIndexer implements PullRequestIndexer {
     }
 
     @Override
-    @Transactional
     public Optional<CleanPullRequest> indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber) {
         counter.increment();
         return timer.record(() -> indexer.indexPullRequest(repoOwner, repoName, pullRequestNumber));

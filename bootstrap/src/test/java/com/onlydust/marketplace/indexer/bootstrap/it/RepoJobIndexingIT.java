@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +28,6 @@ public class RepoJobIndexingIT extends IntegrationTest {
     public ContributionRepository contributionRepository;
 
     @Test
-    @Transactional
     public void should_add_repo_to_index() throws IOException, InterruptedException {
         // Given
         final Long MARKETPLACE = 498695724L;
@@ -70,8 +68,8 @@ public class RepoJobIndexingIT extends IntegrationTest {
 
     private boolean isJobRunning(int minRepoCount, int minPullRequestCount, int minIssueCount) {
         return repoRepository.findAll().size() < minRepoCount ||
-                pullRequestsRepository.findAll().size() < minPullRequestCount ||
-                issuesRepository.findAll().size() < minIssueCount;
+               pullRequestsRepository.findAll().size() < minPullRequestCount ||
+               issuesRepository.findAll().size() < minIssueCount;
     }
 
     private WebTestClient.ResponseSpec indexRepo(Long repoId) {

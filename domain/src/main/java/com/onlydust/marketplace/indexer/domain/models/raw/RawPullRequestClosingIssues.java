@@ -18,7 +18,6 @@ public class RawPullRequestClosingIssues extends JsonDocument {
 
     public List<IssueReference> issues() {
         final var nodes = data.at("/repository/pullRequest/closingIssuesReferences/nodes");
-        System.out.println("nodes: " + nodes);
         return StreamSupport.stream(nodes.spliterator(), false)
                 .map(node -> new IssueReference(
                         node.at("/repository/owner/login").asText(),
