@@ -5,6 +5,12 @@
         "closingIssuesReferences": {
           "nodes": [
             {
+              "repository": {
+                "name": "marketplace-frontend",
+                "owner": {
+                  "login": "onlydustxyz"
+                }
+              },
               "number": 78
             }
           ]

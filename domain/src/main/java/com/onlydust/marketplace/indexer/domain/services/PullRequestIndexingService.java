@@ -79,9 +79,9 @@ public class PullRequestIndexingService implements PullRequestIndexer {
                     return new RawPullRequestClosingIssues();
                 });
 
-        return closingIssues.issueNumbers().stream()
-                .map(issueNumber -> issueIndexer.indexIssue(repoOwner, repoName, issueNumber).orElseGet(() -> {
-                    LOGGER.warn("Unable to index issue {}/{}/{}", issueNumber, repoOwner, pullRequestNumber);
+        return closingIssues.issues().stream()
+                .map(reference -> issueIndexer.indexIssue(reference.repoOwner(), reference.repoName(), reference.number()).orElseGet(() -> {
+                    LOGGER.warn("Unable to index issue {}", reference);
                     return null;
                 }))
                 .filter(Objects::nonNull).toList();
