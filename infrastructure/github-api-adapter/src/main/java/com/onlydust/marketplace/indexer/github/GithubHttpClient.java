@@ -74,7 +74,7 @@ public class GithubHttpClient {
         final var httpResponse = fetch(path);
         return switch (httpResponse.statusCode()) {
             case 200 -> Optional.of(decodeBody(httpResponse.body(), responseClass));
-            case 403, 404 -> Optional.empty();
+            case 403, 404, 422 -> Optional.empty();
             default ->
                     throw OnlyDustException.internalServerError("Received incorrect status (" + httpResponse.statusCode() + ") when fetching github API: " + path);
         };
