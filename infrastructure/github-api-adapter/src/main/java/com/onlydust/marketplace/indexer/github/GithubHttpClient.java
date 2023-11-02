@@ -86,7 +86,7 @@ public class GithubHttpClient {
             final var httpResponse = _fetch("POST", URI.create(config.baseUri + "/graphql"), HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body)));
             return switch (httpResponse.statusCode()) {
                 case 200 -> Optional.of(decodeBody(httpResponse.body(), responseClass));
-                case 403, 404 -> Optional.empty();
+                case 403, 404, 422 -> Optional.empty();
                 default ->
                         throw OnlyDustException.internalServerError("Received incorrect status (" + httpResponse.statusCode() + ") when fetching github graphql API");
             };

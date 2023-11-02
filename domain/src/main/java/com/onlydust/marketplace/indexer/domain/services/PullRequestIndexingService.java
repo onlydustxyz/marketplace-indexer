@@ -48,7 +48,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     }
 
     private List<CleanCommit> indexPullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        LOGGER.info("Indexing pull request commits for repo {} and pull request {}", repoId, pullRequestId);
+        LOGGER.info("Indexing pull request commits for repo {} and pull request {}", repoId, pullRequestNumber);
         final var commits = rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber)
                 .orElseGet(() -> {
                     LOGGER.warn("Unable to fetch pull request commits");
