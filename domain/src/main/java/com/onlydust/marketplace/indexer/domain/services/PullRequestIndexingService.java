@@ -46,6 +46,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
         final var commits = rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber);
         return commits.stream().map(commit -> Optional.ofNullable(commit.getAuthor())
                 .or(() -> Optional.ofNullable(commit.getCommitter()))
+                .filter(user -> user.getId() != null)
                 .flatMap(user -> userIndexer.indexUser(user.getId()))
                 .map(user -> CleanCommit.of(commit, user))
                 .orElseGet(() -> {
