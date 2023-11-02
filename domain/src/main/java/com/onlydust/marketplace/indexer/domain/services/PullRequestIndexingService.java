@@ -31,14 +31,16 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     private List<CleanCodeReview> indexPullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         LOGGER.info("Indexing pull request reviews for repo {} and pull request {}", repoId, pullRequestId);
         final var codeReviews = rawStorageReader.pullRequestReviews(repoId, pullRequestId, pullRequestNumber);
-        return codeReviews.stream().map(review ->
-                userIndexer.indexUser(review.getAuthor().getId())
-                        .map(author -> CleanCodeReview.of(review, author))
-                        .orElseGet(() -> {
-                            LOGGER.warn("User {} not found, skipping review {}", review.getAuthor().getId(), review.getId());
-                            return null;
-                        })
-        ).filter(Objects::nonNull).toList();
+        return codeReviews.stream()
+                .filter(review -> review.getAuthor() != null && review.getAuthor().getId() != null)
+                .map(review ->
+                        userIndexer.indexUser(review.getAuthor().getId())
+                                .map(author -> CleanCodeReview.of(review, author))
+                                .orElseGet(() -> {
+                                    LOGGER.warn("User {} not found, skipping review {}", review.getAuthor().getId(), review.getId());
+                                    return null;
+                                })
+                ).filter(Objects::nonNull).toList();
     }
 
     private List<CleanCommit> indexPullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
