@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.domain.services;
 
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawLanguages;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
 import com.onlydust.marketplace.indexer.domain.ports.in.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
@@ -32,8 +33,12 @@ public class RepoIndexingService implements RepoIndexer {
     }
 
     private Optional<CleanRepo> buildCleanRepo(RawRepo repo) {
-        final var languages = rawStorageReader.repoLanguages(repo.getId());
         return userIndexer.indexUser(repo.getOwner().getId()).map(repoOwnerAccount -> {
+            final var languages = rawStorageReader.repoLanguages(repo.getId()).orElseGet(() -> {
+                LOGGER.warn("Unable to fetch repo languages");
+                return new RawLanguages();
+            });
+
             final var parentRepo = Optional.ofNullable(repo.getParent()).flatMap(parent -> indexRepo(parent.getId()));
             return CleanRepo.of(
                     repo,

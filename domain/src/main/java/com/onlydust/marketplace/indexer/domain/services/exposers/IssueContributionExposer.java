@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.domain.services;
+package com.onlydust.marketplace.indexer.domain.services.exposers;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
 import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;

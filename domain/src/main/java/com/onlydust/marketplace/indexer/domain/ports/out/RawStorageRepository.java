@@ -23,5 +23,5 @@ public interface RawStorageRepository extends RawStorageReader {
 
     void saveRepoLanguages(Long repoId, RawLanguages languages);
 
-    void saveClosingIssues(RawPullRequestClosingIssues closingIssues);
+    void saveClosingIssues(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues);
 }

@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000001_add_name_to_accounts.sql
   - include:
       file: db/changelog/changelogs/00000002_add_missing_fields_to_repos.sql
+  - include:
+      file: db/changelog/changelogs/00000003_add_raw_closing_issues_data.sql

@@ -3,7 +3,6 @@ package com.onlydust.marketplace.indexer.domain.stubs;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageRepository;
-import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.groups.Tuple;
 
 import java.io.IOException;
@@ -17,7 +16,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     final Map<Long, List<RawCodeReview>> pullRequestReviews = new HashMap<>();
     final Map<Long, List<RawCommit>> pullRequestCommits = new HashMap<>();
     final Map<Tuple, RawCheckRuns> checkRuns = new HashMap<>();
-    final Map<Long, List<Long>> closingIssues = new HashMap<>();
+    final Map<Tuple, RawPullRequestClosingIssues> closingIssues = new HashMap<>();
     final Map<Long, List<RawPullRequest>> repoPullRequests = new HashMap<>();
     final Map<Long, List<RawIssue>> repoIssues = new HashMap<>();
     final Map<Long, RawLanguages> repoLanguages = new HashMap<>();
@@ -52,8 +51,8 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public RawLanguages repoLanguages(Long repoId) {
-        return repoLanguages.getOrDefault(repoId, new RawLanguages());
+    public Optional<RawLanguages> repoLanguages(Long repoId) {
+        return Optional.of(repoLanguages.getOrDefault(repoId, new RawLanguages()));
     }
 
     @Override
@@ -62,8 +61,8 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public List<RawSocialAccount> userSocialAccounts(Long userId) {
-        return userSocialAccounts.getOrDefault(userId, new ArrayList<>());
+    public Optional<List<RawSocialAccount>> userSocialAccounts(Long userId) {
+        return Optional.of(userSocialAccounts.getOrDefault(userId, List.of()));
     }
 
     @Override
@@ -81,13 +80,13 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public List<RawCodeReview> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return pullRequestReviews.getOrDefault(pullRequestId, new ArrayList<>());
+    public Optional<List<RawCodeReview>> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        return Optional.of(pullRequestReviews.getOrDefault(pullRequestId, new ArrayList<>()));
     }
 
     @Override
-    public List<RawCommit> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return pullRequestCommits.getOrDefault(pullRequestId, new ArrayList<>());
+    public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        return Optional.of(pullRequestCommits.getOrDefault(pullRequestId, new ArrayList<>()));
     }
 
     @Override
@@ -97,11 +96,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
 
     @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
-        return repo(repoOwner, repoName).flatMap(repo ->
-                pullRequest(repo.getId(), pullRequestNumber).map(pullRequest -> {
-                    final var prClosingIssues = closingIssues.get(pullRequest.getId()).stream().map(issueId -> Pair.of(issueId, repoIssues.getOrDefault(repo.getId(), new ArrayList<>()).stream().filter(i -> i.getId().equals(issueId)).findFirst().orElseThrow().getNumber())).toList();
-                    return new RawPullRequestClosingIssues(pullRequest.getId(), prClosingIssues);
-                }));
+        return Optional.ofNullable(closingIssues.get(Tuple.tuple(repoOwner, repoName, pullRequestNumber)));
     }
 
     public void feedWith(RawRepo... repos) {
@@ -140,10 +135,9 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         saveCheckRuns(repoId, sha, checkRuns);
     }
 
-    public void feedClosingIssuesWith(Long pullRequestId, RawIssue... issues) {
-        saveClosingIssues(new RawPullRequestClosingIssues(pullRequestId, Arrays.stream(issues).map(issue -> Pair.of(issue.getId(), issue.getNumber())).toList()));
+    public void feedWith(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues) {
+        this.closingIssues.put(Tuple.tuple(repoOwner, repoName, pullRequestNumber), closingIssues);
     }
-
 
     @Override
     public void saveUser(RawAccount user) {
@@ -194,8 +188,8 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
     }
 
     @Override
-    public void saveClosingIssues(RawPullRequestClosingIssues closingIssues) {
-        this.closingIssues.put(closingIssues.pullRequestId(), closingIssues.issueIdNumbers().stream().map(Pair::getLeft).toList());
+    public void saveClosingIssues(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues) {
+        this.closingIssues.put(Tuple.tuple(repoOwner, repoName, pullRequestNumber), closingIssues);
     }
 
     public List<RawRepo> repos() {
@@ -222,7 +216,7 @@ public class RawStorageRepositoryStub implements RawStorageRepository {
         return checkRuns;
     }
 
-    public Map<Long, List<Long>> closingIssues() {
+    public Map<Tuple, RawPullRequestClosingIssues> closingIssues() {
         return closingIssues;
     }
 

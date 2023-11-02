@@ -30,7 +30,11 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
     private List<CleanCodeReview> indexPullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         LOGGER.info("Indexing pull request reviews for repo {} and pull request {}", repoId, pullRequestId);
-        final var codeReviews = rawStorageReader.pullRequestReviews(repoId, pullRequestId, pullRequestNumber);
+        final var codeReviews = rawStorageReader.pullRequestReviews(repoId, pullRequestId, pullRequestNumber)
+                .orElseGet(() -> {
+                    LOGGER.warn("Unable to fetch pull request reviews");
+                    return List.of();
+                });
         return codeReviews.stream()
                 .filter(review -> review.getAuthor() != null && review.getAuthor().getId() != null)
                 .map(review ->
@@ -45,14 +49,18 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
     private List<CleanCommit> indexPullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         LOGGER.info("Indexing pull request commits for repo {} and pull request {}", repoId, pullRequestId);
-        final var commits = rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber);
+        final var commits = rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber)
+                .orElseGet(() -> {
+                    LOGGER.warn("Unable to fetch pull request commits");
+                    return List.of();
+                });
         return commits.stream().map(commit -> Optional.ofNullable(commit.getAuthor())
                 .or(() -> Optional.ofNullable(commit.getCommitter()))
                 .filter(user -> user.getId() != null)
                 .flatMap(user -> userIndexer.indexUser(user.getId()))
                 .map(user -> CleanCommit.of(commit, user))
                 .orElseGet(() -> {
-                    LOGGER.warn("Unable to index commit {}", commit.getSha());
+                    LOGGER.warn("Unable to index commit {} for pull request {}/{}", commit.getSha(), repoId, pullRequestNumber);
                     return null;
                 })).filter(Objects::nonNull).toList();
     }
@@ -65,9 +73,17 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
     private List<CleanIssue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         LOGGER.info("Indexing closing issues for repo {} and pull request {}", repoOwner, pullRequestNumber);
-        final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
-        return closingIssues.map(RawPullRequestClosingIssues::issueIdNumbers).orElse(List.of())
-                .stream().map(issue -> issueIndexer.indexIssue(repoOwner, repoName, issue.getRight()).orElse(null))
+        final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber)
+                .orElseGet(() -> {
+                    LOGGER.warn("Unable to fetch pull request {}/{}/{} closing issues", repoOwner, repoName, pullRequestNumber);
+                    return new RawPullRequestClosingIssues();
+                });
+
+        return closingIssues.issueNumbers().stream()
+                .map(issueNumber -> issueIndexer.indexIssue(repoOwner, repoName, issueNumber).orElseGet(() -> {
+                    LOGGER.warn("Unable to index issue {}/{}/{}", issueNumber, repoOwner, pullRequestNumber);
+                    return null;
+                }))
                 .filter(Objects::nonNull).toList();
     }
 
