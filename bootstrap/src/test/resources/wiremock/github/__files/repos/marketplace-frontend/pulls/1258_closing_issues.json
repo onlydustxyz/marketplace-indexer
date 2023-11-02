@@ -2,7 +2,6 @@
   "data": {
     "repository": {
       "pullRequest": {
-        "databaseId": 1525638287,
         "closingIssuesReferences": {
           "nodes": []
         }
