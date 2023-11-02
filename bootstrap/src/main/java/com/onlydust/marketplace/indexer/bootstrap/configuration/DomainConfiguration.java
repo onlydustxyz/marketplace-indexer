@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.ports.in.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import com.onlydust.marketplace.indexer.domain.services.*;
+import com.onlydust.marketplace.indexer.domain.services.exposers.IssueContributionExposer;
+import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestContributionExposer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredFullRepoIndexer;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;

@@ -7,6 +7,8 @@ import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.*;
+import com.onlydust.marketplace.indexer.domain.services.exposers.IssueContributionExposer;
+import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestContributionExposer;
 import com.onlydust.marketplace.indexer.domain.stubs.ContributionRepositoryStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageRepositoryStub;
 import org.assertj.core.groups.Tuple;
