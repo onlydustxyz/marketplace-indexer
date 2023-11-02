@@ -10,7 +10,7 @@
     "bodyPatterns": [
       {
         "equalToJson": {
-          "query": "query GetClosingIssues($owner: String!, $name: String!, $number: Int!) { repository(owner: $owner, name: $name) { pullRequest(number: $number) { closingIssuesReferences(first: 10) { nodes { number } } } } }",
+          "query": "query GetClosingIssues($owner: String!, $name: String!, $number: Int!) { repository(owner: $owner, name: $name) { pullRequest(number: $number) { closingIssuesReferences(first: 10) { nodes { repository { owner { login } name } number } } } } }",
           "variables": {
             "owner": "onlydustxyz",
             "name": "marketplace-frontend",

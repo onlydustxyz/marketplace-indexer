@@ -82,7 +82,7 @@ public class GithubRawStorageReader implements RawStorageReader {
 
     @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
-        final var query = "query GetClosingIssues($owner: String!, $name: String!, $number: Int!) { repository(owner: $owner, name: $name) { pullRequest(number: $number) { closingIssuesReferences(first: 10) { nodes { number } } } } }";
+        final var query = "query GetClosingIssues($owner: String!, $name: String!, $number: Int!) { repository(owner: $owner, name: $name) { pullRequest(number: $number) { closingIssuesReferences(first: 10) { nodes { repository { owner { login } name } number } } } } }";
 
         final var variables = Map.of(
                 "owner", repoOwner,
