@@ -41,7 +41,7 @@ public class RateLimitGuardedFullRepoIndexer implements FullRepoIndexer {
 
     private void sleepUntilReset() {
         try {
-            LOGGER.info("Rate limit reached, waiting for reset");
+            LOGGER.info("Rate limit reached, waiting for reset, now = {}, reset = {}, duration = {}", Instant.now(), rateLimit.resetAt().toInstant(), Duration.between(Instant.now(), rateLimit.resetAt().toInstant()).toMillis());
             Thread.sleep(Duration.between(Instant.now(), rateLimit.resetAt().toInstant()).toMillis());
         } catch (InterruptedException e) {
             throw OnlyDustException.internalServerError("Timer interruption", e);
