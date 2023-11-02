@@ -73,9 +73,17 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
     private List<CleanIssue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         LOGGER.info("Indexing closing issues for repo {} and pull request {}", repoOwner, pullRequestNumber);
-        final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
-        return closingIssues.map(RawPullRequestClosingIssues::issueIdNumbers).orElse(List.of())
-                .stream().map(issue -> issueIndexer.indexIssue(repoOwner, repoName, issue.getRight()).orElse(null))
+        final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber)
+                .orElseGet(() -> {
+                    LOGGER.warn("Unable to fetch pull request {}/{}/{} closing issues", repoOwner, repoName, pullRequestNumber);
+                    return new RawPullRequestClosingIssues();
+                });
+
+        return closingIssues.issueNumbers().stream()
+                .map(issueNumber -> issueIndexer.indexIssue(repoOwner, repoName, issueNumber).orElseGet(() -> {
+                    LOGGER.warn("Unable to index issue {}/{}/{}", issueNumber, repoOwner, pullRequestNumber);
+                    return null;
+                }))
                 .filter(Objects::nonNull).toList();
     }
 

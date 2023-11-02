@@ -35,6 +35,7 @@ public class IndexingServiceTest {
     final RawCodeReview[] pr1257Reviews = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_reviews.json", RawCodeReview[].class);
     final RawCommit[] pr1257Commits = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_commits.json", RawCommit[].class);
     final RawCheckRuns pr1257CheckRuns = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_check_runs.json", RawCheckRuns.class);
+    final RawPullRequestClosingIssues pr1257ClosingIssues = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_closing_issues.json", RawPullRequestClosingIssues.class);
     final RawRepo marketplaceFrontend = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
     final RawLanguages marketplaceFrontendLanguages = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/languages.json", RawLanguages.class);
     final RawRepo marketplaceBackend = RawStorageRepositoryStub.load("/github/repos/marketplace-backend.json", RawRepo.class);
@@ -67,7 +68,7 @@ public class IndexingServiceTest {
         rawStorageReaderStub.feedWith(olivier.getId(), olivierSocialAccounts);
         rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), pr1257);
         rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), issue78);
-        rawStorageReaderStub.feedClosingIssuesWith(pr1257.getId(), issue78);
+        rawStorageReaderStub.feedWith("onlydustxyz", "marketplace-frontend", 1257L, pr1257ClosingIssues);
         rawStorageReaderStub.feedWith(pr1257.getId(), pr1257Reviews);
         rawStorageReaderStub.feedWith(pr1257.getId(), pr1257Commits);
         rawStorageReaderStub.feedWith(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha(), pr1257CheckRuns);
@@ -88,7 +89,6 @@ public class IndexingServiceTest {
     @Test
     void should_index_pull_request() {
         final var pullRequest = pullRequestIndexer.indexPullRequest("onlydustxyz", "marketplace-frontend", 1257L).orElseThrow();
-
         assertThat(pullRequest.getId()).isEqualTo(1524797398);
         assertThat(pullRequest.getAuthor().getLogin()).isEqualTo("AnthonyBuisset");
         assertThat(pullRequest.getReviews().get(0).getId()).isEqualTo(pr1257Reviews[0].getId());
@@ -106,7 +106,7 @@ public class IndexingServiceTest {
         assertCachedReposAre(marketplaceFrontend, marketplaceFrontend);
         assertCachedRepoPullRequestsAre(Map.of(marketplaceFrontend.getId(), List.of(pr1257)));
         assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(issue78)));
-        assertCachedClosingIssuesAre(Map.of(pr1257.getId(), List.of(issue78.getId())));
+        assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), pr1257.getNumber()), pr1257ClosingIssues));
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
         assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
         assertCachedCheckRunsAre(Map.of(Tuple.tuple(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha()), pr1257CheckRuns));
@@ -166,7 +166,7 @@ public class IndexingServiceTest {
                 issue78, // as pr 1257 closing issue
                 issue78  // as repo issue
         )));
-        assertCachedClosingIssuesAre(Map.of(pr1257.getId(), List.of(issue78.getId())));
+        assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), pr1257.getNumber()), pr1257ClosingIssues));
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
         assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
         assertCachedCheckRunsAre(Map.of(Tuple.tuple(pr1257.getHead().getRepo().getId(), pr1257.getHead().getSha()), pr1257CheckRuns));
@@ -257,7 +257,7 @@ public class IndexingServiceTest {
         assertThat(rawStorageRepository.checkRuns()).isEqualTo(expected);
     }
 
-    private void assertCachedClosingIssuesAre(Map<Long, List<Long>> expected) {
+    private void assertCachedClosingIssuesAre(Map<Tuple, RawPullRequestClosingIssues> expected) {
         assertThat(rawStorageRepository.closingIssues()).isEqualTo(expected);
     }
 }

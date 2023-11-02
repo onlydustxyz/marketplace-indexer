@@ -1,7 +1,6 @@
 package com.onlydust.marketplace.indexer.github;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import lombok.AllArgsConstructor;
@@ -81,20 +80,18 @@ public class GithubHttpClient {
         };
     }
 
-    public Optional<JsonNode> graphql(String query, Object variables) {
+    public <ResponseBody> Optional<ResponseBody> graphql(String query, Object variables, Class<ResponseBody> responseClass) {
         try {
             final var body = Map.of("query", query, "variables", variables);
             final var httpResponse = _fetch("POST", URI.create(config.baseUri + "/graphql"), HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body)));
             return switch (httpResponse.statusCode()) {
-                case 200 -> Optional.of(objectMapper.readTree(httpResponse.body()));
+                case 200 -> Optional.of(decodeBody(httpResponse.body(), responseClass));
                 case 403, 404 -> Optional.empty();
                 default ->
                         throw OnlyDustException.internalServerError("Received incorrect status (" + httpResponse.statusCode() + ") when fetching github graphql API");
             };
         } catch (JsonProcessingException e) {
             throw OnlyDustException.internalServerError("Unable to serialize graphql request body", e);
-        } catch (IOException e) {
-            throw OnlyDustException.internalServerError("Unable to deserialize graphql response body", e);
         }
     }
 

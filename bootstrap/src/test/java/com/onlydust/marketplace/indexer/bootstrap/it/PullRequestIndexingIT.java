@@ -47,6 +47,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
         final var pr1257Reviews = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1257_reviews.json"), RawCodeReview[].class));
         final var pr1257Commits = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1257_commits.json"), RawCommit[].class));
         final var pr1257CheckRuns = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1257_check_runs.json"), RawCheckRuns.class);
+        final var pr1257ClosingIssues = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1257_closing_issues.json"), RawPullRequestClosingIssues.class);
         final var issue78 = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/issues/78.json"), RawIssue.class);
 
         final var anthony = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
@@ -76,7 +77,8 @@ public class PullRequestIndexingIT extends IntegrationTest {
                 UserSocialAccounts.of(onlyDust.getId(), List.of())
         );
         assertThat(issueRepository.findAll()).containsExactly(Issue.of(marketplaceFrontend.getId(), issue78));
-        assertThat(pullRequestClosingIssueRepository.findAll()).containsExactly(PullRequestClosingIssue.of(pr1257.getId(), issue78.getId()));
+        assertThat(pullRequestClosingIssueRepository.findAll()).containsExactly(
+                PullRequestClosingIssues.of(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), pr1257.getNumber(), pr1257ClosingIssues));
         /*
          * Pull request 1257 from anthony (author is same as committer)
          * Code review from pierre

@@ -3,7 +3,6 @@ package com.onlydust.marketplace.indexer.domain.models.raw;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -44,10 +43,5 @@ public class JsonDocument implements Serializable {
     @Override
     public int hashCode() {
         return properties.hashCode();
-    }
-
-    @JsonIgnore
-    public boolean isEmpty() {
-        return properties.isEmpty();
     }
 }

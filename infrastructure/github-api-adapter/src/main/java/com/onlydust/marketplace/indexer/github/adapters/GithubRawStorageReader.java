@@ -6,7 +6,6 @@ import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.GithubPage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -91,17 +90,6 @@ public class GithubRawStorageReader implements RawStorageReader {
                 "number", pullRequestNumber
         );
 
-        return client.graphql(query, variables).map(
-                response -> {
-                    var issues = new ArrayList<Pair<Long, Long>>();
-                    final var pullRequest = response.at("/data/repository/pullRequest");
-
-                    for (var node : pullRequest.at("/closingIssuesReferences/nodes")) {
-                        issues.add(Pair.of(node.get("databaseId").asLong(), node.get("number").asLong()));
-                    }
-
-                    return new RawPullRequestClosingIssues(pullRequest.get("databaseId").asLong(), issues);
-                }
-        );
+        return client.graphql(query, variables, RawPullRequestClosingIssues.class);
     }
 }

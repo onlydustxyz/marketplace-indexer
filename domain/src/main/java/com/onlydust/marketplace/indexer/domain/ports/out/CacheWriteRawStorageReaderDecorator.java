@@ -95,7 +95,7 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         final var closingIssues = fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
-        closingIssues.ifPresent(cache::saveClosingIssues);
+        closingIssues.ifPresent(data -> cache.saveClosingIssues(repoOwner, repoName, pullRequestNumber, data));
         return closingIssues;
     }
 }

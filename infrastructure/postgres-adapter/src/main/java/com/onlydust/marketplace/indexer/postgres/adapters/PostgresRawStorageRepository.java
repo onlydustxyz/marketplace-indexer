@@ -5,7 +5,6 @@ import com.onlydust.marketplace.indexer.domain.ports.out.RawStorageRepository;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.Optional;
@@ -87,9 +86,8 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
 
     @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
-        final var closingIssues = pullRequestClosingIssueViewRepository.findAllByPullRequestRepoOwnerAndPullRequestRepoNameAndPullRequestNumber(repoOwner, repoName, pullRequestNumber).stream().toList();
-        final var issues = closingIssues.stream().map(issue -> Pair.of(issue.getIssue().getId(), issue.getIssue().getNumber())).toList();
-        return closingIssues.stream().findFirst().map(issue -> new RawPullRequestClosingIssues(issue.getPullRequest().getId(), issues));
+        return pullRequestClosingIssueViewRepository.findById(new PullRequestClosingIssues.Id(repoOwner, repoName, pullRequestNumber))
+                .map(PullRequestClosingIssues::getData);
     }
 
     @Override
@@ -138,7 +136,7 @@ public class PostgresRawStorageRepository implements RawStorageRepository {
     }
 
     @Override
-    public void saveClosingIssues(RawPullRequestClosingIssues closingIssues) {
-        pullRequestClosingIssueRepository.saveAll(closingIssues.issueIdNumbers().stream().map(issue -> PullRequestClosingIssue.of(closingIssues.pullRequestId(), issue.getLeft())).toList());
+    public void saveClosingIssues(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues) {
+        pullRequestClosingIssueRepository.save(PullRequestClosingIssues.of(repoOwner, repoName, pullRequestNumber, closingIssues));
     }
 }
