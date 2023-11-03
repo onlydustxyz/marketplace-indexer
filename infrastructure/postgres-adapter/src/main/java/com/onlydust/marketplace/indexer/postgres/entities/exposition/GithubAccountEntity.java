@@ -38,12 +38,13 @@ public class GithubAccountEntity {
     }
 
     public enum Type {
-        USER, ORGANIZATION;
+        USER, ORGANIZATION, BOT;
 
         public static Type of(GithubAccount.Type type) {
             return switch (type) {
                 case USER -> USER;
                 case ORGANIZATION -> ORGANIZATION;
+                case BOT -> BOT;
             };
         }
     }

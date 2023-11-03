@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000002_add_missing_fields_to_repos.sql
   - include:
       file: db/changelog/changelogs/00000003_add_raw_closing_issues_data.sql
+  - include:
+      file: db/changelog/changelogs/00000004_add_bot_account_type.sql
