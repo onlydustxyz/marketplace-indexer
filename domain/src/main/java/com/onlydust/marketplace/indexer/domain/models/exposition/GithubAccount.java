@@ -27,7 +27,6 @@ public class GithubAccount {
     }
 
     public enum Type {
-        USER,
-        ORGANIZATION
+        USER, ORGANIZATION, BOT
     }
 }
