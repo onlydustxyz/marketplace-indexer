@@ -35,7 +35,8 @@ public class GithubRawStorageReader implements RawStorageReader {
     @Override
     public Stream<RawIssue> repoIssues(Long repoId) {
         final var page = new GithubPage<>(client, "/repositories/" + repoId + "/issues?state=all&sort=updated&per_page=100", RawIssue[].class);
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false);
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false)
+                .filter(issue -> issue.getPullRequest() == null);
     }
 
     @Override
