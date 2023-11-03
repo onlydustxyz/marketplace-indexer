@@ -30,7 +30,7 @@ public class GithubPage<T> implements Iterator<T> {
                 links = httpResponse.headers().firstValue("Link").map(GithubPageLinks::of).orElse(new GithubPageLinks());
                 content.addAll(asList(client.decodeBody(httpResponse.body(), classType)));
                 break;
-            case 404:
+            case 403, 404, 422:
                 break;
             default:
                 throw OnlyDustException.internalServerError("Received incorrect status (" + httpResponse.statusCode() + ") when fetching github API");
