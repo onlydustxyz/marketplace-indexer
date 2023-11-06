@@ -27,7 +27,7 @@ public class GithubHttpClient {
 
     public <T> T decodeBody(byte[] data, Class<T> classType) {
         try {
-            return objectMapper.readValue(data, classType);
+            return objectMapper.readValue(Sanitizer.sanitize(data), classType);
         } catch (IOException e) {
             throw OnlyDustException.internalServerError("Unable to deserialize github response", e);
         }
@@ -40,7 +40,6 @@ public class GithubHttpClient {
     public HttpResponse<byte[]> fetch(URI uri) {
         return _fetch("GET", overrideHost(uri), HttpRequest.BodyPublishers.noBody());
     }
-
 
     private HttpResponse<byte[]> _fetch(String method, URI uri, HttpRequest.BodyPublisher bodyPublisher) {
         uri = overrideHost(uri);
