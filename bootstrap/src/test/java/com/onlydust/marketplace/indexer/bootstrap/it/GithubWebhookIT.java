@@ -1,8 +1,10 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTriggerEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAppInstallationEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
@@ -27,6 +29,8 @@ public class GithubWebhookIT extends IntegrationTest {
     final Long MARKETPLACE_FRONTEND_ID = 498695724L;
     @Autowired
     RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository;
+    @Autowired
+    OldRepoIndexesEntityRepository oldRepoIndexesEntityRepository;
     @Autowired
     GithubWebhookRestApi.Config config;
     @Autowired
@@ -63,6 +67,7 @@ public class GithubWebhookIT extends IntegrationTest {
         response.expectStatus().isOk();
 
         assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, 42952633L));
+        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactly(new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID));
         final var account = GithubAccountEntity.builder()
                 .id(98735558L)
                 .login("onlydustxyz")
