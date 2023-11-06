@@ -43,7 +43,7 @@ public class GithubHttpClient {
 
     private HttpResponse<byte[]> _fetch(String method, URI uri, HttpRequest.BodyPublisher bodyPublisher) {
         uri = overrideHost(uri);
-        LOGGER.debug("Fetching {} {}", method, uri);
+        LOGGER.info("Fetching {} {}", method, uri);
         try {
             final var requestBuilder = HttpRequest.newBuilder().uri(uri).headers("Authorization", "Bearer " + config.personalAccessToken).method(method, bodyPublisher);
             return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
