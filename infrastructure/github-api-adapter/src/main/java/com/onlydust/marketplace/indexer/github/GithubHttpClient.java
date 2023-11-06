@@ -43,13 +43,23 @@ public class GithubHttpClient {
 
     private HttpResponse<byte[]> _fetch(String method, URI uri, HttpRequest.BodyPublisher bodyPublisher) {
         uri = overrideHost(uri);
-        LOGGER.debug("Fetching {} {}", method, uri);
-        try {
-            final var requestBuilder = HttpRequest.newBuilder().uri(uri).headers("Authorization", "Bearer " + config.personalAccessToken).method(method, bodyPublisher);
-            return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
-        } catch (IOException | InterruptedException e) {
-            throw OnlyDustException.internalServerError("Unable to fetch github API:" + uri, e);
+        final var requestBuilder = HttpRequest.newBuilder().uri(uri).headers("Authorization", "Bearer " + config.personalAccessToken).method(method, bodyPublisher);
+
+        for (var retryCount = 0; retryCount < config.maxRetries; ++retryCount) {
+            try {
+                try {
+                    LOGGER.info("Fetching {} {}", method, uri);
+                    return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
+                } catch (IOException e) {
+                    LOGGER.warn("Error while fetching github ({}), will retry in {}ms", uri, config.retryInterval, e);
+                    Thread.sleep(config.retryInterval);
+                    LOGGER.info("Retry {}/{}", retryCount + 1, config.maxRetries);
+                }
+            } catch (InterruptedException e) {
+                throw OnlyDustException.internalServerError("Github fetch (" + uri + ") interrupted", e);
+            }
         }
+        throw OnlyDustException.internalServerError("Unable to fetch Github (" + uri + "). Max retry reached");
     }
 
     private URI overrideHost(URI uri) {
@@ -99,5 +109,7 @@ public class GithubHttpClient {
     public static class Config {
         private String baseUri;
         private String personalAccessToken;
+        private Integer maxRetries;
+        private Integer retryInterval;
     }
 }
