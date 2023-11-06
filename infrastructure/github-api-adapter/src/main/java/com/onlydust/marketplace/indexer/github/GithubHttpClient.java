@@ -44,18 +44,16 @@ public class GithubHttpClient {
     private HttpResponse<byte[]> _fetch(String method, URI uri, HttpRequest.BodyPublisher bodyPublisher) {
         uri = overrideHost(uri);
         final var requestBuilder = HttpRequest.newBuilder().uri(uri).headers("Authorization", "Bearer " + config.personalAccessToken).method(method, bodyPublisher);
-        final var maxRetries = 3;
-        final var retryInterval = 500;
 
-        for (var retryCount = 0; retryCount < maxRetries; ++retryCount) {
+        for (var retryCount = 0; retryCount < config.maxRetries; ++retryCount) {
             try {
                 try {
                     LOGGER.info("Fetching {} {}", method, uri);
                     return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
                 } catch (IOException e) {
-                    LOGGER.warn("Error while fetching github ({}), will retry in {}ms}", uri, retryInterval, e);
-                    Thread.sleep(retryInterval);
-                    LOGGER.info("Retry {}/{}", retryCount + 1, maxRetries);
+                    LOGGER.warn("Error while fetching github ({}), will retry in {}ms", uri, config.retryInterval, e);
+                    Thread.sleep(config.retryInterval);
+                    LOGGER.info("Retry {}/{}", retryCount + 1, config.maxRetries);
                 }
             } catch (InterruptedException e) {
                 throw OnlyDustException.internalServerError("Github fetch (" + uri + ") interrupted", e);
@@ -111,5 +109,7 @@ public class GithubHttpClient {
     public static class Config {
         private String baseUri;
         private String personalAccessToken;
+        private Integer maxRetries;
+        private Integer retryInterval;
     }
 }

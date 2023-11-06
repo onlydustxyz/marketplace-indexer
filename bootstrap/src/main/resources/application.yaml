@@ -5,6 +5,8 @@ infrastructure:
     rate-limit:
       repo-threshold: 3
       full-repo-threshold: 500
+    max-retries: 10
+    retry-interval: 300
 
 application:
   web:
