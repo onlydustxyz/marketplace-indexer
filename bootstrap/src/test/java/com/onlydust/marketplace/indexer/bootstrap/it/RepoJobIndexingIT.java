@@ -4,9 +4,6 @@ import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTrigger
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.raw.PullRequestRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.raw.RepoRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -18,12 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class RepoJobIndexingIT extends IntegrationTest {
     @Autowired
     public RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository;
-    @Autowired
-    public RepoRepository repoRepository;
-    @Autowired
-    public PullRequestRepository pullRequestsRepository;
-    @Autowired
-    public IssueRepository issuesRepository;
     @Autowired
     public ContributionRepository contributionRepository;
 
@@ -58,18 +49,6 @@ public class RepoJobIndexingIT extends IntegrationTest {
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST)).hasSize(2);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(4);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE)).hasSize(1);
-    }
-
-    private void waitForJobToFinish(int minRepoCount, int minPullRequestCount, int minIssueCount) throws InterruptedException {
-        for (int i = 0; i < 10 && isJobRunning(minRepoCount, minPullRequestCount, minIssueCount); i++) {
-            Thread.sleep(1000);
-        }
-    }
-
-    private boolean isJobRunning(int minRepoCount, int minPullRequestCount, int minIssueCount) {
-        return repoRepository.findAll().size() < minRepoCount ||
-               pullRequestsRepository.findAll().size() < minPullRequestCount ||
-               issuesRepository.findAll().size() < minIssueCount;
     }
 
     private WebTestClient.ResponseSpec indexRepo(Long repoId) {

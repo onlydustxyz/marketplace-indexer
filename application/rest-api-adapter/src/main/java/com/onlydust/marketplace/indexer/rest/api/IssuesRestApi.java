@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.rest.api;
 
+import com.onlydust.marketplace.indexer.domain.ports.in.AuthorizationContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
@@ -12,10 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class IssuesRestApi implements IssuesApi {
     private final IssueIndexer cachedIssueIndexer;
+    private final AuthorizationContext authorizationContext;
 
     @Override
-    public ResponseEntity<Void> indexIssue(String repoOwner, String repoName, Long issueNumber) {
-        cachedIssueIndexer.indexIssue(repoOwner, repoName, issueNumber);
+    public ResponseEntity<Void> indexIssue(String repoOwner, String repoName, Long issueNumber, String authorization) {
+        authorizationContext.withAuthorization(authorization,
+                () -> cachedIssueIndexer.indexIssue(repoOwner, repoName, issueNumber));
         return ResponseEntity.noContent().build();
     }
 }

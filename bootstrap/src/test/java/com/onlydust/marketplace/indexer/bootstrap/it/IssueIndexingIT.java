@@ -20,6 +20,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,6 +62,6 @@ public class IssueIndexingIT extends IntegrationTest {
     }
 
     private WebTestClient.ResponseSpec indexIssue(String repoOwner, String repoName, Long issueNumber) {
-        return put("/api/v1/repos/" + repoOwner + "/" + repoName + "/issues/" + issueNumber);
+        return put("/api/v1/repos/" + repoOwner + "/" + repoName + "/issues/" + issueNumber, Map.of("Authorization", "Bearer ghp_GITHUB_USER_PAT"));
     }
 }

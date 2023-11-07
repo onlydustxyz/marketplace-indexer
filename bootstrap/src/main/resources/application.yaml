@@ -7,6 +7,9 @@ infrastructure:
       full-repo-threshold: 500
     max-retries: 10
     retry-interval: 300
+  github-app:
+    app-id: ${GITHUB_APP_ID}
+    private-key: ${GITHUB_APP_PRIVATE_KEY}
 
 application:
   web:

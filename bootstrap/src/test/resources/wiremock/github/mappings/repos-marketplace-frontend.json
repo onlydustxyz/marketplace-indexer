@@ -4,7 +4,7 @@
     "method": "GET",
     "headers": {
       "Authorization": {
-        "contains": "Bearer GITHUB_PAT"
+        "contains": "Bearer ghp_GITHUB_USER_PAT"
       }
     }
   },

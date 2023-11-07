@@ -1,0 +1,15 @@
+{
+  "request": {
+    "url": "/app/installations/42952633/access_tokens",
+    "method": "POST",
+    "headers": {
+      "Authorization": {
+        "matches": "Bearer .*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "app-installations-42952633-access-tokens.json"
+  }
+}

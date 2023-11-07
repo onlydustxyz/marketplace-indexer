@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.ports.in.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import com.onlydust.marketplace.indexer.domain.services.*;
@@ -10,7 +9,9 @@ import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredFull
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
+import com.onlydust.marketplace.indexer.github.GithubConfig;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
+import com.onlydust.marketplace.indexer.github.adapters.GithubAppJwtProvider;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
@@ -19,14 +20,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.http.HttpClient;
-
 @Configuration
 public class DomainConfiguration {
     @Bean
     @ConfigurationProperties("infrastructure.github")
-    GithubHttpClient.Config githubConfig() {
-        return new GithubHttpClient.Config();
+    GithubConfig githubConfig() {
+        return new GithubConfig();
+    }
+
+    @Bean
+    @ConfigurationProperties("infrastructure.github-app")
+    GithubAppJwtProvider.Config githubAppConfig() {
+        return new GithubAppJwtProvider.Config();
     }
 
     @Bean
@@ -81,11 +86,6 @@ public class DomainConfiguration {
                 cachedUserIndexer,
                 cachedRepoIndexer,
                 githubAppInstallationRepository);
-    }
-
-    @Bean
-    public GithubHttpClient githubHttpClient(final ObjectMapper objectMapper, final HttpClient httpClient, final GithubHttpClient.Config config) {
-        return new GithubHttpClient(objectMapper, httpClient, config);
     }
 
     @Bean
@@ -169,17 +169,19 @@ public class DomainConfiguration {
     @Bean
     public RepoRefreshJobManager repoRefreshJobScheduler(
             final PostgresRepoIndexingJobRepository repoIndexingJobTriggerRepository,
-            final FullRepoIndexer refreshingFullRepoIndexer
+            final FullRepoIndexer refreshingFullRepoIndexer,
+            final GithubAppContext githubAppContext
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, refreshingFullRepoIndexer);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, refreshingFullRepoIndexer, githubAppContext);
     }
 
     @Bean
     public RepoRefreshJobManager repoCacheRefreshJobScheduler(
             final PostgresRepoIndexingJobRepository repoIndexingJobTriggerRepository,
-            final FullRepoIndexer cachedFullRepoIndexer
+            final FullRepoIndexer cachedFullRepoIndexer,
+            final GithubAppContext githubAppContext
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cachedFullRepoIndexer);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cachedFullRepoIndexer, githubAppContext);
     }
 
     @Bean
