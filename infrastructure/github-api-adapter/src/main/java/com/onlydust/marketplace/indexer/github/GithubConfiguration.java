@@ -60,10 +60,11 @@ public class GithubConfiguration {
 
     @Bean
     public GithubTokenProvider tokenProvider(final GithubConfig githubConfig,
+                                             final GithubAuthorizationContext githubAuthorizationContext,
                                              final GithubAppContextAdapter githubAppContextAdapter) {
         return new GithubTokenProviderComposite(
                 githubAppContextAdapter,
-                new GithubAuthorizationContext(),
+                githubAuthorizationContext,
                 new DefaultGithubAccessTokenProvider(githubConfig));
     }
 }

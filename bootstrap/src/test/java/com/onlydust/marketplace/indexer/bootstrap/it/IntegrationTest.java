@@ -30,6 +30,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
+import java.util.Map;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.testcontainers.utility.MountableFile.forClasspathResource;
@@ -95,6 +96,11 @@ public class IntegrationTest {
         return client.put().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY").exchange();
     }
 
+    protected WebTestClient.ResponseSpec put(final String path, Map<String, String> headers) {
+        final var request = client.put().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY");
+        headers.forEach(request::header);
+        return request.exchange();
+    }
 
     protected void waitForJobToFinish(int minRepoCount, int minPullRequestCount, int minIssueCount) throws InterruptedException {
         for (int i = 0; i < 10 && isJobRunning(minRepoCount, minPullRequestCount, minIssueCount); i++) {

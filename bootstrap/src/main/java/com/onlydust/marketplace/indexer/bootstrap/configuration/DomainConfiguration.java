@@ -9,7 +9,6 @@ import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredFull
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
-import com.onlydust.marketplace.indexer.github.GithubAuthorizationContext;
 import com.onlydust.marketplace.indexer.github.GithubConfig;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubAppJwtProvider;
@@ -87,11 +86,6 @@ public class DomainConfiguration {
                 cachedUserIndexer,
                 cachedRepoIndexer,
                 githubAppInstallationRepository);
-    }
-
-    @Bean
-    public AuthorizationContext authorizationContext() {
-        return new GithubAuthorizationContext();
     }
 
     @Bean

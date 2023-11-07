@@ -15,6 +15,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,6 +51,6 @@ public class UserIndexingIT extends IntegrationTest {
     }
 
     private WebTestClient.ResponseSpec indexUser(Long userId) {
-        return put("/api/v1/users/" + userId);
+        return put("/api/v1/users/" + userId, Map.of("Authorization", "Bearer ghp_GITHUB_USER_PAT"));
     }
 }
