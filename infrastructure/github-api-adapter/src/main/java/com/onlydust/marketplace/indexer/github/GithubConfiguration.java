@@ -22,4 +22,24 @@ public class GithubConfiguration {
     public DefaultGithubAccessTokenProvider onlyDustGithubAccessTokenProvider(final GithubConfig githubConfig) {
         return new DefaultGithubAccessTokenProvider(githubConfig);
     }
+
+    @Bean
+    public GithubAuthorizationContext githubAuthorizationContext() {
+        return new GithubAuthorizationContext();
+    }
+
+    @Bean
+    public GithubHttpClient githubHttpClient(final ObjectMapper objectMapper,
+                                             final HttpClient httpClient,
+                                             final GithubConfig config,
+                                             final GithubTokenProvider tokenProvider) {
+        return new GithubHttpClient(objectMapper, httpClient, config, tokenProvider);
+    }
+
+    @Bean
+    public GithubTokenProvider tokenProvider(final GithubConfig githubConfig) {
+        return new GithubTokenProviderComposite(
+                new GithubAuthorizationContext(),
+                new DefaultGithubAccessTokenProvider(githubConfig));
+    }
 }

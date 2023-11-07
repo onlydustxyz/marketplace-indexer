@@ -93,6 +93,11 @@ paths:
       description: |
         Immediately indexes the user if it is not indexed yet. Does nothing if the user is already indexed.
       parameters:
+        - in: header
+          name: Authorization
+          description: The Bearer github access token
+          schema:
+            type: string
         - in: path
           name: userId
           required: true
@@ -118,6 +123,11 @@ paths:
       description: |
         Immediately indexes the issue if it is not indexed yet. Does nothing if the issue is already indexed.
       parameters:
+        - in: header
+          name: Authorization
+          description: The Bearer github access token
+          schema:
+            type: string
         - in: path
           name: repoOwner
           required: true
@@ -157,6 +167,11 @@ paths:
       description: |
         Immediately indexes the pull request if it is not indexed yet. Does nothing if the pull request is already indexed.
       parameters:
+        - in: header
+          name: Authorization
+          description: The Bearer github access token
+          schema:
+            type: string
         - in: path
           name: repoOwner
           required: true

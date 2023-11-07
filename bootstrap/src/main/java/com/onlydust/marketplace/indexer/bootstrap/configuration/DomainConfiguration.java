@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.ports.in.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.*;
 import com.onlydust.marketplace.indexer.domain.services.*;
@@ -10,7 +9,7 @@ import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredFull
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
-import com.onlydust.marketplace.indexer.github.DefaultGithubAccessTokenProvider;
+import com.onlydust.marketplace.indexer.github.GithubAuthorizationContext;
 import com.onlydust.marketplace.indexer.github.GithubConfig;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;
@@ -20,8 +19,6 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.net.http.HttpClient;
 
 @Configuration
 public class DomainConfiguration {
@@ -86,12 +83,8 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public GithubHttpClient githubHttpClient(final ObjectMapper objectMapper,
-                                             final HttpClient httpClient,
-                                             final GithubConfig config,
-                                             final DefaultGithubAccessTokenProvider defaultGithubAccessTokenProvider) {
-        return new GithubHttpClient(objectMapper, httpClient, config, defaultGithubAccessTokenProvider);
-    }
+    public AuthorizationContext authorizationContext() {
+        return new GithubAuthorizationContext();
     }
 
     @Bean

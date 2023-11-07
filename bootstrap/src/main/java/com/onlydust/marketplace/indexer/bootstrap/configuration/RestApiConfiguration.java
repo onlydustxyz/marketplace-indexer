@@ -14,18 +14,21 @@ import java.util.concurrent.Executor;
 @Configuration
 public class RestApiConfiguration {
     @Bean
-    public UsersRestApi usersRestApi(final UserIndexer cachedUserIndexer) {
-        return new UsersRestApi(cachedUserIndexer);
+    public UsersRestApi usersRestApi(final UserIndexer cachedUserIndexer,
+                                     final AuthorizationContext authorizationContext) {
+        return new UsersRestApi(cachedUserIndexer, authorizationContext);
     }
 
     @Bean
-    public IssuesRestApi issuesRestApi(final IssueIndexer cachedIssueIndexer) {
-        return new IssuesRestApi(cachedIssueIndexer);
+    public IssuesRestApi issuesRestApi(final IssueIndexer cachedIssueIndexer,
+                                       final AuthorizationContext authorizationContext) {
+        return new IssuesRestApi(cachedIssueIndexer, authorizationContext);
     }
 
     @Bean
-    public PullRequestsRestApi pullRequestRestApi(final PullRequestIndexer cachedPullRequestIndexer) {
-        return new PullRequestsRestApi(cachedPullRequestIndexer);
+    public PullRequestsRestApi pullRequestRestApi(final PullRequestIndexer cachedPullRequestIndexer,
+                                                  final AuthorizationContext authorizationContext) {
+        return new PullRequestsRestApi(cachedPullRequestIndexer, authorizationContext);
     }
 
     @Bean
