@@ -3,10 +3,13 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubPullRequest;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,6 +48,16 @@ public class GithubPullRequestEntity {
             joinColumns = @JoinColumn(name = "pull_request_id"),
             inverseJoinColumns = @JoinColumn(name = "issue_id"))
     Set<GithubIssueEntity> closingIssues;
+
+    @EqualsAndHashCode.Exclude
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    Instant techCreatedAt;
+
+    @EqualsAndHashCode.Exclude
+    @UpdateTimestamp
+    @Column(nullable = false)
+    Instant techUpdatedAt;
 
     public static GithubPullRequestEntity of(GithubPullRequest pullRequest) {
         return GithubPullRequestEntity.builder()

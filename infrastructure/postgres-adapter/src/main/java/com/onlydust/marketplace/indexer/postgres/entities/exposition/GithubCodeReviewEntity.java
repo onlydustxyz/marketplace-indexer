@@ -3,10 +3,13 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCodeReview;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.Date;
 
 @Entity
@@ -32,6 +35,16 @@ public class GithubCodeReviewEntity {
     State state;
     Date requestedAt;
     Date submittedAt;
+
+    @EqualsAndHashCode.Exclude
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    Instant techCreatedAt;
+
+    @EqualsAndHashCode.Exclude
+    @UpdateTimestamp
+    @Column(nullable = false)
+    Instant techUpdatedAt;
 
     public static GithubCodeReviewEntity of(GithubCodeReview codeReview) {
         return GithubCodeReviewEntity.builder()
