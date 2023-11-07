@@ -12,6 +12,7 @@ import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUser
 import com.onlydust.marketplace.indexer.github.GithubAuthorizationContext;
 import com.onlydust.marketplace.indexer.github.GithubConfig;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
+import com.onlydust.marketplace.indexer.github.adapters.GithubAppJwtProvider;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
@@ -26,6 +27,12 @@ public class DomainConfiguration {
     @ConfigurationProperties("infrastructure.github")
     GithubConfig githubConfig() {
         return new GithubConfig();
+    }
+
+    @Bean
+    @ConfigurationProperties("infrastructure.github-app")
+    GithubAppJwtProvider.Config githubAppConfig() {
+        return new GithubAppJwtProvider.Config();
     }
 
     @Bean
@@ -168,17 +175,19 @@ public class DomainConfiguration {
     @Bean
     public RepoRefreshJobManager repoRefreshJobScheduler(
             final PostgresRepoIndexingJobRepository repoIndexingJobTriggerRepository,
-            final FullRepoIndexer refreshingFullRepoIndexer
+            final FullRepoIndexer refreshingFullRepoIndexer,
+            final GithubAppContext githubAppContext
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, refreshingFullRepoIndexer);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, refreshingFullRepoIndexer, githubAppContext);
     }
 
     @Bean
     public RepoRefreshJobManager repoCacheRefreshJobScheduler(
             final PostgresRepoIndexingJobRepository repoIndexingJobTriggerRepository,
-            final FullRepoIndexer cachedFullRepoIndexer
+            final FullRepoIndexer cachedFullRepoIndexer,
+            final GithubAppContext githubAppContext
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cachedFullRepoIndexer);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cachedFullRepoIndexer, githubAppContext);
     }
 
     @Bean
