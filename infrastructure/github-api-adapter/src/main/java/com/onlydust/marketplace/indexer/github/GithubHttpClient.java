@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.github;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.HttpStatus;
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -49,7 +50,11 @@ public class GithubHttpClient {
             try {
                 try {
                     LOGGER.info("Fetching {} {}", method, uri);
-                    return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
+                    final var response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
+                    if (response.statusCode() == HttpStatus.SC_BAD_GATEWAY) {
+                        throw new IOException("502 BAD GATEWAY received");
+                    }
+                    return response;
                 } catch (IOException e) {
                     LOGGER.warn("Error while fetching github ({}), will retry in {}ms", uri, config.retryInterval, e);
                     Thread.sleep(config.retryInterval);
