@@ -3,11 +3,13 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
+import org.hibernate.annotations.*;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
@@ -41,6 +43,16 @@ public class GithubRepoEntity {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     GithubRepoEntity parent;
+
+    @EqualsAndHashCode.Exclude
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    Instant techCreatedAt;
+
+    @EqualsAndHashCode.Exclude
+    @UpdateTimestamp
+    @Column(nullable = false)
+    Instant techUpdatedAt;
 
     public static GithubRepoEntity of(GithubRepo repo) {
         return GithubRepoEntity.builder()
