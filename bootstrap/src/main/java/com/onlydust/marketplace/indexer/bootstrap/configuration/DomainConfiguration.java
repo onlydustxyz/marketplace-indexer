@@ -10,6 +10,8 @@ import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredFull
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
+import com.onlydust.marketplace.indexer.github.DefaultGithubAccessTokenProvider;
+import com.onlydust.marketplace.indexer.github.GithubConfig;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
@@ -25,8 +27,8 @@ import java.net.http.HttpClient;
 public class DomainConfiguration {
     @Bean
     @ConfigurationProperties("infrastructure.github")
-    GithubHttpClient.Config githubConfig() {
-        return new GithubHttpClient.Config();
+    GithubConfig githubConfig() {
+        return new GithubConfig();
     }
 
     @Bean
@@ -84,8 +86,12 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public GithubHttpClient githubHttpClient(final ObjectMapper objectMapper, final HttpClient httpClient, final GithubHttpClient.Config config) {
-        return new GithubHttpClient(objectMapper, httpClient, config);
+    public GithubHttpClient githubHttpClient(final ObjectMapper objectMapper,
+                                             final HttpClient httpClient,
+                                             final GithubConfig config,
+                                             final DefaultGithubAccessTokenProvider defaultGithubAccessTokenProvider) {
+        return new GithubHttpClient(objectMapper, httpClient, config, defaultGithubAccessTokenProvider);
+    }
     }
 
     @Bean

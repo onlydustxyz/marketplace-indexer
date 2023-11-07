@@ -17,4 +17,9 @@ public class GithubConfiguration {
     public HttpClient httpClient() {
         return HttpClient.newHttpClient();
     }
+
+    @Bean
+    public DefaultGithubAccessTokenProvider onlyDustGithubAccessTokenProvider(final GithubConfig githubConfig) {
+        return new DefaultGithubAccessTokenProvider(githubConfig);
+    }
 }
