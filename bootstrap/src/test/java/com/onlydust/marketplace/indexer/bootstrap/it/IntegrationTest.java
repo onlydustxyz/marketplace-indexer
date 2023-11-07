@@ -8,6 +8,9 @@ import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
 import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import com.onlydust.marketplace.indexer.bootstrap.ApplicationIT;
 import com.onlydust.marketplace.indexer.bootstrap.configuration.SwaggerConfiguration;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.PullRequestRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.RepoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +56,12 @@ public class IntegrationTest {
                             forClasspathResource("db_init_script/"), "/docker-entrypoint-initdb.d");
 
     protected final ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    public RepoRepository repoRepository;
+    @Autowired
+    public PullRequestRepository pullRequestsRepository;
+    @Autowired
+    public IssueRepository issuesRepository;
     @InjectWireMock("github")
     protected WireMockServer githubWireMockServer;
     @LocalServerPort
@@ -85,4 +94,18 @@ public class IntegrationTest {
     protected WebTestClient.ResponseSpec put(final String path) {
         return client.put().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY").exchange();
     }
+
+
+    protected void waitForJobToFinish(int minRepoCount, int minPullRequestCount, int minIssueCount) throws InterruptedException {
+        for (int i = 0; i < 10 && isJobRunning(minRepoCount, minPullRequestCount, minIssueCount); i++) {
+            Thread.sleep(1000);
+        }
+    }
+
+    protected boolean isJobRunning(int minRepoCount, int minPullRequestCount, int minIssueCount) {
+        return repoRepository.findAll().size() < minRepoCount ||
+               pullRequestsRepository.findAll().size() < minPullRequestCount ||
+               issuesRepository.findAll().size() < minIssueCount;
+    }
+
 }

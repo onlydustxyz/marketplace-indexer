@@ -56,9 +56,10 @@ public class GithubWebhookIT extends IntegrationTest {
 
     @Test
     @Order(1)
-    void should_index_repository_upon_installation_created_event() throws URISyntaxException, IOException {
+    void should_index_repository_upon_installation_created_event() throws URISyntaxException, IOException, InterruptedException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_created.json").toURI()));
+        final Long MARKETPLACE = 498695724L;
 
         // When
         final var response = post(event);
@@ -80,6 +81,15 @@ public class GithubWebhookIT extends IntegrationTest {
                 .id(42952633L)
                 .account(account)
                 .build());
+
+        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobTriggerEntity(MARKETPLACE, 42952633L));
+
+        // Wait for the job to finish
+        waitForJobToFinish(1, 2, 2);
+
+        assertThat(repoRepository.findAll()).hasSize(1);
+        assertThat(pullRequestsRepository.findAll()).hasSize(2);
+        assertThat(issuesRepository.findAll()).hasSize(2);
     }
 
     @Test
@@ -95,7 +105,7 @@ public class GithubWebhookIT extends IntegrationTest {
         response.expectStatus().isOk();
 
         assertThat(repoIndexingJobTriggerRepository.findAll()).isEmpty();
-        assertThat(githubAccountRepository.findAll()).containsExactly(GithubAccountEntity.builder()
+        assertThat(githubAccountRepository.findAll()).contains(GithubAccountEntity.builder()
                 .id(98735558L)
                 .login("onlydustxyz")
                 .type(GithubAccountEntity.Type.ORGANIZATION)

@@ -47,7 +47,7 @@ public class GithubHttpClient {
     }
 
     public HttpResponse<byte[]> fetch(String method, String path) {
-        return fetch("GET", URI.create(config.getBaseUri() + path), HttpRequest.BodyPublishers.noBody());
+        return fetch(method, URI.create(config.getBaseUri() + path), HttpRequest.BodyPublishers.noBody());
     }
 
     public HttpResponse<byte[]> fetch(URI uri) {

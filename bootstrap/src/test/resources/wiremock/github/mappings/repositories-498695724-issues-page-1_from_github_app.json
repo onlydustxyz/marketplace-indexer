@@ -1,0 +1,15 @@
+{
+  "request": {
+    "url": "/repositories/498695724/issues?state=all&sort=updated&per_page=100",
+    "method": "GET",
+    "headers": {
+      "Authorization": {
+        "contains": "Bearer GITHUB_INSTALLATION_TOKEN"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "repos/marketplace-frontend/issues-page-2.json"
+  }
+}
