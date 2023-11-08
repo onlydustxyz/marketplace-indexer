@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.domain;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
+import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
@@ -25,7 +26,7 @@ public class InstallationEventTest {
     private final GithubRepoStorageStub githubRepoRepositoryStub = new GithubRepoStorageStub();
     private final RepoIndexingJobStorageStub repoIndexingJobRepositoryStub = new RepoIndexingJobStorageStub();
     private final InstallationStorageStub installationEventRepositoryStub = new InstallationStorageStub();
-    private final InstallationEventProcessorService eventProcessorService = new InstallationEventProcessorService(
+    private final InstallationEventHandler eventProcessorService = new InstallationEventProcessorService(
             rawInstallationEventRepositoryStub, rawStorageRepositoryStub, githubRepoRepositoryStub, repoIndexingJobRepositoryStub, userIndexer, repoIndexer, installationEventRepositoryStub);
 
     @BeforeEach

@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
+import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
@@ -83,14 +84,14 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public InstallationEventProcessorService eventProcessorService(final PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository,
-                                                                   final RawStorageReader cachedRawStorageReader,
-                                                                   final PostgresGithubRepoStorage postgresGithubRepoRepository,
-                                                                   final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
-                                                                   final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
-                                                                   final UserIndexer cachedUserIndexer,
-                                                                   final RepoIndexer cachedRepoIndexer,
-                                                                   final GithubAppInstallationStorage githubAppInstallationStorage) {
+    public InstallationEventHandler eventProcessorService(final PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository,
+                                                          final RawStorageReader cachedRawStorageReader,
+                                                          final PostgresGithubRepoStorage postgresGithubRepoRepository,
+                                                          final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
+                                                          final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
+                                                          final UserIndexer cachedUserIndexer,
+                                                          final RepoIndexer cachedRepoIndexer,
+                                                          final GithubAppInstallationStorage githubAppInstallationStorage) {
         return new InstallationEventProcessorService(postgresRawInstallationEventStorageRepository,
                 cachedRawStorageReader,
                 postgresGithubRepoRepository,

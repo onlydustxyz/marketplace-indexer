@@ -8,6 +8,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstal
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
+import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
@@ -25,7 +26,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Slf4j
 @Transactional
-public class InstallationEventProcessorService {
+public class InstallationEventProcessorService implements InstallationEventHandler {
     private final RawInstallationEventStorage rawInstallationEventStorage;
     private final RawStorageReader rawStorageReader;
     private final GithubRepoStorage githubRepoStorage;
@@ -34,6 +35,7 @@ public class InstallationEventProcessorService {
     private final RepoIndexer repoIndexer;
     private final GithubAppInstallationStorage githubAppInstallationStorage;
 
+    @Override
     public void process(RawInstallationEvent rawEvent) {
         rawInstallationEventStorage.save(rawEvent);
 
