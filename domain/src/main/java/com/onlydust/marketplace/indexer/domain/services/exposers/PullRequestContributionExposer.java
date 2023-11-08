@@ -5,8 +5,8 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCodeReview;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCommit;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubPullRequest;
-import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.out.ContributionStorageRepository;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import lombok.AllArgsConstructor;
 
 import java.util.Optional;
@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class PullRequestContributionExposer implements PullRequestIndexer {
     PullRequestIndexer indexer;
-    ContributionStorageRepository expositionRepository;
+    ContributionStorage expositionRepository;
 
     @Override
     public Optional<CleanPullRequest> indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber) {

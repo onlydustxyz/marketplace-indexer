@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres;
 
-import com.onlydust.marketplace.indexer.domain.ports.out.ContributionStorageRepository;
+import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
@@ -29,18 +29,18 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaAuditing
 public class PostgresConfiguration {
     @Bean
-    public PostgresRawStorageRepository postgresRawStorageRepository(final IssueRepository issueRepository,
-                                                                     final UserRepository userRepository,
-                                                                     final RepoRepository repoRepository,
-                                                                     final PullRequestRepository pullRequestRepository,
-                                                                     final RepoLanguagesRepository repoLanguagesRepository,
-                                                                     final UserSocialAccountsRepository userSocialAccountsRepository,
-                                                                     final PullRequestCommitsRepository pullRequestCommitsRepository,
-                                                                     final PullRequestClosingIssueRepository pullRequestClosingIssueRepository,
-                                                                     final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository,
-                                                                     final PullRequestReviewsRepository pullRequestReviewsRepository,
-                                                                     final RepoCheckRunsRepository repoCheckRunsRepository) {
-        return new PostgresRawStorageRepository(issueRepository,
+    public PostgresRawStorage postgresRawStorageRepository(final IssueRepository issueRepository,
+                                                           final UserRepository userRepository,
+                                                           final RepoRepository repoRepository,
+                                                           final PullRequestRepository pullRequestRepository,
+                                                           final RepoLanguagesRepository repoLanguagesRepository,
+                                                           final UserSocialAccountsRepository userSocialAccountsRepository,
+                                                           final PullRequestCommitsRepository pullRequestCommitsRepository,
+                                                           final PullRequestClosingIssueRepository pullRequestClosingIssueRepository,
+                                                           final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository,
+                                                           final PullRequestReviewsRepository pullRequestReviewsRepository,
+                                                           final RepoCheckRunsRepository repoCheckRunsRepository) {
+        return new PostgresRawStorage(issueRepository,
                 userRepository,
                 repoRepository,
                 pullRequestRepository,
@@ -55,38 +55,38 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public PostgresRawInstallationEventStorageRepository postgresRawInstallationEventStorageRepository(final InstallationEventRepository installationEventRepository) {
-        return new PostgresRawInstallationEventStorageRepository(installationEventRepository);
+    public PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository(final InstallationEventRepository installationEventRepository) {
+        return new PostgresRawInstallationEventStorageStorage(installationEventRepository);
     }
 
     @Bean
-    public PostgresRepoIndexingJobRepository postgresRepoIndexingJobTriggerRepository(final RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository) {
-        return new PostgresRepoIndexingJobRepository(repoIndexingJobTriggerRepository);
+    public PostgresRepoIndexingJobStorage postgresRepoIndexingJobTriggerRepository(final RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository) {
+        return new PostgresRepoIndexingJobStorage(repoIndexingJobTriggerRepository);
     }
 
     @Bean
-    public PostgresOldRepoIndexingJobRepository postgresOldRepoIndexingJobRepository(final OldRepoIndexesEntityRepository oldRepoIndexesEntityRepository) {
-        return new PostgresOldRepoIndexingJobRepository(oldRepoIndexesEntityRepository);
+    public PostgresOldRepoIndexingJobStorage postgresOldRepoIndexingJobRepository(final OldRepoIndexesEntityRepository oldRepoIndexesEntityRepository) {
+        return new PostgresOldRepoIndexingJobStorage(oldRepoIndexesEntityRepository);
     }
 
 
     @Bean
-    public PostgresUserIndexingJobRepository userIndexingJobTriggerRepository(final UserIndexingJobTriggerEntityRepository userIndexingJobTriggerRepository) {
-        return new PostgresUserIndexingJobRepository(userIndexingJobTriggerRepository);
+    public PostgresUserIndexingJobStorage userIndexingJobTriggerRepository(final UserIndexingJobTriggerEntityRepository userIndexingJobTriggerRepository) {
+        return new PostgresUserIndexingJobStorage(userIndexingJobTriggerRepository);
     }
 
     @Bean
-    public ContributionStorageRepository contributionStorageRepository(final ContributionRepository contributionRepository) {
-        return new PostgresContributionStorageRepository(contributionRepository);
+    public ContributionStorage contributionStorageRepository(final ContributionRepository contributionRepository) {
+        return new PostgresContributionStorage(contributionRepository);
     }
 
     @Bean
-    public PostgresGithubRepoRepository postgresGithubRepoRepository(final GithubRepoEntityRepository githubRepoRepository) {
-        return new PostgresGithubRepoRepository(githubRepoRepository);
+    public PostgresGithubRepoStorage postgresGithubRepoRepository(final GithubRepoEntityRepository githubRepoRepository) {
+        return new PostgresGithubRepoStorage(githubRepoRepository);
     }
 
     @Bean
-    public PostgresGithubAppInstallationRepository postgresGithubAppInstallationRepository(final GithubAppInstallationEntityRepository githubAppInstallationEntityRepository) {
-        return new PostgresGithubAppInstallationRepository(githubAppInstallationEntityRepository);
+    public PostgresGithubAppInstallationStorage postgresGithubAppInstallationRepository(final GithubAppInstallationEntityRepository githubAppInstallationEntityRepository) {
+        return new PostgresGithubAppInstallationStorage(githubAppInstallationEntityRepository);
     }
 }

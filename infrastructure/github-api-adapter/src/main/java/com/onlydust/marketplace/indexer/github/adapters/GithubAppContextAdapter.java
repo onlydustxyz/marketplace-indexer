@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.github.adapters;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.onlydust.marketplace.indexer.domain.ports.in.GithubAppContext;
+import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.GithubTokenProvider;
 import lombok.Data;

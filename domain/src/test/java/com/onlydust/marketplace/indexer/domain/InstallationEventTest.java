@@ -3,11 +3,12 @@ package com.onlydust.marketplace.indexer.domain;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
-import com.onlydust.marketplace.indexer.domain.ports.in.RepoIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
-import com.onlydust.marketplace.indexer.domain.services.InstallationEventProcessorService;
-import com.onlydust.marketplace.indexer.domain.services.RepoIndexingService;
-import com.onlydust.marketplace.indexer.domain.services.UserIndexingService;
+import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
+import com.onlydust.marketplace.indexer.domain.services.indexers.RepoIndexingService;
+import com.onlydust.marketplace.indexer.domain.services.indexers.UserIndexingService;
 import com.onlydust.marketplace.indexer.domain.stubs.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,17 +16,17 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class InstallationEventTest {
-    final RawAccount onlyDust = RawStorageRepositoryStub.load("/github/users/onlyDust.json", RawAccount.class);
-    final RawRepo marketplaceFrontend = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
-    private final RawInstallationEventRepositoryStub rawInstallationEventRepositoryStub = new RawInstallationEventRepositoryStub();
-    private final RawInstallationEvent newInstallationEvent = RawStorageRepositoryStub.load("/github/events/new_installation.json", RawInstallationEvent.class);
-    private final RawStorageRepositoryStub rawStorageRepositoryStub = new RawStorageRepositoryStub();
+    final RawAccount onlyDust = RawStorageWriterStub.load("/github/users/onlyDust.json", RawAccount.class);
+    final RawRepo marketplaceFrontend = RawStorageWriterStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
+    private final RawInstallationEventStorageStub rawInstallationEventRepositoryStub = new RawInstallationEventStorageStub();
+    private final RawInstallationEvent newInstallationEvent = RawStorageWriterStub.load("/github/events/new_installation.json", RawInstallationEvent.class);
+    private final RawStorageWriterStub rawStorageRepositoryStub = new RawStorageWriterStub();
     final UserIndexer userIndexer = new UserIndexingService(rawStorageRepositoryStub);
     final RepoIndexer repoIndexer = new RepoIndexingService(rawStorageRepositoryStub, userIndexer);
-    private final GithubRepoRepositoryStub githubRepoRepositoryStub = new GithubRepoRepositoryStub();
-    private final RepoIndexingJobRepositoryStub repoIndexingJobRepositoryStub = new RepoIndexingJobRepositoryStub();
-    private final InstallationRepositoryStub installationEventRepositoryStub = new InstallationRepositoryStub();
-    private final InstallationEventProcessorService eventProcessorService = new InstallationEventProcessorService(
+    private final GithubRepoStorageStub githubRepoRepositoryStub = new GithubRepoStorageStub();
+    private final RepoIndexingJobStorageStub repoIndexingJobRepositoryStub = new RepoIndexingJobStorageStub();
+    private final InstallationStorageStub installationEventRepositoryStub = new InstallationStorageStub();
+    private final InstallationEventHandler eventProcessorService = new InstallationEventProcessorService(
             rawInstallationEventRepositoryStub, rawStorageRepositoryStub, githubRepoRepositoryStub, repoIndexingJobRepositoryStub, userIndexer, repoIndexer, installationEventRepositoryStub);
 
     @BeforeEach

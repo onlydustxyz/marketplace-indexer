@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
-import com.onlydust.marketplace.indexer.domain.ports.in.FullRepoIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.GithubAppContext;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.FullRepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

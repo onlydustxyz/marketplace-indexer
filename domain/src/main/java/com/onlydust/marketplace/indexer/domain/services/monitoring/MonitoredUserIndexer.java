@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.services.monitoring;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
-import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.MeterRegistry;

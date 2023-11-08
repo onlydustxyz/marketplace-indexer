@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.stubs;
 
-import com.onlydust.marketplace.indexer.domain.ports.in.GithubAppContext;
+import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 
 public class GithubAppContextStub implements GithubAppContext {
     @Override

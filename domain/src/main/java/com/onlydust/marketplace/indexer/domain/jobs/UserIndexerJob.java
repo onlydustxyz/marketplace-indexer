@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
-import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

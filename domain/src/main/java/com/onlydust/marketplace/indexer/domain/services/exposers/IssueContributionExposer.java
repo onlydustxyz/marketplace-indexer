@@ -4,8 +4,8 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
 import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubIssue;
-import com.onlydust.marketplace.indexer.domain.ports.in.IssueIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.out.ContributionStorageRepository;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import lombok.AllArgsConstructor;
 
 import java.util.Optional;
@@ -13,7 +13,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class IssueContributionExposer implements IssueIndexer {
     IssueIndexer indexer;
-    ContributionStorageRepository expositionRepository;
+    ContributionStorage expositionRepository;
 
     @Override
     public Optional<CleanIssue> indexIssue(String repoOwner, String repoName, Long issueNumber) {
