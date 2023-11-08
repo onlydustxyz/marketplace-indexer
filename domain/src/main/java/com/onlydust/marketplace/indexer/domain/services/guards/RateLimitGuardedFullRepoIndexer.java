@@ -34,7 +34,12 @@ public class RateLimitGuardedFullRepoIndexer implements FullRepoIndexer {
 
     @Override
     public Optional<CleanRepo> indexFullRepo(Long repoId) {
-        final var rateLimit = rateLimit();
+        final var rateLimit = rateLimitService.rateLimit();
+        Gauge
+                .builder("indexer.rate_limit.remaining", rateLimit, RateLimit::remaining)
+                .tag("installationId", githubAppContext.installationId().map(String::valueOf).orElse("null"))
+                .register(meterRegistry);
+
 
         if (rateLimit.remaining() < config.getFullRepoThreshold()) {
             LOGGER.info("Rate limit reached, waiting for reset until {}", rateLimit.resetAt());
@@ -42,15 +47,5 @@ public class RateLimitGuardedFullRepoIndexer implements FullRepoIndexer {
         }
 
         return indexer.indexFullRepo(repoId);
-    }
-
-    private RateLimit rateLimit() {
-        final var rateLimit = rateLimitService.rateLimit();
-        Gauge
-                .builder("indexer.rate_limit.remaining", rateLimit, RateLimit::remaining)
-                .tag("installationId", githubAppContext.installationId().map(String::valueOf).orElse("null"))
-                .register(meterRegistry);
-
-        return rateLimit;
     }
 }
