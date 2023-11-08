@@ -29,18 +29,18 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaAuditing
 public class PostgresConfiguration {
     @Bean
-    public PostgresRawStorageWriter postgresRawStorageRepository(final IssueRepository issueRepository,
-                                                                 final UserRepository userRepository,
-                                                                 final RepoRepository repoRepository,
-                                                                 final PullRequestRepository pullRequestRepository,
-                                                                 final RepoLanguagesRepository repoLanguagesRepository,
-                                                                 final UserSocialAccountsRepository userSocialAccountsRepository,
-                                                                 final PullRequestCommitsRepository pullRequestCommitsRepository,
-                                                                 final PullRequestClosingIssueRepository pullRequestClosingIssueRepository,
-                                                                 final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository,
-                                                                 final PullRequestReviewsRepository pullRequestReviewsRepository,
-                                                                 final RepoCheckRunsRepository repoCheckRunsRepository) {
-        return new PostgresRawStorageWriter(issueRepository,
+    public PostgresRawStorage postgresRawStorageRepository(final IssueRepository issueRepository,
+                                                           final UserRepository userRepository,
+                                                           final RepoRepository repoRepository,
+                                                           final PullRequestRepository pullRequestRepository,
+                                                           final RepoLanguagesRepository repoLanguagesRepository,
+                                                           final UserSocialAccountsRepository userSocialAccountsRepository,
+                                                           final PullRequestCommitsRepository pullRequestCommitsRepository,
+                                                           final PullRequestClosingIssueRepository pullRequestClosingIssueRepository,
+                                                           final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository,
+                                                           final PullRequestReviewsRepository pullRequestReviewsRepository,
+                                                           final RepoCheckRunsRepository repoCheckRunsRepository) {
+        return new PostgresRawStorage(issueRepository,
                 userRepository,
                 repoRepository,
                 pullRequestRepository,

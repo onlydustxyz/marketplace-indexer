@@ -11,12 +11,12 @@ import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorage
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
-import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
-import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobService;
 import com.onlydust.marketplace.indexer.domain.services.exposers.IssueContributionExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestContributionExposer;
 import com.onlydust.marketplace.indexer.domain.services.guards.RateLimitGuardedFullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
+import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
+import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobService;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredFullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
@@ -60,7 +60,7 @@ public class DomainConfiguration {
     @Bean
     RawStorageReader cachedRawStorageReader(
             final GithubRawStorageReader githubRawStorageReader,
-            final PostgresRawStorageWriter postgresRawStorageRepository
+            final PostgresRawStorage postgresRawStorageRepository
     ) {
         return CacheReadRawStorageReaderDecorator.builder()
                 .fetcher(CacheWriteRawStorageReaderDecorator.builder()
@@ -74,7 +74,7 @@ public class DomainConfiguration {
     @Bean
     RawStorageReader rawStorageReader(
             final GithubRawStorageReader githubRawStorageReader,
-            final PostgresRawStorageWriter postgresRawStorageRepository
+            final PostgresRawStorage postgresRawStorageRepository
     ) {
         return CacheWriteRawStorageReaderDecorator.builder()
                 .fetcher(githubRawStorageReader)

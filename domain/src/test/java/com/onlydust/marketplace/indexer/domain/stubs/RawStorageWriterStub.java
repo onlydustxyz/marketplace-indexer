@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.domain.stubs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
 import org.assertj.core.groups.Tuple;
 
@@ -9,7 +10,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class RawStorageWriterStub implements RawStorageWriter {
+public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader {
     final List<RawRepo> repos = new ArrayList<>();
     final List<RawAccount> users = new ArrayList<>();
     final Map<Long, List<RawSocialAccount>> userSocialAccounts = new HashMap<>();

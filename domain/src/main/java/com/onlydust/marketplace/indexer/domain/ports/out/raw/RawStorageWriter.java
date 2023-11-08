@@ -4,7 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.raw.*;
 
 import java.util.List;
 
-public interface RawStorageWriter extends RawStorageReader {
+public interface RawStorageWriter {
     void saveUser(RawAccount user);
 
     void saveUserSocialAccounts(Long userId, List<RawSocialAccount> socialAccounts);

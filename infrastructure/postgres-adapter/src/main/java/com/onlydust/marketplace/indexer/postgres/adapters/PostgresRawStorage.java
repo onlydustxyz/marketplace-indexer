@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
@@ -11,7 +12,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
-public class PostgresRawStorageWriter implements RawStorageWriter {
+public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     final IssueRepository issueRepository;
     final UserRepository userRepository;
     final RepoRepository repoRepository;

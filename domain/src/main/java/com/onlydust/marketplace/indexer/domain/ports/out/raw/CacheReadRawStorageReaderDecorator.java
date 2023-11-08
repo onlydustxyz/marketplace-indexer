@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 @Builder
 public class CacheReadRawStorageReaderDecorator implements RawStorageReader {
     private final RawStorageReader fetcher;
-    private final RawStorageWriter cache;
+    private final RawStorageReader cache;
 
     @Override
     public Optional<RawRepo> repo(Long repoId) {
