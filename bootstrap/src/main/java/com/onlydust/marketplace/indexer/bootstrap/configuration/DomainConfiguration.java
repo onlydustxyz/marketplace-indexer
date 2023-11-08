@@ -167,7 +167,8 @@ public class DomainConfiguration {
             final RepoIndexer cachedRepoIndexer,
             final MeterRegistry registry,
             final GithubRateLimitServiceAdapter rateLimitService,
-            final GithubRateLimitServiceAdapter.Config githubrateLimitConfig) {
+            final GithubRateLimitServiceAdapter.Config githubrateLimitConfig,
+            final GithubAppContext githubAppContext) {
         return new RateLimitGuardedFullRepoIndexer(
                 new MonitoredFullRepoIndexer(
                         new FullRepoIndexingService(rawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer, cachedRepoIndexer),
@@ -175,7 +176,8 @@ public class DomainConfiguration {
                 ),
                 rateLimitService,
                 githubrateLimitConfig,
-                registry
+                registry,
+                githubAppContext
         );
     }
 
