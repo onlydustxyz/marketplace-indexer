@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.domain.services.indexers;
 
-import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawLanguages;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
@@ -21,15 +20,15 @@ public class RepoIndexingService implements RepoIndexer {
     @Override
     public Optional<CleanRepo> indexRepo(Long repoId) {
         LOGGER.info("Indexing repo {}", repoId);
-        final var repo = rawStorageReader.repo(repoId).orElseThrow(() -> OnlyDustException.notFound("Repo not found"));
-        return buildCleanRepo(repo);
+        return rawStorageReader.repo(repoId)
+                .flatMap(this::buildCleanRepo);
     }
 
     @Override
     public Optional<CleanRepo> indexRepo(String repoOwner, String repoName) {
         LOGGER.info("Indexing repo {}/{}", repoOwner, repoName);
-        final var repo = rawStorageReader.repo(repoOwner, repoName).orElseThrow(() -> OnlyDustException.notFound("Repo not found"));
-        return buildCleanRepo(repo);
+        return rawStorageReader.repo(repoOwner, repoName)
+                .flatMap(this::buildCleanRepo);
     }
 
     private Optional<CleanRepo> buildCleanRepo(RawRepo repo) {
