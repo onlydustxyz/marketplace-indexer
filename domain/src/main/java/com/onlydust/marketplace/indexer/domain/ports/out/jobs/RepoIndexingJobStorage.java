@@ -9,5 +9,5 @@ public interface RepoIndexingJobStorage {
 
     void add(Long installationId, Long... repoIds);
 
-    void deleteAll(Long installationId);
+    void deleteInstallation(Long installationId);
 }

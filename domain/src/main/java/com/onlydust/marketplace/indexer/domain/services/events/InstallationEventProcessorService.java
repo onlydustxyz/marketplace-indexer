@@ -47,7 +47,7 @@ public class InstallationEventProcessorService implements InstallationEventHandl
     }
 
     private void onDeleted(InstallationEvent event) {
-        repoIndexingJobStorage.deleteAll(event.getInstallationId());
+        repoIndexingJobStorage.deleteInstallation(event.getInstallationId());
         githubAppInstallationStorage.delete(event.getInstallationId());
     }
 

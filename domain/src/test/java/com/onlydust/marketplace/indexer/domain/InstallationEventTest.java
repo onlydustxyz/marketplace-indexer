@@ -6,28 +6,34 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.indexers.RepoIndexingService;
 import com.onlydust.marketplace.indexer.domain.services.indexers.UserIndexingService;
-import com.onlydust.marketplace.indexer.domain.stubs.*;
+import com.onlydust.marketplace.indexer.domain.stubs.GithubRepoStorageStub;
+import com.onlydust.marketplace.indexer.domain.stubs.InstallationStorageStub;
+import com.onlydust.marketplace.indexer.domain.stubs.RawInstallationEventStorageStub;
+import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class InstallationEventTest {
     final RawAccount onlyDust = RawStorageWriterStub.load("/github/users/onlyDust.json", RawAccount.class);
     final RawRepo marketplaceFrontend = RawStorageWriterStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
+    final GithubRepoStorageStub githubRepoRepositoryStub = new GithubRepoStorageStub();
+    final RepoIndexingJobStorage repoIndexingJobRepository = mock(RepoIndexingJobStorage.class);
+    final InstallationStorageStub installationEventRepositoryStub = new InstallationStorageStub();
     private final RawInstallationEventStorageStub rawInstallationEventRepositoryStub = new RawInstallationEventStorageStub();
     private final RawInstallationEvent newInstallationEvent = RawStorageWriterStub.load("/github/events/new_installation.json", RawInstallationEvent.class);
     private final RawStorageWriterStub rawStorageRepositoryStub = new RawStorageWriterStub();
     final UserIndexer userIndexer = new UserIndexingService(rawStorageRepositoryStub);
     final RepoIndexer repoIndexer = new RepoIndexingService(rawStorageRepositoryStub, userIndexer);
-    private final GithubRepoStorageStub githubRepoRepositoryStub = new GithubRepoStorageStub();
-    private final RepoIndexingJobStorageStub repoIndexingJobRepositoryStub = new RepoIndexingJobStorageStub();
-    private final InstallationStorageStub installationEventRepositoryStub = new InstallationStorageStub();
-    private final InstallationEventHandler eventProcessorService = new InstallationEventProcessorService(
-            rawInstallationEventRepositoryStub, rawStorageRepositoryStub, githubRepoRepositoryStub, repoIndexingJobRepositoryStub, userIndexer, repoIndexer, installationEventRepositoryStub);
+    final InstallationEventHandler eventHandler = new InstallationEventProcessorService(
+            rawInstallationEventRepositoryStub, rawStorageRepositoryStub, githubRepoRepositoryStub, repoIndexingJobRepository, userIndexer, repoIndexer, installationEventRepositoryStub);
 
     @BeforeEach
     void setup() {
@@ -37,7 +43,7 @@ public class InstallationEventTest {
 
     @Test
     public void should_store_raw_events() {
-        eventProcessorService.process(newInstallationEvent);
+        eventHandler.process(newInstallationEvent);
 
         assertCachedEventsAre(newInstallationEvent);
 
@@ -51,8 +57,7 @@ public class InstallationEventTest {
         assertThat(events.get(0).getId()).isEqualTo(newInstallationEvent.getInstallation().getId());
         assertThat(events.get(0).getAccount().getId()).isEqualTo(onlyDust.getId());
 
-        assertThat(repoIndexingJobRepositoryStub.installationIds()).containsExactly(newInstallationEvent.getInstallation().getId());
-        assertThat(repoIndexingJobRepositoryStub.repos(newInstallationEvent.getInstallation().getId())).containsExactly(marketplaceFrontend.getId());
+        verify(repoIndexingJobRepository).add(newInstallationEvent.getInstallation().getId(), marketplaceFrontend.getId());
     }
 
     private void assertCachedEventsAre(RawInstallationEvent... events) {

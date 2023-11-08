@@ -28,8 +28,8 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void deleteAll(Long installationId) {
-        repoIndexingJobTriggerRepository.deleteAllByInstallationId(installationId);
+    public void deleteInstallation(Long installationId) {
+        repoIndexingJobTriggerRepository.deleteInstallationId(installationId);
     }
 
 }

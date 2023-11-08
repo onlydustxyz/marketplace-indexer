@@ -28,7 +28,7 @@ public class PostgresOldRepoIndexingJobStorage implements RepoIndexingJobStorage
     }
 
     @Override
-    public void deleteAll(Long installationId) {
+    public void deleteInstallation(Long installationId) {
     }
 
 }

@@ -33,8 +33,8 @@ public class RepoIndexingJobStorageComposite implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void deleteAll(Long installationId) {
+    public void deleteInstallation(Long installationId) {
         Arrays.stream(repoIndexingJobRepositories)
-                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.deleteAll(installationId));
+                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.deleteInstallation(installationId));
     }
 }
