@@ -5,23 +5,30 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.FullRepoIndexer
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.MeterRegistry;
+import lombok.AllArgsConstructor;
 
 import java.util.Optional;
 
+@AllArgsConstructor
 public class MonitoredFullRepoIndexer implements FullRepoIndexer {
     final FullRepoIndexer indexer;
-    final LongTaskTimer timer;
-    final Counter counter;
-
-    public MonitoredFullRepoIndexer(FullRepoIndexer indexer, MeterRegistry registry) {
-        this.indexer = indexer;
-        this.timer = LongTaskTimer.builder("indexer.repo.duration").register(registry);
-        this.counter = Counter.builder("indexer.repo.count").register(registry);
-    }
+    final MeterRegistry registry;
 
     @Override
     public Optional<CleanRepo> indexFullRepo(Long repoId) {
-        counter.increment();
-        return timer.record(() -> indexer.indexFullRepo(repoId));
+        final var repo = LongTaskTimer
+                .builder("indexer.repo.duration")
+                .tag("repoId", repoId.toString())
+                .register(registry)
+                .record(() -> indexer.indexFullRepo(repoId));
+
+        if (repo != null && repo.isPresent())
+            Counter
+                    .builder("indexer.repo.count")
+                    .tag("repoId", repoId.toString())
+                    .register(registry)
+                    .increment();
+
+        return repo;
     }
 }
