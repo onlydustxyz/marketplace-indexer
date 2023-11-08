@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.cron;
 
-import com.onlydust.marketplace.indexer.domain.ports.in.RepoRefreshJobManager;
-import com.onlydust.marketplace.indexer.domain.ports.in.UserRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

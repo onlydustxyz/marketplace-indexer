@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.github;
 
-import com.onlydust.marketplace.indexer.domain.ports.in.AuthorizationContext;
+import com.onlydust.marketplace.indexer.domain.ports.in.contexts.AuthorizationContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;

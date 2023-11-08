@@ -11,16 +11,16 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawCodeReview;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawLanguages;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
-import com.onlydust.marketplace.indexer.domain.stubs.RawStorageRepositoryStub;
+import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ContributionTest {
-    final RawAccount anthony = RawStorageRepositoryStub.load("/github/users/anthony.json", RawAccount.class);
-    final RawAccount pierre = RawStorageRepositoryStub.load("/github/users/pierre.json", RawAccount.class);
-    final RawPullRequest pr1257 = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257.json", RawPullRequest.class);
-    final RawCodeReview[] pr1257Reviews = RawStorageRepositoryStub.load("/github/repos/marketplace-frontend/pulls/1257_reviews.json", RawCodeReview[].class);
+    final RawAccount anthony = RawStorageWriterStub.load("/github/users/anthony.json", RawAccount.class);
+    final RawAccount pierre = RawStorageWriterStub.load("/github/users/pierre.json", RawAccount.class);
+    final RawPullRequest pr1257 = RawStorageWriterStub.load("/github/repos/marketplace-frontend/pulls/1257.json", RawPullRequest.class);
+    final RawCodeReview[] pr1257Reviews = RawStorageWriterStub.load("/github/repos/marketplace-frontend/pulls/1257_reviews.json", RawCodeReview[].class);
 
     @Test
     public void should_return_correct_id_for_code_review() {

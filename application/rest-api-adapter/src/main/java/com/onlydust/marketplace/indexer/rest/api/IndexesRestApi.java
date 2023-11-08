@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.rest.api;
 
-import com.onlydust.marketplace.indexer.domain.ports.in.RepoRefreshJobManager;
-import com.onlydust.marketplace.indexer.domain.ports.in.UserRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.AllArgsConstructor;

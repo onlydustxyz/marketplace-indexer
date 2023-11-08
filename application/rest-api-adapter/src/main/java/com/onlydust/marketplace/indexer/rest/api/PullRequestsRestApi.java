@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.rest.api;
 
-import com.onlydust.marketplace.indexer.domain.ports.in.AuthorizationContext;
-import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.contexts.AuthorizationContext;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.AllArgsConstructor;

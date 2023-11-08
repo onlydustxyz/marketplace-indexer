@@ -1,11 +1,11 @@
 package com.onlydust.marketplace.indexer.domain;
 
 import com.onlydust.marketplace.indexer.domain.jobs.Job;
-import com.onlydust.marketplace.indexer.domain.ports.in.FullRepoIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.GithubAppContext;
-import com.onlydust.marketplace.indexer.domain.services.RepoRefreshJobService;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.FullRepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
+import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
 import com.onlydust.marketplace.indexer.domain.stubs.GithubAppContextStub;
-import com.onlydust.marketplace.indexer.domain.stubs.RepoIndexingJobRepositoryStub;
+import com.onlydust.marketplace.indexer.domain.stubs.RepoIndexingJobStorageStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class RepoJobServiceTest {
-    private final RepoIndexingJobRepositoryStub repoIndexingJobRepositoryStub = new RepoIndexingJobRepositoryStub();
+    private final RepoIndexingJobStorageStub repoIndexingJobRepositoryStub = new RepoIndexingJobStorageStub();
     private final FullRepoIndexer fullRepoIndexer = mock(FullRepoIndexer.class);
     private final GithubAppContext githubAppContext = new GithubAppContextStub();
     private final RepoRefreshJobService jobService = new RepoRefreshJobService(repoIndexingJobRepositoryStub, fullRepoIndexer, githubAppContext);

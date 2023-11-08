@@ -1,10 +1,22 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
-import com.onlydust.marketplace.indexer.domain.ports.in.*;
-import com.onlydust.marketplace.indexer.domain.ports.out.*;
-import com.onlydust.marketplace.indexer.domain.services.*;
+import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
+import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorageComposite;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorageReaderDecorator;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
+import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
+import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
+import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobService;
 import com.onlydust.marketplace.indexer.domain.services.exposers.IssueContributionExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestContributionExposer;
+import com.onlydust.marketplace.indexer.domain.services.guards.RateLimitGuardedFullRepoIndexer;
+import com.onlydust.marketplace.indexer.domain.services.indexers.*;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredFullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
@@ -48,7 +60,7 @@ public class DomainConfiguration {
     @Bean
     RawStorageReader cachedRawStorageReader(
             final GithubRawStorageReader githubRawStorageReader,
-            final PostgresRawStorageRepository postgresRawStorageRepository
+            final PostgresRawStorageWriter postgresRawStorageRepository
     ) {
         return CacheReadRawStorageReaderDecorator.builder()
                 .fetcher(CacheWriteRawStorageReaderDecorator.builder()
@@ -62,7 +74,7 @@ public class DomainConfiguration {
     @Bean
     RawStorageReader rawStorageReader(
             final GithubRawStorageReader githubRawStorageReader,
-            final PostgresRawStorageRepository postgresRawStorageRepository
+            final PostgresRawStorageWriter postgresRawStorageRepository
     ) {
         return CacheWriteRawStorageReaderDecorator.builder()
                 .fetcher(githubRawStorageReader)
@@ -71,21 +83,21 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public InstallationEventProcessorService eventProcessorService(final PostgresRawInstallationEventStorageRepository postgresRawInstallationEventStorageRepository,
+    public InstallationEventProcessorService eventProcessorService(final PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository,
                                                                    final RawStorageReader cachedRawStorageReader,
-                                                                   final PostgresGithubRepoRepository postgresGithubRepoRepository,
-                                                                   final PostgresRepoIndexingJobRepository repoIndexingJobRepository,
-                                                                   final PostgresOldRepoIndexingJobRepository oldRepoIndexesEntityRepository,
+                                                                   final PostgresGithubRepoStorage postgresGithubRepoRepository,
+                                                                   final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
+                                                                   final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
                                                                    final UserIndexer cachedUserIndexer,
                                                                    final RepoIndexer cachedRepoIndexer,
-                                                                   final GithubAppInstallationRepository githubAppInstallationRepository) {
+                                                                   final GithubAppInstallationStorage githubAppInstallationStorage) {
         return new InstallationEventProcessorService(postgresRawInstallationEventStorageRepository,
                 cachedRawStorageReader,
                 postgresGithubRepoRepository,
-                new RepoIndexingJobRepositoryComposite(repoIndexingJobRepository, oldRepoIndexesEntityRepository),
+                new RepoIndexingJobStorageComposite(repoIndexingJobRepository, oldRepoIndexesEntityRepository),
                 cachedUserIndexer,
                 cachedRepoIndexer,
-                githubAppInstallationRepository);
+                githubAppInstallationStorage);
     }
 
     @Bean
@@ -102,14 +114,14 @@ public class DomainConfiguration {
     public IssueIndexer cachedIssueIndexer(final RawStorageReader cachedRawStorageReader,
                                            final UserIndexer cachedUserIndexer,
                                            final RepoIndexer cachedRepoIndexer,
-                                           final ContributionStorageRepository contributionStorageRepository,
+                                           final ContributionStorage contributionStorage,
                                            final MeterRegistry registry) {
         return new IssueContributionExposer(
                 new MonitoredIssueIndexer(
                         new IssueIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer),
                         registry
                 ),
-                contributionStorageRepository
+                contributionStorage
         );
     }
 
@@ -120,13 +132,13 @@ public class DomainConfiguration {
             final UserIndexer cachedUserIndexer,
             final RepoIndexer cachedRepoIndexer,
             final IssueIndexer cachedIssueIndexer,
-            final ContributionStorageRepository contributionStorageRepository,
+            final ContributionStorage contributionStorage,
             final MeterRegistry registry) {
         return new PullRequestContributionExposer(
                 new MonitoredPullRequestIndexer(
                         new PullRequestIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer),
                         registry),
-                contributionStorageRepository
+                contributionStorage
         );
     }
 
@@ -168,7 +180,7 @@ public class DomainConfiguration {
 
     @Bean
     public RepoRefreshJobManager repoRefreshJobScheduler(
-            final PostgresRepoIndexingJobRepository repoIndexingJobTriggerRepository,
+            final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
             final FullRepoIndexer refreshingFullRepoIndexer,
             final GithubAppContext githubAppContext
     ) {
@@ -177,7 +189,7 @@ public class DomainConfiguration {
 
     @Bean
     public RepoRefreshJobManager repoCacheRefreshJobScheduler(
-            final PostgresRepoIndexingJobRepository repoIndexingJobTriggerRepository,
+            final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
             final FullRepoIndexer cachedFullRepoIndexer,
             final GithubAppContext githubAppContext
     ) {
@@ -186,7 +198,7 @@ public class DomainConfiguration {
 
     @Bean
     public UserRefreshJobManager userRefreshJobScheduler(
-            final PostgresUserIndexingJobRepository userIndexingJobTriggerRepository,
+            final PostgresUserIndexingJobStorage userIndexingJobTriggerRepository,
             final UserIndexer refreshingUserIndexer
     ) {
         return new UserRefreshJobService(userIndexingJobTriggerRepository, refreshingUserIndexer);
@@ -194,7 +206,7 @@ public class DomainConfiguration {
 
     @Bean
     public UserRefreshJobManager userCacheRefreshJobScheduler(
-            final PostgresUserIndexingJobRepository userIndexingJobTriggerRepository,
+            final PostgresUserIndexingJobStorage userIndexingJobTriggerRepository,
             final UserIndexer cachedUserIndexer
     ) {
         return new UserRefreshJobService(userIndexingJobTriggerRepository, cachedUserIndexer);

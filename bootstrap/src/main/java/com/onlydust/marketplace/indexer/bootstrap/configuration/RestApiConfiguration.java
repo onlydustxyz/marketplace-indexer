@@ -1,6 +1,11 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
-import com.onlydust.marketplace.indexer.domain.ports.in.*;
+import com.onlydust.marketplace.indexer.domain.ports.in.contexts.AuthorizationContext;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
 import com.onlydust.marketplace.indexer.rest.api.IndexesRestApi;
 import com.onlydust.marketplace.indexer.rest.api.IssuesRestApi;
 import com.onlydust.marketplace.indexer.rest.api.PullRequestsRestApi;

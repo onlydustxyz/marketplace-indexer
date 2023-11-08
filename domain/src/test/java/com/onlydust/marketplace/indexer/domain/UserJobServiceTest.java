@@ -1,9 +1,9 @@
 package com.onlydust.marketplace.indexer.domain;
 
 import com.onlydust.marketplace.indexer.domain.jobs.Job;
-import com.onlydust.marketplace.indexer.domain.ports.in.UserIndexer;
-import com.onlydust.marketplace.indexer.domain.services.UserRefreshJobService;
-import com.onlydust.marketplace.indexer.domain.stubs.UserIndexingJobRepositoryStub;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobService;
+import com.onlydust.marketplace.indexer.domain.stubs.UserIndexingJobStorageStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +11,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class UserJobServiceTest {
-    private final UserIndexingJobRepositoryStub userIndexingJobRepositoryStub = new UserIndexingJobRepositoryStub();
+    private final UserIndexingJobStorageStub userIndexingJobRepositoryStub = new UserIndexingJobStorageStub();
     private final UserIndexer userIndexer = mock(UserIndexer.class);
     private final UserRefreshJobService jobService = new UserRefreshJobService(userIndexingJobRepositoryStub, userIndexer);
 

@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.services.monitoring;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
-import com.onlydust.marketplace.indexer.domain.ports.in.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.MeterRegistry;
