@@ -13,6 +13,7 @@ import java.util.Optional;
 @Slf4j
 public class GithubAppContextAdapter implements GithubAppContext, GithubTokenProvider {
     private final GithubHttpClient client;
+    private Long installationId;
     private String accessToken;
 
     public GithubAppContextAdapter(GithubHttpClient client) {
@@ -22,12 +23,19 @@ public class GithubAppContextAdapter implements GithubAppContext, GithubTokenPro
     @Override
     public void withGithubApp(final Long installationId, Runnable callback) {
         try {
+            this.installationId = installationId;
             getInstallationToken(installationId).ifPresent(token -> accessToken = token);
             callback.run();
         } finally {
+            this.installationId = null;
             accessToken = null;
         }
         callback.run();
+    }
+
+    @Override
+    public Optional<Long> installationId() {
+        return Optional.ofNullable(installationId);
     }
 
     @Override
