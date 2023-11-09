@@ -86,7 +86,6 @@ public class DomainConfiguration {
     @Bean
     public InstallationEventHandler eventProcessorService(final PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository,
                                                           final RawStorageReader cachedRawStorageReader,
-                                                          final PostgresGithubRepoStorage postgresGithubRepoRepository,
                                                           final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
                                                           final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
                                                           final UserIndexer cachedUserIndexer,

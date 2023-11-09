@@ -10,7 +10,6 @@ import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobSto
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.indexers.RepoIndexingService;
 import com.onlydust.marketplace.indexer.domain.services.indexers.UserIndexingService;
-import com.onlydust.marketplace.indexer.domain.stubs.GithubRepoStorageStub;
 import com.onlydust.marketplace.indexer.domain.stubs.InstallationStorageStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawInstallationEventStorageStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
@@ -24,7 +23,6 @@ import static org.mockito.Mockito.verify;
 public class InstallationEventTest {
     final RawAccount onlyDust = RawStorageWriterStub.load("/github/users/onlyDust.json", RawAccount.class);
     final RawRepo marketplaceFrontend = RawStorageWriterStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
-    final GithubRepoStorageStub githubRepoRepositoryStub = new GithubRepoStorageStub();
     final RepoIndexingJobStorage repoIndexingJobRepository = mock(RepoIndexingJobStorage.class);
     final InstallationStorageStub installationEventRepositoryStub = new InstallationStorageStub();
     private final RawInstallationEventStorageStub rawInstallationEventRepositoryStub = new RawInstallationEventStorageStub();
