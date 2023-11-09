@@ -33,7 +33,7 @@ public class InstallationEventTest {
     final UserIndexer userIndexer = new UserIndexingService(rawStorageRepositoryStub);
     final RepoIndexer repoIndexer = new RepoIndexingService(rawStorageRepositoryStub, userIndexer);
     final InstallationEventHandler eventHandler = new InstallationEventProcessorService(
-            rawInstallationEventRepositoryStub, rawStorageRepositoryStub, githubRepoRepositoryStub, repoIndexingJobRepository, userIndexer, repoIndexer, installationEventRepositoryStub);
+            rawInstallationEventRepositoryStub, rawStorageRepositoryStub, repoIndexingJobRepository, userIndexer, repoIndexer, installationEventRepositoryStub);
 
     @BeforeEach
     void setup() {
@@ -47,16 +47,12 @@ public class InstallationEventTest {
 
         assertCachedEventsAre(newInstallationEvent);
 
-        final var repos = githubRepoRepositoryStub.repos();
-        assertThat(repos).hasSize(1);
-        final var repo = repos.get(0);
-        assertThat(repo.getId()).isEqualTo(marketplaceFrontend.getId());
-
         final var events = installationEventRepositoryStub.installations();
         assertThat(events).hasSize(1);
         assertThat(events.get(0).getId()).isEqualTo(newInstallationEvent.getInstallation().getId());
         assertThat(events.get(0).getAccount().getId()).isEqualTo(onlyDust.getId());
-
+        assertThat(events.get(0).getRepos()).hasSize(1);
+        assertThat(events.get(0).getRepos().get(0).getId()).isEqualTo(marketplaceFrontend.getId());
         verify(repoIndexingJobRepository).add(newInstallationEvent.getInstallation().getId(), marketplaceFrontend.getId());
     }
 

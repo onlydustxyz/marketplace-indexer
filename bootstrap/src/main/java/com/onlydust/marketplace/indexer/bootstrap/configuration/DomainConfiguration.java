@@ -94,7 +94,6 @@ public class DomainConfiguration {
                                                           final GithubAppInstallationStorage githubAppInstallationStorage) {
         return new InstallationEventProcessorService(postgresRawInstallationEventStorageRepository,
                 cachedRawStorageReader,
-                postgresGithubRepoRepository,
                 new RepoIndexingJobStorageComposite(repoIndexingJobRepository, oldRepoIndexesEntityRepository),
                 cachedUserIndexer,
                 cachedRepoIndexer,

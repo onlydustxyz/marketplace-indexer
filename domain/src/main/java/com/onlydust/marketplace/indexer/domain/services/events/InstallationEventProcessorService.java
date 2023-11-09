@@ -12,7 +12,6 @@ import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEvent
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
-import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubRepoStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawInstallationEventStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
@@ -20,7 +19,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.transaction.Transactional;
-import java.util.Objects;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -29,7 +27,6 @@ import java.util.Optional;
 public class InstallationEventProcessorService implements InstallationEventHandler {
     private final RawInstallationEventStorage rawInstallationEventStorage;
     private final RawStorageReader rawStorageReader;
-    private final GithubRepoStorage githubRepoStorage;
     private final RepoIndexingJobStorage repoIndexingJobStorage;
     private final UserIndexer userIndexer;
     private final RepoIndexer repoIndexer;
@@ -53,13 +50,15 @@ public class InstallationEventProcessorService implements InstallationEventHandl
 
     private void onCreated(InstallationEvent event) {
         final var owner = GithubAccount.of(event.getAccount());
-        githubRepoStorage.saveAll(event.getRepos().stream()
+        final var repos = event.getRepos().stream()
                 .map(repo -> GithubRepo.of(repo, owner))
-                .toList());
+                .toList();
+
         repoIndexingJobStorage.add(event.getInstallationId(), event.getRepos().stream()
                 .map(CleanRepo::getId)
                 .toArray(Long[]::new));
-        githubAppInstallationStorage.save(GithubAppInstallation.of(event, owner));
+
+        githubAppInstallationStorage.save(GithubAppInstallation.of(event, owner, repos));
     }
 
     private InstallationEvent mapRawEvent(RawInstallationEvent rawEvent) {
@@ -67,14 +66,15 @@ public class InstallationEventProcessorService implements InstallationEventHandl
                 .orElseThrow(() -> OnlyDustException.notFound("User not found"));
 
         final var repos = rawEvent.getRepositories().stream()
-                .map(rawRepo -> tryReadRepo(rawRepo).flatMap(repo -> repoIndexer.indexRepo(repo.getId())).orElse(null))
-                .filter(Objects::nonNull)
+                .map(this::indexRepo)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .toList();
 
         return InstallationEvent.of(rawEvent, account, repos);
     }
 
-    private Optional<RawRepo> tryReadRepo(RawRepo eventRepo) {
-        return rawStorageReader.repo(eventRepo.getId());
+    private Optional<CleanRepo> indexRepo(RawRepo eventRepo) {
+        return rawStorageReader.repo(eventRepo.getId()).flatMap(repo -> repoIndexer.indexRepo(repo.getId()));
     }
 }
