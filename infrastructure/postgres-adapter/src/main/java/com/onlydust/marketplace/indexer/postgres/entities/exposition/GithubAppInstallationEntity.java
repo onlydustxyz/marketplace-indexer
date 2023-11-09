@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Data
@@ -18,8 +19,18 @@ import java.time.Instant;
 public class GithubAppInstallationEntity {
     @Id
     Long id;
-    @OneToOne
+
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     GithubAccountEntity account;
+
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+            name = "authorized_github_repos",
+            schema = "indexer_exp",
+            joinColumns = @JoinColumn(name = "installation_id"),
+            inverseJoinColumns = @JoinColumn(name = "repo_id")
+    )
+    List<GithubRepoEntity> repos;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -35,6 +46,7 @@ public class GithubAppInstallationEntity {
         return GithubAppInstallationEntity.builder()
                 .id(installation.getId())
                 .account(GithubAccountEntity.of(installation.getAccount()))
+                .repos(installation.getRepos().stream().map(GithubRepoEntity::of).toList())
                 .build();
     }
 }

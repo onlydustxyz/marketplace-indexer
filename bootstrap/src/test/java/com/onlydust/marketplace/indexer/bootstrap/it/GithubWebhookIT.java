@@ -3,7 +3,6 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTriggerEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
-import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAppInstallationEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Transactional
 public class GithubWebhookIT extends IntegrationTest {
     final Long MARKETPLACE_FRONTEND_ID = 498695724L;
     @Autowired
@@ -59,7 +60,6 @@ public class GithubWebhookIT extends IntegrationTest {
     void should_index_repository_upon_installation_created_event() throws URISyntaxException, IOException, InterruptedException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_created.json").toURI()));
-        final Long MARKETPLACE = 498695724L;
 
         // When
         final var response = post(event);
@@ -69,6 +69,7 @@ public class GithubWebhookIT extends IntegrationTest {
 
         assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, 42952633L));
         assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactly(new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID));
+
         final var account = GithubAccountEntity.builder()
                 .id(98735558L)
                 .login("onlydustxyz")
@@ -77,12 +78,13 @@ public class GithubWebhookIT extends IntegrationTest {
                 .htmlUrl("https://github.com/onlydustxyz")
                 .name("OnlyDust")
                 .build();
-        assertThat(githubAppInstallationEntityRepository.findAll()).containsExactly(GithubAppInstallationEntity.builder()
-                .id(42952633L)
-                .account(account)
-                .build());
 
-        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobTriggerEntity(MARKETPLACE, 42952633L));
+        final var installations = githubAppInstallationEntityRepository.findAll();
+        assertThat(installations).hasSize(1);
+        assertThat(installations.get(0).getId()).isEqualTo(42952633L);
+        assertThat(installations.get(0).getAccount()).isEqualTo(account);
+        assertThat(installations.get(0).getRepos()).hasSize(1);
+        assertThat(installations.get(0).getRepos().get(0).getId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
 
         // Wait for the job to finish
         waitForJobToFinish(1, 2, 2);
@@ -104,7 +106,14 @@ public class GithubWebhookIT extends IntegrationTest {
         // Then
         response.expectStatus().isOk();
 
-        assertThat(repoIndexingJobTriggerRepository.findAll()).isEmpty();
+        // Job data preserved
+        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, null));
+        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactly(new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID));
+
+        // Installation removed
+        assertThat(githubAppInstallationEntityRepository.findAll()).isEmpty();
+
+        // Indexed data preserved
         assertThat(githubAccountRepository.findAll()).contains(GithubAccountEntity.builder()
                 .id(98735558L)
                 .login("onlydustxyz")
@@ -113,7 +122,9 @@ public class GithubWebhookIT extends IntegrationTest {
                 .htmlUrl("https://github.com/onlydustxyz")
                 .name("OnlyDust")
                 .build());
-        assertThat(githubAppInstallationEntityRepository.findAll()).isEmpty();
+        assertThat(repoRepository.findAll()).hasSize(1);
+        assertThat(pullRequestsRepository.findAll()).hasSize(2);
+        assertThat(issuesRepository.findAll()).hasSize(2);
     }
 
     protected WebTestClient.ResponseSpec post(final String event) {

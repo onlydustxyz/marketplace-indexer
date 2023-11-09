@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Slf4j
 public abstract class Job implements Runnable {
-    static Set<String> runningJobs = new HashSet<>();
+    static final Set<String> runningJobs = new HashSet<>();
 
     @Override
     public void run() {

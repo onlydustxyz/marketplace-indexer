@@ -86,7 +86,6 @@ public class DomainConfiguration {
     @Bean
     public InstallationEventHandler eventProcessorService(final PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository,
                                                           final RawStorageReader cachedRawStorageReader,
-                                                          final PostgresGithubRepoStorage postgresGithubRepoRepository,
                                                           final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
                                                           final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
                                                           final UserIndexer cachedUserIndexer,
@@ -94,7 +93,6 @@ public class DomainConfiguration {
                                                           final GithubAppInstallationStorage githubAppInstallationStorage) {
         return new InstallationEventProcessorService(postgresRawInstallationEventStorageRepository,
                 cachedRawStorageReader,
-                postgresGithubRepoRepository,
                 new RepoIndexingJobStorageComposite(repoIndexingJobRepository, oldRepoIndexesEntityRepository),
                 cachedUserIndexer,
                 cachedRepoIndexer,

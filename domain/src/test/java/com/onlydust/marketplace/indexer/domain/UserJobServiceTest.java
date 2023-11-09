@@ -2,22 +2,23 @@ package com.onlydust.marketplace.indexer.domain;
 
 import com.onlydust.marketplace.indexer.domain.jobs.Job;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobService;
-import com.onlydust.marketplace.indexer.domain.stubs.UserIndexingJobStorageStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import java.util.Set;
+
+import static org.mockito.Mockito.*;
 
 public class UserJobServiceTest {
-    private final UserIndexingJobStorageStub userIndexingJobRepositoryStub = new UserIndexingJobStorageStub();
+    private final UserIndexingJobStorage userIndexingJobRepository = mock(UserIndexingJobStorage.class);
     private final UserIndexer userIndexer = mock(UserIndexer.class);
-    private final UserRefreshJobService jobService = new UserRefreshJobService(userIndexingJobRepositoryStub, userIndexer);
+    private final UserRefreshJobService jobService = new UserRefreshJobService(userIndexingJobRepository, userIndexer);
 
     @BeforeEach
     void setup() {
-        userIndexingJobRepositoryStub.feedWith(1L, 2L, 3L, 4L);
+        when(userIndexingJobRepository.users()).thenReturn(Set.of(1L, 2L, 3L, 4L));
     }
 
     @Test

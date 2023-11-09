@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
@@ -42,12 +41,12 @@ public class GithubAppJwtProvider implements GithubTokenProvider {
                     .claim("iat", now - 60)
                     .signWith(rsaPrivateKey, signatureAlgorithm);
             return builder.compact();
-        } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw OnlyDustException.internalServerError("Error while generating JWT token for Github App", e);
         }
     }
 
-    private RSAPrivateKey getPrivateKey() throws IOException, NoSuchAlgorithmException,
+    private RSAPrivateKey getPrivateKey() throws NoSuchAlgorithmException,
             InvalidKeySpecException {
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(config.getPrivateKey()));
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");

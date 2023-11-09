@@ -47,7 +47,7 @@ import static org.testcontainers.utility.MountableFile.forClasspathResource;
 })
 public class IntegrationTest {
     @Container
-    static PostgreSQLContainer postgresSQLContainer =
+    static final PostgreSQLContainer postgresSQLContainer =
             new PostgreSQLContainer<>("postgres:14.3-alpine")
                     .withDatabaseName("marketplace_db")
                     .withUsername("test")

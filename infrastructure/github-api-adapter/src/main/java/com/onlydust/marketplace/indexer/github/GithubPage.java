@@ -13,10 +13,10 @@ import static java.util.Objects.isNull;
 
 @Slf4j
 public class GithubPage<T> implements Iterator<T> {
+    final Deque<T> content = new ArrayDeque<>();
+    final Class<T[]> classType;
     private final GithubHttpClient client;
     GithubPageLinks links;
-    Deque<T> content = new ArrayDeque<>();
-    Class<T[]> classType;
 
     public GithubPage(GithubHttpClient client, String path, Class<T[]> classType) {
         this.client = client;

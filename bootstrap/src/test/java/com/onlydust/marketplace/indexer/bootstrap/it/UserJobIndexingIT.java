@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.io.IOException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserJobIndexingIT extends IntegrationTest {
@@ -14,7 +12,7 @@ public class UserJobIndexingIT extends IntegrationTest {
     public UserIndexingJobStorage userIndexingJobStorage;
 
     @Test
-    public void should_index_user_on_demand() throws IOException {
+    public void should_index_user_on_demand() {
         // Given
         final Long ANTHONY = 43467246L;
 
