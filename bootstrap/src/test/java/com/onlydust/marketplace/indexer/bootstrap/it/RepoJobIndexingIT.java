@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.io.IOException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RepoJobIndexingIT extends IntegrationTest {
@@ -19,7 +17,7 @@ public class RepoJobIndexingIT extends IntegrationTest {
     public ContributionRepository contributionRepository;
 
     @Test
-    public void should_add_repo_to_index() throws IOException, InterruptedException {
+    public void should_add_repo_to_index() throws InterruptedException {
         // Given
         final Long MARKETPLACE = 498695724L;
 

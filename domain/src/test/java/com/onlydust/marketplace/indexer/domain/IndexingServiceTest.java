@@ -15,7 +15,6 @@ import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +56,7 @@ public class IndexingServiceTest {
     final FullRepoIndexingService fullRepoIndexingService = new FullRepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer, repoIndexingService);
 
     @BeforeEach
-    void setup() throws IOException {
+    void setup() {
         rawStorageReaderStub.feedWith(marketplaceFrontend);
         rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), marketplaceFrontendLanguages);
         rawStorageReaderStub.feedWith(marketplaceBackend);
