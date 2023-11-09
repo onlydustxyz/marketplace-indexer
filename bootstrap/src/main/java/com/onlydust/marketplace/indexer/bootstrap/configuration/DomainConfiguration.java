@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManag
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
+import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoContributorsStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorageComposite;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
@@ -14,6 +15,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.exposers.IssueContributionExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestContributionExposer;
+import com.onlydust.marketplace.indexer.domain.services.exposers.RepoContributorsExposer;
 import com.onlydust.marketplace.indexer.domain.services.guards.RateLimitGuardedFullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
 import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
@@ -153,8 +155,12 @@ public class DomainConfiguration {
             final RawStorageReader cachedRawStorageReader,
             final IssueIndexer cachedIssueIndexer,
             final PullRequestIndexer cachedPullRequestIndexer,
-            final RepoIndexer cachedRepoIndexer) {
-        return new FullRepoIndexingService(cachedRawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer, cachedRepoIndexer);
+            final RepoIndexer cachedRepoIndexer,
+            final RepoContributorsStorage repoContributorsStorage) {
+        return new RepoContributorsExposer(
+                new FullRepoIndexingService(cachedRawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer, cachedRepoIndexer),
+                repoContributorsStorage
+        );
     }
 
     @Bean
@@ -166,10 +172,14 @@ public class DomainConfiguration {
             final MeterRegistry registry,
             final GithubRateLimitServiceAdapter rateLimitService,
             final GithubRateLimitServiceAdapter.Config githubrateLimitConfig,
-            final GithubAppContext githubAppContext) {
+            final GithubAppContext githubAppContext,
+            final RepoContributorsStorage repoContributorsStorage) {
         return new RateLimitGuardedFullRepoIndexer(
                 new MonitoredFullRepoIndexer(
-                        new FullRepoIndexingService(rawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer, cachedRepoIndexer),
+                        new RepoContributorsExposer(
+                                new FullRepoIndexingService(rawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer, cachedRepoIndexer),
+                                repoContributorsStorage
+                        ),
                         registry
                 ),
                 rateLimitService,

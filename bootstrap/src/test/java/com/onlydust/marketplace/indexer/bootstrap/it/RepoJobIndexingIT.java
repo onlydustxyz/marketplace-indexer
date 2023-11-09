@@ -4,6 +4,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTrigger
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -15,6 +16,8 @@ public class RepoJobIndexingIT extends IntegrationTest {
     public RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository;
     @Autowired
     public ContributionRepository contributionRepository;
+    @Autowired
+    public RepoContributorRepository repoContributorRepository;
 
     @Test
     public void should_add_repo_to_index() throws InterruptedException {
@@ -47,6 +50,7 @@ public class RepoJobIndexingIT extends IntegrationTest {
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST)).hasSize(2);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(4);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE)).hasSize(1);
+        assertThat(repoContributorRepository.findAll()).hasSize(3);
     }
 
     private WebTestClient.ResponseSpec indexRepo(Long repoId) {
