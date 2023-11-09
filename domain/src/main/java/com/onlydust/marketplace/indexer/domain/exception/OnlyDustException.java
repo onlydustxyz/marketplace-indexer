@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @EqualsAndHashCode(callSuper = true)
 public class OnlyDustException extends RuntimeException {
     @NonNull
+    final
     Integer status;
 
     private OnlyDustException(final @NonNull Integer status, final @NonNull String message, final Throwable cause) {

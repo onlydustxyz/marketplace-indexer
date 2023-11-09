@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JsonDocument implements Serializable {
-    Map<String, Object> properties = new HashMap<>();
+    final Map<String, Object> properties = new HashMap<>();
 
     @JsonAnySetter
     protected void add(String property, Object value) {
