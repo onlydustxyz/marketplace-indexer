@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTri
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobTriggerEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -82,5 +83,10 @@ public class PostgresConfiguration {
     @Bean
     public PostgresGithubAppInstallationStorage postgresGithubAppInstallationRepository(final GithubAppInstallationEntityRepository githubAppInstallationEntityRepository) {
         return new PostgresGithubAppInstallationStorage(githubAppInstallationEntityRepository);
+    }
+
+    @Bean
+    public PostgresRepoContributorsStorage postgresRepoContributorsStorage(final RepoContributorRepository repoContributorRepository) {
+        return new PostgresRepoContributorsStorage(repoContributorRepository);
     }
 }
