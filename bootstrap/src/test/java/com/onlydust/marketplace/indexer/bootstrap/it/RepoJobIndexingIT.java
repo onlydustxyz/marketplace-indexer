@@ -30,12 +30,12 @@ public class RepoJobIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobTriggerEntity(MARKETPLACE, 0L));
+        assertThat(repoIndexingJobTriggerRepository.findAll()).contains(new RepoIndexingJobTriggerEntity(MARKETPLACE, 0L));
 
         // Wait for the job to finish
         waitForJobToFinish(1, 2, 2);
 
-        assertThat(repoRepository.findAll()).hasSize(1);
+        assertThat(githubRepoEntityRepository.findById(MARKETPLACE)).isPresent();
         assertThat(pullRequestsRepository.findAll()).hasSize(2);
         assertThat(issuesRepository.findAll()).hasSize(2);
         /*
@@ -51,6 +51,29 @@ public class RepoJobIndexingIT extends IntegrationTest {
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(4);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE)).hasSize(1);
         assertThat(repoContributorRepository.findAll()).hasSize(3);
+    }
+
+    @Test
+    public void should_add_repo_to_index_even_if_no_contributions() throws InterruptedException {
+        // Given
+        final Long BRETZEL_APP = 380954304L;
+
+        // When
+        final var response = indexRepo(BRETZEL_APP);
+
+        // Then
+        response.expectStatus().isNoContent();
+
+        assertThat(repoIndexingJobTriggerRepository.findAll()).contains(new RepoIndexingJobTriggerEntity(BRETZEL_APP, 0L));
+
+        // Wait for the job to finish
+        waitForJobToFinish(1, 0, 0);
+
+        assertThat(githubRepoEntityRepository.findById(BRETZEL_APP)).isPresent();
+        assertThat(pullRequestsRepository.findAll()).hasSize(0);
+        assertThat(issuesRepository.findAll()).hasSize(0);
+        assertThat(contributionRepository.findAll()).hasSize(0);
+        assertThat(repoContributorRepository.findAll()).hasSize(0);
     }
 
     private WebTestClient.ResponseSpec indexRepo(Long repoId) {

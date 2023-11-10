@@ -1,0 +1,15 @@
+{
+  "request": {
+    "url": "/user/8642470/social_accounts",
+    "method": "GET",
+    "headers": {
+      "Authorization": {
+        "matches": "Bearer (GITHUB_PAT|GITHUB_INSTALLATION_TOKEN|ghp_GITHUB_USER_PAT)"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": "[]"
+  }
+}

@@ -8,6 +8,7 @@ import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
 import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import com.onlydust.marketplace.indexer.bootstrap.ApplicationIT;
 import com.onlydust.marketplace.indexer.bootstrap.configuration.SwaggerConfiguration;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.PullRequestRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.RepoRepository;
@@ -63,6 +64,8 @@ public class IntegrationTest {
     public PullRequestRepository pullRequestsRepository;
     @Autowired
     public IssueRepository issuesRepository;
+    @Autowired
+    public GithubRepoEntityRepository githubRepoEntityRepository;
     @InjectWireMock("github")
     protected WireMockServer githubWireMockServer;
     @LocalServerPort
@@ -110,8 +113,8 @@ public class IntegrationTest {
 
     protected boolean isJobRunning(int minRepoCount, int minPullRequestCount, int minIssueCount) {
         return repoRepository.findAll().size() < minRepoCount ||
-               pullRequestsRepository.findAll().size() < minPullRequestCount ||
-               issuesRepository.findAll().size() < minIssueCount;
+                pullRequestsRepository.findAll().size() < minPullRequestCount ||
+                issuesRepository.findAll().size() < minIssueCount;
     }
 
 }

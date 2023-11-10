@@ -8,6 +8,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManag
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoContributorsStorage;
+import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorageComposite;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
@@ -16,6 +17,7 @@ import com.onlydust.marketplace.indexer.domain.services.events.InstallationEvent
 import com.onlydust.marketplace.indexer.domain.services.exposers.IssueContributionExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestContributionExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.RepoContributorsExposer;
+import com.onlydust.marketplace.indexer.domain.services.exposers.RepoExposer;
 import com.onlydust.marketplace.indexer.domain.services.guards.RateLimitGuardedFullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
 import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
@@ -146,8 +148,9 @@ public class DomainConfiguration {
     @Bean
     public RepoIndexer cachedRepoIndexer(
             final RawStorageReader cachedRawStorageReader,
-            final UserIndexer cachedUserIndexer) {
-        return new RepoIndexingService(cachedRawStorageReader, cachedUserIndexer);
+            final UserIndexer cachedUserIndexer,
+            final RepoStorage postgresRepoStorage) {
+        return new RepoExposer(new RepoIndexingService(cachedRawStorageReader, cachedUserIndexer), postgresRepoStorage);
     }
 
     @Bean

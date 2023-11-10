@@ -1,0 +1,15 @@
+{
+  "request": {
+    "url": "/repositories/380954304/languages",
+    "method": "GET",
+    "headers": {
+      "Authorization": {
+        "contains": "Bearer GITHUB_PAT"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": "{}"
+  }
+}
