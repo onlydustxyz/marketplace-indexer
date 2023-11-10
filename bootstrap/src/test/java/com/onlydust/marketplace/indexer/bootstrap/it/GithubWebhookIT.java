@@ -87,7 +87,7 @@ public class GithubWebhookIT extends IntegrationTest {
         assertThat(installations.get(0).getRepos().get(0).getId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
 
         // Wait for the job to finish
-        waitForJobToFinish(1, 2, 2);
+        waitForJobToFinish(MARKETPLACE_FRONTEND_ID, 2, 2);
 
         assertThat(repoRepository.findAll()).hasSize(1);
         assertThat(pullRequestsRepository.findAll()).hasSize(2);

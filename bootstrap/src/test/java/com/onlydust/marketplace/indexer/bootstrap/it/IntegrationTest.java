@@ -105,14 +105,15 @@ public class IntegrationTest {
         return request.exchange();
     }
 
-    protected void waitForJobToFinish(int minRepoCount, int minPullRequestCount, int minIssueCount) throws InterruptedException {
-        for (int i = 0; i < 10 && isJobRunning(minRepoCount, minPullRequestCount, minIssueCount); i++) {
+    protected void waitForJobToFinish(Long repoId, int minPullRequestCount, int minIssueCount) throws InterruptedException {
+        for (int i = 0; i < 10 && isJobRunning(repoId, minPullRequestCount, minIssueCount); i++) {
             Thread.sleep(1000);
         }
     }
 
-    protected boolean isJobRunning(int minRepoCount, int minPullRequestCount, int minIssueCount) {
-        return repoRepository.findAll().size() < minRepoCount ||
+    protected boolean isJobRunning(Long repoId, int minPullRequestCount, int minIssueCount) {
+        return githubRepoEntityRepository.findById(repoId).isEmpty() ||
+                repoRepository.findById(repoId).isEmpty() ||
                 pullRequestsRepository.findAll().size() < minPullRequestCount ||
                 issuesRepository.findAll().size() < minIssueCount;
     }
