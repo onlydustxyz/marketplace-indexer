@@ -23,7 +23,7 @@ public class GithubAppInstallationEntity {
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     GithubAccountEntity account;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "authorized_github_repos",
             schema = "indexer_exp",

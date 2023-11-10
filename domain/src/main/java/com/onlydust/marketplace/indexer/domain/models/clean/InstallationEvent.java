@@ -27,7 +27,7 @@ public class InstallationEvent extends Event {
     }
 
     public enum Action {
-        CREATED, DELETED;
+        CREATED, DELETED, ADDED;
 
         public static Action of(String rawAction) {
             return valueOf(rawAction.toUpperCase());

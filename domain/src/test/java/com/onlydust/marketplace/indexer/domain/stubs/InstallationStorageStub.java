@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.stubs;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstallation;
+import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
 
 import java.util.ArrayList;
@@ -12,6 +13,12 @@ public class InstallationStorageStub implements GithubAppInstallationStorage {
     @Override
     public void save(GithubAppInstallation installation) {
         this.installations.add(installation);
+    }
+
+    @Override
+    public void addRepos(Long installationId, List<GithubRepo> repos) {
+        final var installation = this.installations.stream().filter(installation1 -> installation1.getId().equals(installationId)).findFirst().orElseThrow();
+        installation.getRepos().addAll(repos);
     }
 
     @Override

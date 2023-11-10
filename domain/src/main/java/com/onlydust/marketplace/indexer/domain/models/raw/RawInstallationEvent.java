@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.models.raw;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -16,4 +17,6 @@ public class RawInstallationEvent extends JsonDocument {
     String action;
     RawInstallation installation;
     List<RawRepo> repositories;
+    @JsonProperty("repositories_added")
+    List<RawRepo> repositoriesAdded;
 }

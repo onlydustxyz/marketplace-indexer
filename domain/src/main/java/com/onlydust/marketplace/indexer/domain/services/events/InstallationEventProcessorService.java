@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -38,6 +39,7 @@ public class InstallationEventProcessorService implements InstallationEventHandl
 
         final var event = mapRawEvent(rawEvent);
         switch (event.getAction()) {
+            case ADDED -> onAdded(event);
             case CREATED -> onCreated(event);
             case DELETED -> onDeleted(event);
         }
@@ -49,6 +51,17 @@ public class InstallationEventProcessorService implements InstallationEventHandl
     }
 
     private void onCreated(InstallationEvent event) {
+        final var installation = buildInstallation(event);
+        githubAppInstallationStorage.save(installation);
+    }
+
+
+    private void onAdded(InstallationEvent event) {
+        final var installation = buildInstallation(event);
+        githubAppInstallationStorage.addRepos(installation.getId(), installation.getRepos());
+    }
+
+    private GithubAppInstallation buildInstallation(InstallationEvent event) {
         final var owner = GithubAccount.of(event.getAccount());
         final var repos = event.getRepos().stream()
                 .map(repo -> GithubRepo.of(repo, owner))
@@ -58,14 +71,18 @@ public class InstallationEventProcessorService implements InstallationEventHandl
                 .map(CleanRepo::getId)
                 .toArray(Long[]::new));
 
-        githubAppInstallationStorage.save(GithubAppInstallation.of(event, owner, repos));
+        return GithubAppInstallation.of(event, owner, repos);
     }
+
 
     private InstallationEvent mapRawEvent(RawInstallationEvent rawEvent) {
         final var account = userIndexer.indexUser(rawEvent.getInstallation().getAccount().getId())
                 .orElseThrow(() -> OnlyDustException.notFound("User not found"));
 
-        final var repos = rawEvent.getRepositories().stream()
+        final var repos = Optional.ofNullable(rawEvent.getRepositories())
+                .or(() -> Optional.ofNullable(rawEvent.getRepositoriesAdded()))
+                .orElse(List.of())
+                .stream()
                 .map(this::indexRepo)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
