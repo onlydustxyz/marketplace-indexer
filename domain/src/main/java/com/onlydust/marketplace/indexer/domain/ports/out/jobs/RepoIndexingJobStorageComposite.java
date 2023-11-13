@@ -51,4 +51,22 @@ public class RepoIndexingJobStorageComposite implements RepoIndexingJobStorage {
         Arrays.stream(repoIndexingJobRepositories)
                 .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.setSuspendedAt(installationId, suspendedAt));
     }
+
+    @Override
+    public void startJob(Long repoId) {
+        Arrays.stream(repoIndexingJobRepositories)
+                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.startJob(repoId));
+    }
+
+    @Override
+    public void failJob(Long repoId) {
+        Arrays.stream(repoIndexingJobRepositories)
+                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.failJob(repoId));
+    }
+
+    @Override
+    public void endJob(Long repoId) {
+        Arrays.stream(repoIndexingJobRepositories)
+                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.endJob(repoId));
+    }
 }

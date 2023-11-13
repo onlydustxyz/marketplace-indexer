@@ -29,11 +29,10 @@ public class RepoJobServiceTest {
     @Test
     public void should_triggers_all_jobs() {
         jobService.allJobs().forEach(Job::execute);
-        verify(fullRepoIndexer).indexFullRepo(1L);
-        verify(fullRepoIndexer).indexFullRepo(2L);
-        verify(fullRepoIndexer).indexFullRepo(3L);
-        verify(fullRepoIndexer).indexFullRepo(4L);
-        verify(fullRepoIndexer).indexFullRepo(5L);
-        verify(fullRepoIndexer).indexFullRepo(6L);
+        for (Long repoId : Set.of(1L, 2L, 3L, 4L, 5L, 6L)) {
+            verify(fullRepoIndexer).indexFullRepo(repoId);
+            verify(repoIndexingJobRepository).startJob(repoId);
+            verify(repoIndexingJobRepository).endJob(repoId);
+        }
     }
 }

@@ -16,4 +16,10 @@ public interface RepoIndexingJobStorage {
     void deleteInstallationForRepos(Long installationId, List<Long> repoIds);
 
     void setSuspendedAt(Long installationId, Instant suspendedAt);
+
+    void startJob(Long repoId);
+
+    void failJob(Long repoId);
+
+    void endJob(Long repoId);
 }

@@ -8,6 +8,7 @@ import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
 import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import com.onlydust.marketplace.indexer.bootstrap.ApplicationIT;
 import com.onlydust.marketplace.indexer.bootstrap.configuration.SwaggerConfiguration;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.PullRequestRepository;
@@ -66,6 +67,9 @@ public class IntegrationTest {
     public IssueRepository issuesRepository;
     @Autowired
     public GithubRepoEntityRepository githubRepoEntityRepository;
+    @Autowired
+    public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
+
     @InjectWireMock("github")
     protected WireMockServer githubWireMockServer;
     @LocalServerPort
@@ -105,17 +109,16 @@ public class IntegrationTest {
         return request.exchange();
     }
 
-    protected void waitForJobToFinish(Long repoId, int minPullRequestCount, int minIssueCount) throws InterruptedException {
-        for (int i = 0; i < 10 && isJobRunning(repoId, minPullRequestCount, minIssueCount); i++) {
+    protected void waitForJobToFinish(Long repoId) throws InterruptedException {
+        for (int i = 0; i < 10 && isJobRunning(repoId); i++) {
             Thread.sleep(1000);
         }
     }
 
-    protected boolean isJobRunning(Long repoId, int minPullRequestCount, int minIssueCount) {
-        return githubRepoEntityRepository.findById(repoId).isEmpty() ||
-               repoRepository.findById(repoId).isEmpty() ||
-               pullRequestsRepository.findAll().size() < minPullRequestCount ||
-               issuesRepository.findAll().size() < minIssueCount;
+    protected boolean isJobRunning(Long repoId) {
+        return repoIndexingJobEntityRepository.findById(repoId)
+                .map(j -> j.getFinishedAt() == null)
+                .orElse(true);
     }
 
 }

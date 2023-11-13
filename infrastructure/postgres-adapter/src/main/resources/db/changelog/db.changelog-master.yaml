@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000007_create_repos_contributors.sql
   - include:
       file: db/changelog/changelogs/00000008_add_suspended_column.sql
+  - include:
+      file: db/changelog/changelogs/00000009_add_job_status_information.sql

@@ -1,8 +1,8 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTriggerEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
-import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import org.junit.jupiter.api.MethodOrderer;
@@ -17,12 +17,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RepoJobIndexingIT extends IntegrationTest {
     @Autowired
-    public RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository;
+    public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
     public ContributionRepository contributionRepository;
     @Autowired
     public RepoContributorRepository repoContributorRepository;
-
 
     @Test
     @Order(1)
@@ -36,10 +35,10 @@ public class RepoJobIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        assertThat(repoIndexingJobTriggerRepository.findAll()).contains(new RepoIndexingJobTriggerEntity(BRETZEL_APP, 0L));
+        assertThat(repoIndexingJobEntityRepository.findAll()).contains(new RepoIndexingJobEntity(BRETZEL_APP, 0L));
 
         // Wait for the job to finish
-        waitForJobToFinish(BRETZEL_APP, 0, 0);
+        waitForJobToFinish(BRETZEL_APP);
 
         assertThat(githubRepoEntityRepository.findById(BRETZEL_APP)).isPresent();
         assertThat(pullRequestsRepository.findAll()).hasSize(0);
@@ -60,10 +59,14 @@ public class RepoJobIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        assertThat(repoIndexingJobTriggerRepository.findAll()).contains(new RepoIndexingJobTriggerEntity(MARKETPLACE, 0L));
+        {
+            final var job = repoIndexingJobEntityRepository.findById(MARKETPLACE);
+            assertThat(job).isPresent();
+            assertThat(job.get().getInstallationId()).isEqualTo(0L);
+        }
 
         // Wait for the job to finish
-        waitForJobToFinish(MARKETPLACE, 2, 2);
+        waitForJobToFinish(MARKETPLACE);
 
         assertThat(githubRepoEntityRepository.findById(MARKETPLACE)).isPresent();
         assertThat(pullRequestsRepository.findAll()).hasSize(2);
@@ -81,6 +84,14 @@ public class RepoJobIndexingIT extends IntegrationTest {
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(4);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE)).hasSize(1);
         assertThat(repoContributorRepository.findAll()).hasSize(3);
+
+        {
+            final var job = repoIndexingJobEntityRepository.findById(MARKETPLACE);
+            assertThat(job).isPresent();
+            assertThat(job.get().getStartedAt()).isNotNull();
+            assertThat(job.get().getFinishedAt()).isNotNull();
+            assertThat(job.get().getStatus()).isNotEqualTo(RepoIndexingJobEntity.Status.PENDING);
+        }
     }
 
     private WebTestClient.ResponseSpec indexRepo(Long repoId) {
