@@ -23,6 +23,8 @@ public class RepoIndexingJobTriggerEntity {
 
     Long installationId;
 
+    Instant suspendedAt;
+
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -34,7 +36,13 @@ public class RepoIndexingJobTriggerEntity {
     Instant techUpdatedAt;
 
     public RepoIndexingJobTriggerEntity(Long repoId, Long installationId) {
+        this(repoId, installationId, null);
+    }
+
+    public RepoIndexingJobTriggerEntity(Long repoId, Long installationId, Instant suspendedAt) {
         this.repoId = repoId;
         this.installationId = installationId;
+        this.suspendedAt = suspendedAt;
     }
+
 }

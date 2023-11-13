@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
@@ -13,7 +14,7 @@ public interface RepoIndexingJobTriggerEntityRepository extends JpaRepository<Re
     @Query("UPDATE RepoIndexingJobTriggerEntity SET installationId = NULL WHERE installationId = :installationId")
     void deleteInstallationId(Long installationId);
 
-    @Query("SELECT DISTINCT installationId FROM RepoIndexingJobTriggerEntity")
+    @Query("SELECT DISTINCT installationId FROM RepoIndexingJobTriggerEntity WHERE suspendedAt IS NULL")
     Set<Long> listDistinctInstallationIds();
 
     @Query("SELECT DISTINCT repoId FROM RepoIndexingJobTriggerEntity WHERE (:installationId IS NULL AND installationId IS NULL) OR (:installationId IS NOT NULL AND installationId = :installationId)")
@@ -22,4 +23,8 @@ public interface RepoIndexingJobTriggerEntityRepository extends JpaRepository<Re
     @Modifying
     @Query("UPDATE RepoIndexingJobTriggerEntity SET installationId = NULL WHERE installationId = :installationId AND repoId IN :repoIds")
     void deleteInstallationIdForRepos(Long installationId, List<Long> repoIds);
+
+    @Modifying
+    @Query("UPDATE RepoIndexingJobTriggerEntity SET suspendedAt = :suspendedAt WHERE installationId = :installationId")
+    void setSuspendedAt(Long installationId, Instant suspendedAt);
 }

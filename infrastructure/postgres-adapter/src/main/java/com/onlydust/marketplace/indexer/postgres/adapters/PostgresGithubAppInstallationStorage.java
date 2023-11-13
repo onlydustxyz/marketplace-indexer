@@ -9,6 +9,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoE
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
 import lombok.AllArgsConstructor;
 
+import java.time.Instant;
 import java.util.List;
 
 @AllArgsConstructor
@@ -35,8 +36,21 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
 
     @Override
     public void removeRepos(Long installationId, List<Long> repoIds) {
-        final var installation = githubAppInstallationEntityRepository.findById(installationId).orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
-        installation.getRepos().removeIf(repo -> repoIds.contains(repo.getId()));
-        githubAppInstallationEntityRepository.save(installation);
+        githubAppInstallationEntityRepository.findById(installationId).ifPresent(
+                installation -> {
+                    installation.getRepos().removeIf(repo -> repoIds.contains(repo.getId()));
+                    githubAppInstallationEntityRepository.save(installation);
+                }
+        );
+    }
+
+    @Override
+    public void setSuspendedAt(Long installationId, Instant suspendedAt) {
+        githubAppInstallationEntityRepository.findById(installationId).ifPresent(
+                installation -> {
+                    installation.setSuspendedAt(suspendedAt);
+                    githubAppInstallationEntityRepository.save(installation);
+                }
+        );
     }
 }

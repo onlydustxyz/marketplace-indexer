@@ -42,7 +42,19 @@ public class InstallationEventProcessorService implements InstallationEventHandl
             case CREATED -> onCreated((InstallationCreatedEvent) event);
             case DELETED -> onDeleted((InstallationDeletedEvent) event);
             case REMOVED -> onRemoved((InstallationRemovedEvent) event);
+            case SUSPEND -> onSuspended((InstallationSuspendedEvent) event);
+            case UNSUSPEND -> onUnsuspended((InstallationUnsuspendedEvent) event);
         }
+    }
+
+    private void onUnsuspended(InstallationUnsuspendedEvent event) {
+        repoIndexingJobStorage.setSuspendedAt(event.getInstallationId(), null);
+        githubAppInstallationStorage.setSuspendedAt(event.getInstallationId(), null);
+    }
+
+    private void onSuspended(InstallationSuspendedEvent event) {
+        repoIndexingJobStorage.setSuspendedAt(event.getInstallationId(), event.getSuspendedAt());
+        githubAppInstallationStorage.setSuspendedAt(event.getInstallationId(), event.getSuspendedAt());
     }
 
     private void onDeleted(InstallationDeletedEvent event) {
@@ -103,6 +115,10 @@ public class InstallationEventProcessorService implements InstallationEventHandl
             case REMOVED -> InstallationRemovedEvent.of(rawEvent);
 
             case DELETED -> InstallationDeletedEvent.of(rawEvent);
+
+            case SUSPEND -> InstallationSuspendedEvent.of(rawEvent);
+
+            case UNSUSPEND -> InstallationUnsuspendedEvent.of(rawEvent);
         };
     }
 

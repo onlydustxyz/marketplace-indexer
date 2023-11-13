@@ -4,6 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstal
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,12 @@ public class InstallationStorageStub implements GithubAppInstallationStorage {
     public void removeRepos(Long installationId, List<Long> repoIds) {
         final var installation = this.installations.stream().filter(installation1 -> installation1.getId().equals(installationId)).findFirst().orElseThrow();
         installation.getRepos().removeIf(repo -> repoIds.contains(repo.getId()));
+    }
+
+    @Override
+    public void setSuspendedAt(Long installationId, Instant suspendedAt) {
+        final var installation = this.installations.stream().filter(installation1 -> installation1.getId().equals(installationId)).findFirst().orElseThrow();
+        installation.setSuspendedAt(suspendedAt);
     }
 
     public List<GithubAppInstallation> installations() {

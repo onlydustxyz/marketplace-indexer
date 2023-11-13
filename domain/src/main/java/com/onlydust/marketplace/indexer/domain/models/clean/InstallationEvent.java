@@ -13,7 +13,7 @@ public abstract class InstallationEvent extends Event {
     Action action;
 
     public enum Action {
-        CREATED, DELETED, ADDED, REMOVED;
+        CREATED, DELETED, ADDED, REMOVED, SUSPEND, UNSUSPEND;
 
         public static Action of(String rawAction) {
             return valueOf(rawAction.toUpperCase());

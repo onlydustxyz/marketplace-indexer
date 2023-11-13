@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -154,6 +155,64 @@ public class GithubWebhookIT extends IntegrationTest {
 
     @Test
     @Order(4)
+    void should_handle_installation_suspended_event() throws URISyntaxException, IOException {
+        // Given
+        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_suspended.json").toURI()));
+
+        // When
+        final var response = post(event);
+
+        // Then
+        response.expectStatus().isOk();
+
+        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactlyInAnyOrder(
+                new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, null),
+                new RepoIndexingJobTriggerEntity(CAIRO_STREAMS_ID, 42952633L, Instant.parse("2023-11-13T14:21:39Z"))
+        );
+        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(
+                new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID),
+                new OldRepoIndexesEntity(CAIRO_STREAMS_ID)
+        );
+
+        final var installations = githubAppInstallationEntityRepository.findAll();
+        assertThat(installations).hasSize(1);
+        final var repos = installations.get(0).getRepos();
+        assertThat(repos).hasSize(1);
+        assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(installations.get(0).getSuspendedAt()).isEqualTo(Instant.parse("2023-11-13T14:21:39Z"));
+    }
+
+
+    @Test
+    @Order(5)
+    void should_handle_installation_unsuspended_event() throws URISyntaxException, IOException {
+        // Given
+        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_unsuspended.json").toURI()));
+
+        // When
+        final var response = post(event);
+
+        // Then
+        response.expectStatus().isOk();
+
+        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactlyInAnyOrder(
+                new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, null),
+                new RepoIndexingJobTriggerEntity(CAIRO_STREAMS_ID, 42952633L)
+        );
+        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(
+                new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID),
+                new OldRepoIndexesEntity(CAIRO_STREAMS_ID)
+        );
+
+        final var installations = githubAppInstallationEntityRepository.findAll();
+        assertThat(installations).hasSize(1);
+        final var repos = installations.get(0).getRepos();
+        assertThat(repos).hasSize(1);
+        assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
+    }
+
+    @Test
+    @Order(6)
     void should_handle_installation_deleted_event() throws URISyntaxException, IOException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_deleted.json").toURI()));

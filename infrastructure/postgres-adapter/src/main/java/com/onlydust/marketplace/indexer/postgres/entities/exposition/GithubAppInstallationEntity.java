@@ -32,6 +32,8 @@ public class GithubAppInstallationEntity {
     )
     List<GithubRepoEntity> repos;
 
+    Instant suspendedAt;
+
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

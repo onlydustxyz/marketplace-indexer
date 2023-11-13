@@ -3,16 +3,18 @@ package com.onlydust.marketplace.indexer.domain.models.exposition;
 import com.onlydust.marketplace.indexer.domain.models.clean.InstallationEvent;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
 
+import java.time.Instant;
 import java.util.List;
 
-@Value
+@Data
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 public class GithubAppInstallation {
     Long id;
     GithubAccount account;
     List<GithubRepo> repos;
+    Instant suspendedAt;
 
     public static GithubAppInstallation of(InstallationEvent event, GithubAccount owner, List<GithubRepo> repos) {
         return GithubAppInstallation.builder()

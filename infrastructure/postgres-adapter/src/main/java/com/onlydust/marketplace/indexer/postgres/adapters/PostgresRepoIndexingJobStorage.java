@@ -5,6 +5,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTrigger
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
 import lombok.AllArgsConstructor;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +37,11 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     @Override
     public void deleteInstallationForRepos(Long installationId, List<Long> repoIds) {
         repoIndexingJobTriggerRepository.deleteInstallationIdForRepos(installationId, repoIds);
+    }
+
+    @Override
+    public void setSuspendedAt(Long installationId, Instant suspendedAt) {
+        repoIndexingJobTriggerRepository.setSuspendedAt(installationId, suspendedAt);
     }
 
 }
