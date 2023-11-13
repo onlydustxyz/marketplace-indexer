@@ -15,3 +15,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000006_create_authorized_repos_table.sql
   - include:
       file: db/changelog/changelogs/00000007_create_repos_contributors.sql
+  - include:
+      file: db/changelog/changelogs/00000008_add_suspended_column.sql

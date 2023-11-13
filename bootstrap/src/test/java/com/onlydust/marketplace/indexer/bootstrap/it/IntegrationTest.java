@@ -113,9 +113,9 @@ public class IntegrationTest {
 
     protected boolean isJobRunning(Long repoId, int minPullRequestCount, int minIssueCount) {
         return githubRepoEntityRepository.findById(repoId).isEmpty() ||
-                repoRepository.findById(repoId).isEmpty() ||
-                pullRequestsRepository.findAll().size() < minPullRequestCount ||
-                issuesRepository.findAll().size() < minIssueCount;
+               repoRepository.findById(repoId).isEmpty() ||
+               pullRequestsRepository.findAll().size() < minPullRequestCount ||
+               issuesRepository.findAll().size() < minIssueCount;
     }
 
 }
