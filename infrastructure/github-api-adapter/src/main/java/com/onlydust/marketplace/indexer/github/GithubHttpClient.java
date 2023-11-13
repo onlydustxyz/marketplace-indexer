@@ -36,7 +36,7 @@ public class GithubHttpClient {
     public <ResponseBody> Optional<ResponseBody> decode(HttpResponse<byte[]> response, Class<ResponseBody> responseClass) {
         return switch (response.statusCode()) {
             case 200, 201 -> Optional.of(decodeBody(response.body(), responseClass));
-            case 403, 404, 422 -> Optional.empty();
+            case 403, 404, 422, 451 -> Optional.empty();
             default ->
                     throw OnlyDustException.internalServerError("Received incorrect status (" + response.statusCode() + ") when fetching github API");
         };
