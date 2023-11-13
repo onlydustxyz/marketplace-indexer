@@ -1,8 +1,8 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
-import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTriggerEntity;
-import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import lombok.AllArgsConstructor;
 
 import java.time.Instant;
@@ -12,36 +12,63 @@ import java.util.Set;
 
 @AllArgsConstructor
 public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
-    private final RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository;
+    private final RepoIndexingJobEntityRepository repository;
 
     @Override
     public Set<Long> installationIds() {
-        return repoIndexingJobTriggerRepository.listDistinctInstallationIds();
+        return repository.listDistinctInstallationIds();
     }
 
     @Override
     public Set<Long> repos(Long installationId) {
-        return repoIndexingJobTriggerRepository.findDistinctRepoIdsByInstallationId(installationId);
+        return repository.findDistinctRepoIdsByInstallationId(installationId);
     }
 
     @Override
     public void add(Long installationId, Long... repoIds) {
-        repoIndexingJobTriggerRepository.saveAll(Arrays.stream(repoIds).map(repoId -> new RepoIndexingJobTriggerEntity(repoId, installationId)).toList());
+        repository.saveAll(Arrays.stream(repoIds).map(repoId -> new RepoIndexingJobEntity(repoId, installationId)).toList());
     }
 
     @Override
     public void deleteInstallation(Long installationId) {
-        repoIndexingJobTriggerRepository.deleteInstallationId(installationId);
+        repository.deleteInstallationId(installationId);
     }
 
     @Override
     public void deleteInstallationForRepos(Long installationId, List<Long> repoIds) {
-        repoIndexingJobTriggerRepository.deleteInstallationIdForRepos(installationId, repoIds);
+        repository.deleteInstallationIdForRepos(installationId, repoIds);
     }
 
     @Override
     public void setSuspendedAt(Long installationId, Instant suspendedAt) {
-        repoIndexingJobTriggerRepository.setSuspendedAt(installationId, suspendedAt);
+        repository.setSuspendedAt(installationId, suspendedAt);
     }
 
+
+    @Override
+    public void startJob(Long repoId) {
+        repository.findById(repoId).ifPresent(job ->
+                repository.save(job.toBuilder()
+                        .status(RepoIndexingJobEntity.Status.RUNNING)
+                        .startedAt(Instant.now())
+                        .build()));
+    }
+
+    @Override
+    public void failJob(Long repoId) {
+        repository.findById(repoId).ifPresent(job ->
+                repository.save(job.toBuilder()
+                        .status(RepoIndexingJobEntity.Status.FAILED)
+                        .finishedAt(Instant.now())
+                        .build()));
+    }
+
+    @Override
+    public void endJob(Long repoId) {
+        repository.findById(repoId).ifPresent(job ->
+                repository.save(job.toBuilder()
+                        .status(RepoIndexingJobEntity.Status.SUCCESS)
+                        .finishedAt(Instant.now())
+                        .build()));
+    }
 }

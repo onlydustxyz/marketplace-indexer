@@ -40,4 +40,16 @@ public class PostgresOldRepoIndexingJobStorage implements RepoIndexingJobStorage
     @Override
     public void setSuspendedAt(Long installationId, Instant suspendedAt) {
     }
+
+    @Override
+    public void startJob(Long repoId) {
+    }
+
+    @Override
+    public void failJob(Long repoId) {
+    }
+
+    @Override
+    public void endJob(Long repoId) {
+    }
 }

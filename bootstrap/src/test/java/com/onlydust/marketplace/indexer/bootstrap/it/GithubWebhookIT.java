@@ -1,10 +1,10 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
-import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobTriggerEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobTriggerEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class GithubWebhookIT extends IntegrationTest {
     final Long MARKETPLACE_FRONTEND_ID = 498695724L;
     final Long CAIRO_STREAMS_ID = 493795808L;
     @Autowired
-    RepoIndexingJobTriggerEntityRepository repoIndexingJobTriggerRepository;
+    RepoIndexingJobEntityRepository repoIndexingJobTriggerRepository;
     @Autowired
     OldRepoIndexesEntityRepository oldRepoIndexesEntityRepository;
     @Autowired
@@ -67,7 +68,7 @@ public class GithubWebhookIT extends IntegrationTest {
         // Then
         response.expectStatus().isOk();
 
-        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, 42952633L));
+        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactly(new RepoIndexingJobEntity(MARKETPLACE_FRONTEND_ID, 42952633L));
         assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactly(new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID));
 
         final var account = GithubAccountEntity.builder()
@@ -89,7 +90,7 @@ public class GithubWebhookIT extends IntegrationTest {
         assertThat(repos.get(0).getId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
 
         // Wait for the job to finish
-        waitForJobToFinish(MARKETPLACE_FRONTEND_ID, 2, 2);
+        waitForJobToFinish(MARKETPLACE_FRONTEND_ID);
 
         assertThat(repoRepository.findAll()).hasSize(1);
         assertThat(pullRequestsRepository.findAll()).hasSize(2);
@@ -108,10 +109,13 @@ public class GithubWebhookIT extends IntegrationTest {
         // Then
         response.expectStatus().isOk();
 
-        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactlyInAnyOrder(
-                new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, 42952633L),
-                new RepoIndexingJobTriggerEntity(CAIRO_STREAMS_ID, 42952633L)
-        );
+        final var jobs = repoIndexingJobTriggerRepository.findAll(Sort.by("repoId"));
+        assertThat(jobs).hasSize(2);
+        assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(jobs.get(0).getInstallationId()).isEqualTo(42952633L);
+        assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
+        assertThat(jobs.get(1).getInstallationId()).isEqualTo(42952633L);
+
         assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(
                 new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID),
                 new OldRepoIndexesEntity(CAIRO_STREAMS_ID)
@@ -137,10 +141,13 @@ public class GithubWebhookIT extends IntegrationTest {
         // Then
         response.expectStatus().isOk();
 
-        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactlyInAnyOrder(
-                new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, null),
-                new RepoIndexingJobTriggerEntity(CAIRO_STREAMS_ID, 42952633L)
-        );
+        final var jobs = repoIndexingJobTriggerRepository.findAll(Sort.by("repoId"));
+        assertThat(jobs).hasSize(2);
+        assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(jobs.get(0).getInstallationId()).isEqualTo(42952633L);
+        assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
+        assertThat(jobs.get(1).getInstallationId()).isNull();
+
         assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(
                 new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID),
                 new OldRepoIndexesEntity(CAIRO_STREAMS_ID)
@@ -165,10 +172,14 @@ public class GithubWebhookIT extends IntegrationTest {
         // Then
         response.expectStatus().isOk();
 
-        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactlyInAnyOrder(
-                new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, null),
-                new RepoIndexingJobTriggerEntity(CAIRO_STREAMS_ID, 42952633L, Instant.parse("2023-11-13T14:21:39Z"))
-        );
+        final var jobs = repoIndexingJobTriggerRepository.findAll(Sort.by("repoId"));
+        assertThat(jobs).hasSize(2);
+        assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(jobs.get(0).getInstallationId()).isEqualTo(42952633L);
+        assertThat(jobs.get(0).getSuspendedAt()).isEqualTo(Instant.parse("2023-11-13T14:21:39Z"));
+        assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
+        assertThat(jobs.get(1).getInstallationId()).isNull();
+
         assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(
                 new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID),
                 new OldRepoIndexesEntity(CAIRO_STREAMS_ID)
@@ -195,10 +206,14 @@ public class GithubWebhookIT extends IntegrationTest {
         // Then
         response.expectStatus().isOk();
 
-        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactlyInAnyOrder(
-                new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, null),
-                new RepoIndexingJobTriggerEntity(CAIRO_STREAMS_ID, 42952633L)
-        );
+        final var jobs = repoIndexingJobTriggerRepository.findAll(Sort.by("repoId"));
+        assertThat(jobs).hasSize(2);
+        assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(jobs.get(0).getInstallationId()).isEqualTo(42952633L);
+        assertThat(jobs.get(0).getSuspendedAt()).isNull();
+        assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
+        assertThat(jobs.get(1).getInstallationId()).isNull();
+
         assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(
                 new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID),
                 new OldRepoIndexesEntity(CAIRO_STREAMS_ID)
@@ -224,10 +239,13 @@ public class GithubWebhookIT extends IntegrationTest {
         response.expectStatus().isOk();
 
         // Job data preserved
-        assertThat(repoIndexingJobTriggerRepository.findAll()).containsExactlyInAnyOrder(
-                new RepoIndexingJobTriggerEntity(MARKETPLACE_FRONTEND_ID, null),
-                new RepoIndexingJobTriggerEntity(CAIRO_STREAMS_ID, null)
-        );
+        final var jobs = repoIndexingJobTriggerRepository.findAll(Sort.by("repoId"));
+        assertThat(jobs).hasSize(2);
+        assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(jobs.get(0).getInstallationId()).isNull();
+        assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
+        assertThat(jobs.get(1).getInstallationId()).isNull();
+
         assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(
                 new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID),
                 new OldRepoIndexesEntity(CAIRO_STREAMS_ID)

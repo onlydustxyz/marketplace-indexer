@@ -2,8 +2,8 @@ package com.onlydust.marketplace.indexer.domain.services.jobs;
 
 import com.onlydust.marketplace.indexer.domain.jobs.Job;
 import com.onlydust.marketplace.indexer.domain.jobs.RepoIndexerJob;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.FullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.FullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import lombok.AllArgsConstructor;
@@ -30,6 +30,6 @@ public class RepoRefreshJobService implements RepoRefreshJobManager {
 
     private Job createJobForInstallationId(Long installationId) {
         final var repos = repoIndexingJobStorage.repos(installationId);
-        return new RepoIndexerJob(fullRepoIndexer, installationId, repos, githubAppContext);
+        return new RepoIndexerJob(fullRepoIndexer, installationId, repos, repoIndexingJobStorage, githubAppContext);
     }
 }
