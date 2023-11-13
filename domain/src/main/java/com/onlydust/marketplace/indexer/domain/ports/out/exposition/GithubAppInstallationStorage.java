@@ -11,4 +11,6 @@ public interface GithubAppInstallationStorage {
     void addRepos(Long installationId, List<GithubRepo> repos);
 
     void delete(Long installationId);
+
+    void removeRepos(Long installationId, List<Long> repoIds);
 }

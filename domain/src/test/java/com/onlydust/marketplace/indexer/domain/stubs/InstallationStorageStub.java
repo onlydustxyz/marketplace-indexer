@@ -26,6 +26,12 @@ public class InstallationStorageStub implements GithubAppInstallationStorage {
         this.installations.removeIf(installation -> installation.getId().equals(installationId));
     }
 
+    @Override
+    public void removeRepos(Long installationId, List<Long> repoIds) {
+        final var installation = this.installations.stream().filter(installation1 -> installation1.getId().equals(installationId)).findFirst().orElseThrow();
+        installation.getRepos().removeIf(repo -> repoIds.contains(repo.getId()));
+    }
+
     public List<GithubAppInstallation> installations() {
         return installations;
     }

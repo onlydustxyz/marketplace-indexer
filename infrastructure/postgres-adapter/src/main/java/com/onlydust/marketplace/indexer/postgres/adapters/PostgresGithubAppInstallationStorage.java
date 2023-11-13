@@ -32,4 +32,11 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
     public void delete(Long installationId) {
         githubAppInstallationEntityRepository.deleteById(installationId);
     }
+
+    @Override
+    public void removeRepos(Long installationId, List<Long> repoIds) {
+        final var installation = githubAppInstallationEntityRepository.findById(installationId).orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
+        installation.getRepos().removeIf(repo -> repoIds.contains(repo.getId()));
+        githubAppInstallationEntityRepository.save(installation);
+    }
 }

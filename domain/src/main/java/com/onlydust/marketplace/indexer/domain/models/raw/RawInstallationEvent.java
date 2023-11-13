@@ -19,4 +19,6 @@ public class RawInstallationEvent extends JsonDocument {
     List<RawRepo> repositories;
     @JsonProperty("repositories_added")
     List<RawRepo> repositoriesAdded;
+    @JsonProperty("repositories_removed")
+    List<RawRepo> repositoriesRemoved;
 }

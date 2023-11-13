@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Set;
 
 public interface RepoIndexingJobTriggerEntityRepository extends JpaRepository<RepoIndexingJobTriggerEntity, Long> {
@@ -17,4 +18,8 @@ public interface RepoIndexingJobTriggerEntityRepository extends JpaRepository<Re
 
     @Query("SELECT DISTINCT repoId FROM RepoIndexingJobTriggerEntity WHERE (:installationId IS NULL AND installationId IS NULL) OR (:installationId IS NOT NULL AND installationId = :installationId)")
     Set<Long> findDistinctRepoIdsByInstallationId(Long installationId);
+
+    @Modifying
+    @Query("UPDATE RepoIndexingJobTriggerEntity SET installationId = NULL WHERE installationId = :installationId AND repoId IN :repoIds")
+    void deleteInstallationIdForRepos(Long installationId, List<Long> repoIds);
 }
