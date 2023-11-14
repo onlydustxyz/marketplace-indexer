@@ -16,8 +16,8 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     private final RepoIndexingJobEntityRepository repository;
 
     @Override
-    public Set<Long> installationIds() {
-        return repository.listDistinctInstallationIds();
+    public Set<Long> installationIds(Instant since) {
+        return repository.listOutdatedInstallationIds(since);
     }
 
     @Override

@@ -58,6 +58,12 @@ public class DomainConfiguration {
     }
 
     @Bean
+    @ConfigurationProperties("application.repo-refresh-job")
+    RepoRefreshJobService.Config repoRefreshJobConfig() {
+        return new RepoRefreshJobService.Config();
+    }
+
+    @Bean
     GithubRateLimitServiceAdapter githubRateLimitServiceAdapter(final GithubHttpClient githubHttpClient) {
         return new GithubRateLimitServiceAdapter(githubHttpClient);
     }
@@ -196,18 +202,20 @@ public class DomainConfiguration {
     public RepoRefreshJobManager repoRefreshJobScheduler(
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
             final FullRepoIndexer refreshingFullRepoIndexer,
-            final GithubAppContext githubAppContext
+            final GithubAppContext githubAppContext,
+            final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, refreshingFullRepoIndexer, githubAppContext);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, refreshingFullRepoIndexer, githubAppContext, repoRefreshJobConfig);
     }
 
     @Bean
     public RepoRefreshJobManager repoCacheRefreshJobScheduler(
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
             final FullRepoIndexer cachedFullRepoIndexer,
-            final GithubAppContext githubAppContext
+            final GithubAppContext githubAppContext,
+            final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cachedFullRepoIndexer, githubAppContext);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cachedFullRepoIndexer, githubAppContext, repoRefreshJobConfig);
     }
 
     @Bean

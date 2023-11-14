@@ -15,9 +15,9 @@ public class RepoIndexingJobStorageComposite implements RepoIndexingJobStorage {
     }
 
     @Override
-    public Set<Long> installationIds() {
+    public Set<Long> installationIds(Instant since) {
         return Arrays.stream(repoIndexingJobRepositories)
-                .flatMap(repoIndexingJobRepository -> repoIndexingJobRepository.installationIds().stream())
+                .flatMap(repoIndexingJobRepository -> repoIndexingJobRepository.installationIds(since).stream())
                 .collect(Collectors.toSet());
     }
 
