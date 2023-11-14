@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.postgres.entities.UserIndexingJobEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ public class UserJobIndexingIT extends IntegrationTest {
     public UserIndexingJobEntityRepository userIndexingJobEntityRepository;
 
     @Test
-    public void should_index_user_on_demand() {
+    public void should_index_user_on_demand() throws InterruptedException {
         // Given
         final Long ANTHONY = 43467246L;
 
@@ -23,7 +23,14 @@ public class UserJobIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        assertThat(userIndexingJobEntityRepository.findAll()).containsExactly(new UserIndexingJobEntity(ANTHONY));
+        waitForUserJobToFinish(ANTHONY);
+
+        final var jobs = userIndexingJobEntityRepository.findAll();
+        assertThat(jobs).hasSize(1);
+        assertThat(jobs.get(0).getUserId()).isEqualTo(ANTHONY);
+        assertThat(jobs.get(0).getStartedAt()).isNotNull();
+        assertThat(jobs.get(0).getFinishedAt()).isNotNull();
+        assertThat(jobs.get(0).getStatus()).isEqualTo(JobStatus.SUCCESS);
     }
 
     private WebTestClient.ResponseSpec indexUser(Long userId) {

@@ -36,7 +36,7 @@ public class RepoJobIndexingIT extends IntegrationTest {
         assertThat(repoIndexingJobEntityRepository.findAll()).contains(new RepoIndexingJobEntity(BRETZEL_APP, 0L));
 
         // Wait for the job to finish
-        waitForJobToFinish(BRETZEL_APP);
+        waitForRepoJobToFinish(BRETZEL_APP);
 
         assertThat(githubRepoEntityRepository.findById(BRETZEL_APP)).isPresent();
         assertThat(pullRequestsRepository.findAll()).hasSize(0);
@@ -64,7 +64,7 @@ public class RepoJobIndexingIT extends IntegrationTest {
         }
 
         // Wait for the job to finish
-        waitForJobToFinish(MARKETPLACE);
+        waitForRepoJobToFinish(MARKETPLACE);
 
         assertThat(githubRepoEntityRepository.findById(MARKETPLACE)).isPresent();
         assertThat(pullRequestsRepository.findAll()).hasSize(2);
@@ -88,7 +88,7 @@ public class RepoJobIndexingIT extends IntegrationTest {
             assertThat(job).isPresent();
             assertThat(job.get().getStartedAt()).isNotNull();
             assertThat(job.get().getFinishedAt()).isNotNull();
-            assertThat(job.get().getStatus()).isNotEqualTo(JobStatus.PENDING);
+            assertThat(job.get().getStatus()).isEqualTo(JobStatus.SUCCESS);
         }
     }
 
