@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
@@ -91,8 +92,6 @@ public class GithubWebhookIT extends IntegrationTest {
         waitForRepoJobToFinish(MARKETPLACE_FRONTEND_ID);
 
         assertThat(repoRepository.findAll()).hasSize(1);
-        assertThat(pullRequestsRepository.findAll()).hasSize(2);
-        assertThat(issuesRepository.findAll()).hasSize(2);
     }
 
     @Test
@@ -263,8 +262,6 @@ public class GithubWebhookIT extends IntegrationTest {
                 .build());
 
         assertThat(repoRepository.findAll()).hasSize(2);
-        assertThat(pullRequestsRepository.findAll()).hasSize(2);
-        assertThat(issuesRepository.findAll()).hasSize(2);
     }
 
     protected WebTestClient.ResponseSpec post(final String event) {

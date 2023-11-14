@@ -13,7 +13,6 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawInstallationEventStorage;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,7 +24,6 @@ import java.util.Optional;
 @Transactional
 public class InstallationEventProcessorService implements InstallationEventHandler {
     private final RawInstallationEventStorage rawInstallationEventStorage;
-    private final RawStorageReader rawStorageReader;
     private final RepoIndexingJobStorage repoIndexingJobStorage;
     private final UserIndexer userIndexer;
     private final RepoIndexer repoIndexer;
@@ -122,7 +120,7 @@ public class InstallationEventProcessorService implements InstallationEventHandl
         };
     }
 
-    private Optional<CleanRepo> indexRepo(RawRepo eventRepo) {
-        return rawStorageReader.repo(eventRepo.getId()).flatMap(repo -> repoIndexer.indexRepo(repo.getId()));
+    private Optional<CleanRepo> indexRepo(RawRepo repo) {
+        return repoIndexer.indexRepo(repo.getId());
     }
 }
