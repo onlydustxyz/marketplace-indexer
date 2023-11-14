@@ -26,11 +26,10 @@ public class RepoIndexerJob extends Job {
                         repoIndexingJobStorage.startJob(repo);
                         if (fullRepoIndexer.indexFullRepo(repo).isEmpty())
                             LOGGER.warn("Repo {} not found", repo);
+                        repoIndexingJobStorage.endJob(repo);
                     } catch (Throwable e) {
                         LOGGER.error("Error indexing repo {}", repo, e);
                         repoIndexingJobStorage.failJob(repo);
-                    } finally {
-                        repoIndexingJobStorage.endJob(repo);
                     }
                 })
         );
