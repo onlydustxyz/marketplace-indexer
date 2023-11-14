@@ -4,6 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.exposers.IssueContributionExposer;
@@ -213,6 +214,21 @@ public class IndexingServiceTest {
         );
         assertCachedUserSocialAccountsAre(Map.of(onlyDust.getId(), List.of()));
     }
+
+    @Test
+    void should_not_reindex_up_to_date_pull_requests() {
+        final var cachedReader = CacheReadRawStorageReaderDecorator.builder().cache(rawStorageReader).fetcher(rawStorageReader).build();
+        final var indexer = new FullRepoIndexingService(cachedReader, issueIndexer, pullRequestIndexer, repoIndexingService);
+
+        final var cachedIssues = rawStorageReaderStub.repoIssues();
+        final var cachedPullRequests = rawStorageReaderStub.repoPullRequests();
+
+        indexer.indexFullRepo(marketplaceFrontend.getId()).orElseThrow();
+
+        assertCachedRepoIssuesAre(cachedIssues);
+        assertCachedRepoPullRequestsAre(cachedPullRequests);
+    }
+
 
     @Test
     void should_not_throw_when_indexing_non_existing_items() {
