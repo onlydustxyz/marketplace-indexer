@@ -1,8 +1,8 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
-import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import org.junit.jupiter.api.MethodOrderer;
@@ -16,8 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RepoJobIndexingIT extends IntegrationTest {
-    @Autowired
-    public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
     public ContributionRepository contributionRepository;
     @Autowired
@@ -90,7 +88,7 @@ public class RepoJobIndexingIT extends IntegrationTest {
             assertThat(job).isPresent();
             assertThat(job.get().getStartedAt()).isNotNull();
             assertThat(job.get().getFinishedAt()).isNotNull();
-            assertThat(job.get().getStatus()).isNotEqualTo(RepoIndexingJobEntity.Status.PENDING);
+            assertThat(job.get().getStatus()).isNotEqualTo(JobStatus.PENDING);
         }
     }
 

@@ -28,7 +28,7 @@ public class RepoIndexingJobEntity {
 
     @Enumerated(EnumType.STRING)
     @Type(type = "job_status")
-    Status status;
+    JobStatus status;
 
     Instant startedAt;
     Instant finishedAt;
@@ -46,10 +46,7 @@ public class RepoIndexingJobEntity {
     public RepoIndexingJobEntity(Long repoId, Long installationId) {
         this.repoId = repoId;
         this.installationId = installationId;
-        this.status = Status.PENDING;
+        this.status = JobStatus.PENDING;
     }
 
-    public enum Status {
-        PENDING, RUNNING, SUCCESS, FAILED
-    }
 }
