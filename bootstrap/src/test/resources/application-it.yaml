@@ -8,3 +8,7 @@ application:
   web:
     authentication:
       api-key: "BACKEND_API_KEY"
+
+  cron:
+    repo-refresh-job-delay: 100
+    user-refresh-job-delay: 100
