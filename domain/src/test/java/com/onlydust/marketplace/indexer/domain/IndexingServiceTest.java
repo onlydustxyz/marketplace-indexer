@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class IndexingServiceTest {
     final RawAccount onlyDust = RawStorageWriterStub.load("/github/users/onlyDust.json", RawAccount.class);
@@ -234,6 +237,27 @@ public class IndexingServiceTest {
     void should_not_throw_when_indexing_non_existing_items() {
         assertThat(userIndexingService.indexUser(0L)).isEmpty();
         assertCachedUsersAre();
+    }
+
+
+    @Test
+    void should_not_fail_when_pr_indexing_fail() {
+        final var pullRequestIndexer = mock(PullRequestIndexer.class);
+        final var indexer = new FullRepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer, repoIndexingService);
+
+        when(pullRequestIndexer.indexPullRequest(any(), any(), any())).thenThrow(new RuntimeException("Unable to index PR"));
+
+        indexer.indexFullRepo(marketplaceFrontend.getId()).orElseThrow();
+    }
+
+    @Test
+    void should_not_fail_when_issue_indexing_fail() {
+        final var issueIndexer = mock(IssueIndexer.class);
+        final var indexer = new FullRepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer, repoIndexingService);
+
+        when(issueIndexer.indexIssue(any(), any(), any())).thenThrow(new RuntimeException("Unable to index issue"));
+
+        indexer.indexFullRepo(marketplaceFrontend.getId()).orElseThrow();
     }
 
     private void assertCachedReposAre(RawRepo... repos) {
