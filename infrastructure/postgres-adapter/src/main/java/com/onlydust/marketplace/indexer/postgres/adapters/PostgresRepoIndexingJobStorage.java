@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
+import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import lombok.AllArgsConstructor;
@@ -49,7 +50,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     public void startJob(Long repoId) {
         repository.findById(repoId).ifPresent(job ->
                 repository.save(job.toBuilder()
-                        .status(RepoIndexingJobEntity.Status.RUNNING)
+                        .status(JobStatus.RUNNING)
                         .startedAt(Instant.now())
                         .build()));
     }
@@ -58,7 +59,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     public void failJob(Long repoId) {
         repository.findById(repoId).ifPresent(job ->
                 repository.save(job.toBuilder()
-                        .status(RepoIndexingJobEntity.Status.FAILED)
+                        .status(JobStatus.FAILED)
                         .finishedAt(Instant.now())
                         .build()));
     }
@@ -67,7 +68,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     public void endJob(Long repoId) {
         repository.findById(repoId).ifPresent(job ->
                 repository.save(job.toBuilder()
-                        .status(RepoIndexingJobEntity.Status.SUCCESS)
+                        .status(JobStatus.SUCCESS)
                         .finishedAt(Instant.now())
                         .build()));
     }

@@ -24,6 +24,6 @@ public class UserRefreshJobService implements UserRefreshJobManager {
     @Override
     public List<Job> allJobs() {
         final var users = userIndexingJobStorage.users();
-        return List.of(new UserIndexerJob(userIndexer, users));
+        return List.of(new UserIndexerJob(userIndexer, users, userIndexingJobStorage));
     }
 }
