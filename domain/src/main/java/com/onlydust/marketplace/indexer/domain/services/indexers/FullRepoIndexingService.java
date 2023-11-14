@@ -21,7 +21,7 @@ public class FullRepoIndexingService implements FullRepoIndexer {
 
     @Override
     public Optional<CleanRepo> indexFullRepo(Long repoId) {
-        LOGGER.info("Indexing full repo {}", repoId);
+        LOGGER.debug("Indexing full repo {}", repoId);
         return repoIndexer.indexRepo(repoId).map(repo -> {
             rawStorageReader.repoPullRequests(repoId).forEach(pr -> pullRequestIndexer.indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber()));
             rawStorageReader.repoIssues(repoId).forEach(issue -> issueIndexer.indexIssue(repo.getOwner().getLogin(), repo.getName(), issue.getNumber()));

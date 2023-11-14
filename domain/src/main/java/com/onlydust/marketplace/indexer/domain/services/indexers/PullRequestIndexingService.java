@@ -28,7 +28,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
 
     private List<CleanCodeReview> indexPullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        LOGGER.info("Indexing pull request reviews for repo {} and pull request {}", repoId, pullRequestId);
+        LOGGER.debug("Indexing pull request reviews for repo {} and pull request {}", repoId, pullRequestId);
         final var codeReviews = rawStorageReader.pullRequestReviews(repoId, pullRequestId, pullRequestNumber)
                 .orElseGet(() -> {
                     LOGGER.warn("Unable to fetch pull request reviews");
@@ -47,7 +47,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     }
 
     private List<CleanCommit> indexPullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        LOGGER.info("Indexing pull request commits for repo {} and pull request {}", repoId, pullRequestNumber);
+        LOGGER.debug("Indexing pull request commits for repo {} and pull request {}", repoId, pullRequestNumber);
         final var commits = rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber)
                 .orElseGet(() -> {
                     LOGGER.warn("Unable to fetch pull request commits");
@@ -65,13 +65,13 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     }
 
     private List<CleanCheckRun> indexCheckRuns(Long repoId, String sha) {
-        LOGGER.info("Indexing check runs for repo {} and sha {}", repoId, sha);
+        LOGGER.debug("Indexing check runs for repo {} and sha {}", repoId, sha);
         final var checkRuns = rawStorageReader.checkRuns(repoId, sha).map(RawCheckRuns::getCheckRuns).orElse(List.of());
         return checkRuns.stream().map(CleanCheckRun::of).toList();
     }
 
     private List<CleanIssue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
-        LOGGER.info("Indexing closing issues for repo {} and pull request {}", repoOwner, pullRequestNumber);
+        LOGGER.debug("Indexing closing issues for repo {} and pull request {}", repoOwner, pullRequestNumber);
         final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber)
                 .orElseGet(() -> {
                     LOGGER.warn("Unable to fetch pull request {}/{}/{} closing issues", repoOwner, repoName, pullRequestNumber);
@@ -88,7 +88,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
     @Override
     public Optional<CleanPullRequest> indexPullRequest(String repoOwner, String repoName, Long prNumber) {
-        LOGGER.info("Indexing pull request {} for repo {}/{}", prNumber, repoOwner, repoName);
+        LOGGER.debug("Indexing pull request {} for repo {}/{}", prNumber, repoOwner, repoName);
         return repoIndexer.indexRepo(repoOwner, repoName).flatMap(repo -> {
             final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber).orElseThrow(() -> OnlyDustException.notFound("Pull request not found"));
 

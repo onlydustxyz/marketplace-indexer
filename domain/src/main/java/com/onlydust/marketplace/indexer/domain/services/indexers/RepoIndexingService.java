@@ -19,14 +19,14 @@ public class RepoIndexingService implements RepoIndexer {
 
     @Override
     public Optional<CleanRepo> indexRepo(Long repoId) {
-        LOGGER.info("Indexing repo {}", repoId);
+        LOGGER.debug("Indexing repo {}", repoId);
         return rawStorageReader.repo(repoId)
                 .flatMap(this::buildCleanRepo);
     }
 
     @Override
     public Optional<CleanRepo> indexRepo(String repoOwner, String repoName) {
-        LOGGER.info("Indexing repo {}/{}", repoOwner, repoName);
+        LOGGER.debug("Indexing repo {}/{}", repoOwner, repoName);
         return rawStorageReader.repo(repoOwner, repoName)
                 .flatMap(this::buildCleanRepo);
     }

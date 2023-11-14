@@ -16,7 +16,7 @@ public class UserIndexingService implements UserIndexer {
 
     @Override
     public Optional<CleanAccount> indexUser(Long userId) {
-        LOGGER.info("Indexing user {}", userId);
+        LOGGER.debug("Indexing user {}", userId);
         return rawStorageReader.user(userId).map(user -> {
             final var socialAccounts = rawStorageReader.userSocialAccounts(userId)
                     .orElseGet(() -> {
