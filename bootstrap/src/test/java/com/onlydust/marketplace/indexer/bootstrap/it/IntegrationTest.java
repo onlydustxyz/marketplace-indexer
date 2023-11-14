@@ -9,6 +9,7 @@ import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import com.onlydust.marketplace.indexer.bootstrap.ApplicationIT;
 import com.onlydust.marketplace.indexer.bootstrap.configuration.SwaggerConfiguration;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.PullRequestRepository;
@@ -69,6 +70,9 @@ public class IntegrationTest {
     public GithubRepoEntityRepository githubRepoEntityRepository;
     @Autowired
     public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
+    @Autowired
+    public UserIndexingJobEntityRepository userIndexingJobEntityRepository;
+
 
     @InjectWireMock("github")
     protected WireMockServer githubWireMockServer;
@@ -109,14 +113,26 @@ public class IntegrationTest {
         return request.exchange();
     }
 
-    protected void waitForJobToFinish(Long repoId) throws InterruptedException {
-        for (int i = 0; i < 10 && isJobRunning(repoId); i++) {
+    protected void waitForRepoJobToFinish(Long repoId) throws InterruptedException {
+        for (int i = 0; i < 10 && isRepoJobRunning(repoId); i++) {
             Thread.sleep(1000);
         }
     }
 
-    protected boolean isJobRunning(Long repoId) {
+    protected void waitForUserJobToFinish(Long userId) throws InterruptedException {
+        for (int i = 0; i < 10 && isUserJobRunning(userId); i++) {
+            Thread.sleep(1000);
+        }
+    }
+
+    protected boolean isRepoJobRunning(Long repoId) {
         return repoIndexingJobEntityRepository.findById(repoId)
+                .map(j -> j.getFinishedAt() == null)
+                .orElse(true);
+    }
+
+    protected boolean isUserJobRunning(Long userId) {
+        return userIndexingJobEntityRepository.findById(userId)
                 .map(j -> j.getFinishedAt() == null)
                 .orElse(true);
     }

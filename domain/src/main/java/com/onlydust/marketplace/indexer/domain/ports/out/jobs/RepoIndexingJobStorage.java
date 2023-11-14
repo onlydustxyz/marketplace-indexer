@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface RepoIndexingJobStorage {
-    Set<Long> installationIds();
+    Set<Long> installationIds(Instant since);
 
     Set<Long> repos(Long installationId);
 

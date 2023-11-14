@@ -39,7 +39,7 @@ public class GithubPage<T> implements Iterator<T> {
 
     @Override
     public boolean hasNext() {
-        return !content.isEmpty() || !isNull(links.getNext());
+        return !content.isEmpty() || (!isNull(links) && !isNull(links.getNext()));
     }
 
     @Override

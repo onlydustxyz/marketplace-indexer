@@ -21,10 +21,24 @@ public class FullRepoIndexingService implements FullRepoIndexer {
 
     @Override
     public Optional<CleanRepo> indexFullRepo(Long repoId) {
-        LOGGER.info("Indexing full repo {}", repoId);
+        LOGGER.debug("Indexing full repo {}", repoId);
         return repoIndexer.indexRepo(repoId).map(repo -> {
-            rawStorageReader.repoPullRequests(repoId).forEach(pr -> pullRequestIndexer.indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber()));
-            rawStorageReader.repoIssues(repoId).forEach(issue -> issueIndexer.indexIssue(repo.getOwner().getLogin(), repo.getName(), issue.getNumber()));
+            rawStorageReader.repoPullRequests(repoId).forEach(pr -> {
+                try {
+                    pullRequestIndexer.indexPullRequest(repo.getOwner().getLogin(), repo.getName(), pr.getNumber());
+                } catch (Exception e) {
+                    LOGGER.error("Unable to index pull request {} for repo {}", pr.getNumber(), repoId, e);
+                }
+            });
+
+            rawStorageReader.repoIssues(repoId).forEach(issue -> {
+                try {
+                    issueIndexer.indexIssue(repo.getOwner().getLogin(), repo.getName(), issue.getNumber());
+                } catch (Exception e) {
+                    LOGGER.error("Unable to index issue {} for repo {}", issue.getNumber(), repoId, e);
+                }
+            });
+
             return repo;
         });
     }

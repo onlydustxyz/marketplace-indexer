@@ -17,11 +17,11 @@ public class RepoJobServiceTest {
     private final RepoIndexingJobStorage repoIndexingJobRepository = mock(RepoIndexingJobStorage.class);
     private final FullRepoIndexer fullRepoIndexer = mock(FullRepoIndexer.class);
     private final GithubAppContext githubAppContext = new GithubAppContextStub();
-    private final RepoRefreshJobService jobService = new RepoRefreshJobService(repoIndexingJobRepository, fullRepoIndexer, githubAppContext);
+    private final RepoRefreshJobService jobService = new RepoRefreshJobService(repoIndexingJobRepository, fullRepoIndexer, githubAppContext, new RepoRefreshJobService.Config(1));
 
     @BeforeEach
     void setup() {
-        when(repoIndexingJobRepository.installationIds()).thenReturn(Set.of(1L, 2L));
+        when(repoIndexingJobRepository.installationIds(any())).thenReturn(Set.of(1L, 2L));
         when(repoIndexingJobRepository.repos(1L)).thenReturn(Set.of(1L, 2L, 3L));
         when(repoIndexingJobRepository.repos(2L)).thenReturn(Set.of(4L, 5L, 6L));
     }

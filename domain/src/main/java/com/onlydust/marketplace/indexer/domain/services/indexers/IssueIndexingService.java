@@ -21,7 +21,7 @@ public class IssueIndexingService implements IssueIndexer {
 
     @Override
     public Optional<CleanIssue> indexIssue(String repoOwner, String repoName, Long issueNumber) {
-        LOGGER.info("Indexing issue {} for repo {}/{}", issueNumber, repoOwner, repoName);
+        LOGGER.debug("Indexing issue {} for repo {}/{}", issueNumber, repoOwner, repoName);
         return repoIndexer.indexRepo(repoOwner, repoName).flatMap(repo -> {
             final var issue = rawStorageReader.issue(repo.getId(), issueNumber).orElseThrow(() -> OnlyDustException.notFound("Issue not found"));
             return userIndexer.indexUser(issue.getAuthor().getId()).map(author -> {

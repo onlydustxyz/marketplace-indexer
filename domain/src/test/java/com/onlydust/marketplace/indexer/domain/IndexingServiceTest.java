@@ -4,6 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.exposers.IssueContributionExposer;
@@ -20,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class IndexingServiceTest {
     final RawAccount onlyDust = RawStorageWriterStub.load("/github/users/onlyDust.json", RawAccount.class);
@@ -215,9 +219,45 @@ public class IndexingServiceTest {
     }
 
     @Test
+    void should_not_reindex_up_to_date_pull_requests() {
+        final var cachedReader = CacheReadRawStorageReaderDecorator.builder().cache(rawStorageReader).fetcher(rawStorageReader).build();
+        final var indexer = new FullRepoIndexingService(cachedReader, issueIndexer, pullRequestIndexer, repoIndexingService);
+
+        final var cachedIssues = rawStorageReaderStub.repoIssues();
+        final var cachedPullRequests = rawStorageReaderStub.repoPullRequests();
+
+        indexer.indexFullRepo(marketplaceFrontend.getId()).orElseThrow();
+
+        assertCachedRepoIssuesAre(cachedIssues);
+        assertCachedRepoPullRequestsAre(cachedPullRequests);
+    }
+
+
+    @Test
     void should_not_throw_when_indexing_non_existing_items() {
         assertThat(userIndexingService.indexUser(0L)).isEmpty();
         assertCachedUsersAre();
+    }
+
+
+    @Test
+    void should_not_fail_when_pr_indexing_fail() {
+        final var pullRequestIndexer = mock(PullRequestIndexer.class);
+        final var indexer = new FullRepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer, repoIndexingService);
+
+        when(pullRequestIndexer.indexPullRequest(any(), any(), any())).thenThrow(new RuntimeException("Unable to index PR"));
+
+        indexer.indexFullRepo(marketplaceFrontend.getId()).orElseThrow();
+    }
+
+    @Test
+    void should_not_fail_when_issue_indexing_fail() {
+        final var issueIndexer = mock(IssueIndexer.class);
+        final var indexer = new FullRepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer, repoIndexingService);
+
+        when(issueIndexer.indexIssue(any(), any(), any())).thenThrow(new RuntimeException("Unable to index issue"));
+
+        indexer.indexFullRepo(marketplaceFrontend.getId()).orElseThrow();
     }
 
     private void assertCachedReposAre(RawRepo... repos) {

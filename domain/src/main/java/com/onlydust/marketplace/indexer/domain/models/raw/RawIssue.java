@@ -30,6 +30,8 @@ public class RawIssue extends JsonDocument {
     Date createdAt;
     @JsonProperty("closed_at")
     Date closedAt;
+    @JsonProperty("updated_at")
+    Date updatedAt;
     @JsonProperty("pull_request")
     RawPullRequest pullRequest;
     Integer comments;
