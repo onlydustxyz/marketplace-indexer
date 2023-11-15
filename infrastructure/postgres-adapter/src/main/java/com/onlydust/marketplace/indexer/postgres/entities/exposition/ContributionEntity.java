@@ -42,6 +42,12 @@ public class ContributionEntity {
     Date createdAt;
     Date completedAt;
     Boolean draft;
+    Long githubNumber;
+    String githubStatus;
+    String githubTitle;
+    String githubHtmlUrl;
+    String githubBody;
+    Integer githubCommentsCount;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -66,6 +72,12 @@ public class ContributionEntity {
                 .createdAt(contribution.getCreatedAt())
                 .completedAt(contribution.getCompletedAt())
                 .draft(contribution.getDraft())
+                .githubNumber(contribution.getGithubNumber())
+                .githubStatus(contribution.getGithubStatus())
+                .githubTitle(contribution.getGithubTitle())
+                .githubHtmlUrl(contribution.getGithubHtmlUrl())
+                .githubBody(contribution.getGithubBody())
+                .githubCommentsCount(contribution.getGithubCommentsCount())
                 .build();
     }
 
