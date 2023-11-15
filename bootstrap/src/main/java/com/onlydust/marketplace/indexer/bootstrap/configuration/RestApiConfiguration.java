@@ -37,10 +37,10 @@ public class RestApiConfiguration {
     }
 
     @Bean
-    public IndexesRestApi indexesRestApi(final UserRefreshJobManager userCacheRefreshJobScheduler,
-                                         final RepoRefreshJobManager repoCacheRefreshJobScheduler,
+    public IndexesRestApi indexesRestApi(final UserRefreshJobManager cachedUserRefreshJobManager,
+                                         final RepoRefreshJobManager cachedRepoRefreshJobManager,
                                          final Executor applicationTaskExecutor) {
-        return new IndexesRestApi(applicationTaskExecutor, userCacheRefreshJobScheduler, repoCacheRefreshJobScheduler);
+        return new IndexesRestApi(applicationTaskExecutor, cachedUserRefreshJobManager, cachedRepoRefreshJobManager);
     }
 
     @Bean

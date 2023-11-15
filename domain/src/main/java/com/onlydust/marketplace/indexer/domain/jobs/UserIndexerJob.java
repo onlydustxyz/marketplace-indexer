@@ -21,11 +21,10 @@ public class UserIndexerJob extends Job {
                 LOGGER.info("Indexing users {}", userIds);
                 userIndexingJobStorage.startJob(user);
                 userIndexer.indexUser(user);
+                userIndexingJobStorage.endJob(user);
             } catch (Throwable e) {
                 LOGGER.error("Failed to index user {}", user, e);
                 userIndexingJobStorage.failJob(user);
-            } finally {
-                userIndexingJobStorage.endJob(user);
             }
         });
     }

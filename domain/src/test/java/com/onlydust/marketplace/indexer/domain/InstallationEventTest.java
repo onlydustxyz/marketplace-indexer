@@ -31,7 +31,7 @@ public class InstallationEventTest {
     final UserIndexer userIndexer = new UserIndexingService(rawStorageRepositoryStub);
     final RepoIndexer repoIndexer = new RepoIndexingService(rawStorageRepositoryStub, userIndexer);
     final InstallationEventHandler eventHandler = new InstallationEventProcessorService(
-            rawInstallationEventRepositoryStub, rawStorageRepositoryStub, repoIndexingJobRepository, userIndexer, repoIndexer, installationEventRepositoryStub);
+            rawInstallationEventRepositoryStub, repoIndexingJobRepository, userIndexer, repoIndexer, installationEventRepositoryStub);
 
     @BeforeEach
     void setup() {

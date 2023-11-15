@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
@@ -21,6 +22,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.Comparator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -90,8 +92,6 @@ public class GithubWebhookIT extends IntegrationTest {
         waitForRepoJobToFinish(MARKETPLACE_FRONTEND_ID);
 
         assertThat(repoRepository.findAll()).hasSize(1);
-        assertThat(pullRequestsRepository.findAll()).hasSize(2);
-        assertThat(issuesRepository.findAll()).hasSize(2);
     }
 
     @Test
@@ -120,10 +120,10 @@ public class GithubWebhookIT extends IntegrationTest {
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
-        final var repos = installations.get(0).getRepos();
+        final var repos = installations.get(0).getRepos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
         assertThat(repos).hasSize(2);
-        assertThat(repos.get(0).getId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
-        assertThat(repos.get(1).getId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(repos.get(1).getId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
     }
 
     @Test
@@ -262,8 +262,6 @@ public class GithubWebhookIT extends IntegrationTest {
                 .build());
 
         assertThat(repoRepository.findAll()).hasSize(2);
-        assertThat(pullRequestsRepository.findAll()).hasSize(2);
-        assertThat(issuesRepository.findAll()).hasSize(2);
     }
 
     protected WebTestClient.ResponseSpec post(final String event) {

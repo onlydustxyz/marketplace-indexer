@@ -14,18 +14,18 @@ import java.util.concurrent.Executor;
 @AllArgsConstructor
 public class JobScheduler {
     private final Executor applicationTaskExecutor;
-    private final RepoRefreshJobManager repoRefreshJobScheduler;
-    private final UserRefreshJobManager userRefreshJobScheduler;
+    private final RepoRefreshJobManager diffRepoRefreshJobManager;
+    private final UserRefreshJobManager diffUserRefreshJobManager;
 
     @Scheduled(fixedDelayString = "${application.cron.repo-refresh-job-delay}")
     public void scheduleRepoRefresherJobs() {
         LOGGER.info("Refreshing repos");
-        repoRefreshJobScheduler.allJobs().forEach(applicationTaskExecutor::execute);
+        diffRepoRefreshJobManager.allJobs().forEach(applicationTaskExecutor::execute);
     }
 
     @Scheduled(fixedDelayString = "${application.cron.user-refresh-job-delay}")
     public void scheduleUserRefresherJobs() {
         LOGGER.info("Refreshing users");
-        userRefreshJobScheduler.allJobs().forEach(applicationTaskExecutor::execute);
+        diffUserRefreshJobManager.allJobs().forEach(applicationTaskExecutor::execute);
     }
 }
