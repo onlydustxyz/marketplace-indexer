@@ -21,6 +21,12 @@ public class Contribution {
     Date createdAt;
     Date completedAt;
     Boolean draft;
+    Long githubNumber;
+    String githubStatus;
+    String githubTitle;
+    String githubHtmlUrl;
+    String githubBody;
+    Integer githubCommentsCount;
 
     public static Contribution of(GithubPullRequest pullRequest) {
         return Contribution.builder()
@@ -32,6 +38,12 @@ public class Contribution {
                 .createdAt(pullRequest.getCreatedAt())
                 .completedAt(pullRequest.getClosedAt())
                 .draft(pullRequest.getDraft())
+                .githubNumber(pullRequest.getNumber())
+                .githubStatus(pullRequest.getStatus().toString())
+                .githubTitle(pullRequest.getTitle())
+                .githubHtmlUrl(pullRequest.getHtmlUrl())
+                .githubBody(pullRequest.getBody())
+                .githubCommentsCount(pullRequest.getCommentsCount())
                 .build();
     }
 
@@ -44,6 +56,12 @@ public class Contribution {
                 .issue(issue)
                 .createdAt(issue.getCreatedAt())
                 .completedAt(issue.getClosedAt())
+                .githubNumber(issue.getNumber())
+                .githubStatus(issue.getStatus().toString())
+                .githubTitle(issue.getTitle())
+                .githubHtmlUrl(issue.getHtmlUrl())
+                .githubBody(issue.getBody())
+                .githubCommentsCount(issue.getCommentsCount())
                 .build();
     }
 
@@ -57,6 +75,12 @@ public class Contribution {
                 .codeReview(codeReview)
                 .createdAt(codeReview.getRequestedAt())
                 .completedAt(status == Status.IN_PROGRESS ? null : codeReview.getSubmittedAt())
+                .githubNumber(codeReview.getPullRequest().getNumber())
+                .githubStatus(codeReview.getState().toString())
+                .githubTitle(codeReview.getPullRequest().getTitle())
+                .githubHtmlUrl(codeReview.getPullRequest().getHtmlUrl())
+                .githubBody(codeReview.getPullRequest().getBody())
+                .githubCommentsCount(codeReview.getPullRequest().getCommentsCount())
                 .build();
     }
 
