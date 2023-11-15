@@ -25,6 +25,7 @@ public class CleanPullRequest {
     String htmlUrl;
     String body;
     Integer comments;
+    Boolean draft;
     @Builder.Default
     List<CleanCodeReview> reviews = new ArrayList<>();
     @Builder.Default
@@ -51,6 +52,7 @@ public class CleanPullRequest {
                 .body(pullRequest.getBody())
                 .comments(pullRequest.getComments())
                 .author(author)
+                .draft(pullRequest.getDraft())
                 .build();
     }
 
