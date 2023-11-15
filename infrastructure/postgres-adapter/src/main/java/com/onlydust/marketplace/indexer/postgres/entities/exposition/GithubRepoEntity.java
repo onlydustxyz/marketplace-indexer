@@ -30,6 +30,7 @@ public class GithubRepoEntity {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     GithubAccountEntity owner;
     String name;
+    String ownerLogin;
     String htmlUrl;
     Date updatedAt;
     String description;
@@ -58,6 +59,7 @@ public class GithubRepoEntity {
         return GithubRepoEntity.builder()
                 .id(repo.getId())
                 .owner(GithubAccountEntity.of(repo.getOwner()))
+                .ownerLogin(repo.getOwner().getLogin())
                 .name(repo.getName())
                 .htmlUrl(repo.getHtmlUrl())
                 .updatedAt(repo.getUpdatedAt())
