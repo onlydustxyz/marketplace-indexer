@@ -38,6 +38,7 @@ public class RawPullRequest extends JsonDocument {
     String body;
     Integer comments;
     Boolean merged;
+    Boolean draft;
 
 
     @JsonProperty("requested_reviewers")

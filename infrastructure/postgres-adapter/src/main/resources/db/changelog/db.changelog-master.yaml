@@ -23,3 +23,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000010_add_user_job_status_information.sql
   - include:
       file: db/changelog/changelogs/00000011_add_repo_owner_login.sql
+  - include:
+      file: db/changelog/changelogs/00000012_add_draft_column.sql

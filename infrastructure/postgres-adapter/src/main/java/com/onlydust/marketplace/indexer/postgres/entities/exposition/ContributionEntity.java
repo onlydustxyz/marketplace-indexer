@@ -41,6 +41,7 @@ public class ContributionEntity {
     GithubCodeReviewEntity codeReview;
     Date createdAt;
     Date completedAt;
+    Boolean draft;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -64,6 +65,7 @@ public class ContributionEntity {
                 .codeReview(contribution.getCodeReview() != null ? GithubCodeReviewEntity.of(contribution.getCodeReview()) : null)
                 .createdAt(contribution.getCreatedAt())
                 .completedAt(contribution.getCompletedAt())
+                .draft(contribution.getDraft())
                 .build();
     }
 

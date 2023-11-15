@@ -23,6 +23,7 @@ public class GithubPullRequest {
     Date closedAt;
     Date mergedAt;
     String body;
+    Boolean draft;
     List<GithubIssue> closingIssues;
 
     public static GithubPullRequest of(CleanPullRequest pullRequest) {
@@ -39,6 +40,7 @@ public class GithubPullRequest {
                 .closedAt(pullRequest.getClosedAt())
                 .mergedAt(pullRequest.getMergedAt())
                 .body(pullRequest.getBody())
+                .draft(pullRequest.getDraft())
                 .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssue::of).toList())
                 .build();
     }
