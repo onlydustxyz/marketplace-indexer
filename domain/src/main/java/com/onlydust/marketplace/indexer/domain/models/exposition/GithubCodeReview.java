@@ -48,6 +48,10 @@ public class GithubCodeReview {
         COMMENTED,
         APPROVED,
         CHANGES_REQUESTED,
-        DISMISSED
+        DISMISSED;
+
+        public boolean isCompleted() {
+            return this == APPROVED || this == CHANGES_REQUESTED || this == DISMISSED;
+        }
     }
 }

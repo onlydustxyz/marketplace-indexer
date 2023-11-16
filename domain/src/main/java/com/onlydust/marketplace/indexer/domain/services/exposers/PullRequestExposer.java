@@ -30,14 +30,19 @@ public class PullRequestExposer implements PullRequestIndexer {
     private void expose(CleanPullRequest pullRequest) {
         final var fromPullRequest = Stream.of(pullRequest).map(GithubPullRequest::of).map(Contribution::of);
         final var fromCommits = pullRequest.getCommits().stream().map(commit -> GithubCommit.of(commit, pullRequest)).map(Contribution::of);
-        final var fromCodeReviews = pullRequest.getReviews().stream()
+        final var fromCodeReviewsPending = pullRequest.getReviews().stream()
                 .map(review -> GithubCodeReview.of(review, pullRequest))
+                .filter(codeReview -> !codeReview.getState().isCompleted())
                 .map(Contribution::of);
-        final var fromRequestReviewers = pullRequest.getRequestedReviewers().stream()
+        final var fromCodeReviewsCompleted = pullRequest.getReviews().stream()
+                .map(review -> GithubCodeReview.of(review, pullRequest))
+                .filter(codeReview -> codeReview.getState().isCompleted())
+                .map(Contribution::of);
+        final var fromRequestedReviewers = pullRequest.getRequestedReviewers().stream()
                 .map(reviewer -> GithubCodeReview.of(reviewer, pullRequest))
                 .map(Contribution::of);
 
-        final var contributions = Stream.of(fromPullRequest, fromCommits, fromCodeReviews, fromRequestReviewers)
+        final var contributions = Stream.of(fromPullRequest, fromCommits, fromCodeReviewsPending, fromCodeReviewsCompleted, fromRequestedReviewers)
                 .flatMap(s -> s).toArray(Contribution[]::new);
 
         contributionStorage.saveAll(contributions);

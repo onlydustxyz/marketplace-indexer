@@ -120,6 +120,7 @@ public class IndexingServiceTest {
                 onlyDust, // as PR repo owner
                 anthony, // as PR author
                 pierre,  // as code reviewer
+                pierre,  // as code reviewer
                 olivier, // as requested reviewer
                 anthony, // as committer
                 onlyDust,// as issue repo owner
@@ -133,10 +134,11 @@ public class IndexingServiceTest {
                         onlyDust.getId(), List.of())
         );
 
-        assertThat(contributionRepository.contributions()).hasSize(5);
-        assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.PULL_REQUEST))).hasSize(2);
+        assertThat(contributionRepository.contributions().stream()).hasSize(4);
+        assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.PULL_REQUEST))).hasSize(1);
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.CODE_REVIEW))).hasSize(2);
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.ISSUE))).hasSize(1);
+        assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.CODE_REVIEW) && c.getStatus().equals(Contribution.Status.COMPLETED))).hasSize(1);
 
         verify(pullRequestStorage, times(1)).saveAll(any());
     }
@@ -183,6 +185,7 @@ public class IndexingServiceTest {
                 onlyDust,// as repo owner
                 onlyDust,// as PR repo owner
                 anthony, // as PR author
+                pierre,  // as code reviewer
                 pierre,  // as code reviewer
                 olivier, // as requested reviewer
                 anthony, // as committer
