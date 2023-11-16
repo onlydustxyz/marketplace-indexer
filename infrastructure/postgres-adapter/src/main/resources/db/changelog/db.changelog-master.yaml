@@ -33,3 +33,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000015_add_more_data_in_contributions.sql
   - include:
       file: db/changelog/changelogs/00000016_add_contributor_data_in_contributions.sql
+  - include:
+      file: db/changelog/changelogs/00000017_fix_projections.sql
