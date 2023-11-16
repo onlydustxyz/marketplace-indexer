@@ -95,4 +95,9 @@ public class PostgresConfiguration {
     public PostgresRepoStorage postgresRepoStorage(final GithubRepoEntityRepository githubRepoEntityRepository) {
         return new PostgresRepoStorage(githubRepoEntityRepository);
     }
+
+    @Bean
+    public PostgresPullRequestStorage postgresPullRequestStorage(final com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubPullRequestRepository githubPullRequestRepository) {
+        return new PostgresPullRequestStorage(githubPullRequestRepository);
+    }
 }

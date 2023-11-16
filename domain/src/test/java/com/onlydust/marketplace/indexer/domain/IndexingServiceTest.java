@@ -4,11 +4,12 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.out.exposition.PullRequestStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.exposers.IssueContributionExposer;
-import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestContributionExposer;
+import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestExposer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
 import com.onlydust.marketplace.indexer.domain.stubs.ContributionStorageStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
@@ -22,8 +23,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class IndexingServiceTest {
     final RawAccount onlyDust = RawStorageWriterStub.load("/github/users/onlyDust.json", RawAccount.class);
@@ -43,6 +43,7 @@ public class IndexingServiceTest {
     final RawLanguages marketplaceFrontendLanguages = RawStorageWriterStub.load("/github/repos/marketplace-frontend/languages.json", RawLanguages.class);
     final RawRepo marketplaceBackend = RawStorageWriterStub.load("/github/repos/marketplace-backend.json", RawRepo.class);
     final RawLanguages marketplaceBackendLanguages = RawStorageWriterStub.load("/github/repos/marketplace-backend/languages.json", RawLanguages.class);
+    final PullRequestStorage pullRequestStorage = mock(PullRequestStorage.class);
     final RawStorageWriterStub rawStorageReaderStub = new RawStorageWriterStub();
     final RawStorageWriterStub rawStorageRepository = new RawStorageWriterStub();
     final ContributionStorageStub contributionRepository = new ContributionStorageStub();
@@ -53,9 +54,9 @@ public class IndexingServiceTest {
             new IssueIndexingService(rawStorageReader, userIndexingService, repoIndexingService),
             contributionRepository
     );
-    final PullRequestIndexer pullRequestIndexer = new PullRequestContributionExposer(
+    final PullRequestIndexer pullRequestIndexer = new PullRequestExposer(
             new PullRequestIndexingService(rawStorageReader, userIndexingService, repoIndexingService, issueIndexer),
-            contributionRepository
+            contributionRepository, pullRequestStorage
     );
     final FullRepoIndexingService fullRepoIndexingService = new FullRepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer, repoIndexingService);
 
@@ -134,6 +135,8 @@ public class IndexingServiceTest {
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.PULL_REQUEST))).hasSize(2);
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.CODE_REVIEW))).hasSize(2);
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.ISSUE))).hasSize(1);
+
+        verify(pullRequestStorage, times(1)).saveAll(any());
     }
 
     @Test
