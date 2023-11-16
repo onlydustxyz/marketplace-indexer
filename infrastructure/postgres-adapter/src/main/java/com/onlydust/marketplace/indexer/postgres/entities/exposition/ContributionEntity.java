@@ -1,9 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
-import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
-import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCodeReview;
-import com.onlydust.marketplace.indexer.domain.models.exposition.GithubIssue;
-import com.onlydust.marketplace.indexer.domain.models.exposition.GithubPullRequest;
+import com.onlydust.marketplace.indexer.domain.models.exposition.*;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -52,6 +49,13 @@ public class ContributionEntity {
     String githubHtmlUrl;
     String githubBody;
     Integer githubCommentsCount;
+    String repoOwnerLogin;
+    String repoName;
+    String repoHtmlUrl;
+    Long githubAuthorId;
+    String githubAuthorLogin;
+    String githubAuthorHtmlUrl;
+    String githubAuthorAvatarUrl;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -64,6 +68,14 @@ public class ContributionEntity {
     Instant techUpdatedAt;
 
     public static ContributionEntity of(Contribution contribution) {
+        final var repo = Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getRepo)
+                .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getRepo))
+                .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getPullRequest).map(GithubPullRequest::getRepo));
+
+        final var author = Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getAuthor)
+                .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getAuthor))
+                .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getAuthor));
+
         return ContributionEntity.builder()
                 .id(contribution.getId())
                 .repo(GithubRepoEntity.of(contribution.getRepo()))
@@ -100,6 +112,13 @@ public class ContributionEntity {
                         .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getCommentsCount))
                         .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getPullRequest).map(GithubPullRequest::getCommentsCount))
                         .orElse(null))
+                .repoOwnerLogin(repo.map(GithubRepo::getOwner).map(GithubAccount::getLogin).orElse(null))
+                .repoName(repo.map(GithubRepo::getName).orElse(null))
+                .repoHtmlUrl(repo.map(GithubRepo::getHtmlUrl).orElse(null))
+                .githubAuthorId(author.map(GithubAccount::getId).orElse(null))
+                .githubAuthorLogin(author.map(GithubAccount::getLogin).orElse(null))
+                .githubAuthorHtmlUrl(author.map(GithubAccount::getHtmlUrl).orElse(null))
+                .githubAuthorAvatarUrl(author.map(GithubAccount::getAvatarUrl).orElse(null))
                 .build();
     }
 

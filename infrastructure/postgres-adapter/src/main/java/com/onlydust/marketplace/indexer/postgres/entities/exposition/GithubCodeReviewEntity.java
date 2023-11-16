@@ -42,6 +42,11 @@ public class GithubCodeReviewEntity {
     Integer comments_count;
     String repo_owner_login;
     String repo_name;
+    Long repoId;
+    String repoHtmlUrl;
+    String authorLogin;
+    String authorHtmlUrl;
+    String authorAvatarUrl;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -68,6 +73,11 @@ public class GithubCodeReviewEntity {
                 .comments_count(codeReview.getPullRequest().getCommentsCount())
                 .repo_owner_login(codeReview.getPullRequest().getRepo().getOwner().getLogin())
                 .repo_name(codeReview.getPullRequest().getRepo().getName())
+                .repoId(codeReview.getPullRequest().getRepo().getId())
+                .repoHtmlUrl(codeReview.getPullRequest().getRepo().getHtmlUrl())
+                .authorLogin(codeReview.getAuthor().getLogin())
+                .authorHtmlUrl(codeReview.getAuthor().getHtmlUrl())
+                .authorAvatarUrl(codeReview.getAuthor().getAvatarUrl())
                 .build();
     }
 
