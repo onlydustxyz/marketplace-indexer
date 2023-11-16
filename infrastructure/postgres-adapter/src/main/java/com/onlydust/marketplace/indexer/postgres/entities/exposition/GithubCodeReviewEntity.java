@@ -35,6 +35,13 @@ public class GithubCodeReviewEntity {
     State state;
     Date requestedAt;
     Date submittedAt;
+    Long number;
+    String title;
+    String html_url;
+    String body;
+    Integer comments_count;
+    String repo_owner_login;
+    String repo_name;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -54,6 +61,13 @@ public class GithubCodeReviewEntity {
                 .state(State.of(codeReview.getState()))
                 .requestedAt(codeReview.getRequestedAt())
                 .submittedAt(codeReview.getSubmittedAt())
+                .number(codeReview.getPullRequest().getNumber())
+                .title(codeReview.getPullRequest().getTitle())
+                .html_url(codeReview.getPullRequest().getHtmlUrl())
+                .body(codeReview.getPullRequest().getBody())
+                .comments_count(codeReview.getPullRequest().getCommentsCount())
+                .repo_owner_login(codeReview.getPullRequest().getRepo().getOwner().getLogin())
+                .repo_name(codeReview.getPullRequest().getRepo().getName())
                 .build();
     }
 

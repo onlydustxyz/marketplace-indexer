@@ -1,6 +1,9 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
+import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCodeReview;
+import com.onlydust.marketplace.indexer.domain.models.exposition.GithubIssue;
+import com.onlydust.marketplace.indexer.domain.models.exposition.GithubPullRequest;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,6 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Optional;
 
 @Entity
 @Data
@@ -72,12 +76,30 @@ public class ContributionEntity {
                 .createdAt(contribution.getCreatedAt())
                 .completedAt(contribution.getCompletedAt())
                 .draft(contribution.getDraft())
-                .githubNumber(contribution.getGithubNumber())
-                .githubStatus(contribution.getGithubStatus())
-                .githubTitle(contribution.getGithubTitle())
-                .githubHtmlUrl(contribution.getGithubHtmlUrl())
-                .githubBody(contribution.getGithubBody())
-                .githubCommentsCount(contribution.getGithubCommentsCount())
+                .githubNumber(Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getNumber)
+                        .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getNumber))
+                        .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getPullRequest).map(GithubPullRequest::getNumber))
+                        .orElse(null))
+                .githubStatus(Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getStatus).map(Enum::toString)
+                        .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getStatus).map(Enum::toString))
+                        .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getState).map(Enum::toString))
+                        .orElse(null))
+                .githubTitle(Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getTitle)
+                        .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getTitle))
+                        .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getPullRequest).map(GithubPullRequest::getTitle))
+                        .orElse(null))
+                .githubHtmlUrl(Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getHtmlUrl)
+                        .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getHtmlUrl))
+                        .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getPullRequest).map(GithubPullRequest::getHtmlUrl))
+                        .orElse(null))
+                .githubBody(Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getBody)
+                        .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getBody))
+                        .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getPullRequest).map(GithubPullRequest::getBody))
+                        .orElse(null))
+                .githubCommentsCount(Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getCommentsCount)
+                        .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getCommentsCount))
+                        .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getPullRequest).map(GithubPullRequest::getCommentsCount))
+                        .orElse(null))
                 .build();
     }
 

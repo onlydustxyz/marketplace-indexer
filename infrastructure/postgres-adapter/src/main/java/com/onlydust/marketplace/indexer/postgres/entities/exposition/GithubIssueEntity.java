@@ -39,6 +39,8 @@ public class GithubIssueEntity {
     String htmlUrl;
     String body;
     Integer commentsCount;
+    String repoOwnerLogin;
+    String repoName;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "github_issues_assignees",
@@ -70,6 +72,8 @@ public class GithubIssueEntity {
                 .htmlUrl(issue.getHtmlUrl())
                 .body(issue.getBody())
                 .commentsCount(issue.getCommentsCount())
+                .repoOwnerLogin(issue.getRepo().getOwner().getLogin())
+                .repoName(issue.getRepo().getName())
                 .assignees(issue.getAssignees().stream().map(GithubAccountEntity::of).toList())
                 .build();
     }

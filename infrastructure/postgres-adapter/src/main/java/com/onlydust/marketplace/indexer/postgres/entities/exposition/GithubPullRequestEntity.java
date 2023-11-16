@@ -42,6 +42,8 @@ public class GithubPullRequestEntity {
     String htmlUrl;
     Integer commentsCount;
     Boolean draft;
+    String repoOwnerLogin;
+    String repoName;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "github_pull_requests_closing_issues",
@@ -75,6 +77,8 @@ public class GithubPullRequestEntity {
                 .htmlUrl(pullRequest.getHtmlUrl())
                 .commentsCount(pullRequest.getCommentsCount())
                 .draft(pullRequest.getDraft())
+                .repoOwnerLogin(pullRequest.getRepo().getOwner().getLogin())
+                .repoName(pullRequest.getRepo().getName())
                 .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssueEntity::of).collect(Collectors.toUnmodifiableSet()))
                 .build();
     }
