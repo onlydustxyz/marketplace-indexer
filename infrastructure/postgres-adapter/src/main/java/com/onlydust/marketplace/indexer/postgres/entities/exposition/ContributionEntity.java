@@ -56,6 +56,9 @@ public class ContributionEntity {
     String githubAuthorLogin;
     String githubAuthorHtmlUrl;
     String githubAuthorAvatarUrl;
+    String contributorLogin;
+    String contributorHtmlUrl;
+    String contributorAvatarUrl;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -119,6 +122,9 @@ public class ContributionEntity {
                 .githubAuthorLogin(author.map(GithubAccount::getLogin).orElse(null))
                 .githubAuthorHtmlUrl(author.map(GithubAccount::getHtmlUrl).orElse(null))
                 .githubAuthorAvatarUrl(author.map(GithubAccount::getAvatarUrl).orElse(null))
+                .contributorLogin(contribution.getContributor().getLogin())
+                .contributorHtmlUrl(contribution.getContributor().getHtmlUrl())
+                .contributorAvatarUrl(contribution.getContributor().getAvatarUrl())
                 .build();
     }
 

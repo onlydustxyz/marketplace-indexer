@@ -31,3 +31,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000014_add_repo_info_in_sub_tables.sql
   - include:
       file: db/changelog/changelogs/00000015_add_more_data_in_contributions.sql
+  - include:
+      file: db/changelog/changelogs/00000016_add_contributor_data_in_contributions.sql
