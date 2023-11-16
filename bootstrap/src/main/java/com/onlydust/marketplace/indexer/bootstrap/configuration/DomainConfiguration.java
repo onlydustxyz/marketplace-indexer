@@ -5,18 +5,15 @@ import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEvent
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
-import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
-import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
-import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoContributorsStorage;
-import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
+import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorageComposite;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.DiffRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
-import com.onlydust.marketplace.indexer.domain.services.exposers.IssueContributionExposer;
-import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestContributionExposer;
+import com.onlydust.marketplace.indexer.domain.services.exposers.IssueExposer;
+import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.RepoContributorsExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.RepoExposer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
@@ -135,13 +132,14 @@ public class DomainConfiguration {
                                            final UserIndexer cachedUserIndexer,
                                            final RepoIndexer cachedRepoIndexer,
                                            final ContributionStorage contributionStorage,
+                                           final IssueStorage issueStorage,
                                            final MeterRegistry registry) {
-        return new IssueContributionExposer(
+        return new IssueExposer(
                 new MonitoredIssueIndexer(
                         new IssueIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer),
                         registry
                 ),
-                contributionStorage
+                contributionStorage, issueStorage
         );
     }
 
@@ -150,13 +148,14 @@ public class DomainConfiguration {
                                          final UserIndexer cachedUserIndexer,
                                          final RepoIndexer cachedRepoIndexer,
                                          final ContributionStorage contributionStorage,
+                                         final IssueStorage issueStorage,
                                          final MeterRegistry registry) {
-        return new IssueContributionExposer(
+        return new IssueExposer(
                 new MonitoredIssueIndexer(
                         new IssueIndexingService(liveRawStorageReader, cachedUserIndexer, cachedRepoIndexer),
                         registry
                 ),
-                contributionStorage
+                contributionStorage, issueStorage
         );
     }
 
@@ -167,15 +166,16 @@ public class DomainConfiguration {
             final RepoIndexer cachedRepoIndexer,
             final IssueIndexer cachedIssueIndexer,
             final ContributionStorage contributionStorage,
+            final PullRequestStorage pullRequestStorage,
             final MeterRegistry registry) {
-        return new PullRequestContributionExposer(
+        return new PullRequestExposer(
                 new MonitoredPullRequestIndexer(
                         new PullRequestIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer),
                         registry),
-                contributionStorage
+                contributionStorage,
+                pullRequestStorage
         );
     }
-
 
     @Bean
     public PullRequestIndexer livePullRequestIndexer(
@@ -184,12 +184,14 @@ public class DomainConfiguration {
             final RepoIndexer cachedRepoIndexer,
             final IssueIndexer cachedIssueIndexer,
             final ContributionStorage contributionStorage,
+            final PullRequestStorage pullRequestStorage,
             final MeterRegistry registry) {
-        return new PullRequestContributionExposer(
+        return new PullRequestExposer(
                 new MonitoredPullRequestIndexer(
                         new PullRequestIndexingService(liveRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer),
                         registry),
-                contributionStorage
+                contributionStorage,
+                pullRequestStorage
         );
     }
 

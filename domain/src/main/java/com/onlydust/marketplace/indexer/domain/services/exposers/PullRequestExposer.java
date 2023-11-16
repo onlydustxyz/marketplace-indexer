@@ -7,15 +7,17 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCommit;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubPullRequest;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
+import com.onlydust.marketplace.indexer.domain.ports.out.exposition.PullRequestStorage;
 import lombok.AllArgsConstructor;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
-public class PullRequestContributionExposer implements PullRequestIndexer {
+public class PullRequestExposer implements PullRequestIndexer {
     PullRequestIndexer indexer;
-    ContributionStorage expositionRepository;
+    ContributionStorage contributionStorage;
+    PullRequestStorage pullRequestStorage;
 
     @Override
     public Optional<CleanPullRequest> indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber) {
@@ -38,6 +40,7 @@ public class PullRequestContributionExposer implements PullRequestIndexer {
         final var contributions = Stream.of(fromPullRequest, fromCommits, fromCodeReviews, fromRequestReviewers)
                 .flatMap(s -> s).toArray(Contribution[]::new);
 
-        expositionRepository.saveAll(contributions);
+        contributionStorage.saveAll(contributions);
+        pullRequestStorage.saveAll(GithubPullRequest.of(pullRequest));
     }
 }
