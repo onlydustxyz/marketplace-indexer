@@ -93,11 +93,12 @@ public class GithubPullRequestEntity {
     }
 
     public enum Status {
-        OPEN, CLOSED, MERGED;
+        OPEN, CLOSED, MERGED, DRAFT;
 
         public static Status of(GithubPullRequest.Status status) {
             return switch (status) {
                 case OPEN -> OPEN;
+                case DRAFT -> DRAFT;
                 case CLOSED -> CLOSED;
                 case MERGED -> MERGED;
             };

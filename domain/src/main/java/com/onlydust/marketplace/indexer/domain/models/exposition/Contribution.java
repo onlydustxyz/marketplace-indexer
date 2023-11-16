@@ -20,7 +20,6 @@ public class Contribution {
     GithubCodeReview codeReview;
     Date createdAt;
     Date completedAt;
-    Boolean draft;
 
     public static Contribution of(GithubPullRequest pullRequest) {
         return Contribution.builder()
@@ -31,7 +30,6 @@ public class Contribution {
                 .pullRequest(pullRequest)
                 .createdAt(pullRequest.getCreatedAt())
                 .completedAt(pullRequest.getClosedAt())
-                .draft(pullRequest.getDraft())
                 .build();
     }
 
@@ -92,7 +90,7 @@ public class Contribution {
 
         public static Status of(GithubPullRequest.Status status) {
             return switch (status) {
-                case OPEN -> Status.IN_PROGRESS;
+                case OPEN, DRAFT -> Status.IN_PROGRESS;
                 case CLOSED -> Status.CANCELLED;
                 case MERGED -> Status.COMPLETED;
             };
