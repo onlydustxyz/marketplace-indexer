@@ -27,3 +27,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000012_add_draft_column.sql
   - include:
       file: db/changelog/changelogs/00000013_add_contribution_github_data.sql
+  - include:
+      file: db/changelog/changelogs/00000014_add_repo_info_in_sub_tables.sql
