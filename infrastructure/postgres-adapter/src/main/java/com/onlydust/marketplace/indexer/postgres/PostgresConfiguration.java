@@ -100,4 +100,9 @@ public class PostgresConfiguration {
     public PostgresPullRequestStorage postgresPullRequestStorage(final com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubPullRequestRepository githubPullRequestRepository) {
         return new PostgresPullRequestStorage(githubPullRequestRepository);
     }
+
+    @Bean
+    public PostgresIssueStorage postgresIssueStorage(final com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository githubIssueRepository) {
+        return new PostgresIssueStorage(githubIssueRepository);
+    }
 }

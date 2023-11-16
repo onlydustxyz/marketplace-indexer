@@ -12,7 +12,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorag
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.DiffRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
-import com.onlydust.marketplace.indexer.domain.services.exposers.IssueContributionExposer;
+import com.onlydust.marketplace.indexer.domain.services.exposers.IssueExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.RepoContributorsExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.RepoExposer;
@@ -132,13 +132,14 @@ public class DomainConfiguration {
                                            final UserIndexer cachedUserIndexer,
                                            final RepoIndexer cachedRepoIndexer,
                                            final ContributionStorage contributionStorage,
+                                           final IssueStorage issueStorage,
                                            final MeterRegistry registry) {
-        return new IssueContributionExposer(
+        return new IssueExposer(
                 new MonitoredIssueIndexer(
                         new IssueIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer),
                         registry
                 ),
-                contributionStorage
+                contributionStorage, issueStorage
         );
     }
 
@@ -147,13 +148,14 @@ public class DomainConfiguration {
                                          final UserIndexer cachedUserIndexer,
                                          final RepoIndexer cachedRepoIndexer,
                                          final ContributionStorage contributionStorage,
+                                         final IssueStorage issueStorage,
                                          final MeterRegistry registry) {
-        return new IssueContributionExposer(
+        return new IssueExposer(
                 new MonitoredIssueIndexer(
                         new IssueIndexingService(liveRawStorageReader, cachedUserIndexer, cachedRepoIndexer),
                         registry
                 ),
-                contributionStorage
+                contributionStorage, issueStorage
         );
     }
 
