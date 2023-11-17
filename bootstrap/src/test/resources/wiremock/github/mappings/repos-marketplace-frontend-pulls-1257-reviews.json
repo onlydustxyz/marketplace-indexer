@@ -1,6 +1,6 @@
 {
   "request": {
-    "url": "/repositories/498695724/pulls/1257/reviews",
+    "url": "/repositories/498695724/pulls/1257/reviews?per_page=100",
     "method": "GET",
     "headers": {
       "Authorization": {
