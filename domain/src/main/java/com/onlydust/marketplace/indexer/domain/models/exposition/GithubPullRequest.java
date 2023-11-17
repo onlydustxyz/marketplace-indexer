@@ -49,12 +49,13 @@ public class GithubPullRequest {
     public enum Status {
         OPEN,
         MERGED,
-        CLOSED;
+        CLOSED,
+        DRAFT;
 
         public static Status of(CleanPullRequest pullRequest) {
             switch (pullRequest.getState()) {
                 case "open":
-                    return Status.OPEN;
+                    return pullRequest.getDraft() ? Status.DRAFT : Status.OPEN;
                 case "closed":
                     return pullRequest.getMerged() ? Status.MERGED : Status.CLOSED;
             }

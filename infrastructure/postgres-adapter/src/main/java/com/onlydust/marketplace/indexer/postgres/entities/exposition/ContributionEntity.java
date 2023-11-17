@@ -42,7 +42,6 @@ public class ContributionEntity {
     GithubCodeReviewEntity codeReview;
     Date createdAt;
     Date completedAt;
-    Boolean draft;
     Long githubNumber;
     String githubStatus;
     String githubTitle;
@@ -90,7 +89,6 @@ public class ContributionEntity {
                 .codeReview(contribution.getCodeReview() != null ? GithubCodeReviewEntity.of(contribution.getCodeReview()) : null)
                 .createdAt(contribution.getCreatedAt())
                 .completedAt(contribution.getCompletedAt())
-                .draft(contribution.getDraft())
                 .githubNumber(Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getNumber)
                         .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getNumber))
                         .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getPullRequest).map(GithubPullRequest::getNumber))

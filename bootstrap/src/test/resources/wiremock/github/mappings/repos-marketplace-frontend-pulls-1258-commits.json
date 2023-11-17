@@ -1,6 +1,6 @@
 {
   "request": {
-    "url": "/repositories/498695724/pulls/1258/commits",
+    "url": "/repositories/498695724/pulls/1258/commits?per_page=100",
     "method": "GET",
     "headers": {
       "Authorization": {

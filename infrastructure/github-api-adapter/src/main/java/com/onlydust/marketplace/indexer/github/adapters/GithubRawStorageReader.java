@@ -66,13 +66,13 @@ public class GithubRawStorageReader implements RawStorageReader {
 
     @Override
     public Optional<List<RawCodeReview>> pullRequestReviews(Long repoId, Long pullRequestId, Long prNumber) {
-        final var page = new GithubPage<>(client, "/repositories/" + repoId + "/pulls/" + prNumber + "/reviews", RawCodeReview[].class);
+        final var page = new GithubPage<>(client, "/repositories/" + repoId + "/pulls/" + prNumber + "/reviews?per_page=100", RawCodeReview[].class);
         return Optional.of(StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false).toList());
     }
 
     @Override
     public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long prNumber) {
-        final var page = new GithubPage<>(client, "/repositories/" + repoId + "/pulls/" + prNumber + "/commits", RawCommit[].class);
+        final var page = new GithubPage<>(client, "/repositories/" + repoId + "/pulls/" + prNumber + "/commits?per_page=100", RawCommit[].class);
         return Optional.of(StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false).toList());
     }
 

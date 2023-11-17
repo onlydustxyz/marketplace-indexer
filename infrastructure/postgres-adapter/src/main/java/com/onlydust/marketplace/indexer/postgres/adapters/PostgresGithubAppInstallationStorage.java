@@ -24,7 +24,8 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
 
     @Override
     public void addRepos(Long installationId, List<GithubRepo> repos) {
-        final var installation = githubAppInstallationEntityRepository.findById(installationId).orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
+        final var installation = githubAppInstallationEntityRepository.findById(installationId)
+                .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
         installation.getRepos().addAll(repos.stream().map(GithubRepoEntity::of).toList());
         githubAppInstallationEntityRepository.save(installation);
     }
@@ -36,21 +37,18 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
 
     @Override
     public void removeRepos(Long installationId, List<Long> repoIds) {
-        githubAppInstallationEntityRepository.findById(installationId).ifPresent(
-                installation -> {
-                    installation.getRepos().removeIf(repo -> repoIds.contains(repo.getId()));
-                    githubAppInstallationEntityRepository.save(installation);
-                }
-        );
+        final var installation = githubAppInstallationEntityRepository.findById(installationId)
+                .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
+        installation.getRepos().removeIf(repo -> repoIds.contains(repo.getId()));
+        githubAppInstallationEntityRepository.save(installation);
     }
 
     @Override
     public void setSuspendedAt(Long installationId, Instant suspendedAt) {
-        githubAppInstallationEntityRepository.findById(installationId).ifPresent(
-                installation -> {
-                    installation.setSuspendedAt(suspendedAt);
-                    githubAppInstallationEntityRepository.save(installation);
-                }
-        );
+        final var installation = githubAppInstallationEntityRepository.findById(installationId)
+                .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
+        githubAppInstallationEntityRepository.save(installation.toBuilder()
+                .suspendedAt(suspendedAt)
+                .build());
     }
 }
