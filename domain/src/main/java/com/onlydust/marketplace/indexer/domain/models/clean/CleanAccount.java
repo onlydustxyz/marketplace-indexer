@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.models.clean;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawShortAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,6 +30,16 @@ public class CleanAccount {
                 .htmlUrl(account.getHtmlUrl())
                 .avatarUrl(account.getAvatarUrl())
                 .name(account.getName())
+                .build();
+    }
+
+    public static CleanAccount of(RawShortAccount account) {
+        return CleanAccount.builder()
+                .id(account.getId())
+                .login(account.getLogin())
+                .type(account.getType())
+                .htmlUrl(account.getHtmlUrl())
+                .avatarUrl(account.getAvatarUrl())
                 .build();
     }
 

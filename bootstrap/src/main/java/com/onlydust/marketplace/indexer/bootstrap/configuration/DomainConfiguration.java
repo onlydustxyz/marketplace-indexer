@@ -101,14 +101,10 @@ public class DomainConfiguration {
     public InstallationEventHandler eventProcessorService(final PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository,
                                                           final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
                                                           final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
-                                                          final UserIndexer cachedUserIndexer,
-                                                          final RepoIndexer cachedRepoIndexer,
                                                           final GithubAppInstallationStorage githubAppInstallationStorage) {
         return new InstallationEventProcessorService(
                 postgresRawInstallationEventStorageRepository,
                 new RepoIndexingJobStorageComposite(repoIndexingJobRepository, oldRepoIndexesEntityRepository),
-                cachedUserIndexer,
-                cachedRepoIndexer,
                 githubAppInstallationStorage);
     }
 

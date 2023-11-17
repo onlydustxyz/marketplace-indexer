@@ -4,12 +4,8 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
-import com.onlydust.marketplace.indexer.domain.services.indexers.RepoIndexingService;
-import com.onlydust.marketplace.indexer.domain.services.indexers.UserIndexingService;
 import com.onlydust.marketplace.indexer.domain.stubs.InstallationStorageStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawInstallationEventStorageStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
@@ -26,12 +22,10 @@ public class InstallationEventTest {
     final RepoIndexingJobStorage repoIndexingJobRepository = mock(RepoIndexingJobStorage.class);
     final InstallationStorageStub installationEventRepositoryStub = new InstallationStorageStub();
     private final RawInstallationEventStorageStub rawInstallationEventRepositoryStub = new RawInstallationEventStorageStub();
+    final InstallationEventHandler eventHandler = new InstallationEventProcessorService(
+            rawInstallationEventRepositoryStub, repoIndexingJobRepository, installationEventRepositoryStub);
     private final RawInstallationEvent newInstallationEvent = RawStorageWriterStub.load("/github/events/new_installation.json", RawInstallationEvent.class);
     private final RawStorageWriterStub rawStorageRepositoryStub = new RawStorageWriterStub();
-    final UserIndexer userIndexer = new UserIndexingService(rawStorageRepositoryStub);
-    final RepoIndexer repoIndexer = new RepoIndexingService(rawStorageRepositoryStub, userIndexer);
-    final InstallationEventHandler eventHandler = new InstallationEventProcessorService(
-            rawInstallationEventRepositoryStub, repoIndexingJobRepository, userIndexer, repoIndexer, installationEventRepositoryStub);
 
     @BeforeEach
     void setup() {

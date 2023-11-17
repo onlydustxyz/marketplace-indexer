@@ -84,7 +84,6 @@ public class GithubWebhookIT extends IntegrationTest {
                 .type(GithubAccountEntity.Type.ORGANIZATION)
                 .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
                 .htmlUrl("https://github.com/onlydustxyz")
-                .name("OnlyDust")
                 .build();
 
         final var installations = githubAppInstallationEntityRepository.findAll();
@@ -128,7 +127,6 @@ public class GithubWebhookIT extends IntegrationTest {
                 .type(GithubAccountEntity.Type.ORGANIZATION)
                 .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
                 .htmlUrl("https://github.com/onlydustxyz")
-                .name("OnlyDust")
                 .build();
 
         final var installations = githubAppInstallationEntityRepository.findAll();
@@ -305,7 +303,6 @@ public class GithubWebhookIT extends IntegrationTest {
                 .type(GithubAccountEntity.Type.ORGANIZATION)
                 .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
                 .htmlUrl("https://github.com/onlydustxyz")
-                .name("OnlyDust")
                 .build());
 
         assertThat(repoRepository.findAll()).hasSize(2);
