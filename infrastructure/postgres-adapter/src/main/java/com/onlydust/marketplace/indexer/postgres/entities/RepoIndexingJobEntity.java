@@ -2,11 +2,10 @@ package com.onlydust.marketplace.indexer.postgres.entities;
 
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.*;
 import java.time.Instant;
 
@@ -18,6 +17,7 @@ import java.time.Instant;
 @NoArgsConstructor(force = true)
 @Table(name = "repo_indexing_jobs", schema = "indexer")
 @TypeDef(name = "job_status", typeClass = PostgreSQLEnumType.class)
+@DynamicUpdate
 public class RepoIndexingJobEntity {
     @Id
     Long repoId;

@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
+import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
@@ -48,28 +49,31 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
 
     @Override
     public void startJob(Long repoId) {
-        repository.findById(repoId).ifPresent(job ->
-                repository.save(job.toBuilder()
-                        .status(JobStatus.RUNNING)
-                        .startedAt(Instant.now())
-                        .build()));
+        final var job = repository.findById(repoId)
+                .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
+        repository.save(job.toBuilder()
+                .status(JobStatus.RUNNING)
+                .startedAt(Instant.now())
+                .build());
     }
 
     @Override
     public void failJob(Long repoId) {
-        repository.findById(repoId).ifPresent(job ->
-                repository.save(job.toBuilder()
-                        .status(JobStatus.FAILED)
-                        .finishedAt(Instant.now())
-                        .build()));
+        final var job = repository.findById(repoId)
+                .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
+        repository.save(job.toBuilder()
+                .status(JobStatus.FAILED)
+                .finishedAt(Instant.now())
+                .build());
     }
 
     @Override
     public void endJob(Long repoId) {
-        repository.findById(repoId).ifPresent(job ->
-                repository.save(job.toBuilder()
-                        .status(JobStatus.SUCCESS)
-                        .finishedAt(Instant.now())
-                        .build()));
+        final var job = repository.findById(repoId)
+                .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
+        repository.save(job.toBuilder()
+                .status(JobStatus.SUCCESS)
+                .finishedAt(Instant.now())
+                .build());
     }
 }
