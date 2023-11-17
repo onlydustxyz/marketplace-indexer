@@ -34,6 +34,7 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
     @Override
     public void delete(Long installationId) {
         githubAppInstallationEntityRepository.deleteById(installationId);
+        githubAppInstallationEntityRepository.flush();
     }
 
     @Override
