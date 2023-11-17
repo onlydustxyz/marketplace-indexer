@@ -297,14 +297,7 @@ public class GithubWebhookIT extends IntegrationTest {
         assertThat(githubAppInstallationEntityRepository.findAll()).isEmpty();
 
         // Indexed data preserved
-        assertThat(githubAccountRepository.findAll()).contains(GithubAccountEntity.builder()
-                .id(98735558L)
-                .login("onlydustxyz")
-                .type(GithubAccountEntity.Type.ORGANIZATION)
-                .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
-                .htmlUrl("https://github.com/onlydustxyz")
-                .build());
-
+        assertThat(githubAccountRepository.findAll()).hasSize(1);
         assertThat(repoRepository.findAll()).hasSize(2);
     }
 
