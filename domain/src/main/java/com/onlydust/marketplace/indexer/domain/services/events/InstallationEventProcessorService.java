@@ -56,8 +56,12 @@ public class InstallationEventProcessorService implements InstallationEventHandl
     }
 
     private void onDeleted(InstallationDeletedEvent event) {
-        repoIndexingJobStorage.deleteInstallation(event.getInstallationId());
-        githubAppInstallationStorage.delete(event.getInstallationId());
+        onDeleted(event.getInstallationId());
+    }
+
+    private void onDeleted(Long installationId) {
+        repoIndexingJobStorage.deleteInstallation(installationId);
+        githubAppInstallationStorage.delete(installationId);
     }
 
     private void onCreated(InstallationCreatedEvent event) {
@@ -65,6 +69,9 @@ public class InstallationEventProcessorService implements InstallationEventHandl
         final var repos = event.getRepos().stream()
                 .map(repo -> GithubRepo.of(repo, owner))
                 .toList();
+
+        githubAppInstallationStorage.findInstallationIdByAccount(event.getAccount().getId())
+                .ifPresent(this::onDeleted);
 
         repoIndexingJobStorage.add(event.getInstallationId(), event.getRepos().stream()
                 .map(CleanRepo::getId)
