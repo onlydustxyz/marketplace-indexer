@@ -5,6 +5,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 public interface GithubAppInstallationStorage {
     void save(GithubAppInstallation installation);
@@ -16,4 +17,6 @@ public interface GithubAppInstallationStorage {
     void removeRepos(Long installationId, List<Long> repoIds);
 
     void setSuspendedAt(Long installationId, Instant suspendedAt);
+
+    Optional<Long> findInstallationIdByAccount(Long accountId);
 }

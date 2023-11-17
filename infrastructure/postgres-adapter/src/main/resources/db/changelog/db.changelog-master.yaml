@@ -37,3 +37,7 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000017_fix_projections.sql
   - include:
       file: db/changelog/changelogs/00000018_add_draft_pr_status.sql
+  - include:
+      file: db/changelog/changelogs/00000019_add_account_installation_unique_constraint.sql
+  - include:
+      file: db/changelog/changelogs/00000020_make_repo_data_optional.sql

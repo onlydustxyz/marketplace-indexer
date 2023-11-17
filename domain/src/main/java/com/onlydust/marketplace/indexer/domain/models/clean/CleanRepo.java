@@ -26,18 +26,24 @@ public class CleanRepo {
     Map<String, Long> languages = new HashMap<>();
     CleanRepo parent;
 
-    public static CleanRepo of(RawRepo repo, CleanAccount owner, RawLanguages languages, CleanRepo parent) {
+
+    public static CleanRepo of(RawRepo repo, CleanAccount owner) {
         return CleanRepo
                 .builder()
                 .id(repo.getId())
                 .name(repo.getName())
-                .htmlUrl(repo.getHtmlUrl())
+                .htmlUrl(repo.getHtmlUrl() == null ? owner.getHtmlUrl() + "/" + repo.getName() : repo.getHtmlUrl())
                 .updatedAt(repo.getUpdatedAt())
                 .description(repo.getDescription())
                 .owner(owner)
                 .starsCount(repo.getStargazersCount())
                 .forksCount(repo.getForksCount())
                 .hasIssues(repo.getHasIssues())
+                .build();
+    }
+
+    public static CleanRepo of(RawRepo repo, CleanAccount owner, RawLanguages languages, CleanRepo parent) {
+        return CleanRepo.of(repo, owner).toBuilder()
                 .parent(parent)
                 .languages(languages.get())
                 .build();

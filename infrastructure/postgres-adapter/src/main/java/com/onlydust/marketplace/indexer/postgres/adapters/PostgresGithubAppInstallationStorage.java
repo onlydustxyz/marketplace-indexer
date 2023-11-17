@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 public class PostgresGithubAppInstallationStorage implements GithubAppInstallationStorage {
@@ -33,6 +34,7 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
     @Override
     public void delete(Long installationId) {
         githubAppInstallationEntityRepository.deleteById(installationId);
+        githubAppInstallationEntityRepository.flush();
     }
 
     @Override
@@ -50,5 +52,11 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
         githubAppInstallationEntityRepository.save(installation.toBuilder()
                 .suspendedAt(suspendedAt)
                 .build());
+    }
+
+    @Override
+    public Optional<Long> findInstallationIdByAccount(Long accountId) {
+        return githubAppInstallationEntityRepository.findByAccountId(accountId)
+                .map(GithubAppInstallationEntity::getId);
     }
 }

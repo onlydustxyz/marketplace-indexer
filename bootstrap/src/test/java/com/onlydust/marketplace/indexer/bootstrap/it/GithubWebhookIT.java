@@ -30,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GithubWebhookIT extends IntegrationTest {
     final Long MARKETPLACE_FRONTEND_ID = 498695724L;
     final Long CAIRO_STREAMS_ID = 493795808L;
+    private final long INSTALLATION_ID = 42952633L;
     @Autowired
     OldRepoIndexesEntityRepository oldRepoIndexesEntityRepository;
     @Autowired
@@ -42,7 +43,7 @@ public class GithubWebhookIT extends IntegrationTest {
     @Test
     void should_reject_upon_invalid_signature() throws URISyntaxException, IOException {
         // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_created.json").toURI()));
+        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_created_new.json").toURI()));
 
         // When
         final var response = client.post().uri(getApiURI("/github-app/webhook"))
@@ -57,9 +58,10 @@ public class GithubWebhookIT extends IntegrationTest {
 
     @Test
     @Order(1)
-    void should_handle_installation_created_event() throws URISyntaxException, IOException, InterruptedException {
+    void should_handle_installation_created_event() throws URISyntaxException, IOException {
         // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_created.json").toURI()));
+        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_created_old.json").toURI()));
+        final long OLD_INSTALLATION_ID = 42952632L;
 
         // When
         final var response = post(event);
@@ -67,8 +69,14 @@ public class GithubWebhookIT extends IntegrationTest {
         // Then
         response.expectStatus().isOk();
 
-        assertThat(repoIndexingJobEntityRepository.findAll()).containsExactly(new RepoIndexingJobEntity(MARKETPLACE_FRONTEND_ID, 42952633L));
-        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactly(new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID));
+        assertThat(repoIndexingJobEntityRepository.findAll()).containsExactlyInAnyOrder(
+                new RepoIndexingJobEntity(CAIRO_STREAMS_ID, OLD_INSTALLATION_ID),
+                new RepoIndexingJobEntity(MARKETPLACE_FRONTEND_ID, OLD_INSTALLATION_ID)
+        );
+        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(
+                new OldRepoIndexesEntity(CAIRO_STREAMS_ID),
+                new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID)
+        );
 
         final var account = GithubAccountEntity.builder()
                 .id(98735558L)
@@ -76,26 +84,63 @@ public class GithubWebhookIT extends IntegrationTest {
                 .type(GithubAccountEntity.Type.ORGANIZATION)
                 .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
                 .htmlUrl("https://github.com/onlydustxyz")
-                .name("OnlyDust")
                 .build();
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
-        assertThat(installations.get(0).getId()).isEqualTo(42952633L);
+        assertThat(installations.get(0).getId()).isEqualTo(OLD_INSTALLATION_ID);
+        assertThat(installations.get(0).getAccount()).isEqualTo(account);
+
+        final var repos = installations.get(0).getRepos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
+        assertThat(repos).hasSize(2);
+        assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(repos.get(1).getId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
+    }
+
+    @Test
+    @Order(2)
+    void should_handle_duplicate_installation_created_event() throws URISyntaxException, IOException {
+        // Given
+        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_created_new.json").toURI()));
+
+        // When
+        final var response = post(event);
+
+        // Then
+        response.expectStatus().isOk();
+
+        final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
+        assertThat(jobs).hasSize(2);
+        assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(jobs.get(0).getInstallationId()).isEqualTo(null);
+        assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
+        assertThat(jobs.get(1).getInstallationId()).isEqualTo(INSTALLATION_ID);
+
+        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(
+                new OldRepoIndexesEntity(CAIRO_STREAMS_ID),
+                new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID)
+        );
+
+        final var account = GithubAccountEntity.builder()
+                .id(98735558L)
+                .login("onlydustxyz")
+                .type(GithubAccountEntity.Type.ORGANIZATION)
+                .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
+                .htmlUrl("https://github.com/onlydustxyz")
+                .build();
+
+        final var installations = githubAppInstallationEntityRepository.findAll();
+        assertThat(installations).hasSize(1);
+        assertThat(installations.get(0).getId()).isEqualTo(INSTALLATION_ID);
         assertThat(installations.get(0).getAccount()).isEqualTo(account);
 
         final var repos = installations.get(0).getRepos();
         assertThat(repos).hasSize(1);
         assertThat(repos.get(0).getId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
-
-        // Wait for the job to finish
-        waitForRepoJobToFinish(MARKETPLACE_FRONTEND_ID);
-
-        assertThat(repoRepository.findAll()).hasSize(1);
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     void should_handle_installation_added_events() throws URISyntaxException, IOException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_added.json").toURI()));
@@ -109,13 +154,13 @@ public class GithubWebhookIT extends IntegrationTest {
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
         assertThat(jobs).hasSize(2);
         assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
-        assertThat(jobs.get(0).getInstallationId()).isEqualTo(42952633L);
+        assertThat(jobs.get(0).getInstallationId()).isEqualTo(INSTALLATION_ID);
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
-        assertThat(jobs.get(1).getInstallationId()).isEqualTo(42952633L);
+        assertThat(jobs.get(1).getInstallationId()).isEqualTo(INSTALLATION_ID);
 
         assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(
-                new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID),
-                new OldRepoIndexesEntity(CAIRO_STREAMS_ID)
+                new OldRepoIndexesEntity(CAIRO_STREAMS_ID),
+                new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID)
         );
 
         final var installations = githubAppInstallationEntityRepository.findAll();
@@ -127,7 +172,7 @@ public class GithubWebhookIT extends IntegrationTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     void should_handle_installation_removed_events() throws URISyntaxException, IOException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_removed.json").toURI()));
@@ -141,7 +186,7 @@ public class GithubWebhookIT extends IntegrationTest {
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
         assertThat(jobs).hasSize(2);
         assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
-        assertThat(jobs.get(0).getInstallationId()).isEqualTo(42952633L);
+        assertThat(jobs.get(0).getInstallationId()).isEqualTo(INSTALLATION_ID);
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isNull();
 
@@ -158,7 +203,7 @@ public class GithubWebhookIT extends IntegrationTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     void should_handle_installation_suspended_event() throws URISyntaxException, IOException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_suspended.json").toURI()));
@@ -172,7 +217,7 @@ public class GithubWebhookIT extends IntegrationTest {
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
         assertThat(jobs).hasSize(2);
         assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
-        assertThat(jobs.get(0).getInstallationId()).isEqualTo(42952633L);
+        assertThat(jobs.get(0).getInstallationId()).isEqualTo(INSTALLATION_ID);
         assertThat(jobs.get(0).getSuspendedAt()).isEqualTo(Instant.parse("2023-11-13T14:21:39Z"));
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isNull();
@@ -192,7 +237,7 @@ public class GithubWebhookIT extends IntegrationTest {
 
 
     @Test
-    @Order(5)
+    @Order(6)
     void should_handle_installation_unsuspended_event() throws URISyntaxException, IOException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_unsuspended.json").toURI()));
@@ -206,7 +251,7 @@ public class GithubWebhookIT extends IntegrationTest {
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
         assertThat(jobs).hasSize(2);
         assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
-        assertThat(jobs.get(0).getInstallationId()).isEqualTo(42952633L);
+        assertThat(jobs.get(0).getInstallationId()).isEqualTo(INSTALLATION_ID);
         assertThat(jobs.get(0).getSuspendedAt()).isNull();
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isNull();
@@ -224,7 +269,7 @@ public class GithubWebhookIT extends IntegrationTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     void should_handle_installation_deleted_event() throws URISyntaxException, IOException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_deleted.json").toURI()));
@@ -252,15 +297,7 @@ public class GithubWebhookIT extends IntegrationTest {
         assertThat(githubAppInstallationEntityRepository.findAll()).isEmpty();
 
         // Indexed data preserved
-        assertThat(githubAccountRepository.findAll()).contains(GithubAccountEntity.builder()
-                .id(98735558L)
-                .login("onlydustxyz")
-                .type(GithubAccountEntity.Type.ORGANIZATION)
-                .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
-                .htmlUrl("https://github.com/onlydustxyz")
-                .name("OnlyDust")
-                .build());
-
+        assertThat(githubAccountRepository.findAll()).hasSize(1);
         assertThat(repoRepository.findAll()).hasSize(2);
     }
 

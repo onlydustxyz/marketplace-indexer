@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppIns
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class InstallationStorageStub implements GithubAppInstallationStorage {
     private final List<GithubAppInstallation> installations = new ArrayList<>();
@@ -37,6 +38,11 @@ public class InstallationStorageStub implements GithubAppInstallationStorage {
     public void setSuspendedAt(Long installationId, Instant suspendedAt) {
         final var installation = this.installations.stream().filter(installation1 -> installation1.getId().equals(installationId)).findFirst().orElseThrow();
         installation.setSuspendedAt(suspendedAt);
+    }
+
+    @Override
+    public Optional<Long> findInstallationIdByAccount(Long accountId) {
+        return installations.stream().filter(installation -> installation.getAccount().getId().equals(accountId)).findFirst().map(GithubAppInstallation::getId);
     }
 
     public List<GithubAppInstallation> installations() {
