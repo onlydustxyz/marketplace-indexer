@@ -4,13 +4,13 @@ info:
   description: OnlyDust Indexer API
   version: 1.0.0
 servers:
-  - url: 'http://localhost:8001'
+  - url: 'http://localhost:9998'
     description: Local
-  - url: 'https://develop-indexer.onlydust.xyz'
+  - url: 'https://develop-indexer.onlydust.com'
     description: Develop
-  - url: 'https://staging-indexer.onlydust.xyz'
+  - url: 'https://staging-indexer.onlydust.com'
     description: Staging
-  - url: 'https://indexer.onlydust.xyz'
+  - url: 'https://indexer.onlydust.com'
     description: Production
 
 paths:
@@ -76,7 +76,7 @@ paths:
         Re-project all expositions data based on raw data already indexed.
       responses:
         "204":
-          description: 'The refresh process has started'
+          description: 'The refresh process has completed'
         "401":
           $ref: '#/components/responses/UnauthorizedError'
         "500":
