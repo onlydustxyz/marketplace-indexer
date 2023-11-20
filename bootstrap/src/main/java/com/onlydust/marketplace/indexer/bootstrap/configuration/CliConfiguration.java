@@ -13,8 +13,8 @@ public class CliConfiguration {
     @Bean
     public RepoRefreshCliAdapter repoRefreshCliAdapter(
             final TaskExecutor applicationTaskExecutor,
-            final RepoRefreshJobManager cachedRepoRefreshJobManager
+            final RepoRefreshJobManager cacheOnlyRepoRefreshJobManager
     ) {
-        return new RepoRefreshCliAdapter(applicationTaskExecutor, cachedRepoRefreshJobManager);
+        return new RepoRefreshCliAdapter(applicationTaskExecutor, cacheOnlyRepoRefreshJobManager);
     }
 }
