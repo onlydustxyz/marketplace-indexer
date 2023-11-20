@@ -36,7 +36,7 @@ public class IndexesRestApi implements IndexesApi {
 
     @Override
     public ResponseEntity<Void> refreshExpositions() {
-        final var jobs = cachedRepoRefreshJobManager.allJobs().stream().map(j -> new FutureTask<>(j, null)).toList();
+        final var jobs = cachedRepoRefreshJobManager.allJobs().stream().map(j -> new FutureTask<>(j::execute, null)).toList();
         jobs.forEach(applicationTaskExecutor::execute);
         jobs.forEach(j -> {
             try {
