@@ -41,3 +41,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000019_add_account_installation_unique_constraint.sql
   - include:
       file: db/changelog/changelogs/00000020_make_repo_data_optional.sql
+  - include:
+      file: db/changelog/changelogs/00000021_project_pr_review_state.sql

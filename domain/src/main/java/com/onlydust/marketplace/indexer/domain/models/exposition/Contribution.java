@@ -20,6 +20,7 @@ public class Contribution {
     GithubCodeReview codeReview;
     Date createdAt;
     Date completedAt;
+    GithubPullRequest.ReviewState pullRequestReviewState;
 
     public static Contribution of(GithubPullRequest pullRequest) {
         return Contribution.builder()
@@ -30,6 +31,7 @@ public class Contribution {
                 .pullRequest(pullRequest)
                 .createdAt(pullRequest.getCreatedAt())
                 .completedAt(pullRequest.getClosedAt())
+                .pullRequestReviewState(pullRequest.getReviewState())
                 .build();
     }
 
