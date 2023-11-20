@@ -38,7 +38,7 @@ import java.util.Map;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.testcontainers.utility.MountableFile.forClasspathResource;
 
-@ActiveProfiles({"it", "local"})
+@ActiveProfiles({"it", "local", "api", "github", "job"})
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = ApplicationIT.class)
 @Testcontainers

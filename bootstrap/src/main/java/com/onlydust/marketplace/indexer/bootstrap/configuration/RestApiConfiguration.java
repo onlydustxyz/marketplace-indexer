@@ -13,9 +13,11 @@ import com.onlydust.marketplace.indexer.rest.api.UsersRestApi;
 import com.onlydust.marketplace.indexer.rest.api.exception.OnlyDustExceptionRestHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.task.TaskExecutor;
 
 @Configuration
+@Profile("api")
 public class RestApiConfiguration {
     @Bean
     public UsersRestApi usersRestApi(final UserIndexer cachedUserIndexer,

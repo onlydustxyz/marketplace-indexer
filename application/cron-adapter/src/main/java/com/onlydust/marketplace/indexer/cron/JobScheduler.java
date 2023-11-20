@@ -4,6 +4,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManag
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.util.concurrent.Executor;
 @Component
 @Slf4j
 @AllArgsConstructor
+@Profile("job")
 public class JobScheduler {
     private final Executor applicationTaskExecutor;
     private final RepoRefreshJobManager diffRepoRefreshJobManager;
