@@ -4,9 +4,11 @@ import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.RepoContributorEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import org.junit.jupiter.api.MethodOrderer;
@@ -39,6 +41,8 @@ public class GithubWebhookIT extends IntegrationTest {
     GithubAccountEntityRepository githubAccountRepository;
     @Autowired
     GithubAppInstallationEntityRepository githubAppInstallationEntityRepository;
+    @Autowired
+    RepoContributorRepository repoContributorRepository;
 
     @Test
     void should_reject_upon_invalid_signature() throws URISyntaxException, IOException {
@@ -299,6 +303,17 @@ public class GithubWebhookIT extends IntegrationTest {
         // Indexed data preserved
         assertThat(githubAccountRepository.findAll()).hasSize(1);
         assertThat(repoRepository.findAll()).hasSize(2);
+    }
+
+    @Test
+    @Order(100)
+    public void should_project_repos_contributors() throws InterruptedException {
+        waitForRepoJobToFinish(MARKETPLACE_FRONTEND_ID);
+
+        assertThat(repoContributorRepository.findAll()).containsExactlyInAnyOrder(
+                new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE_FRONTEND_ID, 43467246L), true),
+                new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE_FRONTEND_ID, 16590657L), false),
+                new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE_FRONTEND_ID, 595505L), false));
     }
 
     protected WebTestClient.ResponseSpec post(final String event) {

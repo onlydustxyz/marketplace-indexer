@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Value;
@@ -15,13 +16,17 @@ import java.io.Serializable;
 @Table(name = "repos_contributors", schema = "indexer_exp")
 @Value
 @NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class RepoContributorEntity {
     @EmbeddedId
     Id id;
 
+    Boolean hasCompletedContribution;
+
     @Embeddable
     @Value
     @NoArgsConstructor(force = true)
+    @AllArgsConstructor
     @EqualsAndHashCode
     public static class Id implements Serializable {
         Long repoId;
