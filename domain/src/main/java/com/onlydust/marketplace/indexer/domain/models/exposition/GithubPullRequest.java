@@ -25,6 +25,7 @@ public class GithubPullRequest {
     String body;
     Boolean draft;
     List<GithubIssue> closingIssues;
+    ReviewState reviewState;
 
     public static GithubPullRequest of(CleanPullRequest pullRequest) {
         return GithubPullRequest.builder()
@@ -42,7 +43,18 @@ public class GithubPullRequest {
                 .body(pullRequest.getBody())
                 .draft(pullRequest.getDraft())
                 .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssue::of).toList())
+                .reviewState(aggregateReviewState(pullRequest))
                 .build();
+    }
+
+    private static ReviewState aggregateReviewState(CleanPullRequest pullRequest) {
+        if (pullRequest.getReviews().stream().anyMatch(review -> review.getState().equals("CHANGES_REQUESTED"))) {
+            return ReviewState.CHANGES_REQUESTED;
+        }
+        if (pullRequest.getReviews().stream().anyMatch(review -> review.getState().equals("APPROVED"))) {
+            return ReviewState.APPROVED;
+        }
+        return pullRequest.getReviews().isEmpty() && pullRequest.getRequestedReviewers().isEmpty() ? ReviewState.PENDING_REVIEWER : ReviewState.UNDER_REVIEW;
     }
 
 
@@ -61,5 +73,9 @@ public class GithubPullRequest {
             }
             throw new RuntimeException("Unknown pull request state: " + pullRequest.getState());
         }
+    }
+
+    public enum ReviewState {
+        PENDING_REVIEWER, UNDER_REVIEW, APPROVED, CHANGES_REQUESTED
     }
 }

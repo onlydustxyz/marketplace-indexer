@@ -21,6 +21,7 @@ import java.util.Optional;
 @Table(name = "contributions", schema = "indexer_exp")
 @TypeDef(name = "contribution_type", typeClass = PostgreSQLEnumType.class)
 @TypeDef(name = "contribution_status", typeClass = PostgreSQLEnumType.class)
+@TypeDef(name = "github_pull_request_review_state", typeClass = PostgreSQLEnumType.class)
 public class ContributionEntity {
     @Id
     String id;
@@ -58,6 +59,9 @@ public class ContributionEntity {
     String contributorLogin;
     String contributorHtmlUrl;
     String contributorAvatarUrl;
+    @Enumerated(EnumType.STRING)
+    @org.hibernate.annotations.Type(type = "github_pull_request_review_state")
+    GithubPullRequestEntity.ReviewState prReviewState;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -123,6 +127,7 @@ public class ContributionEntity {
                 .contributorLogin(contribution.getContributor().getLogin())
                 .contributorHtmlUrl(contribution.getContributor().getHtmlUrl())
                 .contributorAvatarUrl(contribution.getContributor().getAvatarUrl())
+                .prReviewState(Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getReviewState).map(GithubPullRequestEntity.ReviewState::of).orElse(null))
                 .build();
     }
 

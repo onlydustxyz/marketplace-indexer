@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode
 @Table(name = "github_pull_requests", schema = "indexer_exp")
 @TypeDef(name = "github_pull_request_status", typeClass = PostgreSQLEnumType.class)
+@TypeDef(name = "github_pull_request_review_state", typeClass = PostgreSQLEnumType.class)
 public class GithubPullRequestEntity {
     @Id
     Long id;
@@ -48,6 +49,9 @@ public class GithubPullRequestEntity {
     String authorLogin;
     String authorHtmlUrl;
     String authorAvatarUrl;
+    @Enumerated(EnumType.STRING)
+    @Type(type = "github_pull_request_review_state")
+    ReviewState reviewState;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -88,6 +92,7 @@ public class GithubPullRequestEntity {
                 .authorLogin(pullRequest.getAuthor().getLogin())
                 .authorHtmlUrl(pullRequest.getAuthor().getHtmlUrl())
                 .authorAvatarUrl(pullRequest.getAuthor().getAvatarUrl())
+                .reviewState(ReviewState.of(pullRequest.getReviewState()))
                 .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssueEntity::of).collect(Collectors.toUnmodifiableSet()))
                 .build();
     }
@@ -104,4 +109,18 @@ public class GithubPullRequestEntity {
             };
         }
     }
+
+    public enum ReviewState {
+        PENDING_REVIEWER, UNDER_REVIEW, APPROVED, CHANGES_REQUESTED;
+
+        public static ReviewState of(GithubPullRequest.ReviewState reviewState) {
+            return switch (reviewState) {
+                case PENDING_REVIEWER -> PENDING_REVIEWER;
+                case UNDER_REVIEW -> UNDER_REVIEW;
+                case APPROVED -> APPROVED;
+                case CHANGES_REQUESTED -> CHANGES_REQUESTED;
+            };
+        }
+    }
+
 }
