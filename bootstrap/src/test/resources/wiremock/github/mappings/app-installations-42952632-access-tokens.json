@@ -1,6 +1,6 @@
 {
   "request": {
-    "url": "/app/installations/null/access_tokens",
+    "url": "/app/installations/42952632/access_tokens",
     "method": "POST",
     "headers": {
       "Authorization": {
@@ -9,6 +9,7 @@
     }
   },
   "response": {
-    "status": 404
+    "status": 200,
+    "bodyFileName": "app-installations-42952632-access-tokens.json"
   }
 }
