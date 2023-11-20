@@ -14,8 +14,6 @@ import com.onlydust.marketplace.indexer.rest.api.exception.OnlyDustExceptionRest
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.concurrent.Executor;
-
 @Configuration
 public class RestApiConfiguration {
     @Bean
@@ -38,9 +36,8 @@ public class RestApiConfiguration {
 
     @Bean
     public IndexesRestApi indexesRestApi(final UserRefreshJobManager cachedUserRefreshJobManager,
-                                         final RepoRefreshJobManager cachedRepoRefreshJobManager,
-                                         final Executor applicationTaskExecutor) {
-        return new IndexesRestApi(applicationTaskExecutor, cachedUserRefreshJobManager, cachedRepoRefreshJobManager);
+                                         final RepoRefreshJobManager cachedRepoRefreshJobManager) {
+        return new IndexesRestApi(cachedUserRefreshJobManager, cachedRepoRefreshJobManager);
     }
 
     @Bean
