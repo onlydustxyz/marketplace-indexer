@@ -24,20 +24,20 @@ public class CacheReadRawStorageReaderDecorator implements RawStorageReader {
 
     @Override
     public Stream<RawPullRequest> repoPullRequests(Long repoId) {
-        return fetcher.repoPullRequests(repoId)
-                .filter(pullRequest -> cache.pullRequest(repoId, pullRequest.getNumber())
-                        .map(cached -> !cached.getUpdatedAt().equals(pullRequest.getUpdatedAt()))
-                        .orElse(true)
-                );
+        if (cache.repoPullRequests(repoId).anyMatch(pr -> true)) {
+            return cache.repoPullRequests(repoId);
+        } else {
+            return fetcher.repoPullRequests(repoId);
+        }
     }
 
     @Override
     public Stream<RawIssue> repoIssues(Long repoId) {
-        return fetcher.repoIssues(repoId)
-                .filter(issue -> cache.issue(repoId, issue.getNumber())
-                        .map(cached -> !cached.getUpdatedAt().equals(issue.getUpdatedAt()))
-                        .orElse(true)
-                );
+        if (cache.repoIssues(repoId).anyMatch(i -> true)) {
+            return cache.repoIssues(repoId);
+        } else {
+            return fetcher.repoIssues(repoId);
+        }
     }
 
     @Override
