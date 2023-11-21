@@ -15,16 +15,16 @@ public class RepoIndexingJobStorageComposite implements RepoIndexingJobStorage {
     }
 
     @Override
-    public Set<Long> installationIds(Instant since) {
+    public Set<Long> installationIds() {
         return Arrays.stream(repoIndexingJobRepositories)
-                .flatMap(repoIndexingJobRepository -> repoIndexingJobRepository.installationIds(since).stream())
-                .collect(Collectors.toSet());
+                .flatMap(repoIndexingJobRepository -> repoIndexingJobRepository.installationIds().stream())
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
-    public Set<Long> repos(Long installationId) {
+    public Set<Long> reposUpdatedBefore(Long installationId, Instant since) {
         return Arrays.stream(repoIndexingJobRepositories)
-                .flatMap(repoIndexingJobRepository -> repoIndexingJobRepository.repos(installationId).stream())
+                .flatMap(repoIndexingJobRepository -> repoIndexingJobRepository.reposUpdatedBefore(installationId, since).stream())
                 .collect(Collectors.toSet());
     }
 

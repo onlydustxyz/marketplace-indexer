@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Slf4j
@@ -29,12 +30,16 @@ public class RepoRefreshJobService implements RepoRefreshJobManager {
 
     @Override
     public List<Job> allJobs() {
-        return repoIndexingJobStorage.installationIds(Instant.now().minusSeconds(config.refreshInterval)).stream().map(this::createJobForInstallationId).toList();
+        return repoIndexingJobStorage.installationIds().stream()
+                .map(this::createJobForInstallationId)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
     }
 
-    private Job createJobForInstallationId(Long installationId) {
-        final var repos = repoIndexingJobStorage.repos(installationId);
-        return new RepoIndexerJob(fullRepoIndexer, installationId, repos, repoIndexingJobStorage, githubAppContext);
+    private Optional<Job> createJobForInstallationId(Long installationId) {
+        final var repos = repoIndexingJobStorage.reposUpdatedBefore(installationId, Instant.now().minusSeconds(config.refreshInterval));
+        return repos.isEmpty() ? Optional.empty() : Optional.of(new RepoIndexerJob(fullRepoIndexer, installationId, repos, repoIndexingJobStorage, githubAppContext));
     }
 
     @Data

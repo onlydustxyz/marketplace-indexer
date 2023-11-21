@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Set;
 
 public interface RepoIndexingJobStorage {
-    Set<Long> installationIds(Instant since);
+    Set<Long> installationIds();
 
-    Set<Long> repos(Long installationId);
+    Set<Long> reposUpdatedBefore(Long installationId, Instant since);
 
     void add(Long installationId, Long... repoIds);
 
