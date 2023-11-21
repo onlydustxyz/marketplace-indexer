@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.bootstrap.configuration;
 import com.onlydust.marketplace.indexer.rest.api.authentication.api_key.ApiKeyAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @AllArgsConstructor
 @Configuration
+@Profile("api")
 public class WebSecurityAdapter extends WebSecurityConfigurerAdapter {
     private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
     private final AuthenticationEntryPoint authEntryPoint;

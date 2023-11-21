@@ -6,8 +6,8 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.IssueStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.PullRequestStorage;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.DiffRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.exposers.IssueExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestExposer;
@@ -229,7 +229,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_not_reindex_up_to_date_pull_requests() {
-        final var cachedReader = CacheReadRawStorageReaderDecorator.builder().cache(rawStorageReader).fetcher(rawStorageReader).build();
+        final var cachedReader = DiffRawStorageReaderDecorator.builder().cache(rawStorageReader).fetcher(rawStorageReader).build();
         final var indexer = new FullRepoIndexingService(cachedReader, issueIndexer, pullRequestIndexer, repoIndexingService);
 
         final var cachedIssues = rawStorageReaderStub.repoIssues();
