@@ -14,13 +14,13 @@ import com.onlydust.marketplace.indexer.domain.jobs.OtherEventsInboxJob;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -28,7 +28,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
@@ -46,25 +45,26 @@ import static org.testcontainers.utility.MountableFile.forClasspathResource;
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = ApplicationIT.class)
 @Testcontainers
 @Slf4j
-@DirtiesContext
 @Import(SwaggerConfiguration.class)
 @EnableWireMock({
         @ConfigureWireMock(name = "github", property = "infrastructure.github.baseUri"),
         @ConfigureWireMock(name = "api", property = "infrastructure.api-client.baseUri")
 })
 public class IntegrationTest {
-    @Container
-    static final PostgreSQLContainer postgresSQLContainer =
-            new PostgreSQLContainer<>("postgres:14.3-alpine")
-                    .withDatabaseName("marketplace_db")
-                    .withUsername("test")
-                    .withPassword("test")
-                    .waitingFor(Wait.forLogMessage(".*PostgreSQL init process complete; ready for start up.*", 1))
-                    .withCopyFileToContainer(
-                            forClasspathResource("db_init_script/"), "/docker-entrypoint-initdb.d");
+    static final PostgreSQLContainer postgresSQLContainer;
+
+    static {
+        postgresSQLContainer =
+                new PostgreSQLContainer<>("postgres:14.3-alpine")
+                        .withDatabaseName("marketplace_db")
+                        .withUsername("test")
+                        .withPassword("test")
+                        .waitingFor(Wait.forLogMessage(".*PostgreSQL init process complete; ready for start up.*", 1))
+                        .withCopyFileToContainer(
+                                forClasspathResource("db_init_script/"), "/docker-entrypoint-initdb.d");
+    }
 
     protected final ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
-
     @InjectWireMock("github")
     protected WireMockServer githubWireMockServer;
     @InjectWireMock("api")
@@ -79,6 +79,12 @@ public class IntegrationTest {
     InstallationEventsInboxJob installationEventsInboxJob;
     @Autowired
     OtherEventsInboxJob otherEventsInboxJob;
+
+    @BeforeAll
+    static void beforeAll() {
+        if (!postgresSQLContainer.isRunning())
+            postgresSQLContainer.start();
+    }
 
     @DynamicPropertySource
     static void updateProperties(DynamicPropertyRegistry registry) {
