@@ -15,12 +15,12 @@ public class PostgresOldRepoIndexingJobStorage implements RepoIndexingJobStorage
     private final OldRepoIndexesEntityRepository oldRepoIndexesEntityRepository;
 
     @Override
-    public Set<Long> installationIds(Instant since) {
+    public Set<Long> installationIds() {
         return Set.of();
     }
 
     @Override
-    public Set<Long> repos(Long installationId) {
+    public Set<Long> reposUpdatedBefore(Long installationId, Instant since) {
         return Set.of();
     }
 
