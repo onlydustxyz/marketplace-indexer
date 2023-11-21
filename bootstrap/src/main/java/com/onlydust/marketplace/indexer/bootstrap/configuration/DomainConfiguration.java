@@ -12,9 +12,9 @@ import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorag
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.DiffRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
-import com.onlydust.marketplace.indexer.domain.services.exposers.FullRepoExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.IssueExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestExposer;
+import com.onlydust.marketplace.indexer.domain.services.exposers.RepoContributorsExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.RepoExposer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
 import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
@@ -260,7 +260,7 @@ public class DomainConfiguration {
             final PullRequestIndexer cachedPullRequestIndexer,
             final RepoIndexer cachedRepoIndexer,
             final RepoContributorsStorage repoContributorsStorage) {
-        return new FullRepoExposer(
+        return new RepoContributorsExposer(
                 new FullRepoIndexingService(cachedRawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer, cachedRepoIndexer),
                 repoContributorsStorage
         );
@@ -273,7 +273,7 @@ public class DomainConfiguration {
             final PullRequestIndexer cacheOnlyPullRequestIndexer,
             final RepoIndexer cacheOnlyRepoIndexer,
             final RepoContributorsStorage repoContributorsStorage) {
-        return new FullRepoExposer(
+        return new RepoContributorsExposer(
                 new FullRepoIndexingService(postgresRawStorage, cacheOnlyIssueIndexer, cacheOnlyPullRequestIndexer, cacheOnlyRepoIndexer),
                 repoContributorsStorage
         );
@@ -286,7 +286,7 @@ public class DomainConfiguration {
             final PullRequestIndexer livePullRequestIndexer,
             final RepoIndexer liveRepoIndexer,
             final RepoContributorsStorage repoContributorsStorage) {
-        return new FullRepoExposer(
+        return new RepoContributorsExposer(
                 new FullRepoIndexingService(diffRawStorageReader, liveIssueIndexer, livePullRequestIndexer, liveRepoIndexer),
                 repoContributorsStorage
         );

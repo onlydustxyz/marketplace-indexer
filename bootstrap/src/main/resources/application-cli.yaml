@@ -7,7 +7,3 @@ spring:
 application:
   repo-refresh-job:
     refresh-interval: 0
-
-logging:
-  level:
-    com.onlydust: DEBUG
