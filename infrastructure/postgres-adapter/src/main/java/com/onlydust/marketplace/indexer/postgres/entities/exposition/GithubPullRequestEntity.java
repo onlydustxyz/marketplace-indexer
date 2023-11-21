@@ -52,6 +52,7 @@ public class GithubPullRequestEntity {
     @Enumerated(EnumType.STRING)
     @Type(type = "github_pull_request_review_state")
     ReviewState reviewState;
+    Integer commitCount;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -60,6 +61,9 @@ public class GithubPullRequestEntity {
             joinColumns = @JoinColumn(name = "pull_request_id"),
             inverseJoinColumns = @JoinColumn(name = "issue_id"))
     Set<GithubIssueEntity> closingIssues;
+
+    @OneToMany(mappedBy = "pullRequestId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    Set<GithubPullRequestCommitCountEntity> commitCounts;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -93,7 +97,11 @@ public class GithubPullRequestEntity {
                 .authorHtmlUrl(pullRequest.getAuthor().getHtmlUrl())
                 .authorAvatarUrl(pullRequest.getAuthor().getAvatarUrl())
                 .reviewState(ReviewState.of(pullRequest.getReviewState()))
+                .commitCount(pullRequest.getCommitCounts().values().stream().mapToInt(Long::intValue).sum())
                 .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssueEntity::of).collect(Collectors.toUnmodifiableSet()))
+                .commitCounts(pullRequest.getCommitCounts().entrySet().stream()
+                        .map(e -> GithubPullRequestCommitCountEntity.of(pullRequest.getId(), GithubAccountEntity.of(e.getKey()), e.getValue()))
+                        .collect(Collectors.toUnmodifiableSet()))
                 .build();
     }
 

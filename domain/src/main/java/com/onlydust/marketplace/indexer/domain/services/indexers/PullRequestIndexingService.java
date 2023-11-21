@@ -90,7 +90,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     public Optional<CleanPullRequest> indexPullRequest(String repoOwner, String repoName, Long prNumber) {
         LOGGER.debug("Indexing pull request {} for repo {}/{}", prNumber, repoOwner, repoName);
         return repoIndexer.indexRepo(repoOwner, repoName).flatMap(repo -> {
-            final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber).orElseThrow(() -> OnlyDustException.notFound("Pull request not found"));
+            final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber).orElseThrow(() -> OnlyDustException.notFound("Pull request %d/%d not found".formatted(repo.getId(), prNumber)));
 
             return userIndexer.indexUser(pullRequest.getAuthor().getId()).map(author -> {
                 final var codeReviews = indexPullRequestReviews(repo.getId(), pullRequest.getId(), prNumber);
