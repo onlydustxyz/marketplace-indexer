@@ -70,7 +70,7 @@ public class GithubWebhookIT extends IntegrationTest {
         final long OLD_INSTALLATION_ID = 42952632L;
 
         // When
-        final var response = post(event);
+        final var response = post(event, "installation");
 
         // Then
         response.expectStatus().isOk();
@@ -112,7 +112,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_created_new.json").toURI()));
 
         // When
-        final var response = post(event);
+        final var response = post(event, "installation");
 
         // Then
         response.expectStatus().isOk();
@@ -155,7 +155,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_added.json").toURI()));
 
         // When
-        final var response = post(event);
+        final var response = post(event, "installation_repositories");
 
         // Then
         response.expectStatus().isOk();
@@ -189,7 +189,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_removed.json").toURI()));
 
         // When
-        final var response = post(event);
+        final var response = post(event, "installation_repositories");
 
         // Then
         response.expectStatus().isOk();
@@ -221,7 +221,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_suspended.json").toURI()));
 
         // When
-        final var response = post(event);
+        final var response = post(event, "installation");
 
         // Then
         response.expectStatus().isOk();
@@ -256,7 +256,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_unsuspended.json").toURI()));
 
         // When
-        final var response = post(event);
+        final var response = post(event, "installation");
 
         // Then
         response.expectStatus().isOk();
@@ -289,7 +289,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_deleted.json").toURI()));
 
         // When
-        final var response = post(event);
+        final var response = post(event, "installation");
 
         // Then
         response.expectStatus().isOk();
@@ -325,7 +325,7 @@ public class GithubWebhookIT extends IntegrationTest {
                 .getResource("/github/webhook/events/installation_removed_by_removing_some_repos.json").toURI()));
 
         // When
-        var response = post(installationAddedEvent);
+        var response = post(installationAddedEvent, "installation");
 
         // Then
         response.expectStatus().isOk();
@@ -339,7 +339,7 @@ public class GithubWebhookIT extends IntegrationTest {
         assertThat(repos.get(1).getId()).isEqualTo(715033315);
 
         // When
-        response = post(installationRemovedByRemovingSomeReposEvent);
+        response = post(installationRemovedByRemovingSomeReposEvent, "installation_repositories");
 
         // Then
         response.expectStatus().isOk();
@@ -362,8 +362,8 @@ public class GithubWebhookIT extends IntegrationTest {
                 new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE_FRONTEND_ID, 595505L), 0, 0));
     }
 
-    protected WebTestClient.ResponseSpec post(final String event) {
-        return client.post().uri(getApiURI("/github-app/webhook")).header("X-GitHub-Event", "installation")
+    protected WebTestClient.ResponseSpec post(final String event, String eventTypeHeader) {
+        return client.post().uri(getApiURI("/github-app/webhook")).header("X-GitHub-Event", eventTypeHeader)
                 .header("X-Hub-Signature-256", "sha256=" + GithubSignatureVerifier.hmac(event.getBytes(),
                         config.secret))
                 .bodyValue(event)
