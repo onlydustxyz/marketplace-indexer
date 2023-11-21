@@ -23,6 +23,7 @@ public class RepoIndexerJob extends Job {
         githubAppContext.withGithubApp(installationId,
                 () -> repoIds.forEach(repo -> {
                     try {
+                        LOGGER.info("Start indexing repo {}", repo);
                         repoIndexingJobStorage.startJob(repo);
                         if (fullRepoIndexer.indexFullRepo(repo).isEmpty())
                             LOGGER.warn("Repo {} not found", repo);

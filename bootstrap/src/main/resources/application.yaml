@@ -68,7 +68,6 @@ spring:
 
 server:
   port: ${PORT}
-
 management:
   metrics:
     export:

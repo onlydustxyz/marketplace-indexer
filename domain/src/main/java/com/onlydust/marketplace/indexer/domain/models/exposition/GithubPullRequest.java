@@ -7,6 +7,8 @@ import lombok.Value;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Value
 @Builder(access = AccessLevel.PRIVATE)
@@ -26,6 +28,7 @@ public class GithubPullRequest {
     Boolean draft;
     List<GithubIssue> closingIssues;
     ReviewState reviewState;
+    Map<GithubAccount, Long> commitCounts;
 
     public static GithubPullRequest of(CleanPullRequest pullRequest) {
         return GithubPullRequest.builder()
@@ -44,6 +47,9 @@ public class GithubPullRequest {
                 .draft(pullRequest.getDraft())
                 .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssue::of).toList())
                 .reviewState(aggregateReviewState(pullRequest))
+                .commitCounts(pullRequest.getCommits().stream()
+                        .collect(Collectors.groupingBy(c -> GithubAccount.of(c.getAuthor()), Collectors.counting()))
+                )
                 .build();
     }
 

@@ -21,9 +21,9 @@ public class RepoJobServiceTest {
 
     @BeforeEach
     void setup() {
-        when(repoIndexingJobRepository.installationIds(any())).thenReturn(Set.of(1L, 2L));
-        when(repoIndexingJobRepository.repos(1L)).thenReturn(Set.of(1L, 2L, 3L));
-        when(repoIndexingJobRepository.repos(2L)).thenReturn(Set.of(4L, 5L, 6L));
+        when(repoIndexingJobRepository.installationIds()).thenReturn(Set.of(1L, 2L));
+        when(repoIndexingJobRepository.reposUpdatedBefore(eq(1L), any())).thenReturn(Set.of(1L, 2L, 3L));
+        when(repoIndexingJobRepository.reposUpdatedBefore(eq(2L), any())).thenReturn(Set.of(4L, 5L, 6L));
     }
 
     @Test
