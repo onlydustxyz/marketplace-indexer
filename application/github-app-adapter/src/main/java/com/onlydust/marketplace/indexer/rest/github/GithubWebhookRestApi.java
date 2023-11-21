@@ -32,7 +32,7 @@ public class GithubWebhookRestApi {
         GithubSignatureVerifier.validateWebhook(event, config.secret, signature);
 
         switch (type) {
-            case "installation":
+            case "installation", "installation_repositories":
                 eventProcessorService.process(objectMapper.readValue(event, RawInstallationEvent.class));
                 break;
             default:
