@@ -1,7 +1,13 @@
 spring:
   main:
     web-application-type: none
+  application:
+    name: marketplace-indexer-cli
 
 application:
   repo-refresh-job:
     refresh-interval: 0
+
+logging:
+  level:
+    com.onlydust: DEBUG
