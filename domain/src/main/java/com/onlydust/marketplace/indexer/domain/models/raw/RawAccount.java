@@ -20,4 +20,7 @@ public class RawAccount extends JsonDocument {
     @JsonProperty("avatar_url")
     String avatarUrl;
     String name;
+    String bio;
+    String location;
+    String blog;
 }

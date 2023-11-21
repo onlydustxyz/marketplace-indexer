@@ -28,6 +28,12 @@ public class GithubAccountEntity {
     String htmlUrl;
     String avatarUrl;
     String name;
+    String bio;
+    String location;
+    String website;
+    String twitter;
+    String linkedin;
+    String telegram;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
@@ -47,6 +53,12 @@ public class GithubAccountEntity {
                 .htmlUrl(account.getHtmlUrl())
                 .avatarUrl(account.getAvatarUrl())
                 .name(account.getName())
+                .bio(account.getBio())
+                .location(account.getLocation())
+                .website(account.getWebsite())
+                .twitter(account.getTwitter())
+                .linkedin(account.getLinkedin())
+                .telegram(account.getTelegram())
                 .build();
     }
 

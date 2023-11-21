@@ -19,6 +19,9 @@ public class CleanAccount {
     String htmlUrl;
     String avatarUrl;
     String name;
+    String bio;
+    String location;
+    String website;
     @Builder.Default
     List<RawSocialAccount> socialAccounts = new ArrayList<>();
 
@@ -30,6 +33,9 @@ public class CleanAccount {
                 .htmlUrl(account.getHtmlUrl())
                 .avatarUrl(account.getAvatarUrl())
                 .name(account.getName())
+                .bio(account.getBio())
+                .location(account.getLocation())
+                .website(account.getBlog())
                 .build();
     }
 
@@ -48,5 +54,30 @@ public class CleanAccount {
         return CleanAccount.of(account).toBuilder()
                 .socialAccounts(socialAccounts)
                 .build();
+    }
+
+    public String getTwitter() {
+        return socialAccounts.stream()
+                .filter(socialAccount -> socialAccount.getProvider().equals("twitter"))
+                .findFirst()
+                .map(RawSocialAccount::getUrl)
+                .orElse(null);
+    }
+
+    public String getLinkedin() {
+        return socialAccounts.stream()
+                .filter(socialAccount -> socialAccount.getProvider().equals("linkedin"))
+                .findFirst()
+                .map(RawSocialAccount::getUrl)
+                .orElse(null);
+    }
+
+    public String getTelegram() {
+        return socialAccounts.stream()
+                .filter(socialAccount -> socialAccount.getProvider().equals("generic") &&
+                                         (socialAccount.getUrl().startsWith("https://t.me") || socialAccount.getUrl().startsWith("https://telegram.me")))
+                .findFirst()
+                .map(RawSocialAccount::getUrl)
+                .orElse(null);
     }
 }

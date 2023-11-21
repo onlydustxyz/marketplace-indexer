@@ -14,6 +14,12 @@ public class GithubAccount {
     String htmlUrl;
     String avatarUrl;
     String name;
+    String bio;
+    String location;
+    String website;
+    String twitter;
+    String linkedin;
+    String telegram;
 
     public static GithubAccount of(CleanAccount account) {
         return GithubAccount.builder()
@@ -23,6 +29,12 @@ public class GithubAccount {
                 .htmlUrl(account.getHtmlUrl())
                 .avatarUrl(account.getAvatarUrl())
                 .name(account.getName())
+                .bio(account.getBio())
+                .location(account.getLocation())
+                .website(account.getWebsite())
+                .twitter(account.getTwitter())
+                .linkedin(account.getLinkedin())
+                .telegram(account.getTelegram())
                 .build();
     }
 
