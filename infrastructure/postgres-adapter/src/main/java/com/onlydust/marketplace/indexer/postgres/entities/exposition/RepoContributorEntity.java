@@ -21,7 +21,8 @@ public class RepoContributorEntity {
     @EmbeddedId
     Id id;
 
-    Boolean hasCompletedContribution;
+    Integer completedContributionCount;
+    Integer totalContributionCount;
 
     @Embeddable
     @Value

@@ -45,3 +45,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000021_project_pr_review_state.sql
   - include:
       file: db/changelog/changelogs/00000022_add_has_completed_contribution_column.sql
+  - include:
+      file: db/changelog/changelogs/00000023_add_completed_contribution_count_column.sql

@@ -4,7 +4,7 @@
     "method": "POST",
     "headers": {
       "Authorization": {
-        "matches": "Bearer .*"
+        "matches": "Bearer (.*)"
       }
     }
   },
