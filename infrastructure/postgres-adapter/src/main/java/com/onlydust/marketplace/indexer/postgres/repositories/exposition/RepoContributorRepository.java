@@ -8,11 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 public interface RepoContributorRepository extends JpaRepository<RepoContributorEntity, String> {
     @Modifying
     @Query(value = """
-            INSERT INTO indexer_exp.repos_contributors (repo_id, contributor_id, has_completed_contribution)
+            INSERT INTO indexer_exp.repos_contributors (repo_id, contributor_id, completed_contribution_count, total_contribution_count)
             SELECT DISTINCT ON (c.repo_id, c.contributor_id)
               c.repo_id,
               c.contributor_id,
-              max(case when c.status = 'COMPLETED' then 1 else 0 end) = 1
+              count(c.id) filter ( where c.status = 'COMPLETED' ),
+              count(c.id)
             FROM indexer_exp.contributions c
             WHERE c.repo_id = :repoId
             GROUP BY (c.repo_id, c.contributor_id)
