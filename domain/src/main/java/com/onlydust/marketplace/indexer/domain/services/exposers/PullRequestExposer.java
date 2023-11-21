@@ -9,11 +9,13 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestInde
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.PullRequestStorage;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
+@Slf4j
 public class PullRequestExposer implements PullRequestIndexer {
     PullRequestIndexer indexer;
     ContributionStorage contributionStorage;
@@ -22,12 +24,13 @@ public class PullRequestExposer implements PullRequestIndexer {
     @Override
     public Optional<CleanPullRequest> indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber) {
         final var pullRequest = indexer.indexPullRequest(repoOwner, repoName, pullRequestNumber);
-        pullRequest.ifPresent(this::expose);
+        pullRequest.ifPresentOrElse(this::expose, () -> LOGGER.warn("Pull request {} not found, unable to expose", pullRequestNumber));
 
         return pullRequest;
     }
 
     private void expose(CleanPullRequest pullRequest) {
+        LOGGER.info("Exposing pull request {}", pullRequest.getNumber());
         final var fromPullRequest = Stream.of(pullRequest).map(GithubPullRequest::of).map(Contribution::of);
         final var fromCommits = pullRequest.getCommits().stream().map(commit -> GithubCommit.of(commit, pullRequest)).map(Contribution::of);
         final var fromCodeReviewsPending = pullRequest.getReviews().stream()
