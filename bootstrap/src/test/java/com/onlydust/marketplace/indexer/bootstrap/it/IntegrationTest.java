@@ -8,12 +8,6 @@ import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
 import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import com.onlydust.marketplace.indexer.bootstrap.ApplicationIT;
 import com.onlydust.marketplace.indexer.bootstrap.configuration.SwaggerConfiguration;
-import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.raw.PullRequestRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.raw.RepoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +32,7 @@ import java.util.Map;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.testcontainers.utility.MountableFile.forClasspathResource;
 
-@ActiveProfiles({"it", "local", "api", "github", "job"})
+@ActiveProfiles({"it", "local", "api", "github"})
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = ApplicationIT.class)
 @Testcontainers
@@ -60,18 +54,6 @@ public class IntegrationTest {
                             forClasspathResource("db_init_script/"), "/docker-entrypoint-initdb.d");
 
     protected final ObjectMapper mapper = new ObjectMapper();
-    @Autowired
-    public RepoRepository repoRepository;
-    @Autowired
-    public PullRequestRepository pullRequestsRepository;
-    @Autowired
-    public IssueRepository issuesRepository;
-    @Autowired
-    public GithubRepoEntityRepository githubRepoEntityRepository;
-    @Autowired
-    public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
-    @Autowired
-    public UserIndexingJobEntityRepository userIndexingJobEntityRepository;
 
 
     @InjectWireMock("github")
@@ -112,29 +94,4 @@ public class IntegrationTest {
         headers.forEach(request::header);
         return request.exchange();
     }
-
-    protected void waitForRepoJobToFinish(Long repoId) throws InterruptedException {
-        for (int i = 0; i < 10 && isRepoJobRunning(repoId); i++) {
-            Thread.sleep(1000);
-        }
-    }
-
-    protected void waitForUserJobToFinish(Long userId) throws InterruptedException {
-        for (int i = 0; i < 10 && isUserJobRunning(userId); i++) {
-            Thread.sleep(1000);
-        }
-    }
-
-    protected boolean isRepoJobRunning(Long repoId) {
-        return repoIndexingJobEntityRepository.findById(repoId)
-                .map(j -> j.getFinishedAt() == null)
-                .orElse(true);
-    }
-
-    protected boolean isUserJobRunning(Long userId) {
-        return userIndexingJobEntityRepository.findById(userId)
-                .map(j -> j.getFinishedAt() == null)
-                .orElse(true);
-    }
-
 }

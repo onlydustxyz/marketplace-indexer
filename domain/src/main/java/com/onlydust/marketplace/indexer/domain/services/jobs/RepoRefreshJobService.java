@@ -25,7 +25,7 @@ public class RepoRefreshJobService implements RepoRefreshJobManager {
 
     @Override
     public void addRepoToRefresh(Long repoId) {
-        repoIndexingJobStorage.add(0L, repoId);
+        repoIndexingJobStorage.add(null, repoId);
     }
 
     @Override
