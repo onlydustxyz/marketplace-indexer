@@ -9,17 +9,13 @@ import lombok.AllArgsConstructor;
 import java.time.Instant;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toUnmodifiableSet;
-
 @AllArgsConstructor
 public class PostgresUserIndexingJobStorage implements UserIndexingJobStorage {
     private final UserIndexingJobEntityRepository repository;
 
     @Override
-    public Set<Long> users() {
-        return repository.findAll().stream()
-                .map(UserIndexingJobEntity::getUserId)
-                .collect(toUnmodifiableSet());
+    public Set<Long> usersUpdatedBefore(Instant since) {
+        return repository.findUsersUpdatedBefore(since);
     }
 
     @Override

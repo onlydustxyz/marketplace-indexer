@@ -60,6 +60,13 @@ public class DomainConfiguration {
     }
 
     @Bean
+    @ConfigurationProperties("application.user-refresh-job")
+    UserRefreshJobService.Config userRefreshJobConfig() {
+        return new UserRefreshJobService.Config();
+    }
+
+
+    @Bean
     GithubRateLimitServiceAdapter githubRateLimitServiceAdapter(final GithubHttpClient githubHttpClient) {
         return new GithubRateLimitServiceAdapter(githubHttpClient);
     }
@@ -325,16 +332,18 @@ public class DomainConfiguration {
     @Bean
     public UserRefreshJobManager diffUserRefreshJobManager(
             final PostgresUserIndexingJobStorage userIndexingJobTriggerRepository,
-            final UserIndexer diffUserIndexer
+            final UserIndexer diffUserIndexer,
+            final UserRefreshJobService.Config userRefreshJobConfig
     ) {
-        return new UserRefreshJobService(userIndexingJobTriggerRepository, diffUserIndexer);
+        return new UserRefreshJobService(userIndexingJobTriggerRepository, diffUserIndexer, userRefreshJobConfig);
     }
 
     @Bean
     public UserRefreshJobManager cachedUserRefreshJobManager(
             final PostgresUserIndexingJobStorage userIndexingJobTriggerRepository,
-            final UserIndexer cachedUserIndexer
+            final UserIndexer cachedUserIndexer,
+            final UserRefreshJobService.Config userRefreshJobConfig
     ) {
-        return new UserRefreshJobService(userIndexingJobTriggerRepository, cachedUserIndexer);
+        return new UserRefreshJobService(userIndexingJobTriggerRepository, cachedUserIndexer, userRefreshJobConfig);
     }
 }

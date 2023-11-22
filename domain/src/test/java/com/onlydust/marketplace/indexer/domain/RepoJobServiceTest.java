@@ -17,7 +17,7 @@ public class RepoJobServiceTest {
     private final RepoIndexingJobStorage repoIndexingJobRepository = mock(RepoIndexingJobStorage.class);
     private final FullRepoIndexer fullRepoIndexer = mock(FullRepoIndexer.class);
     private final GithubAppContext githubAppContext = new GithubAppContextStub();
-    private final RepoRefreshJobService jobService = new RepoRefreshJobService(repoIndexingJobRepository, fullRepoIndexer, githubAppContext, new RepoRefreshJobService.Config(1));
+    private final RepoRefreshJobService jobService = new RepoRefreshJobService(repoIndexingJobRepository, fullRepoIndexer, githubAppContext, new RepoRefreshJobService.Config(0));
 
     @BeforeEach
     void setup() {
