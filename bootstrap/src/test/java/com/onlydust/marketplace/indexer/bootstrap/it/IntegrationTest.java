@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
 import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
@@ -53,8 +54,7 @@ public class IntegrationTest {
                     .withCopyFileToContainer(
                             forClasspathResource("db_init_script/"), "/docker-entrypoint-initdb.d");
 
-    protected final ObjectMapper mapper = new ObjectMapper();
-
+    protected final ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
 
     @InjectWireMock("github")
     protected WireMockServer githubWireMockServer;

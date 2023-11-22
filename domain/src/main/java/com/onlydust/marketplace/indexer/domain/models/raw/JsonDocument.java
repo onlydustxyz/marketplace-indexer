@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.SneakyThrows;
 
 import java.io.Serializable;
@@ -27,7 +28,7 @@ public class JsonDocument implements Serializable {
     @SneakyThrows
     @Override
     public String toString() {
-        return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(this);
+        return JsonMapper.builder().findAndAddModules().build().writerWithDefaultPrettyPrinter().writeValueAsString(this);
     }
 
     @Override
@@ -35,7 +36,7 @@ public class JsonDocument implements Serializable {
         if (this == o) return true;
         if (!(o instanceof JsonDocument that)) return false;
 
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
         mapper.configure(DeserializationFeature.USE_LONG_FOR_INTS, true);
         return mapper.valueToTree(this).equals(mapper.valueToTree(that));
     }

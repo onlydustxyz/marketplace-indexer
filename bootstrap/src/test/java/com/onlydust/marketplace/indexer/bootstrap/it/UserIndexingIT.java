@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.User;
@@ -21,7 +22,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserIndexingIT extends IntegrationTest {
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
 
     @Autowired
     public UserRepository userRepository;

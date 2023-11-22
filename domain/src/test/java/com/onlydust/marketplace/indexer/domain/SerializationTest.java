@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.domain;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +12,7 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SerializationTest {
-    final ObjectMapper mapper = new ObjectMapper();
+    final ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
 
     @Test
     void should_deserialize_user_from_github_response() throws Exception {
