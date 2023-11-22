@@ -51,3 +51,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000024_add_more_fields_to_github_accounts.sql
   - include:
       file: db/changelog/changelogs/00000025_add_pr_commit_counts.sql
+  - include:
+      file: db/changelog/changelogs/00000026_update_code_review_state_of_closed_prs.sql
