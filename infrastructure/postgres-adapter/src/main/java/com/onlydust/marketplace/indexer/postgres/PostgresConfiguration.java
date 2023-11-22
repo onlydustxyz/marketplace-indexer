@@ -5,10 +5,7 @@ import com.onlydust.marketplace.indexer.postgres.adapters.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -94,6 +91,11 @@ public class PostgresConfiguration {
     @Bean
     public PostgresRepoStorage postgresRepoStorage(final GithubRepoEntityRepository githubRepoEntityRepository) {
         return new PostgresRepoStorage(githubRepoEntityRepository);
+    }
+
+    @Bean
+    public PostgresAccountStorage accountStorage(final GithubAccountEntityRepository githubAccountEntityRepository) {
+        return new PostgresAccountStorage(githubAccountEntityRepository);
     }
 
     @Bean
