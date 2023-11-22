@@ -41,7 +41,8 @@ import static org.testcontainers.utility.MountableFile.forClasspathResource;
 @DirtiesContext
 @Import(SwaggerConfiguration.class)
 @EnableWireMock({
-        @ConfigureWireMock(name = "github", property = "infrastructure.github.baseUri")
+        @ConfigureWireMock(name = "github", property = "infrastructure.github.baseUri"),
+        @ConfigureWireMock(name = "api", property = "infrastructure.api-client.baseUri")
 })
 public class IntegrationTest {
     @Container
@@ -58,6 +59,8 @@ public class IntegrationTest {
 
     @InjectWireMock("github")
     protected WireMockServer githubWireMockServer;
+    @InjectWireMock("api")
+    protected WireMockServer apiWireMockServer;
     @LocalServerPort
     int port;
     @Autowired

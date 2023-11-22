@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.domain.jobs.Job;
+import com.onlydust.marketplace.indexer.domain.ports.in.ApiNotifier;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -41,6 +43,8 @@ public class RepoJobIndexingIT extends IntegrationTest {
     public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
     public RepoRefreshJobManager diffRepoRefreshJobManager;
+    @Autowired
+    public ApiNotifier apiNotifier;
 
     private WebTestClient.ResponseSpec indexRepo(Long repoId) {
         return put("/api/v1/indexes/repos/" + repoId);
@@ -106,5 +110,22 @@ public class RepoJobIndexingIT extends IntegrationTest {
                 new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE, 43467246L), 2, 3),
                 new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE, 16590657L), 1, 2),
                 new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE, 595505L), 0, 2));
+    }
+
+
+    @Test
+    @Order(100)
+    public void should_notify_api_upon_new_contributions() {
+        apiWireMockServer.stubFor(post(urlEqualTo("/api/v1/events/on-contributions-change"))
+                .withHeader("Api-Key", equalTo("INTERNAL_API_KEY"))
+                .withRequestBody(equalToJson("{\"repoIds\": [%d]}".formatted(MARKETPLACE)))
+                .willReturn(noContent()));
+
+        apiNotifier.notifyUponNewContributions();
+
+        assertThat(apiWireMockServer
+                .countRequestsMatching(postRequestedFor(urlEqualTo("/api/v1/events/on-contributions-change")).build())
+                .getCount()
+        ).isEqualTo(1);
     }
 }

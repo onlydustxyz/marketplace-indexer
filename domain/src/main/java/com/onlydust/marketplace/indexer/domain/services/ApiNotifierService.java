@@ -5,6 +5,8 @@ import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import lombok.AllArgsConstructor;
 
+import java.time.Instant;
+
 @AllArgsConstructor
 public class ApiNotifierService implements ApiNotifier {
     private final ContributionStorage contributionStorage;
@@ -12,7 +14,7 @@ public class ApiNotifierService implements ApiNotifier {
 
     @Override
     public void notifyUponNewContributions() {
-        final var repoIds = contributionStorage.listReposWithContributionsUpdatedSince(null);
+        final var repoIds = contributionStorage.listReposWithContributionsUpdatedSince(Instant.EPOCH);
         if (!repoIds.isEmpty())
             apiClient.onNewContributions(repoIds);
     }
