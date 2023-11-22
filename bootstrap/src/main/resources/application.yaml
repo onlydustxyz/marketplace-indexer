@@ -10,6 +10,9 @@ infrastructure:
   github-app:
     app-id: ${GITHUB_APP_ID}
     private-key: ${GITHUB_APP_PRIVATE_KEY}
+  api-client:
+    api-key: ${INTERNAL_API_KEY}
+    base-uri: ${API_BACKEND_BASE_URL}
 
 application:
   web:

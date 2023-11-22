@@ -1,16 +1,19 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
+import com.onlydust.marketplace.indexer.domain.ports.in.ApiNotifier;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorageComposite;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.DiffRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
+import com.onlydust.marketplace.indexer.domain.services.ApiNotifierService;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.exposers.IssueExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestExposer;
@@ -345,5 +348,10 @@ public class DomainConfiguration {
             final UserRefreshJobService.Config userRefreshJobConfig
     ) {
         return new UserRefreshJobService(userIndexingJobTriggerRepository, cachedUserIndexer, userRefreshJobConfig);
+    }
+
+    @Bean
+    public ApiNotifier apiNotifier(final ContributionStorage contributionStorage, final ApiClient apiClient) {
+        return new ApiNotifierService(contributionStorage, apiClient);
     }
 }
