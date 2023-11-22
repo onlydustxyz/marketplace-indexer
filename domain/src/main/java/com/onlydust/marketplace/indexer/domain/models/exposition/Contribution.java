@@ -48,7 +48,7 @@ public class Contribution {
     }
 
     public static Contribution of(GithubCodeReview codeReview) {
-        final var status = Status.of(codeReview.getState());
+        final var status = Status.of(codeReview.getState(), codeReview.getPullRequest().getStatus());
         return Contribution.builder()
                 .repo(codeReview.getPullRequest().getRepo())
                 .contributor(codeReview.getAuthor())
@@ -106,9 +106,12 @@ public class Contribution {
             };
         }
 
-        public static Status of(GithubCodeReview.State state) {
-            return switch (state) {
-                case PENDING, COMMENTED -> Status.IN_PROGRESS;
+        public static Status of(GithubCodeReview.State codeReviewState, GithubPullRequest.Status pullRequestStatus) {
+            return switch (codeReviewState) {
+                case PENDING, COMMENTED -> switch (pullRequestStatus) {
+                    case CLOSED, MERGED -> Status.CANCELLED;
+                    default -> Status.IN_PROGRESS;
+                };
                 case APPROVED, CHANGES_REQUESTED -> Status.COMPLETED;
                 case DISMISSED -> Status.CANCELLED;
             };

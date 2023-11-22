@@ -42,4 +42,32 @@ public class ContributionTest {
 
         assertThat(Contribution.of(contribution).getId()).isEqualTo("8aa3f462c9613831dc0dc72a1912a06772311d079595db73b9e13af2c3feb233");
     }
+
+    @Test
+    public void should_compute_code_review_state() {
+        assertThat(Contribution.Status.of(GithubCodeReview.State.PENDING, GithubPullRequest.Status.OPEN)).isEqualTo(Contribution.Status.IN_PROGRESS);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.PENDING, GithubPullRequest.Status.DRAFT)).isEqualTo(Contribution.Status.IN_PROGRESS);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.PENDING, GithubPullRequest.Status.CLOSED)).isEqualTo(Contribution.Status.CANCELLED);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.PENDING, GithubPullRequest.Status.MERGED)).isEqualTo(Contribution.Status.CANCELLED);
+
+        assertThat(Contribution.Status.of(GithubCodeReview.State.COMMENTED, GithubPullRequest.Status.OPEN)).isEqualTo(Contribution.Status.IN_PROGRESS);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.COMMENTED, GithubPullRequest.Status.DRAFT)).isEqualTo(Contribution.Status.IN_PROGRESS);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.COMMENTED, GithubPullRequest.Status.CLOSED)).isEqualTo(Contribution.Status.CANCELLED);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.COMMENTED, GithubPullRequest.Status.MERGED)).isEqualTo(Contribution.Status.CANCELLED);
+
+        assertThat(Contribution.Status.of(GithubCodeReview.State.DISMISSED, GithubPullRequest.Status.OPEN)).isEqualTo(Contribution.Status.CANCELLED);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.DISMISSED, GithubPullRequest.Status.DRAFT)).isEqualTo(Contribution.Status.CANCELLED);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.DISMISSED, GithubPullRequest.Status.CLOSED)).isEqualTo(Contribution.Status.CANCELLED);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.DISMISSED, GithubPullRequest.Status.MERGED)).isEqualTo(Contribution.Status.CANCELLED);
+
+        assertThat(Contribution.Status.of(GithubCodeReview.State.APPROVED, GithubPullRequest.Status.OPEN)).isEqualTo(Contribution.Status.COMPLETED);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.APPROVED, GithubPullRequest.Status.DRAFT)).isEqualTo(Contribution.Status.COMPLETED);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.APPROVED, GithubPullRequest.Status.CLOSED)).isEqualTo(Contribution.Status.COMPLETED);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.APPROVED, GithubPullRequest.Status.MERGED)).isEqualTo(Contribution.Status.COMPLETED);
+
+        assertThat(Contribution.Status.of(GithubCodeReview.State.CHANGES_REQUESTED, GithubPullRequest.Status.OPEN)).isEqualTo(Contribution.Status.COMPLETED);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.CHANGES_REQUESTED, GithubPullRequest.Status.DRAFT)).isEqualTo(Contribution.Status.COMPLETED);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.CHANGES_REQUESTED, GithubPullRequest.Status.CLOSED)).isEqualTo(Contribution.Status.COMPLETED);
+        assertThat(Contribution.Status.of(GithubCodeReview.State.CHANGES_REQUESTED, GithubPullRequest.Status.MERGED)).isEqualTo(Contribution.Status.COMPLETED);
+    }
 }
