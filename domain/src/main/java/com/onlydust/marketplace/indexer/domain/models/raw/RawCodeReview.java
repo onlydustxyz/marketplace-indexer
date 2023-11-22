@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.Value;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
@@ -17,7 +17,7 @@ public class RawCodeReview extends JsonDocument {
     Long id;
     String state;
     @JsonProperty("submitted_at")
-    Date submittedAt;
+    Instant submittedAt;
 
     @JsonProperty("user")
     RawShortAccount author;

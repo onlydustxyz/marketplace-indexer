@@ -10,7 +10,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.Date;
 
 @Entity
 @Data
@@ -33,8 +32,8 @@ public class GithubCodeReviewEntity {
     @Enumerated(EnumType.STRING)
     @Type(type = "github_code_review_state")
     State state;
-    Date requestedAt;
-    Date submittedAt;
+    Instant requestedAt;
+    Instant submittedAt;
     Long number;
     String title;
     String html_url;

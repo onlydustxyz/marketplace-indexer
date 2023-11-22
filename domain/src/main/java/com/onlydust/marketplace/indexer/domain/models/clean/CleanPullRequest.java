@@ -5,8 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
@@ -17,9 +17,9 @@ public class CleanPullRequest {
     Long number;
     String title;
     String state;
-    Date createdAt;
-    Date closedAt;
-    Date mergedAt;
+    Instant createdAt;
+    Instant closedAt;
+    Instant mergedAt;
     Boolean merged;
     CleanAccount author;
     String htmlUrl;

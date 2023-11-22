@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.Date;
 import java.util.Map;
 
 @Entity
@@ -32,7 +31,7 @@ public class GithubRepoEntity {
     String name;
     String ownerLogin;
     String htmlUrl;
-    Date updatedAt;
+    Instant updatedAt;
     String description;
     Long starsCount;
     Long forksCount;

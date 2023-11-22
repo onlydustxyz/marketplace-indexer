@@ -6,7 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +16,7 @@ public class CleanRepo {
     Long id;
     String name;
     String htmlUrl;
-    Date updatedAt;
+    Instant updatedAt;
     String description;
     CleanAccount owner;
     Long starsCount;

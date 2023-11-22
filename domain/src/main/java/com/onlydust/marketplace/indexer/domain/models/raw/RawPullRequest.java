@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.Value;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 @Value
@@ -26,13 +26,13 @@ public class RawPullRequest extends JsonDocument {
     String title;
     String state;
     @JsonProperty("created_at")
-    Date createdAt;
+    Instant createdAt;
     @JsonProperty("closed_at")
-    Date closedAt;
+    Instant closedAt;
     @JsonProperty("merged_at")
-    Date mergedAt;
+    Instant mergedAt;
     @JsonProperty("updated_at")
-    Date updatedAt;
+    Instant updatedAt;
     @JsonProperty("html_url")
     String htmlUrl;
     String body;

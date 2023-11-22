@@ -17,6 +17,6 @@ public class InstallationSuspendedEvent extends InstallationEvent {
     }
 
     public static InstallationSuspendedEvent of(RawInstallationEvent rawEvent) {
-        return new InstallationSuspendedEvent(rawEvent.getInstallation().getId(), rawEvent.getInstallation().getSuspendedAt().toInstant());
+        return new InstallationSuspendedEvent(rawEvent.getInstallation().getId(), rawEvent.getInstallation().getSuspendedAt());
     }
 }

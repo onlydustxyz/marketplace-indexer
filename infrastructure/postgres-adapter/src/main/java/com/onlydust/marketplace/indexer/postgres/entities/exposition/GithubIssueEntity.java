@@ -10,7 +10,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -32,8 +31,8 @@ public class GithubIssueEntity {
     @Enumerated(EnumType.STRING)
     @Type(type = "github_issue_status")
     Status status;
-    Date createdAt;
-    Date closedAt;
+    Instant createdAt;
+    Instant closedAt;
     @ManyToOne(cascade = CascadeType.ALL)
     GithubAccountEntity author;
     String htmlUrl;

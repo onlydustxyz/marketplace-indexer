@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Builder(access = AccessLevel.PRIVATE)
 @Value
@@ -13,7 +13,7 @@ public class CleanCodeReview {
     Long id;
     CleanAccount author;
     String state;
-    Date submittedAt;
+    Instant submittedAt;
 
     public static CleanCodeReview of(RawCodeReview review, CleanAccount author) {
         return CleanCodeReview.builder()

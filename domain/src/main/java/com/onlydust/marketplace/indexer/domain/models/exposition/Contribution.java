@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.Date;
+import java.time.Instant;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
@@ -18,8 +18,8 @@ public class Contribution {
     GithubPullRequest pullRequest;
     GithubIssue issue;
     GithubCodeReview codeReview;
-    Date createdAt;
-    Date completedAt;
+    Instant createdAt;
+    Instant completedAt;
     GithubPullRequest.ReviewState pullRequestReviewState;
 
     public static Contribution of(GithubPullRequest pullRequest) {
