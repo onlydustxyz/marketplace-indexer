@@ -4,8 +4,8 @@ import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoEntity;
-import com.onlydust.marketplace.indexer.postgres.entities.exposition.RepoContributorEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
@@ -33,6 +33,8 @@ public class GithubWebhookIT extends IntegrationTest {
     final Long MARKETPLACE_FRONTEND_ID = 498695724L;
     final Long CAIRO_STREAMS_ID = 493795808L;
     private final long INSTALLATION_ID = 42952633L;
+    @Autowired
+    public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
     OldRepoIndexesEntityRepository oldRepoIndexesEntityRepository;
     @Autowired
@@ -312,7 +314,6 @@ public class GithubWebhookIT extends IntegrationTest {
 
         // Indexed data preserved
         assertThat(githubAccountRepository.findAll()).hasSize(1);
-        assertThat(repoRepository.findAll()).hasSize(2);
     }
 
     @Test
@@ -349,17 +350,6 @@ public class GithubWebhookIT extends IntegrationTest {
                 installationsUpdated.get(0).getRepos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
         assertThat(reposUpdated).hasSize(1);
         assertThat(reposUpdated.get(0).getId()).isEqualTo(715033198);
-    }
-
-    //@Test
-    @Order(100)
-    public void should_project_repos_contributors() throws InterruptedException {
-        waitForRepoJobToFinish(MARKETPLACE_FRONTEND_ID);
-
-        assertThat(repoContributorRepository.findAll()).containsExactlyInAnyOrder(
-                new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE_FRONTEND_ID, 43467246L), 0, 0),
-                new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE_FRONTEND_ID, 16590657L), 0, 0),
-                new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE_FRONTEND_ID, 595505L), 0, 0));
     }
 
     protected WebTestClient.ResponseSpec post(final String event, String eventTypeHeader) {

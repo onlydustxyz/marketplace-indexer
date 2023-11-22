@@ -1,71 +1,90 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.onlydust.marketplace.indexer.domain.jobs.Job;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.RepoContributorEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.PullRequestRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RepoJobIndexingIT extends IntegrationTest {
+    final static Long MARKETPLACE = 498695724L;
+    final static Long BRETZEL_APP = 380954304L;
+
     @Autowired
     public ContributionRepository contributionRepository;
     @Autowired
     public RepoContributorRepository repoContributorRepository;
+    @Autowired
+    public PullRequestRepository pullRequestsRepository;
+    @Autowired
+    public IssueRepository issuesRepository;
+    @Autowired
+    public GithubRepoEntityRepository githubRepoEntityRepository;
+    @Autowired
+    public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
+    @Autowired
+    public RepoRefreshJobManager diffRepoRefreshJobManager;
+
+    private WebTestClient.ResponseSpec indexRepo(Long repoId) {
+        return put("/api/v1/indexes/repos/" + repoId);
+    }
 
     @Test
     @Order(1)
-    public void should_add_repo_to_index_even_if_no_contributions() throws InterruptedException {
-        // Given
-        final Long BRETZEL_APP = 380954304L;
+    public void indexAllRepos() {
+        // Add repos to index
+        for (final var repoId : new Long[]{BRETZEL_APP, MARKETPLACE}) {
+            indexRepo(repoId).expectStatus().isNoContent();
+        }
 
-        // When
-        final var response = indexRepo(BRETZEL_APP);
+        // Jobs are pending
+        assertThat(repoIndexingJobEntityRepository.findAll(Sort.by("repoId"))).contains(
+                new RepoIndexingJobEntity(BRETZEL_APP, null),
+                new RepoIndexingJobEntity(MARKETPLACE, null)
+        );
 
-        // Then
-        response.expectStatus().isNoContent();
+        // Run all jobs
+        diffRepoRefreshJobManager.allJobs().forEach(Job::run);
 
-        assertThat(repoIndexingJobEntityRepository.findAll()).contains(new RepoIndexingJobEntity(BRETZEL_APP, 0L));
-
-        // Wait for the job to finish
-        waitForRepoJobToFinish(BRETZEL_APP);
-
-        assertThat(githubRepoEntityRepository.findById(BRETZEL_APP)).isPresent();
-        assertThat(pullRequestsRepository.findAll()).hasSize(0);
-        assertThat(issuesRepository.findAll()).hasSize(0);
-        assertThat(contributionRepository.findAll()).hasSize(0);
-        assertThat(repoContributorRepository.findAll()).hasSize(0);
+        // Jobs are finished
+        for (final var repoId : new Long[]{BRETZEL_APP, MARKETPLACE}) {
+            final var job = repoIndexingJobEntityRepository.findById(repoId).orElseThrow();
+            assertThat(job.getStartedAt()).isNotNull();
+            assertThat(job.getFinishedAt()).isNotNull();
+            assertThat(job.getStatus()).isEqualTo(JobStatus.SUCCESS);
+        }
     }
 
     @Test
     @Order(2)
-    public void should_add_repo_to_index() throws InterruptedException {
-        // Given
-        final Long MARKETPLACE = 498695724L;
+    public void should_expose_indexed_repo_even_if_no_contributions() {
+        assertThat(githubRepoEntityRepository.findById(BRETZEL_APP)).isPresent();
+        assertThat(pullRequestsRepository.findAllByRepoId(BRETZEL_APP)).hasSize(0);
+        assertThat(issuesRepository.findAllByRepoId(BRETZEL_APP)).hasSize(0);
+        assertThat(contributionRepository.findAll().stream().filter(c -> c.getRepo().getId().equals(BRETZEL_APP))).hasSize(0);
+        assertThat(repoContributorRepository.findAll().stream().filter(r -> r.getId().getRepoId().equals(BRETZEL_APP))).hasSize(0);
+    }
 
-        // When
-        final var response = indexRepo(MARKETPLACE);
-
-        // Then
-        response.expectStatus().isNoContent();
-
-        {
-            final var job = repoIndexingJobEntityRepository.findById(MARKETPLACE);
-            assertThat(job).isPresent();
-            assertThat(job.get().getInstallationId()).isEqualTo(0L);
-        }
-
-        // Wait for the job to finish
-        waitForRepoJobToFinish(MARKETPLACE);
-
+    @Test
+    @Order(2)
+    public void should_index_repo_with_contributions() {
         assertThat(githubRepoEntityRepository.findById(MARKETPLACE)).isPresent();
         assertThat(pullRequestsRepository.findAll()).hasSize(2);
         assertThat(issuesRepository.findAll()).hasSize(2);
@@ -83,16 +102,9 @@ public class RepoJobIndexingIT extends IntegrationTest {
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE)).hasSize(1);
         assertThat(repoContributorRepository.findAll()).hasSize(3);
 
-        {
-            final var job = repoIndexingJobEntityRepository.findById(MARKETPLACE);
-            assertThat(job).isPresent();
-            assertThat(job.get().getStartedAt()).isNotNull();
-            assertThat(job.get().getFinishedAt()).isNotNull();
-            assertThat(job.get().getStatus()).isNotEqualTo(JobStatus.PENDING);
-        }
-    }
-
-    private WebTestClient.ResponseSpec indexRepo(Long repoId) {
-        return put("/api/v1/indexes/repos/" + repoId);
+        assertThat(repoContributorRepository.findAll()).containsExactlyInAnyOrder(
+                new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE, 43467246L), 2, 3),
+                new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE, 16590657L), 1, 2),
+                new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE, 595505L), 0, 2));
     }
 }
