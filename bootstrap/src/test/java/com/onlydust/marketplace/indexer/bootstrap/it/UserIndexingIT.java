@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.User;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.UserSocialAccounts;
+import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserSocialAccountsRepository;
@@ -30,6 +31,8 @@ public class UserIndexingIT extends IntegrationTest {
     public UserSocialAccountsRepository userSocialAccountsRepository;
     @Autowired
     public GithubAccountEntityRepository githubAccountEntityRepository;
+    @Autowired
+    public UserIndexingJobEntityRepository userIndexingJobEntityRepository;
 
     @BeforeEach
     void setup() {
@@ -54,6 +57,7 @@ public class UserIndexingIT extends IntegrationTest {
         assertThat(userSocialAccountsRepository.findAll()).containsExactly(UserSocialAccounts.of(ANTHONY, Arrays.asList(expectedUserSocialAccounts)));
 
         assertThat(githubAccountEntityRepository.findById(ANTHONY)).isPresent();
+        assertThat(userIndexingJobEntityRepository.findById(ANTHONY)).isPresent();
     }
 
     private WebTestClient.ResponseSpec indexUser(Long userId) {

@@ -14,11 +14,11 @@ import static org.mockito.Mockito.*;
 public class UserJobServiceTest {
     private final UserIndexingJobStorage userIndexingJobRepository = mock(UserIndexingJobStorage.class);
     private final UserIndexer userIndexer = mock(UserIndexer.class);
-    private final UserRefreshJobService jobService = new UserRefreshJobService(userIndexingJobRepository, userIndexer);
+    private final UserRefreshJobService jobService = new UserRefreshJobService(userIndexingJobRepository, userIndexer, new UserRefreshJobService.Config(0));
 
     @BeforeEach
     void setup() {
-        when(userIndexingJobRepository.users()).thenReturn(Set.of(1L, 2L, 3L, 4L));
+        when(userIndexingJobRepository.usersUpdatedBefore(any())).thenReturn(Set.of(1L, 2L, 3L, 4L));
     }
 
     @Test

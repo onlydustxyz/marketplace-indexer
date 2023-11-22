@@ -1,9 +1,10 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.jobs;
 
+import java.time.Instant;
 import java.util.Set;
 
 public interface UserIndexingJobStorage {
-    Set<Long> users();
+    Set<Long> usersUpdatedBefore(Instant since);
 
     void add(Long userId);
 
