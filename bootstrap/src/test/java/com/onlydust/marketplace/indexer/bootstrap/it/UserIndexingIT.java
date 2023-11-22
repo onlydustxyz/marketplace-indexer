@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.User;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.UserSocialAccounts;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserSocialAccountsRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,8 @@ public class UserIndexingIT extends IntegrationTest {
     public UserRepository userRepository;
     @Autowired
     public UserSocialAccountsRepository userSocialAccountsRepository;
+    @Autowired
+    public GithubAccountEntityRepository githubAccountEntityRepository;
 
     @BeforeEach
     void setup() {
@@ -48,6 +51,8 @@ public class UserIndexingIT extends IntegrationTest {
 
         final var expectedUserSocialAccounts = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony_social_accounts.json"), RawSocialAccount[].class);
         assertThat(userSocialAccountsRepository.findAll()).containsExactly(UserSocialAccounts.of(ANTHONY, Arrays.asList(expectedUserSocialAccounts)));
+
+        assertThat(githubAccountEntityRepository.findById(ANTHONY)).isPresent();
     }
 
     private WebTestClient.ResponseSpec indexUser(Long userId) {
