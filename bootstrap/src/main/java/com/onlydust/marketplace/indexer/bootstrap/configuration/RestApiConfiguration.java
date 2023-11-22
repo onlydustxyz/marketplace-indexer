@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.AccountStorage;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.exposers.UserExposer;
 import com.onlydust.marketplace.indexer.rest.api.IndexesRestApi;
 import com.onlydust.marketplace.indexer.rest.api.IssuesRestApi;
@@ -23,10 +24,12 @@ public class RestApiConfiguration {
     @Bean
     public UsersRestApi usersRestApi(final UserIndexer cachedUserIndexer,
                                      final AuthorizationContext authorizationContext,
-                                     final AccountStorage accountStorage) {
+                                     final AccountStorage accountStorage,
+                                     final UserIndexingJobStorage userIndexingJobStorage) {
         return new UsersRestApi(
                 new UserExposer(cachedUserIndexer, accountStorage),
-                authorizationContext);
+                authorizationContext,
+                userIndexingJobStorage);
     }
 
     @Bean
