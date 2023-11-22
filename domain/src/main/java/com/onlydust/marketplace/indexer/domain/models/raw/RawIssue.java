@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.Value;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 @Value
@@ -27,11 +27,11 @@ public class RawIssue extends JsonDocument {
     String htmlUrl;
     String body;
     @JsonProperty("created_at")
-    Date createdAt;
+    Instant createdAt;
     @JsonProperty("closed_at")
-    Date closedAt;
+    Instant closedAt;
     @JsonProperty("updated_at")
-    Date updatedAt;
+    Instant updatedAt;
     @JsonProperty("pull_request")
     RawPullRequest pullRequest;
     Integer comments;

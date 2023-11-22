@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.github;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.github.adapters.GithubAppContextAdapter;
 import com.onlydust.marketplace.indexer.github.adapters.GithubAppJwtProvider;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +13,7 @@ import java.net.http.HttpClient;
 public class GithubConfiguration {
     @Bean
     public ObjectMapper objectMapper() {
-        return new ObjectMapper();
+        return JsonMapper.builder().findAndAddModules().build();
     }
 
     @Bean

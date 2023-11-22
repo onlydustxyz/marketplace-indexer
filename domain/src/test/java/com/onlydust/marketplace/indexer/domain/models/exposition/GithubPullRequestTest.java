@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.models.exposition;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.domain.models.clean.*;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawCodeReview;
@@ -25,7 +25,7 @@ class GithubPullRequestTest {
     private CleanCodeReview codeReview(String state) {
         final RawCodeReview codeReview;
         try {
-            codeReview = new ObjectMapper().readValue("""
+            codeReview = JsonMapper.builder().findAndAddModules().build().readValue("""
                     {
                       "id": 1637731192,
                       "user": {

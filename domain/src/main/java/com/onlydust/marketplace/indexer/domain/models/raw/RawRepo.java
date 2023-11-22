@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.Value;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
@@ -21,7 +21,7 @@ public class RawRepo extends JsonDocument {
     String htmlUrl;
     String description;
     @JsonProperty("updated_at")
-    Date updatedAt;
+    Instant updatedAt;
     @JsonProperty("stargazers_count")
     Long stargazersCount;
     @JsonProperty("forks_count")

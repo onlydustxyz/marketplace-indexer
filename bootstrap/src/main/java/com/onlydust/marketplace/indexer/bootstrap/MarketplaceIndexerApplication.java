@@ -9,6 +9,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import javax.annotation.PostConstruct;
+import java.util.TimeZone;
+
 @SpringBootApplication
 @EnableConfigurationProperties
 @EnableScheduling
@@ -19,4 +22,9 @@ public class MarketplaceIndexerApplication {
         SpringApplication.run(MarketplaceIndexerApplication.class, args);
     }
 
+    @PostConstruct
+    public void init() {
+        // Setting default JVM timezone as UTC
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
 }

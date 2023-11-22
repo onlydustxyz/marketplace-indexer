@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.Map;
 
 @Value
@@ -15,7 +15,7 @@ public class GithubRepo {
     GithubAccount owner;
     String name;
     String htmlUrl;
-    Date updatedAt;
+    Instant updatedAt;
     String description;
     Long starsCount;
     Long forksCount;

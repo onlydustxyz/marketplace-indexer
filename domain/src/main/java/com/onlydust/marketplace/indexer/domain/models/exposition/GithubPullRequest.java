@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,9 +21,9 @@ public class GithubPullRequest {
     GithubAccount author;
     String htmlUrl;
     Integer commentsCount;
-    Date createdAt;
-    Date closedAt;
-    Date mergedAt;
+    Instant createdAt;
+    Instant closedAt;
+    Instant mergedAt;
     String body;
     Boolean draft;
     List<GithubIssue> closingIssues;

@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.stubs;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
@@ -25,7 +25,7 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     public static <T> T load(String path, Class<T> type) {
         final var inputStream = type.getResourceAsStream(path);
         try {
-            return new ObjectMapper().readValue(inputStream, type);
+            return JsonMapper.builder().findAndAddModules().build().readValue(inputStream, type);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

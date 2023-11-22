@@ -9,7 +9,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.Date;
 import java.util.Optional;
 
 @Entity
@@ -41,8 +40,8 @@ public class ContributionEntity {
     GithubIssueEntity issue;
     @ManyToOne(cascade = CascadeType.ALL)
     GithubCodeReviewEntity codeReview;
-    Date createdAt;
-    Date completedAt;
+    Instant createdAt;
+    Instant completedAt;
     Long githubNumber;
     String githubStatus;
     String githubTitle;
