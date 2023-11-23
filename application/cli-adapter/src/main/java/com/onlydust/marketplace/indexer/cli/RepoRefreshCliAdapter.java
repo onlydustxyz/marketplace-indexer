@@ -15,12 +15,12 @@ import java.util.concurrent.FutureTask;
 @Profile("cli")
 public class RepoRefreshCliAdapter implements CommandLineRunner {
     private final TaskExecutor applicationTaskExecutor;
-    private final RepoRefreshJobManager cachedRepoRefreshJobManager;
+    private final RepoRefreshJobManager cacheOnlyRepoRefreshJobManager;
 
     @Override
     public void run(String... args) {
         LOGGER.info("Refreshing repos");
-        final var jobs = cachedRepoRefreshJobManager.allJobs().stream().map(j -> new FutureTask<>(j, null)).toList();
+        final var jobs = cacheOnlyRepoRefreshJobManager.allJobs().stream().map(j -> new FutureTask<>(j, null)).toList();
         jobs.forEach(applicationTaskExecutor::execute);
         jobs.forEach(j -> {
             try {
