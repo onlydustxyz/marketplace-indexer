@@ -1,7 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.models.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
@@ -11,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Value
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 public class GithubPullRequest {
     Long id;
     GithubRepo repo;

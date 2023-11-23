@@ -57,3 +57,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000027_update_tech_updated_at_triggers.sql
   - include:
       file: db/changelog/changelogs/00000028_create_notifier_jobs_table.sql
+  - include:
+      file: db/changelog/changelogs/00000028_migrate_code_review_completion_dates.sql
