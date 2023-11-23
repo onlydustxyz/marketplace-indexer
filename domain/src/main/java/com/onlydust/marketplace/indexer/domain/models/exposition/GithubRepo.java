@@ -22,7 +22,7 @@ public class GithubRepo {
     Boolean hasIssues;
     Map<String, Long> languages;
     GithubRepo parent;
-
+    Visibility visibility;
 
     public static GithubRepo of(CleanRepo repo) {
         return of(repo, GithubAccount.of(repo.getOwner()));
@@ -41,6 +41,11 @@ public class GithubRepo {
                 .hasIssues(repo.getHasIssues())
                 .languages(repo.getLanguages())
                 .parent(repo.getParent() == null ? null : GithubRepo.of(repo.getParent()))
+                .visibility(Visibility.valueOf(repo.getVisibility().toUpperCase()))
                 .build();
+    }
+
+    public enum Visibility {
+        PUBLIC, PRIVATE
     }
 }

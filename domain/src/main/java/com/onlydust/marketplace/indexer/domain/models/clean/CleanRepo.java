@@ -9,6 +9,7 @@ import lombok.Value;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 @Value
@@ -25,6 +26,7 @@ public class CleanRepo {
     @Builder.Default
     Map<String, Long> languages = new HashMap<>();
     CleanRepo parent;
+    String visibility;
 
 
     public static CleanRepo of(RawRepo repo, CleanAccount owner) {
@@ -39,6 +41,8 @@ public class CleanRepo {
                 .starsCount(repo.getStargazersCount())
                 .forksCount(repo.getForksCount())
                 .hasIssues(repo.getHasIssues())
+                .visibility(Optional.ofNullable(repo.getVisibility())
+                        .orElse(Boolean.TRUE.equals(repo.getIsPrivate()) ? "private" : "public"))
                 .build();
     }
 
