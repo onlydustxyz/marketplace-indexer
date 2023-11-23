@@ -3,10 +3,8 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubPullRequest;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -63,16 +61,6 @@ public class GithubPullRequestEntity {
 
     @OneToMany(mappedBy = "pullRequestId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     Set<GithubPullRequestCommitCountEntity> commitCounts;
-
-    @EqualsAndHashCode.Exclude
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    ZonedDateTime techCreatedAt;
-
-    @EqualsAndHashCode.Exclude
-    @UpdateTimestamp
-    @Column(nullable = false)
-    ZonedDateTime techUpdatedAt;
 
     public static GithubPullRequestEntity of(GithubPullRequest pullRequest) {
         return GithubPullRequestEntity.builder()

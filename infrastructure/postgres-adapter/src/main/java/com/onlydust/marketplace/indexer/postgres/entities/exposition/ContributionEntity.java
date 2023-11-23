@@ -3,9 +3,7 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.*;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -61,16 +59,6 @@ public class ContributionEntity {
     @Enumerated(EnumType.STRING)
     @org.hibernate.annotations.Type(type = "github_pull_request_review_state")
     GithubPullRequestEntity.ReviewState prReviewState;
-
-    @EqualsAndHashCode.Exclude
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    ZonedDateTime techCreatedAt;
-
-    @EqualsAndHashCode.Exclude
-    @UpdateTimestamp
-    @Column(nullable = false)
-    ZonedDateTime techUpdatedAt;
 
     public static ContributionEntity of(Contribution contribution) {
         final var repo = Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getRepo)

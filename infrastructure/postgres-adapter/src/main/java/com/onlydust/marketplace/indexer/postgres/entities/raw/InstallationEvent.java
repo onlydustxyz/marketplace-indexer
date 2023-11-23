@@ -3,12 +3,10 @@ package com.onlydust.marketplace.indexer.postgres.entities.raw;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
 
 @Data
 @Entity
@@ -25,11 +23,6 @@ public class InstallationEvent {
 
     @Type(type = "jsonb")
     RawInstallationEvent data;
-
-    @EqualsAndHashCode.Exclude
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    ZonedDateTime createdAt;
 
     public static InstallationEvent of(RawInstallationEvent event) {
         return InstallationEvent.builder().data(event).build();

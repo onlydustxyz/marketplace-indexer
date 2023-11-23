@@ -6,16 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.ZonedDateTime;
 
 
 @Data
@@ -31,14 +27,6 @@ public class RepoLanguages {
 
     @Type(type = "jsonb")
     RawLanguages data;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    ZonedDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    ZonedDateTime updatedAt;
 
     public static RepoLanguages of(Long repoId, RawLanguages languages) {
         return RepoLanguages.builder().repoId(repoId).data(languages).build();

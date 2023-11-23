@@ -3,16 +3,12 @@ package com.onlydust.marketplace.indexer.postgres.entities.raw;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawCommit;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 
@@ -30,16 +26,6 @@ public class PullRequestCommits {
 
     @Type(type = "jsonb")
     List<RawCommit> data;
-
-    @EqualsAndHashCode.Exclude
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    ZonedDateTime createdAt;
-
-    @EqualsAndHashCode.Exclude
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    ZonedDateTime updatedAt;
 
     public static PullRequestCommits of(Long pullRequestId, List<RawCommit> commits) {
         return PullRequestCommits.builder().pullRequestId(pullRequestId).data(commits).build();
