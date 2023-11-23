@@ -3,17 +3,13 @@ package com.onlydust.marketplace.indexer.postgres.entities.raw;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestClosingIssues;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 
 
 @Data
@@ -37,16 +33,6 @@ public class PullRequestClosingIssues {
 
     @Type(type = "jsonb")
     RawPullRequestClosingIssues data;
-
-    @EqualsAndHashCode.Exclude
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    ZonedDateTime createdAt;
-
-    @EqualsAndHashCode.Exclude
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    ZonedDateTime updatedAt;
 
     public static PullRequestClosingIssues of(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues) {
         return PullRequestClosingIssues.builder()

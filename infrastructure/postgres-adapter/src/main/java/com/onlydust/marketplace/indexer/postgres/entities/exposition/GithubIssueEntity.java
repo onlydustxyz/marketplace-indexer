@@ -3,10 +3,8 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubIssue;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -52,16 +50,6 @@ public class GithubIssueEntity {
             joinColumns = @JoinColumn(name = "issue_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     List<GithubAccountEntity> assignees;
-
-    @EqualsAndHashCode.Exclude
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    ZonedDateTime techCreatedAt;
-
-    @EqualsAndHashCode.Exclude
-    @UpdateTimestamp
-    @Column(nullable = false)
-    ZonedDateTime techUpdatedAt;
 
     public static GithubIssueEntity of(GithubIssue issue) {
         return GithubIssueEntity.builder()

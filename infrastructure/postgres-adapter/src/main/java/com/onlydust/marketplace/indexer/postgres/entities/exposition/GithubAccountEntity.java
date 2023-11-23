@@ -3,12 +3,9 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
 
 @Entity
 @Data
@@ -34,16 +31,6 @@ public class GithubAccountEntity {
     String twitter;
     String linkedin;
     String telegram;
-
-    @EqualsAndHashCode.Exclude
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    ZonedDateTime techCreatedAt;
-
-    @EqualsAndHashCode.Exclude
-    @UpdateTimestamp
-    @Column(nullable = false)
-    ZonedDateTime techUpdatedAt;
 
     public static GithubAccountEntity of(GithubAccount account) {
         return GithubAccountEntity.builder()

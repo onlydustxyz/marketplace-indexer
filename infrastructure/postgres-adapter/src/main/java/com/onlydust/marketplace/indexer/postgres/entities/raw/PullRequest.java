@@ -3,13 +3,13 @@ package com.onlydust.marketplace.indexer.postgres.entities.raw;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
-import java.time.ZonedDateTime;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 
 @Data
@@ -32,16 +32,6 @@ public class PullRequest {
 
     @Type(type = "jsonb")
     RawPullRequest data;
-
-    @EqualsAndHashCode.Exclude
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    ZonedDateTime createdAt;
-
-    @EqualsAndHashCode.Exclude
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    ZonedDateTime updatedAt;
 
     public static PullRequest of(Long repoId, RawPullRequest pullRequest) {
         final var repo = Repo.builder().id(repoId).build();
