@@ -9,7 +9,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 
 
 @Data
@@ -36,12 +36,12 @@ public class PullRequest {
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    Instant createdAt;
+    ZonedDateTime createdAt;
 
     @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
-    Instant updatedAt;
+    ZonedDateTime updatedAt;
 
     public static PullRequest of(Long repoId, RawPullRequest pullRequest) {
         final var repo = Repo.builder().id(repoId).build();

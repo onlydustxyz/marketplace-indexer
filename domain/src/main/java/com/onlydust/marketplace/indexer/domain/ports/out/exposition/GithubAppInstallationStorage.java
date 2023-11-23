@@ -3,7 +3,7 @@ package com.onlydust.marketplace.indexer.domain.ports.out.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstallation;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +16,7 @@ public interface GithubAppInstallationStorage {
 
     void removeRepos(Long installationId, List<Long> repoIds);
 
-    void setSuspendedAt(Long installationId, Instant suspendedAt);
+    void setSuspendedAt(Long installationId, ZonedDateTime suspendedAt);
 
     Optional<Long> findInstallationIdByAccount(Long accountId);
 }

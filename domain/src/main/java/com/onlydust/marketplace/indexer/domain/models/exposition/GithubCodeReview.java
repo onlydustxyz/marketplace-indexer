@@ -7,7 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
@@ -17,8 +17,8 @@ public class GithubCodeReview {
     GithubPullRequest pullRequest;
     GithubAccount author;
     State state;
-    Instant requestedAt;
-    Instant submittedAt;
+    ZonedDateTime requestedAt;
+    ZonedDateTime submittedAt;
 
     public static GithubCodeReview of(CleanCodeReview codeReview, CleanPullRequest pullRequest) {
         return GithubCodeReview.builder()

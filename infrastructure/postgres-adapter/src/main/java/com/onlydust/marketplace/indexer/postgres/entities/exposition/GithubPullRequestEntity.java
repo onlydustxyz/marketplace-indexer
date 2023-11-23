@@ -9,7 +9,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,9 +33,9 @@ public class GithubPullRequestEntity {
     @Enumerated(EnumType.STRING)
     @Type(type = "github_pull_request_status")
     Status status;
-    Instant createdAt;
-    Instant closedAt;
-    Instant mergedAt;
+    ZonedDateTime createdAt;
+    ZonedDateTime closedAt;
+    ZonedDateTime mergedAt;
     String body;
     @ManyToOne(cascade = CascadeType.ALL)
     GithubAccountEntity author;
@@ -67,12 +67,12 @@ public class GithubPullRequestEntity {
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    Instant techCreatedAt;
+    ZonedDateTime techCreatedAt;
 
     @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(nullable = false)
-    Instant techUpdatedAt;
+    ZonedDateTime techUpdatedAt;
 
     public static GithubPullRequestEntity of(GithubPullRequest pullRequest) {
         return GithubPullRequestEntity.builder()

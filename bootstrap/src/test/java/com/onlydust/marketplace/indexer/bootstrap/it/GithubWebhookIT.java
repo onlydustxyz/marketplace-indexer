@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -232,7 +232,7 @@ public class GithubWebhookIT extends IntegrationTest {
         assertThat(jobs).hasSize(2);
         assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
         assertThat(jobs.get(0).getInstallationId()).isEqualTo(INSTALLATION_ID);
-        assertThat(jobs.get(0).getSuspendedAt()).isEqualTo(Instant.parse("2023-11-13T14:21:39Z"));
+        assertThat(jobs.get(0).getSuspendedAt()).isEqualTo(ZonedDateTime.parse("2023-11-13T14:21:39Z"));
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isNull();
 
@@ -246,7 +246,7 @@ public class GithubWebhookIT extends IntegrationTest {
         final var repos = installations.get(0).getRepos();
         assertThat(repos).hasSize(1);
         assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
-        assertThat(installations.get(0).getSuspendedAt()).isEqualTo(Instant.parse("2023-11-13T14:21:39Z"));
+        assertThat(installations.get(0).getSuspendedAt()).isEqualTo(ZonedDateTime.parse("2023-11-13T14:21:39Z"));
     }
 
 

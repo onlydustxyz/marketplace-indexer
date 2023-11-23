@@ -8,7 +8,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 
 @Entity
 @Data
@@ -38,12 +38,12 @@ public class GithubAccountEntity {
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    Instant techCreatedAt;
+    ZonedDateTime techCreatedAt;
 
     @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(nullable = false)
-    Instant techUpdatedAt;
+    ZonedDateTime techUpdatedAt;
 
     public static GithubAccountEntity of(GithubAccount account) {
         return GithubAccountEntity.builder()

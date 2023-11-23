@@ -9,7 +9,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
@@ -31,8 +31,8 @@ public class GithubIssueEntity {
     @Enumerated(EnumType.STRING)
     @Type(type = "github_issue_status")
     Status status;
-    Instant createdAt;
-    Instant closedAt;
+    ZonedDateTime createdAt;
+    ZonedDateTime closedAt;
     @ManyToOne(cascade = CascadeType.ALL)
     GithubAccountEntity author;
     String htmlUrl;
@@ -56,12 +56,12 @@ public class GithubIssueEntity {
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    Instant techCreatedAt;
+    ZonedDateTime techCreatedAt;
 
     @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(nullable = false)
-    Instant techUpdatedAt;
+    ZonedDateTime techUpdatedAt;
 
     public static GithubIssueEntity of(GithubIssue issue) {
         return GithubIssueEntity.builder()

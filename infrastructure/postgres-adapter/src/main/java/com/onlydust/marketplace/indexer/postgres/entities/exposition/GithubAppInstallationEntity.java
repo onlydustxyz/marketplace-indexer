@@ -6,7 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
@@ -32,17 +32,17 @@ public class GithubAppInstallationEntity {
     )
     List<GithubRepoEntity> repos;
 
-    Instant suspendedAt;
+    ZonedDateTime suspendedAt;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    Instant techCreatedAt;
+    ZonedDateTime techCreatedAt;
 
     @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(nullable = false)
-    Instant techUpdatedAt;
+    ZonedDateTime techUpdatedAt;
 
     public static GithubAppInstallationEntity of(GithubAppInstallation installation) {
         return GithubAppInstallationEntity.builder()

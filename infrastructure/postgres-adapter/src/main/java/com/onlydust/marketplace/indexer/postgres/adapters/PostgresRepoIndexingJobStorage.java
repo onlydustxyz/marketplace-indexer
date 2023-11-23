@@ -7,7 +7,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import lombok.AllArgsConstructor;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +22,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     }
 
     @Override
-    public Set<Long> reposUpdatedBefore(Long installationId, Instant since) {
+    public Set<Long> reposUpdatedBefore(Long installationId, ZonedDateTime since) {
         return repository.findReposUpdatedBefore(installationId, since);
     }
 
@@ -42,7 +42,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void setSuspendedAt(Long installationId, Instant suspendedAt) {
+    public void setSuspendedAt(Long installationId, ZonedDateTime suspendedAt) {
         repository.setSuspendedAt(installationId, suspendedAt);
     }
 
@@ -53,7 +53,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
                 .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
         repository.save(job.toBuilder()
                 .status(JobStatus.RUNNING)
-                .startedAt(Instant.now())
+                .startedAt(ZonedDateTime.now())
                 .build());
     }
 
@@ -63,7 +63,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
                 .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
         repository.save(job.toBuilder()
                 .status(JobStatus.FAILED)
-                .finishedAt(Instant.now())
+                .finishedAt(ZonedDateTime.now())
                 .build());
     }
 
@@ -73,7 +73,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
                 .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
         repository.save(job.toBuilder()
                 .status(JobStatus.SUCCESS)
-                .finishedAt(Instant.now())
+                .finishedAt(ZonedDateTime.now())
                 .build());
     }
 }

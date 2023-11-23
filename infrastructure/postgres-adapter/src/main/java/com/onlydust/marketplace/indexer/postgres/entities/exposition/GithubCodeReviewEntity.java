@@ -9,7 +9,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 
 @Entity
 @Data
@@ -32,8 +32,8 @@ public class GithubCodeReviewEntity {
     @Enumerated(EnumType.STRING)
     @Type(type = "github_code_review_state")
     State state;
-    Instant requestedAt;
-    Instant submittedAt;
+    ZonedDateTime requestedAt;
+    ZonedDateTime submittedAt;
     Long number;
     String title;
     String html_url;
@@ -50,12 +50,12 @@ public class GithubCodeReviewEntity {
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    Instant techCreatedAt;
+    ZonedDateTime techCreatedAt;
 
     @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(nullable = false)
-    Instant techUpdatedAt;
+    ZonedDateTime techUpdatedAt;
 
     public static GithubCodeReviewEntity of(GithubCodeReview codeReview) {
         return GithubCodeReviewEntity.builder()

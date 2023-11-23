@@ -12,7 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 
@@ -34,12 +34,12 @@ public class PullRequestCommits {
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    Instant createdAt;
+    ZonedDateTime createdAt;
 
     @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
-    Instant updatedAt;
+    ZonedDateTime updatedAt;
 
     public static PullRequestCommits of(Long pullRequestId, List<RawCommit> commits) {
         return PullRequestCommits.builder().pullRequestId(pullRequestId).data(commits).build();
