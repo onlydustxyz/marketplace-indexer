@@ -3,7 +3,6 @@ package com.onlydust.marketplace.indexer.domain.services.indexers;
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.clean.*;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawCheckRuns;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestClosingIssues;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
@@ -72,13 +71,14 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
     private List<CleanIssue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         LOGGER.debug("Indexing closing issues for repo {} and pull request {}", repoOwner, pullRequestNumber);
-        final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber)
-                .orElseGet(() -> {
-                    LOGGER.warn("Unable to fetch pull request {}/{}/{} closing issues", repoOwner, repoName, pullRequestNumber);
-                    return new RawPullRequestClosingIssues();
-                });
+        final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
 
-        return closingIssues.issues().stream()
+        if (closingIssues.isEmpty()) {
+            LOGGER.warn("Unable to fetch pull request {}/{}/{} closing issues", repoOwner, repoName, pullRequestNumber);
+            return List.of();
+        }
+
+        return closingIssues.get().issues().stream()
                 .map(reference -> issueIndexer.indexIssue(reference.repoOwner(), reference.repoName(), reference.number()).orElseGet(() -> {
                     LOGGER.warn("Unable to index issue {}", reference);
                     return null;
