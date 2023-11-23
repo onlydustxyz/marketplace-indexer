@@ -9,7 +9,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoE
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
 import lombok.AllArgsConstructor;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +46,7 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
     }
 
     @Override
-    public void setSuspendedAt(Long installationId, Instant suspendedAt) {
+    public void setSuspendedAt(Long installationId, ZonedDateTime suspendedAt) {
         final var installation = githubAppInstallationEntityRepository.findById(installationId)
                 .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
         githubAppInstallationEntityRepository.save(installation.toBuilder()

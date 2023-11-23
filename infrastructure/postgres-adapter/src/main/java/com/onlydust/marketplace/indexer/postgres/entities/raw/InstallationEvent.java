@@ -8,7 +8,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 
 @Data
 @Entity
@@ -29,7 +29,7 @@ public class InstallationEvent {
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    Instant createdAt;
+    ZonedDateTime createdAt;
 
     public static InstallationEvent of(RawInstallationEvent event) {
         return InstallationEvent.builder().data(event).build();

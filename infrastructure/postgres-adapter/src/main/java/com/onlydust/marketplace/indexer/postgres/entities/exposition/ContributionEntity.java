@@ -8,7 +8,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Entity
@@ -40,8 +40,8 @@ public class ContributionEntity {
     GithubIssueEntity issue;
     @ManyToOne(cascade = CascadeType.ALL)
     GithubCodeReviewEntity codeReview;
-    Instant createdAt;
-    Instant completedAt;
+    ZonedDateTime createdAt;
+    ZonedDateTime completedAt;
     Long githubNumber;
     String githubStatus;
     String githubTitle;
@@ -65,12 +65,12 @@ public class ContributionEntity {
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    Instant techCreatedAt;
+    ZonedDateTime techCreatedAt;
 
     @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(nullable = false)
-    Instant techUpdatedAt;
+    ZonedDateTime techUpdatedAt;
 
     public static ContributionEntity of(Contribution contribution) {
         final var repo = Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getRepo)

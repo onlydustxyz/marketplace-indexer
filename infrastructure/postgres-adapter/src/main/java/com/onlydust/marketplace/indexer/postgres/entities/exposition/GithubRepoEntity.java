@@ -9,7 +9,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 @Entity
@@ -31,7 +31,7 @@ public class GithubRepoEntity {
     String name;
     String ownerLogin;
     String htmlUrl;
-    Instant updatedAt;
+    ZonedDateTime updatedAt;
     String description;
     Long starsCount;
     Long forksCount;
@@ -47,12 +47,12 @@ public class GithubRepoEntity {
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    Instant techCreatedAt;
+    ZonedDateTime techCreatedAt;
 
     @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(nullable = false)
-    Instant techUpdatedAt;
+    ZonedDateTime techUpdatedAt;
 
     public static GithubRepoEntity of(GithubRepo repo) {
         return GithubRepoEntity.builder()

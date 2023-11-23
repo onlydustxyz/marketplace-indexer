@@ -6,7 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Value
@@ -17,8 +17,8 @@ public class GithubIssue {
     Long number;
     String title;
     Status status;
-    Instant createdAt;
-    Instant closedAt;
+    ZonedDateTime createdAt;
+    ZonedDateTime closedAt;
     GithubAccount author;
     String htmlUrl;
     String body;

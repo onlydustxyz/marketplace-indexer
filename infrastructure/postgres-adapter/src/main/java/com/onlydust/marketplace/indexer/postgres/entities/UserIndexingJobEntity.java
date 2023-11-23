@@ -7,7 +7,7 @@ import org.hibernate.annotations.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 
 @Entity
 @EqualsAndHashCode
@@ -26,18 +26,18 @@ public class UserIndexingJobEntity {
     @Type(type = "job_status")
     JobStatus status;
 
-    Instant startedAt;
-    Instant finishedAt;
+    ZonedDateTime startedAt;
+    ZonedDateTime finishedAt;
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    Instant techCreatedAt;
+    ZonedDateTime techCreatedAt;
 
     @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(nullable = false)
-    Instant techUpdatedAt;
+    ZonedDateTime techUpdatedAt;
 
     public UserIndexingJobEntity(Long userId) {
 

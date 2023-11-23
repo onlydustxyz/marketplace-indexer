@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 
 
 @Data
@@ -38,12 +38,12 @@ public class RepoCheckRuns {
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    Instant createdAt;
+    ZonedDateTime createdAt;
 
     @EqualsAndHashCode.Exclude
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
-    Instant updatedAt;
+    ZonedDateTime updatedAt;
 
     public static RepoCheckRuns of(Long repoId, String sha, RawCheckRuns checkRuns) {
         return RepoCheckRuns.builder().repoId(repoId).sha(sha).data(checkRuns).build();

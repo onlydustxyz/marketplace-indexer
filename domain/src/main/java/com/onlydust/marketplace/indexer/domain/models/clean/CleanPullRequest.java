@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +17,9 @@ public class CleanPullRequest {
     Long number;
     String title;
     String state;
-    Instant createdAt;
-    Instant closedAt;
-    Instant mergedAt;
+    ZonedDateTime createdAt;
+    ZonedDateTime closedAt;
+    ZonedDateTime mergedAt;
     Boolean merged;
     CleanAccount author;
     String htmlUrl;
