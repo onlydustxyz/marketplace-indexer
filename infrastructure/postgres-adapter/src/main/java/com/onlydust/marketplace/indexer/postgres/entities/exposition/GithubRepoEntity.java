@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -19,7 +20,8 @@ import java.util.Map;
 @EqualsAndHashCode
 @Table(name = "github_repos", schema = "indexer_exp")
 @TypeDefs({
-        @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+        @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class),
+        @TypeDef(name = "github_repo_visibility", typeClass = PostgreSQLEnumType.class)
 })
 public class GithubRepoEntity {
     @Id
@@ -43,6 +45,10 @@ public class GithubRepoEntity {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     GithubRepoEntity parent;
 
+    @Enumerated(EnumType.STRING)
+    @Type(type = "github_repo_visibility")
+    Visibility visibility;
+
     public static GithubRepoEntity of(GithubRepo repo) {
         return GithubRepoEntity.builder()
                 .id(repo.getId())
@@ -57,6 +63,18 @@ public class GithubRepoEntity {
                 .hasIssues(repo.getHasIssues())
                 .languages(repo.getLanguages())
                 .parent(repo.getParent() == null ? null : GithubRepoEntity.of(repo.getParent()))
+                .visibility(Visibility.of(repo.getVisibility()))
                 .build();
+    }
+
+    public enum Visibility {
+        PRIVATE, PUBLIC;
+
+        public static GithubRepoEntity.Visibility of(GithubRepo.Visibility type) {
+            return switch (type) {
+                case PRIVATE -> PRIVATE;
+                case PUBLIC -> PUBLIC;
+            };
+        }
     }
 }

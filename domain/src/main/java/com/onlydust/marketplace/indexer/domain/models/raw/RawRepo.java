@@ -29,4 +29,7 @@ public class RawRepo extends JsonDocument {
     @JsonProperty("has_issues")
     Boolean hasIssues;
     RawRepo parent;
+    String visibility;
+    @JsonProperty("private")
+    Boolean isPrivate;
 }
