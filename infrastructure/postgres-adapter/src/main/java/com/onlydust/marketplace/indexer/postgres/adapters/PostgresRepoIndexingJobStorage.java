@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import lombok.AllArgsConstructor;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +23,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     }
 
     @Override
-    public Set<Long> reposUpdatedBefore(Long installationId, ZonedDateTime since) {
+    public Set<Long> reposUpdatedBefore(Long installationId, Instant since) {
         return repository.findReposUpdatedBefore(installationId, since);
     }
 
@@ -46,14 +47,13 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
         repository.setSuspendedAt(installationId, suspendedAt);
     }
 
-
     @Override
     public void startJob(Long repoId) {
         final var job = repository.findById(repoId)
                 .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
         repository.save(job.toBuilder()
                 .status(JobStatus.RUNNING)
-                .startedAt(ZonedDateTime.now())
+                .startedAt(Instant.now())
                 .build());
     }
 
@@ -63,7 +63,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
                 .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
         repository.save(job.toBuilder()
                 .status(JobStatus.FAILED)
-                .finishedAt(ZonedDateTime.now())
+                .finishedAt(Instant.now())
                 .build());
     }
 
@@ -73,7 +73,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
                 .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
         repository.save(job.toBuilder()
                 .status(JobStatus.SUCCESS)
-                .finishedAt(ZonedDateTime.now())
+                .finishedAt(Instant.now())
                 .build());
     }
 }

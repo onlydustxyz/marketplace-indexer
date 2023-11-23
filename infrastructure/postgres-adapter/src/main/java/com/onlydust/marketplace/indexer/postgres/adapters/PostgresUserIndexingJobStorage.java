@@ -6,7 +6,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.UserIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
 import lombok.AllArgsConstructor;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -14,7 +14,7 @@ public class PostgresUserIndexingJobStorage implements UserIndexingJobStorage {
     private final UserIndexingJobEntityRepository repository;
 
     @Override
-    public Set<Long> usersUpdatedBefore(ZonedDateTime since) {
+    public Set<Long> usersUpdatedBefore(Instant since) {
         return repository.findUsersUpdatedBefore(since);
     }
 
@@ -28,7 +28,7 @@ public class PostgresUserIndexingJobStorage implements UserIndexingJobStorage {
         repository.findById(userId).ifPresent(job ->
                 repository.save(job.toBuilder()
                         .status(JobStatus.RUNNING)
-                        .startedAt(ZonedDateTime.now())
+                        .startedAt(Instant.now())
                         .build()));
     }
 
@@ -37,7 +37,7 @@ public class PostgresUserIndexingJobStorage implements UserIndexingJobStorage {
         repository.findById(userId).ifPresent(job ->
                 repository.save(job.toBuilder()
                         .status(JobStatus.FAILED)
-                        .finishedAt(ZonedDateTime.now())
+                        .finishedAt(Instant.now())
                         .build()));
     }
 
@@ -46,7 +46,7 @@ public class PostgresUserIndexingJobStorage implements UserIndexingJobStorage {
         repository.findById(userId).ifPresent(job ->
                 repository.save(job.toBuilder()
                         .status(JobStatus.SUCCESS)
-                        .finishedAt(ZonedDateTime.now())
+                        .finishedAt(Instant.now())
                         .build()));
     }
 }

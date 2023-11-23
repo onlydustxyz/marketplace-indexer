@@ -4,7 +4,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.UserIndexingJobEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.Set;
 
 public interface UserIndexingJobEntityRepository extends JpaRepository<UserIndexingJobEntity, Long> {
@@ -13,6 +13,6 @@ public interface UserIndexingJobEntityRepository extends JpaRepository<UserIndex
             FROM UserIndexingJobEntity
             WHERE (finishedAt IS NULL OR finishedAt < :since)
             """)
-    Set<Long> findUsersUpdatedBefore(ZonedDateTime since);
+    Set<Long> findUsersUpdatedBefore(Instant since);
 
 }

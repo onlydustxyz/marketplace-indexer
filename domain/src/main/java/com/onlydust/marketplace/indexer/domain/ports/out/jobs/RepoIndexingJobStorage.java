@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.jobs;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
@@ -7,7 +8,7 @@ import java.util.Set;
 public interface RepoIndexingJobStorage {
     Set<Long> installationIds();
 
-    Set<Long> reposUpdatedBefore(Long installationId, ZonedDateTime since);
+    Set<Long> reposUpdatedBefore(Long installationId, Instant since);
 
     void add(Long installationId, Long... repoIds);
 

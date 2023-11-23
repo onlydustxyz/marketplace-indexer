@@ -3,9 +3,12 @@ package com.onlydust.marketplace.indexer.bootstrap.configuration;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.NotifierJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.NotifierJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorageComposite;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
@@ -17,6 +20,7 @@ import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestExpo
 import com.onlydust.marketplace.indexer.domain.services.exposers.RepoContributorsExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.RepoExposer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
+import com.onlydust.marketplace.indexer.domain.services.jobs.NotifierJobManagerJobService;
 import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
 import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobService;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
@@ -345,5 +349,10 @@ public class DomainConfiguration {
             final UserRefreshJobService.Config userRefreshJobConfig
     ) {
         return new UserRefreshJobService(userIndexingJobTriggerRepository, cachedUserIndexer, userRefreshJobConfig);
+    }
+
+    @Bean
+    public NotifierJobManager apiNotifier(final ContributionStorage contributionStorage, final ApiClient apiClient, final NotifierJobStorage notifierJobStorage) {
+        return new NotifierJobManagerJobService(contributionStorage, apiClient, notifierJobStorage);
     }
 }

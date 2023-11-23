@@ -8,24 +8,22 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 
 @Entity
-@EqualsAndHashCode
+@Value
 @Builder(toBuilder = true)
-@Data
-@AllArgsConstructor
+@EqualsAndHashCode
 @NoArgsConstructor(force = true)
-@Table(name = "repo_indexing_jobs", schema = "indexer")
+@AllArgsConstructor
+@Table(name = "notifier_jobs", schema = "indexer")
 @TypeDef(name = "job_status", typeClass = PostgreSQLEnumType.class)
 @DynamicUpdate
-public class RepoIndexingJobEntity {
+public class NotifierJobEntity {
     @Id
-    Long repoId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
-    Long installationId;
-
-    ZonedDateTime suspendedAt;
+    Instant lastNotification;
 
     @Enumerated(EnumType.STRING)
     @Type(type = "job_status")
@@ -33,11 +31,4 @@ public class RepoIndexingJobEntity {
 
     Instant startedAt;
     Instant finishedAt;
-
-    public RepoIndexingJobEntity(Long repoId, Long installationId) {
-        this.repoId = repoId;
-        this.installationId = installationId;
-        this.status = JobStatus.PENDING;
-    }
-
 }

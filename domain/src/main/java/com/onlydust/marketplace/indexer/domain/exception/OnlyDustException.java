@@ -24,8 +24,16 @@ public class OnlyDustException extends RuntimeException {
         return new OnlyDustException(404, message, null);
     }
 
+    public static OnlyDustException unAuthorized(@NonNull String message) {
+        return unAuthorized(message, null);
+    }
+
     public static OnlyDustException unAuthorized(@NonNull String message, Throwable cause) {
         return new OnlyDustException(401, message, cause);
+    }
+
+    public static OnlyDustException forbidden(@NonNull String message) {
+        return new OnlyDustException(401, message, null);
     }
 
     public static OnlyDustException internalServerError(@NonNull String message) {

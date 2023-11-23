@@ -4,4 +4,5 @@ import com.onlydust.marketplace.indexer.postgres.entities.exposition.Contributio
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ContributionRepository extends JpaRepository<ContributionEntity, String> {
+
 }

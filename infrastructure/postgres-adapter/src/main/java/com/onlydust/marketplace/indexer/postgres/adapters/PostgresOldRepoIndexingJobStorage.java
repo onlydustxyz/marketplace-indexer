@@ -5,6 +5,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import lombok.AllArgsConstructor;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +21,7 @@ public class PostgresOldRepoIndexingJobStorage implements RepoIndexingJobStorage
     }
 
     @Override
-    public Set<Long> reposUpdatedBefore(Long installationId, ZonedDateTime since) {
+    public Set<Long> reposUpdatedBefore(Long installationId, Instant since) {
         return Set.of();
     }
 
