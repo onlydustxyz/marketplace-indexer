@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.domain.jobs.Job;
-import com.onlydust.marketplace.indexer.domain.ports.in.ApiNotifier;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.NotifierJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
@@ -44,7 +44,7 @@ public class RepoJobIndexingIT extends IntegrationTest {
     @Autowired
     public RepoRefreshJobManager diffRepoRefreshJobManager;
     @Autowired
-    public ApiNotifier apiNotifier;
+    public NotifierJobManager notifierJobManager;
 
     private WebTestClient.ResponseSpec indexRepo(Long repoId) {
         return put("/api/v1/indexes/repos/" + repoId);
@@ -115,13 +115,15 @@ public class RepoJobIndexingIT extends IntegrationTest {
 
     @Test
     @Order(100)
-    public void should_notify_api_upon_new_contributions() {
+    public void should_notify_api_upon_new_contributions() throws InterruptedException {
         apiWireMockServer.stubFor(post(urlEqualTo("/api/v1/events/on-contributions-change"))
                 .withHeader("Api-Key", equalTo("INTERNAL_API_KEY"))
                 .withRequestBody(equalToJson("{\"repoIds\": [%d]}".formatted(MARKETPLACE)))
                 .willReturn(noContent()));
 
-        apiNotifier.notifyUponNewContributions();
+        notifierJobManager.allJobs().forEach(Job::run);
+        Thread.sleep(10);
+        notifierJobManager.allJobs().forEach(Job::run); // This run will not send any event
 
         assertThat(apiWireMockServer
                 .countRequestsMatching(postRequestedFor(urlEqualTo("/api/v1/events/on-contributions-change")).build())

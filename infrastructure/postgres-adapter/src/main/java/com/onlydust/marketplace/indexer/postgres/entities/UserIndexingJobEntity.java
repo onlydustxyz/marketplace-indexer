@@ -7,7 +7,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 @Entity
 @EqualsAndHashCode
@@ -26,8 +26,8 @@ public class UserIndexingJobEntity {
     @Type(type = "job_status")
     JobStatus status;
 
-    ZonedDateTime startedAt;
-    ZonedDateTime finishedAt;
+    Instant startedAt;
+    Instant finishedAt;
 
     public UserIndexingJobEntity(Long userId) {
 

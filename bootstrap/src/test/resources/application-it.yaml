@@ -15,3 +15,6 @@ application:
   cron:
     repo-refresh-job-delay: 100
     user-refresh-job-delay: 100
+spring:
+  jpa:
+    show-sql: true

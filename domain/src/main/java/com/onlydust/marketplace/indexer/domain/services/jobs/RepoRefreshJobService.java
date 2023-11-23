@@ -11,7 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +38,7 @@ public class RepoRefreshJobService implements RepoRefreshJobManager {
     }
 
     private Optional<Job> createJobForInstallationId(Long installationId) {
-        final var repos = repoIndexingJobStorage.reposUpdatedBefore(installationId, ZonedDateTime.now().minusSeconds(config.refreshInterval));
+        final var repos = repoIndexingJobStorage.reposUpdatedBefore(installationId, Instant.now().minusSeconds(config.refreshInterval));
         return repos.isEmpty() ? Optional.empty() : Optional.of(new RepoIndexerJob(fullRepoIndexer, installationId, repos, repoIndexingJobStorage, githubAppContext));
     }
 

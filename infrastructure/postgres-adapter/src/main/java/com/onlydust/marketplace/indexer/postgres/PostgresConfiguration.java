@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.postgres;
 
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
+import com.onlydust.marketplace.indexer.postgres.repositories.NotifierJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
@@ -74,8 +75,8 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public ContributionStorage contributionStorageRepository(final ContributionRepository contributionRepository) {
-        return new PostgresContributionStorage(contributionRepository);
+    public ContributionStorage contributionStorageRepository(final ContributionRepository contributionRepository, final ContributionNotificationEntityRepository contributionNotificationEntityRepository) {
+        return new PostgresContributionStorage(contributionRepository, contributionNotificationEntityRepository);
     }
 
     @Bean
@@ -106,5 +107,10 @@ public class PostgresConfiguration {
     @Bean
     public PostgresIssueStorage postgresIssueStorage(final com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository githubIssueRepository) {
         return new PostgresIssueStorage(githubIssueRepository);
+    }
+
+    @Bean
+    public PostgresNotifierJobStorage notifierJobStorage(final NotifierJobEntityRepository notifierJobEntityRepository) {
+        return new PostgresNotifierJobStorage(notifierJobEntityRepository);
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +25,7 @@ public interface RepoIndexingJobEntityRepository extends JpaRepository<RepoIndex
                OR installationId = :installationId
                 AND (finishedAt IS NULL OR finishedAt < :since)
             """)
-    Set<Long> findReposUpdatedBefore(Long installationId, ZonedDateTime since);
+    Set<Long> findReposUpdatedBefore(Long installationId, Instant since);
 
     @Modifying
     @Query("UPDATE RepoIndexingJobEntity SET installationId = NULL WHERE installationId = :installationId AND repoId IN :repoIds")

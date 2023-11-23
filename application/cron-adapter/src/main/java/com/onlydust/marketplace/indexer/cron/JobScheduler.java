@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.cron;
 
-import com.onlydust.marketplace.indexer.domain.ports.in.ApiNotifier;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.NotifierJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ public class JobScheduler {
     private final Executor applicationTaskExecutor;
     private final RepoRefreshJobManager diffRepoRefreshJobManager;
     private final UserRefreshJobManager diffUserRefreshJobManager;
-    private final ApiNotifier apiNotifier;
+    private final NotifierJobManager notifierJobManager;
 
     @Scheduled(fixedDelayString = "${application.cron.repo-refresh-job-delay}")
     public void scheduleRepoRefresherJobs() {
@@ -36,6 +36,6 @@ public class JobScheduler {
     @Scheduled(fixedDelayString = "${application.cron.api-notifier-job-delay}")
     public void notifyApi() {
         LOGGER.info("Notifying API");
-        apiNotifier.notifyUponNewContributions();
+        notifierJobManager.allJobs().forEach(applicationTaskExecutor::execute);
     }
 }

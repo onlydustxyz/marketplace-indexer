@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @AllArgsConstructor
@@ -27,7 +27,7 @@ public class UserRefreshJobService implements UserRefreshJobManager {
 
     @Override
     public List<Job> allJobs() {
-        final var users = userIndexingJobStorage.usersUpdatedBefore(ZonedDateTime.now().minusSeconds(config.refreshInterval));
+        final var users = userIndexingJobStorage.usersUpdatedBefore(Instant.now().minusSeconds(config.refreshInterval));
         return List.of(new UserIndexerJob(userIndexer, users, userIndexingJobStorage));
     }
 
