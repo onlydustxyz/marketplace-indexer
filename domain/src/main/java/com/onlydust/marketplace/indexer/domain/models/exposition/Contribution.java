@@ -56,7 +56,7 @@ public class Contribution {
                 .status(status)
                 .codeReview(codeReview)
                 .createdAt(codeReview.getRequestedAt())
-                .completedAt(status == Status.IN_PROGRESS ? null : codeReview.getSubmittedAt())
+                .completedAt(GetCompletionDate(codeReview))
                 .build();
     }
 
@@ -64,6 +64,17 @@ public class Contribution {
         return Contribution.of(commit.getPullRequest()).toBuilder()
                 .contributor(commit.getAuthor())
                 .build();
+    }
+
+    private static ZonedDateTime GetCompletionDate(GithubCodeReview codeReview) {
+        return switch (codeReview.getState()) {
+            case PENDING, COMMENTED -> switch (codeReview.getPullRequest().getStatus()) {
+                case CLOSED -> codeReview.getPullRequest().getClosedAt();
+                case MERGED -> codeReview.getPullRequest().getMergedAt();
+                default -> null;
+            };
+            default -> codeReview.getSubmittedAt();
+        };
     }
 
     public String getId() {
@@ -116,6 +127,5 @@ public class Contribution {
                 case DISMISSED -> Status.CANCELLED;
             };
         }
-
     }
 }

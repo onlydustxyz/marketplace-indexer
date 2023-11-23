@@ -3,7 +3,6 @@ package com.onlydust.marketplace.indexer.domain.models.exposition;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanCodeReview;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
@@ -12,7 +11,7 @@ import java.time.ZonedDateTime;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 @Value
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 public class GithubCodeReview {
     GithubPullRequest pullRequest;
     GithubAccount author;

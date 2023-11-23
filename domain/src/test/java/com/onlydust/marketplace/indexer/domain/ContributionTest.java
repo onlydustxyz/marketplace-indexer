@@ -14,6 +14,9 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
 import org.junit.jupiter.api.Test;
 
+import java.time.ZonedDateTime;
+import java.util.function.BiFunction;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ContributionTest {
@@ -69,5 +72,49 @@ public class ContributionTest {
         assertThat(Contribution.Status.of(GithubCodeReview.State.CHANGES_REQUESTED, GithubPullRequest.Status.DRAFT)).isEqualTo(Contribution.Status.COMPLETED);
         assertThat(Contribution.Status.of(GithubCodeReview.State.CHANGES_REQUESTED, GithubPullRequest.Status.CLOSED)).isEqualTo(Contribution.Status.COMPLETED);
         assertThat(Contribution.Status.of(GithubCodeReview.State.CHANGES_REQUESTED, GithubPullRequest.Status.MERGED)).isEqualTo(Contribution.Status.COMPLETED);
+    }
+
+    @Test
+    public void should_compute_code_review_completion_date() {
+        final var codeReviewSubmissionDate = ZonedDateTime.now().minusSeconds(30);
+        final var pullRequestClosedDate = ZonedDateTime.now().minusSeconds(15);
+        final var pullRequestMergedDate = ZonedDateTime.now().minusSeconds(10);
+
+        final BiFunction<GithubCodeReview.State, GithubPullRequest.Status, Contribution> contribution =
+                (GithubCodeReview.State codeReviewState, GithubPullRequest.Status pullRequestStatus) ->
+                        Contribution.of(GithubCodeReview.builder()
+                                .submittedAt(codeReviewSubmissionDate)
+                                .state(codeReviewState)
+                                .pullRequest(GithubPullRequest.builder()
+                                        .status(pullRequestStatus)
+                                        .mergedAt(pullRequestMergedDate)
+                                        .closedAt(pullRequestClosedDate)
+                                        .build())
+                                .build());
+
+        assertThat(contribution.apply(GithubCodeReview.State.PENDING, GithubPullRequest.Status.OPEN).getCompletedAt()).isNull();
+        assertThat(contribution.apply(GithubCodeReview.State.PENDING, GithubPullRequest.Status.DRAFT).getCompletedAt()).isNull();
+        assertThat(contribution.apply(GithubCodeReview.State.PENDING, GithubPullRequest.Status.CLOSED).getCompletedAt()).isEqualTo(pullRequestClosedDate);
+        assertThat(contribution.apply(GithubCodeReview.State.PENDING, GithubPullRequest.Status.MERGED).getCompletedAt()).isEqualTo(pullRequestMergedDate);
+
+        assertThat(contribution.apply(GithubCodeReview.State.COMMENTED, GithubPullRequest.Status.OPEN).getCompletedAt()).isNull();
+        assertThat(contribution.apply(GithubCodeReview.State.COMMENTED, GithubPullRequest.Status.DRAFT).getCompletedAt()).isNull();
+        assertThat(contribution.apply(GithubCodeReview.State.COMMENTED, GithubPullRequest.Status.CLOSED).getCompletedAt()).isEqualTo(pullRequestClosedDate);
+        assertThat(contribution.apply(GithubCodeReview.State.COMMENTED, GithubPullRequest.Status.MERGED).getCompletedAt()).isEqualTo(pullRequestMergedDate);
+
+        assertThat(contribution.apply(GithubCodeReview.State.DISMISSED, GithubPullRequest.Status.OPEN).getCompletedAt()).isEqualTo(codeReviewSubmissionDate);
+        assertThat(contribution.apply(GithubCodeReview.State.DISMISSED, GithubPullRequest.Status.DRAFT).getCompletedAt()).isEqualTo(codeReviewSubmissionDate);
+        assertThat(contribution.apply(GithubCodeReview.State.DISMISSED, GithubPullRequest.Status.CLOSED).getCompletedAt()).isEqualTo(codeReviewSubmissionDate);
+        assertThat(contribution.apply(GithubCodeReview.State.DISMISSED, GithubPullRequest.Status.MERGED).getCompletedAt()).isEqualTo(codeReviewSubmissionDate);
+
+        assertThat(contribution.apply(GithubCodeReview.State.APPROVED, GithubPullRequest.Status.OPEN).getCompletedAt()).isEqualTo(codeReviewSubmissionDate);
+        assertThat(contribution.apply(GithubCodeReview.State.APPROVED, GithubPullRequest.Status.DRAFT).getCompletedAt()).isEqualTo(codeReviewSubmissionDate);
+        assertThat(contribution.apply(GithubCodeReview.State.APPROVED, GithubPullRequest.Status.CLOSED).getCompletedAt()).isEqualTo(codeReviewSubmissionDate);
+        assertThat(contribution.apply(GithubCodeReview.State.APPROVED, GithubPullRequest.Status.MERGED).getCompletedAt()).isEqualTo(codeReviewSubmissionDate);
+
+        assertThat(contribution.apply(GithubCodeReview.State.CHANGES_REQUESTED, GithubPullRequest.Status.OPEN).getCompletedAt()).isEqualTo(codeReviewSubmissionDate);
+        assertThat(contribution.apply(GithubCodeReview.State.CHANGES_REQUESTED, GithubPullRequest.Status.DRAFT).getCompletedAt()).isEqualTo(codeReviewSubmissionDate);
+        assertThat(contribution.apply(GithubCodeReview.State.CHANGES_REQUESTED, GithubPullRequest.Status.CLOSED).getCompletedAt()).isEqualTo(codeReviewSubmissionDate);
+        assertThat(contribution.apply(GithubCodeReview.State.CHANGES_REQUESTED, GithubPullRequest.Status.MERGED).getCompletedAt()).isEqualTo(codeReviewSubmissionDate);
     }
 }
