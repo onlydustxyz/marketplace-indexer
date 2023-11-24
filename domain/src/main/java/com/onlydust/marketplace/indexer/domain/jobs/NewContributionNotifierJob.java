@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.Set;
 
 @AllArgsConstructor
 @Slf4j
@@ -22,7 +23,7 @@ public class NewContributionNotifierJob extends Job {
         final var job = notifierJobStorage.startJob();
         try {
             final var notification = contributionStorage.newContributionsNotification(Optional.ofNullable(job.getLastNotificationSentAt()).orElse(Instant.EPOCH));
-            if (!notification.repoIds().isEmpty()) {
+            if (!Optional.ofNullable(notification.repoIds()).orElse(Set.of()).isEmpty()) {
                 apiClient.onNewContributions(notification.repoIds());
                 job.setLastNotificationSentAt(notification.latestContributionUpdate());
             }
