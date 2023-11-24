@@ -26,6 +26,7 @@ application:
   cron:
     repo-refresh-job-delay: 5000 # 5s
     user-refresh-job-delay: 5000 # 5s
+    api-notifier-job-delay: 10000 # 10s
   repo-refresh-job:
     refresh-interval: 60 # 1m
   user-refresh-job:
