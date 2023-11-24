@@ -7,7 +7,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -29,8 +29,8 @@ public class GithubIssueEntity {
     @Enumerated(EnumType.STRING)
     @Type(type = "github_issue_status")
     Status status;
-    ZonedDateTime createdAt;
-    ZonedDateTime closedAt;
+    Date createdAt;
+    Date closedAt;
     @ManyToOne(cascade = CascadeType.ALL)
     GithubAccountEntity author;
     String htmlUrl;

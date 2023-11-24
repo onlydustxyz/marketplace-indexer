@@ -1,8 +1,8 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.jobs;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,7 +48,7 @@ public class RepoIndexingJobStorageComposite implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void setSuspendedAt(Long installationId, ZonedDateTime suspendedAt) {
+    public void setSuspendedAt(Long installationId, Date suspendedAt) {
         Arrays.stream(repoIndexingJobRepositories)
                 .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.setSuspendedAt(installationId, suspendedAt));
     }

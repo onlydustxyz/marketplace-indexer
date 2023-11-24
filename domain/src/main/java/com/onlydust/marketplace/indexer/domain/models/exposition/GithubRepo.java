@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Map;
 
 @Value
@@ -15,7 +15,7 @@ public class GithubRepo {
     GithubAccount owner;
     String name;
     String htmlUrl;
-    ZonedDateTime updatedAt;
+    Date updatedAt;
     String description;
     Long starsCount;
     Long forksCount;

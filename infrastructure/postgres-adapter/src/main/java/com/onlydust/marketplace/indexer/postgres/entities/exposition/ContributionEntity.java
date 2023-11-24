@@ -6,7 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 @Entity
@@ -38,8 +38,8 @@ public class ContributionEntity {
     GithubIssueEntity issue;
     @ManyToOne(cascade = CascadeType.ALL)
     GithubCodeReviewEntity codeReview;
-    ZonedDateTime createdAt;
-    ZonedDateTime completedAt;
+    Date createdAt;
+    Date completedAt;
     Long githubNumber;
     String githubStatus;
     String githubTitle;

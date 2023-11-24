@@ -9,7 +9,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Map;
 
 @Entity
@@ -32,7 +32,7 @@ public class GithubRepoEntity {
     String name;
     String ownerLogin;
     String htmlUrl;
-    ZonedDateTime updatedAt;
+    Date updatedAt;
     String description;
     Long starsCount;
     Long forksCount;

@@ -7,7 +7,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Entity
 @Data
@@ -30,8 +30,8 @@ public class GithubCodeReviewEntity {
     @Enumerated(EnumType.STRING)
     @Type(type = "github_code_review_state")
     State state;
-    ZonedDateTime requestedAt;
-    ZonedDateTime submittedAt;
+    Date requestedAt;
+    Date submittedAt;
     Long number;
     String title;
     String html_url;

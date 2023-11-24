@@ -4,7 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import lombok.Builder;
 import lombok.Value;
 
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,9 +20,9 @@ public class GithubPullRequest {
     GithubAccount author;
     String htmlUrl;
     Integer commentsCount;
-    ZonedDateTime createdAt;
-    ZonedDateTime closedAt;
-    ZonedDateTime mergedAt;
+    Date createdAt;
+    Date closedAt;
+    Date mergedAt;
     String body;
     Boolean draft;
     List<GithubIssue> closingIssues;

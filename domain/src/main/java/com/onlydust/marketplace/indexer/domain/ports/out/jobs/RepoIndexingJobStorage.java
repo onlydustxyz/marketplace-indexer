@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.jobs;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -16,7 +16,7 @@ public interface RepoIndexingJobStorage {
 
     void deleteInstallationForRepos(Long installationId, List<Long> repoIds);
 
-    void setSuspendedAt(Long installationId, ZonedDateTime suspendedAt);
+    void setSuspendedAt(Long installationId, Date suspendedAt);
 
     void startJob(Long repoId);
 
