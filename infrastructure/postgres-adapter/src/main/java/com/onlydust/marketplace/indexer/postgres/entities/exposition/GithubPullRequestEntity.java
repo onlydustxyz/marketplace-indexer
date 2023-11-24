@@ -7,7 +7,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,9 +31,9 @@ public class GithubPullRequestEntity {
     @Enumerated(EnumType.STRING)
     @Type(type = "github_pull_request_status")
     Status status;
-    ZonedDateTime createdAt;
-    ZonedDateTime closedAt;
-    ZonedDateTime mergedAt;
+    Date createdAt;
+    Date closedAt;
+    Date mergedAt;
     String body;
     @ManyToOne(cascade = CascadeType.ALL)
     GithubAccountEntity author;

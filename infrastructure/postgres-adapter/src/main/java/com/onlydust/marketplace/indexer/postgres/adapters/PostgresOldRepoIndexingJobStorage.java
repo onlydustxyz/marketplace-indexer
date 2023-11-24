@@ -6,8 +6,8 @@ import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEnti
 import lombok.AllArgsConstructor;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +39,7 @@ public class PostgresOldRepoIndexingJobStorage implements RepoIndexingJobStorage
     }
 
     @Override
-    public void setSuspendedAt(Long installationId, ZonedDateTime suspendedAt) {
+    public void setSuspendedAt(Long installationId, Date suspendedAt) {
     }
 
     @Override

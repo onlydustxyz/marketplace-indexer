@@ -6,7 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -17,7 +17,7 @@ public class CleanRepo {
     Long id;
     String name;
     String htmlUrl;
-    ZonedDateTime updatedAt;
+    Date updatedAt;
     String description;
     CleanAccount owner;
     Long starsCount;

@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.Value;
 
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
@@ -16,5 +16,5 @@ public class RawInstallation extends JsonDocument {
     Long id;
     RawShortAccount account;
     @JsonProperty("suspended_at")
-    ZonedDateTime suspendedAt;
+    Date suspendedAt;
 }

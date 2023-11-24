@@ -6,7 +6,7 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import lombok.Builder;
 import lombok.Value;
 
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
@@ -16,8 +16,8 @@ public class GithubCodeReview {
     GithubPullRequest pullRequest;
     GithubAccount author;
     State state;
-    ZonedDateTime requestedAt;
-    ZonedDateTime submittedAt;
+    Date requestedAt;
+    Date submittedAt;
 
     public static GithubCodeReview of(CleanCodeReview codeReview, CleanPullRequest pullRequest) {
         return GithubCodeReview.builder()

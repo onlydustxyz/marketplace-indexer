@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Builder(access = AccessLevel.PRIVATE)
@@ -17,8 +17,8 @@ public class CleanIssue {
     String title;
     String state;
     String stateReason;
-    ZonedDateTime createdAt;
-    ZonedDateTime closedAt;
+    Date createdAt;
+    Date closedAt;
     CleanAccount author;
     String htmlUrl;
     String body;

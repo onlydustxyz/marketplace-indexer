@@ -14,7 +14,8 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
 import org.junit.jupiter.api.Test;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
+import java.util.Date;
 import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -76,9 +77,9 @@ public class ContributionTest {
 
     @Test
     public void should_compute_code_review_completion_date() {
-        final var codeReviewSubmissionDate = ZonedDateTime.now().minusSeconds(30);
-        final var pullRequestClosedDate = ZonedDateTime.now().minusSeconds(15);
-        final var pullRequestMergedDate = ZonedDateTime.now().minusSeconds(10);
+        final var codeReviewSubmissionDate = Date.from(Instant.now().minusSeconds(30));
+        final var pullRequestClosedDate = Date.from(Instant.now().minusSeconds(15));
+        final var pullRequestMergedDate = Date.from(Instant.now().minusSeconds(10));
 
         final BiFunction<GithubCodeReview.State, GithubPullRequest.Status, Contribution> contribution =
                 (GithubCodeReview.State codeReviewState, GithubPullRequest.Status pullRequestStatus) ->

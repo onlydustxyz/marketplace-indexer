@@ -4,7 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstal
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -30,7 +30,7 @@ public class GithubAppInstallationEntity {
     )
     List<GithubRepoEntity> repos;
 
-    ZonedDateTime suspendedAt;
+    Date suspendedAt;
 
     public static GithubAppInstallationEntity of(GithubAppInstallation installation) {
         return GithubAppInstallationEntity.builder()

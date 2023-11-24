@@ -8,7 +8,7 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Entity
 @EqualsAndHashCode
@@ -25,7 +25,7 @@ public class RepoIndexingJobEntity {
 
     Long installationId;
 
-    ZonedDateTime suspendedAt;
+    Date suspendedAt;
 
     @Enumerated(EnumType.STRING)
     @Type(type = "job_status")

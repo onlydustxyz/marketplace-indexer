@@ -4,14 +4,14 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class InstallationSuspendedEvent extends InstallationEvent {
-    ZonedDateTime suspendedAt;
+    Date suspendedAt;
 
-    private InstallationSuspendedEvent(Long installationId, ZonedDateTime suspendedAt) {
+    private InstallationSuspendedEvent(Long installationId, Date suspendedAt) {
         super(installationId, Action.SUSPEND);
         this.suspendedAt = suspendedAt;
     }

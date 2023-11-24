@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
@@ -18,8 +18,8 @@ public class Contribution {
     GithubPullRequest pullRequest;
     GithubIssue issue;
     GithubCodeReview codeReview;
-    ZonedDateTime createdAt;
-    ZonedDateTime completedAt;
+    Date createdAt;
+    Date completedAt;
     GithubPullRequest.ReviewState pullRequestReviewState;
 
     public static Contribution of(GithubPullRequest pullRequest) {
@@ -66,7 +66,7 @@ public class Contribution {
                 .build();
     }
 
-    private static ZonedDateTime GetCompletionDate(GithubCodeReview codeReview) {
+    private static Date GetCompletionDate(GithubCodeReview codeReview) {
         return switch (codeReview.getState()) {
             case PENDING, COMMENTED -> switch (codeReview.getPullRequest().getStatus()) {
                 case CLOSED -> codeReview.getPullRequest().getClosedAt();
