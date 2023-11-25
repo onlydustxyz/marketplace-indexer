@@ -58,14 +58,14 @@ spring:
           in_clause_parameter_padding: true
         event:
           merge:
-            entity_copy_observer: allow
+            entity_copy_observer: log
         format_sql: false
-        order_inserts: true
-        order_updates: true
+        order_inserts: false
+        order_updates: false
         generate_statistics: false
         jdbc:
           time_zone: UTC
-          batch_size: 10000
+          batch_size: 50
         temp:
           use_jdbc_metadata_defaults: false
     generate-ddl: false
