@@ -2,7 +2,7 @@ package com.onlydust.marketplace.indexer.domain;
 
 import com.onlydust.marketplace.indexer.domain.jobs.Job;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.FullRepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
 import com.onlydust.marketplace.indexer.domain.stubs.GithubAppContextStub;
@@ -15,9 +15,9 @@ import static org.mockito.Mockito.*;
 
 public class RepoJobServiceTest {
     private final RepoIndexingJobStorage repoIndexingJobRepository = mock(RepoIndexingJobStorage.class);
-    private final FullRepoIndexer fullRepoIndexer = mock(FullRepoIndexer.class);
+    private final RepoIndexer repoIndexer = mock(RepoIndexer.class);
     private final GithubAppContext githubAppContext = new GithubAppContextStub();
-    private final RepoRefreshJobService jobService = new RepoRefreshJobService(repoIndexingJobRepository, fullRepoIndexer, githubAppContext, new RepoRefreshJobService.Config(0));
+    private final RepoRefreshJobService jobService = new RepoRefreshJobService(repoIndexingJobRepository, repoIndexer, githubAppContext, new RepoRefreshJobService.Config(0));
 
     @BeforeEach
     void setup() {
@@ -30,7 +30,7 @@ public class RepoJobServiceTest {
     public void should_triggers_all_jobs() {
         jobService.allJobs().forEach(Job::execute);
         for (Long repoId : Set.of(1L, 2L, 3L, 4L, 5L, 6L)) {
-            verify(fullRepoIndexer).indexFullRepo(repoId);
+            verify(repoIndexer).indexRepo(repoId);
             verify(repoIndexingJobRepository).startJob(repoId);
             verify(repoIndexingJobRepository).endJob(repoId);
         }

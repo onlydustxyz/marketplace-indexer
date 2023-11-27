@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.FullRepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Slf4j
 public class RepoIndexerJob extends Job {
-    final FullRepoIndexer fullRepoIndexer;
+    final RepoIndexer fullRepoIndexer;
     final Long installationId;
     final Set<Long> repoIds;
     final RepoIndexingJobStorage repoIndexingJobStorage;
@@ -25,7 +25,7 @@ public class RepoIndexerJob extends Job {
                     try {
                         LOGGER.info("Start indexing repo {}", repo);
                         repoIndexingJobStorage.startJob(repo);
-                        if (fullRepoIndexer.indexFullRepo(repo).isEmpty())
+                        if (fullRepoIndexer.indexRepo(repo).isEmpty())
                             LOGGER.warn("Repo {} not found", repo);
                         repoIndexingJobStorage.endJob(repo);
                     } catch (Throwable e) {

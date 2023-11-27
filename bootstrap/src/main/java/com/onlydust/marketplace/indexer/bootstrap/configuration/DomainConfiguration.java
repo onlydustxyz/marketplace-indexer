@@ -2,7 +2,10 @@ package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.NotifierJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
@@ -265,7 +268,7 @@ public class DomainConfiguration {
 
 
     @Bean
-    public FullRepoIndexer cachedFullRepoIndexer(
+    public RepoIndexer cachedFullRepoIndexer(
             final RawStorageReader cachedRawStorageReader,
             final IssueIndexer cachedIssueIndexer,
             final PullRequestIndexer cachedPullRequestIndexer,
@@ -278,7 +281,7 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public FullRepoIndexer cacheOnlyFullRepoIndexer(
+    public RepoIndexer cacheOnlyFullRepoIndexer(
             final PostgresRawStorage postgresRawStorage,
             final IssueIndexer cacheOnlyIssueIndexer,
             final PullRequestIndexer cacheOnlyPullRequestIndexer,
@@ -291,7 +294,7 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public FullRepoIndexer diffFullRepoIndexer(
+    public RepoIndexer diffFullRepoIndexer(
             final RawStorageReader diffRawStorageReader,
             final IssueIndexer liveIssueIndexer,
             final PullRequestIndexer livePullRequestIndexer,
@@ -306,7 +309,7 @@ public class DomainConfiguration {
     @Bean
     public RepoRefreshJobManager diffRepoRefreshJobManager(
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
-            final FullRepoIndexer diffFullRepoIndexer,
+            final RepoIndexer diffFullRepoIndexer,
             final GithubAppContext githubAppContext,
             final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
@@ -316,7 +319,7 @@ public class DomainConfiguration {
     @Bean
     public RepoRefreshJobManager cachedRepoRefreshJobManager(
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
-            final FullRepoIndexer cachedFullRepoIndexer,
+            final RepoIndexer cachedFullRepoIndexer,
             final GithubAppContext githubAppContext,
             final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
@@ -326,7 +329,7 @@ public class DomainConfiguration {
     @Bean
     public RepoRefreshJobManager cacheOnlyRepoRefreshJobManager(
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
-            final FullRepoIndexer cacheOnlyFullRepoIndexer,
+            final RepoIndexer cacheOnlyFullRepoIndexer,
             final GithubAppContext githubAppContext,
             final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
