@@ -107,4 +107,22 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
 
         repository.saveAll(jobs);
     }
+
+    @Override
+    public void setPrivate(Long repoId) {
+        final var job = repository.findById(repoId)
+                .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
+        repository.save(job.toBuilder()
+                .isPublic(false)
+                .build());
+    }
+
+    @Override
+    public void setPublic(Long repoId) {
+        final var job = repository.findById(repoId)
+                .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
+        repository.save(job.toBuilder()
+                .isPublic(true)
+                .build());
+    }
 }

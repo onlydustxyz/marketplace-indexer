@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.rest.github;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,9 @@ public class GithubWebhookRestApi {
         switch (type) {
             case "installation", "installation_repositories":
                 eventProcessorService.process(objectMapper.readValue(event, RawInstallationEvent.class));
+                break;
+            case "repository":
+                eventProcessorService.process(objectMapper.readValue(event, RawRepositoryEvent.class));
                 break;
             default:
                 LOGGER.warn("Unknown event type {}", type);

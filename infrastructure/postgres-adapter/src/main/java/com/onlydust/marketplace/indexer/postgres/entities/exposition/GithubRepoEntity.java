@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Entity
 @Data
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode

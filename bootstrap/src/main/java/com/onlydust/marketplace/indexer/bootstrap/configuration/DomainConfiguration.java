@@ -111,11 +111,12 @@ public class DomainConfiguration {
     public InstallationEventHandler eventProcessorService(final PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository,
                                                           final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
                                                           final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
-                                                          final GithubAppInstallationStorage githubAppInstallationStorage) {
+                                                          final GithubAppInstallationStorage githubAppInstallationStorage,
+                                                          final RepoStorage repoStorage) {
         return new InstallationEventProcessorService(
                 postgresRawInstallationEventStorageRepository,
                 new RepoIndexingJobStorageComposite(repoIndexingJobRepository, oldRepoIndexesEntityRepository),
-                githubAppInstallationStorage);
+                githubAppInstallationStorage, repoStorage);
     }
 
     @Bean
@@ -127,7 +128,6 @@ public class DomainConfiguration {
     public UserIndexer cachedUserIndexer(final RawStorageReader cachedRawStorageReader, final MeterRegistry registry) {
         return new MonitoredUserIndexer(new UserIndexingService(cachedRawStorageReader), registry);
     }
-
 
     @Bean
     public UserIndexer cacheOnlyUserIndexer(final PostgresRawStorage postgresRawStorage) {

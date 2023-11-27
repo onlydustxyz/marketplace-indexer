@@ -16,7 +16,15 @@ public abstract class InstallationEvent extends Event {
         CREATED, DELETED, ADDED, REMOVED, SUSPEND, UNSUSPEND;
 
         public static Action of(String rawAction) {
-            return valueOf(rawAction.toUpperCase());
+            return switch (rawAction.toUpperCase()) {
+                case "CREATED" -> CREATED;
+                case "DELETED" -> DELETED;
+                case "ADDED" -> ADDED;
+                case "REMOVED" -> REMOVED;
+                case "SUSPEND" -> SUSPEND;
+                case "UNSUSPEND" -> UNSUSPEND;
+                default -> null;
+            };
         }
     }
 }
