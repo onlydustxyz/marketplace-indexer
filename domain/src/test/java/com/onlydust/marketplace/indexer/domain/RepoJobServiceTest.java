@@ -25,15 +25,15 @@ public class RepoJobServiceTest {
     void setup() {
         when(repoIndexingJobRepository.installationIds()).thenReturn(Set.of(1L, 2L));
         when(repoIndexingJobRepository.reposUpdatedBefore(eq(1L), any())).thenReturn(Set.of(
-                new RepoIndexingJobTrigger(1L, true),
-                new RepoIndexingJobTrigger(2L, false),
-                new RepoIndexingJobTrigger(3L, true)
+                new RepoIndexingJobTrigger(1L, true, true),
+                new RepoIndexingJobTrigger(2L, false, true),
+                new RepoIndexingJobTrigger(3L, true, true)
         ));
 
         when(repoIndexingJobRepository.reposUpdatedBefore(eq(2L), any())).thenReturn(Set.of(
-                new RepoIndexingJobTrigger(4L, true),
-                new RepoIndexingJobTrigger(5L, false),
-                new RepoIndexingJobTrigger(6L, true)
+                new RepoIndexingJobTrigger(4L, true, true),
+                new RepoIndexingJobTrigger(5L, false, true),
+                new RepoIndexingJobTrigger(6L, true, true)
         ));
     }
 

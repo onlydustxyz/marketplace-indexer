@@ -27,7 +27,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     @Override
     public Set<RepoIndexingJobTrigger> reposUpdatedBefore(Long installationId, Instant since) {
         return repository.findReposUpdatedBefore(installationId, since)
-                .stream().map(job -> new RepoIndexingJobTrigger(job.getRepoId(), job.getFullIndexing()))
+                .stream().map(job -> new RepoIndexingJobTrigger(job.getRepoId(), job.getFullIndexing(), job.getIsPublic()))
                 .collect(Collectors.toUnmodifiableSet());
     }
 
@@ -77,11 +77,12 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void configureRepoForFullIndexing(Long repoId) {
+    public void configureRepoForFullIndexing(Long repoId, Boolean isPublic) {
         final var job = repository.findById(repoId)
                 .orElse(RepoIndexingJobEntity.builder()
                         .status(JobStatus.PENDING)
                         .repoId(repoId)
+                        .isPublic(isPublic)
                         .build());
 
         repository.save(job.toBuilder()
@@ -90,13 +91,14 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void setInstallationForRepos(Long installationId, Long... repoIds) {
-        final var jobs = Arrays.stream(repoIds).
-                map(repoId -> repository.findById(repoId)
+    public void setInstallationForRepos(Long installationId, RepoIndexingJobTrigger... triggers) {
+        final var jobs = Arrays.stream(triggers).
+                map(trigger -> repository.findById(trigger.getRepoId())
                         .orElse(RepoIndexingJobEntity.builder()
-                                .repoId(repoId)
+                                .repoId(trigger.getRepoId())
                                 .status(JobStatus.PENDING)
                                 .fullIndexing(false)
+                                .isPublic(trigger.getIsPublic())
                                 .build()))
                 .map(job -> job.toBuilder()
                         .installationId(installationId)

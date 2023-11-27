@@ -21,7 +21,7 @@ public interface RepoIndexingJobEntityRepository extends JpaRepository<RepoIndex
     @Query("""
             SELECT j
             FROM RepoIndexingJobEntity j
-            WHERE (:installationId IS NULL AND (j.installationId IS NULL OR j.suspendedAt IS NOT NULL))
+            WHERE (:installationId IS NULL AND (j.installationId IS NULL OR j.suspendedAt IS NOT NULL) AND j.isPublic = TRUE)
                OR j.installationId = :installationId
                 AND (j.finishedAt IS NULL OR j.finishedAt < :since)
             """)

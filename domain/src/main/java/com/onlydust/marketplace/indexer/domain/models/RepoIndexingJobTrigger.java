@@ -8,4 +8,5 @@ import lombok.Data;
 public class RepoIndexingJobTrigger {
     Long repoId;
     Boolean fullIndexing;
+    Boolean isPublic;
 }

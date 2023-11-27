@@ -63,3 +63,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000029_add_repos_visibility.sql
   - include:
       file: db/changelog/changelogs/00000030_add_repo_indexing_mode.sql
+  - include:
+      file: db/changelog/changelogs/00000031_add_repo_visibility_in_jobs.sql
