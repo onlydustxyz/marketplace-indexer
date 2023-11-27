@@ -306,20 +306,22 @@ public class DomainConfiguration {
     public RepoRefreshJobManager diffRepoRefreshJobManager(
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
             final RepoIndexer diffFullRepoIndexer,
+            final RepoIndexer liveRepoIndexer,
             final GithubAppContext githubAppContext,
             final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, diffFullRepoIndexer, githubAppContext, repoRefreshJobConfig);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, diffFullRepoIndexer, liveRepoIndexer, githubAppContext, repoRefreshJobConfig);
     }
 
     @Bean
     public RepoRefreshJobManager cacheOnlyRepoRefreshJobManager(
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
             final RepoIndexer cacheOnlyFullRepoIndexer,
+            final RepoIndexer cacheOnlyRepoIndexer,
             final GithubAppContext githubAppContext,
             final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cacheOnlyFullRepoIndexer, githubAppContext, repoRefreshJobConfig);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cacheOnlyFullRepoIndexer, cacheOnlyRepoIndexer, githubAppContext, repoRefreshJobConfig);
     }
 
     @Bean

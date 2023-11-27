@@ -1,5 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.jobs;
 
+import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
+
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
@@ -23,7 +25,7 @@ public class RepoIndexingJobStorageComposite implements RepoIndexingJobStorage {
     }
 
     @Override
-    public Set<Long> reposUpdatedBefore(Long installationId, Instant since) {
+    public Set<RepoIndexingJobTrigger> reposUpdatedBefore(Long installationId, Instant since) {
         return Arrays.stream(repoIndexingJobRepositories)
                 .flatMap(repoIndexingJobRepository -> repoIndexingJobRepository.reposUpdatedBefore(installationId, since).stream())
                 .collect(Collectors.toSet());

@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
+import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
@@ -23,8 +25,10 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     }
 
     @Override
-    public Set<Long> reposUpdatedBefore(Long installationId, Instant since) {
-        return repository.findReposUpdatedBefore(installationId, since);
+    public Set<RepoIndexingJobTrigger> reposUpdatedBefore(Long installationId, Instant since) {
+        return repository.findReposUpdatedBefore(installationId, since)
+                .stream().map(job -> new RepoIndexingJobTrigger(job.getRepoId(), job.getFullIndexing()))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override

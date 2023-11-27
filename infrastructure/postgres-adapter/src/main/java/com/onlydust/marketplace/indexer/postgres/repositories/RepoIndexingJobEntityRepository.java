@@ -19,14 +19,13 @@ public interface RepoIndexingJobEntityRepository extends JpaRepository<RepoIndex
     Set<Long> findAllValidInstallationIds();
 
     @Query("""
-            SELECT DISTINCT repoId
-            FROM RepoIndexingJobEntity
-            WHERE (:installationId IS NULL AND (installationId IS NULL OR suspendedAt IS NOT NULL))
-               OR installationId = :installationId
-                AND (finishedAt IS NULL OR finishedAt < :since)
-                AND fullIndexing = TRUE
+            SELECT j
+            FROM RepoIndexingJobEntity j
+            WHERE (:installationId IS NULL AND (j.installationId IS NULL OR j.suspendedAt IS NOT NULL))
+               OR j.installationId = :installationId
+                AND (j.finishedAt IS NULL OR j.finishedAt < :since)
             """)
-    Set<Long> findReposUpdatedBefore(Long installationId, Instant since);
+    Set<RepoIndexingJobEntity> findReposUpdatedBefore(Long installationId, Instant since);
 
     @Modifying
     @Query("UPDATE RepoIndexingJobEntity SET installationId = NULL WHERE installationId = :installationId AND repoId IN :repoIds")

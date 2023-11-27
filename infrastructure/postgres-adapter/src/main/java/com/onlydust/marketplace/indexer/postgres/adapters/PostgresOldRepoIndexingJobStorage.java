@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
+import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
@@ -21,7 +22,7 @@ public class PostgresOldRepoIndexingJobStorage implements RepoIndexingJobStorage
     }
 
     @Override
-    public Set<Long> reposUpdatedBefore(Long installationId, Instant since) {
+    public Set<RepoIndexingJobTrigger> reposUpdatedBefore(Long installationId, Instant since) {
         return Set.of();
     }
 
