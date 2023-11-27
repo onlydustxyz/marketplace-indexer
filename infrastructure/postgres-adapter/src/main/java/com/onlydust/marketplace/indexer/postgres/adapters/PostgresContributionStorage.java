@@ -26,4 +26,9 @@ public class PostgresContributionStorage implements ContributionStorage {
     public void saveAll(Contribution... contributions) {
         contributionRepository.saveAll(Arrays.stream(contributions).map(ContributionEntity::of).toList());
     }
+
+    @Override
+    public void deleteAllByRepoIdAndGithubNumber(Long id, Long number) {
+        contributionRepository.deleteAllByRepoIdAndGithubNumber(id, number);
+    }
 }
