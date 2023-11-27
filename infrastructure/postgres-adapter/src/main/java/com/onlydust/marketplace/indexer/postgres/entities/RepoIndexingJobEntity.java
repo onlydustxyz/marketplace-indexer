@@ -25,6 +25,7 @@ public class RepoIndexingJobEntity {
     Long installationId;
     Date suspendedAt;
     Boolean fullIndexing;
+    Boolean isPublic;
 
     @Enumerated(EnumType.STRING)
     @Type(type = "job_status")
@@ -33,10 +34,11 @@ public class RepoIndexingJobEntity {
     Instant startedAt;
     Instant finishedAt;
 
-    public RepoIndexingJobEntity(Long repoId, Long installationId, Boolean fullIndexing) {
+    public RepoIndexingJobEntity(Long repoId, Long installationId, Boolean fullIndexing, Boolean isPublic) {
         this.repoId = repoId;
         this.installationId = installationId;
         this.fullIndexing = fullIndexing;
+        this.isPublic = isPublic;
         this.status = JobStatus.PENDING;
     }
 

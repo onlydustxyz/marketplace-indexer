@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services.events;
 
+import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
 import com.onlydust.marketplace.indexer.domain.models.clean.*;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstallation;
@@ -67,16 +68,16 @@ public class InstallationEventProcessorService implements InstallationEventHandl
                 .ifPresent(this::onDeleted);
 
         repoIndexingJobStorage.setInstallationForRepos(event.getInstallationId(), event.getRepos().stream()
-                .map(CleanRepo::getId)
-                .toArray(Long[]::new));
+                .map(repo -> new RepoIndexingJobTrigger(repo.getId(), false, repo.getVisibility().equals("public")))
+                .toArray(RepoIndexingJobTrigger[]::new));
 
         githubAppInstallationStorage.save(GithubAppInstallation.of(event, owner, repos));
     }
 
     private void onAdded(InstallationAddedEvent event) {
         repoIndexingJobStorage.setInstallationForRepos(event.getInstallationId(), event.getReposAdded().stream()
-                .map(CleanRepo::getId)
-                .toArray(Long[]::new));
+                .map(repo -> new RepoIndexingJobTrigger(repo.getId(), false, repo.getVisibility().equals("public")))
+                .toArray(RepoIndexingJobTrigger[]::new));
 
         githubAppInstallationStorage.addRepos(event.getInstallationId(),
                 event.getReposAdded().stream()

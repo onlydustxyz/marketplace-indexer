@@ -68,14 +68,14 @@ public class RepoIndexingJobStorageComposite implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void configureRepoForFullIndexing(Long repoId) {
+    public void configureRepoForFullIndexing(Long repoId, Boolean isPublic) {
         Arrays.stream(repoIndexingJobRepositories)
-                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.configureRepoForFullIndexing(repoId));
+                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.configureRepoForFullIndexing(repoId, isPublic));
     }
 
     @Override
-    public void setInstallationForRepos(Long installationId, Long... repoIds) {
+    public void setInstallationForRepos(Long installationId, RepoIndexingJobTrigger... triggers) {
         Arrays.stream(repoIndexingJobRepositories)
-                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.setInstallationForRepos(installationId, repoIds));
+                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.setInstallationForRepos(installationId, triggers));
     }
 }

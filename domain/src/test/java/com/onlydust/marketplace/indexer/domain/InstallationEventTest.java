@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.domain;
 
+import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
@@ -45,7 +46,7 @@ public class InstallationEventTest {
         assertThat(events.get(0).getAccount().getId()).isEqualTo(onlyDust.getId());
         assertThat(events.get(0).getRepos()).hasSize(1);
         assertThat(events.get(0).getRepos().get(0).getId()).isEqualTo(marketplaceFrontend.getId());
-        verify(repoIndexingJobRepository).setInstallationForRepos(newInstallationEvent.getInstallation().getId(), marketplaceFrontend.getId());
+        verify(repoIndexingJobRepository).setInstallationForRepos(newInstallationEvent.getInstallation().getId(), new RepoIndexingJobTrigger(marketplaceFrontend.getId(), false, true));
     }
 
     private void assertCachedEventsAre(RawInstallationEvent... events) {
