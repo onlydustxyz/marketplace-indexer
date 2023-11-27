@@ -25,7 +25,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class RepoJobIndexingIT extends IntegrationTest {
+public class FullRepoJobIndexingIT extends IntegrationTest {
     final static Long MARKETPLACE = 498695724L;
     final static Long BRETZEL_APP = 380954304L;
 
@@ -52,8 +52,8 @@ public class RepoJobIndexingIT extends IntegrationTest {
 
     @Test
     @Order(1)
-    public void indexAllRepos() {
-        // Add repos to index
+    public void index_repos() {
+        // Add repos to index (full mode = from REST API)
         for (final var repoId : new Long[]{BRETZEL_APP, MARKETPLACE}) {
             indexRepo(repoId).expectStatus().isNoContent();
         }
