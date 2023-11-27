@@ -31,6 +31,7 @@ public class InstallationEventProcessorService implements InstallationEventHandl
         rawInstallationEventStorage.save(rawEvent);
 
         final var event = mapRawEvent(rawEvent);
+        if (event.getAction() == null) return;
 
         switch (event.getAction()) {
             case ADDED -> onAdded((InstallationAddedEvent) event);
@@ -45,6 +46,7 @@ public class InstallationEventProcessorService implements InstallationEventHandl
     @Override
     public void process(RawRepositoryEvent rawEvent) {
         final var event = RepositoryEvent.of(rawEvent);
+        if (event.getAction() == null) return;
         switch (event.getAction()) {
             case PRIVATIZED -> onPrivatized(event);
             case PUBLICIZED -> onPublicized(event);

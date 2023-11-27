@@ -24,7 +24,11 @@ public class RepositoryEvent extends Event {
         PUBLICIZED, PRIVATIZED;
 
         public static Action of(String rawAction) {
-            return valueOf(rawAction.toUpperCase());
+            return switch (rawAction.toUpperCase()) {
+                case "PUBLICIZED" -> PUBLICIZED;
+                case "PRIVATIZED" -> PRIVATIZED;
+                default -> null;
+            };
         }
     }
 }
