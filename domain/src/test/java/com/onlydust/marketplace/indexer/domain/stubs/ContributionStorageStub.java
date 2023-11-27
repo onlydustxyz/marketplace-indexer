@@ -23,6 +23,15 @@ public class ContributionStorageStub implements ContributionStorage {
         Arrays.stream(contributions).forEach(c -> this.contributions.put(c.getId(), c));
     }
 
+    @Override
+    public void deleteAllByRepoIdAndGithubNumber(Long id, Long number) {
+        contributions.values().removeIf(c -> c.getRepo().getId().equals(id) && switch (c.getType()) {
+            case PULL_REQUEST -> c.getPullRequest().getNumber().equals(number);
+            case ISSUE -> c.getIssue().getNumber().equals(number);
+            case CODE_REVIEW -> c.getCodeReview().getPullRequest().getNumber().equals(number);
+        });
+    }
+
     public List<Contribution> contributions() {
         return contributions.values().stream().toList();
     }

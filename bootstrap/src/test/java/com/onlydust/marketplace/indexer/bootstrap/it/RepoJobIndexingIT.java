@@ -112,6 +112,46 @@ public class RepoJobIndexingIT extends IntegrationTest {
                 new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE, 595505L), 0, 2));
     }
 
+    @Test
+    @Order(3)
+    public void should_delete_contributions_before_saving_new_ones() {
+        // Given
+        githubWireMockServer.stubFor(get(urlEqualTo("/repositories/498695724/pulls?state=all&sort=updated&per_page=100"))
+                .atPriority(1)
+                .willReturn(aResponse().withBodyFile("repos/marketplace-frontend/pulls-page-1-updated.json")));
+
+        githubWireMockServer.stubFor(get(urlEqualTo("/repositories/498695724/pulls/1257"))
+                .atPriority(1)
+                .willReturn(aResponse().withBodyFile("repos/marketplace-frontend/pulls/1257-2.json")));
+
+        githubWireMockServer.stubFor(get(urlEqualTo("/repositories/498695724/issues?state=all&sort=updated&per_page=100"))
+                .atPriority(1)
+                .willReturn(aResponse().withBodyFile("repos/marketplace-frontend/issues-page-1-updated.json")));
+
+        githubWireMockServer.stubFor(get(urlEqualTo("/repositories/498695724/issues/78"))
+                .atPriority(1)
+                .willReturn(aResponse().withBodyFile("repos/marketplace-frontend/issues/78-2.json")));
+
+        // When
+        diffRepoRefreshJobManager.allJobs().forEach(Job::run);
+
+        // Then
+        /*
+         * Pull request 1257 from anthony (author is same as committer)
+         * Code review from pierre
+         * Pull request 1258 from anthony (author is same as committer)
+         * Code review requested to olivier and pierre
+         * Issue 78 assigned to olivier
+         */
+        assertThat(contributionRepository.findAll()).hasSize(6);
+        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST)).hasSize(2);
+        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(3);
+
+        final var issues = contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE).toList();
+        assertThat(issues).hasSize(1);
+        assertThat(issues.get(0).getContributor().getLogin()).isEqualTo("ofux");
+    }
+
 
     @Test
     @Order(100)

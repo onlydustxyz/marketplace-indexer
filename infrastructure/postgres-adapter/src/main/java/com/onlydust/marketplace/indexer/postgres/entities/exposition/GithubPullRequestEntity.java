@@ -24,7 +24,7 @@ public class GithubPullRequestEntity {
     @Id
     Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubRepoEntity repo;
     Long number;
     String title;
@@ -35,7 +35,7 @@ public class GithubPullRequestEntity {
     Date closedAt;
     Date mergedAt;
     String body;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubAccountEntity author;
     String htmlUrl;
     Integer commentsCount;
@@ -51,7 +51,7 @@ public class GithubPullRequestEntity {
     ReviewState reviewState;
     Integer commitCount;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "github_pull_requests_closing_issues",
             schema = "indexer_exp",

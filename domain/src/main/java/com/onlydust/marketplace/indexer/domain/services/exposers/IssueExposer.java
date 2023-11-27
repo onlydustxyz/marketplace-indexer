@@ -9,6 +9,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.exposition.Contribution
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.IssueStorage;
 import lombok.AllArgsConstructor;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -18,6 +19,7 @@ public class IssueExposer implements IssueIndexer {
     IssueStorage issueStorage;
 
     @Override
+    @Transactional
     public Optional<CleanIssue> indexIssue(String repoOwner, String repoName, Long issueNumber) {
         final var issue = indexer.indexIssue(repoOwner, repoName, issueNumber);
         issue.ifPresent(this::expose);
@@ -29,6 +31,7 @@ public class IssueExposer implements IssueIndexer {
 
         final var contributions = fromAssignees.toArray(Contribution[]::new);
 
+        contributionStorage.deleteAllByRepoIdAndGithubNumber(issue.getRepo().getId(), issue.getNumber());
         contributionStorage.saveAll(contributions);
         issueStorage.saveAll(GithubIssue.of(issue));
     }

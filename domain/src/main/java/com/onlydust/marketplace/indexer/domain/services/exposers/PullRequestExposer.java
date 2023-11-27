@@ -10,6 +10,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.exposition.Contribution
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.PullRequestStorage;
 import lombok.AllArgsConstructor;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -20,6 +21,7 @@ public class PullRequestExposer implements PullRequestIndexer {
     PullRequestStorage pullRequestStorage;
 
     @Override
+    @Transactional
     public Optional<CleanPullRequest> indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber) {
         final var pullRequest = indexer.indexPullRequest(repoOwner, repoName, pullRequestNumber);
         pullRequest.ifPresent(this::expose);
@@ -45,6 +47,7 @@ public class PullRequestExposer implements PullRequestIndexer {
         final var contributions = Stream.of(fromPullRequest, fromCommits, fromCodeReviewsPending, fromCodeReviewsCompleted, fromRequestedReviewers)
                 .flatMap(s -> s).toArray(Contribution[]::new);
 
+        contributionStorage.deleteAllByRepoIdAndGithubNumber(pullRequest.getRepo().getId(), pullRequest.getNumber());
         contributionStorage.saveAll(contributions);
         pullRequestStorage.saveAll(GithubPullRequest.of(pullRequest));
     }

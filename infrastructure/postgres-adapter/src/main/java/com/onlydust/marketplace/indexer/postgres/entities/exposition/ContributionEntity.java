@@ -22,9 +22,9 @@ import java.util.Optional;
 public class ContributionEntity {
     @Id
     String id;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubRepoEntity repo;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubAccountEntity contributor;
     @Enumerated(EnumType.STRING)
     @org.hibernate.annotations.Type(type = "contribution_type")
@@ -32,11 +32,11 @@ public class ContributionEntity {
     @Enumerated(EnumType.STRING)
     @org.hibernate.annotations.Type(type = "contribution_status")
     Status status;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubPullRequestEntity pullRequest;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubIssueEntity issue;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubCodeReviewEntity codeReview;
     Date createdAt;
     Date completedAt;

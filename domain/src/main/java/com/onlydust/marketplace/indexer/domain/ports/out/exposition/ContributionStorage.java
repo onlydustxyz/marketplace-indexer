@@ -9,4 +9,6 @@ public interface ContributionStorage {
     NewContributionsNotification newContributionsNotification(Instant since);
 
     void saveAll(Contribution... contributions);
+
+    void deleteAllByRepoIdAndGithubNumber(Long id, Long number);
 }
