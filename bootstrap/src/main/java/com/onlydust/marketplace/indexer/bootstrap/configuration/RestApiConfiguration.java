@@ -4,8 +4,8 @@ import com.onlydust.marketplace.indexer.domain.ports.in.contexts.AuthorizationCo
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.AccountStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.exposers.UserExposer;
@@ -45,9 +45,9 @@ public class RestApiConfiguration {
     }
 
     @Bean
-    public IndexesRestApi indexesRestApi(final UserRefreshJobManager cachedUserRefreshJobManager,
-                                         final RepoRefreshJobManager cachedRepoRefreshJobManager) {
-        return new IndexesRestApi(cachedUserRefreshJobManager, cachedRepoRefreshJobManager);
+    public IndexesRestApi indexesRestApi(final UserIndexingJobScheduler userIndexingJobScheduler,
+                                         final RepoIndexingJobScheduler repoIndexingJobScheduler) {
+        return new IndexesRestApi(userIndexingJobScheduler, repoIndexingJobScheduler);
     }
 
     @Bean
