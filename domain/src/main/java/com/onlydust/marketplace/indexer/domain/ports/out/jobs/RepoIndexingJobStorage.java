@@ -1,5 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.jobs;
 
+import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
+
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.Set;
 public interface RepoIndexingJobStorage {
     Set<Long> installationIds();
 
-    Set<Long> reposUpdatedBefore(Long installationId, Instant since);
+    Set<RepoIndexingJobTrigger> reposUpdatedBefore(Long installationId, Instant since);
 
     void deleteInstallation(Long installationId);
 

@@ -164,7 +164,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_repo() {
-        final var repo = fullRepoIndexingService.indexFullRepo(marketplaceFrontend.getId()).orElseThrow();
+        final var repo = fullRepoIndexingService.indexRepo(marketplaceFrontend.getId()).orElseThrow();
 
         assertThat(repo.getId()).isEqualTo(marketplaceFrontend.getId());
 
@@ -206,7 +206,7 @@ public class IndexingServiceTest {
 
     @Test
     void should_index_parent_repo() {
-        final var repo = fullRepoIndexingService.indexFullRepo(marketplaceBackend.getId()).orElseThrow();
+        final var repo = fullRepoIndexingService.indexRepo(marketplaceBackend.getId()).orElseThrow();
 
         assertThat(repo.getId()).isEqualTo(marketplaceBackend.getId());
 
@@ -235,7 +235,7 @@ public class IndexingServiceTest {
         final var cachedIssues = rawStorageReaderStub.repoIssues();
         final var cachedPullRequests = rawStorageReaderStub.repoPullRequests();
 
-        indexer.indexFullRepo(marketplaceFrontend.getId()).orElseThrow();
+        indexer.indexRepo(marketplaceFrontend.getId()).orElseThrow();
 
         assertCachedRepoIssuesAre(cachedIssues);
         assertCachedRepoPullRequestsAre(cachedPullRequests);
@@ -256,7 +256,7 @@ public class IndexingServiceTest {
 
         when(pullRequestIndexer.indexPullRequest(any(), any(), any())).thenThrow(new RuntimeException("Unable to index PR"));
 
-        indexer.indexFullRepo(marketplaceFrontend.getId()).orElseThrow();
+        indexer.indexRepo(marketplaceFrontend.getId()).orElseThrow();
     }
 
     @Test
@@ -266,7 +266,7 @@ public class IndexingServiceTest {
 
         when(issueIndexer.indexIssue(any(), any(), any())).thenThrow(new RuntimeException("Unable to index issue"));
 
-        indexer.indexFullRepo(marketplaceFrontend.getId()).orElseThrow();
+        indexer.indexRepo(marketplaceFrontend.getId()).orElseThrow();
     }
 
     private void assertCachedReposAre(RawRepo... repos) {

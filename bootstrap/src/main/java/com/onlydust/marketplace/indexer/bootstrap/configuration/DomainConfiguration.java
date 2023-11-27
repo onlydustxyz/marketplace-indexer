@@ -2,10 +2,11 @@ package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.NotifierJobManager;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.NotifierJobStorage;
@@ -20,9 +21,7 @@ import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestExpo
 import com.onlydust.marketplace.indexer.domain.services.exposers.RepoContributorsExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.RepoExposer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
-import com.onlydust.marketplace.indexer.domain.services.jobs.NotifierJobManagerJobService;
-import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
-import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobService;
+import com.onlydust.marketplace.indexer.domain.services.jobs.*;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
@@ -265,7 +264,7 @@ public class DomainConfiguration {
 
 
     @Bean
-    public FullRepoIndexer cachedFullRepoIndexer(
+    public RepoIndexer cachedFullRepoIndexer(
             final RawStorageReader cachedRawStorageReader,
             final IssueIndexer cachedIssueIndexer,
             final PullRequestIndexer cachedPullRequestIndexer,
@@ -278,7 +277,7 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public FullRepoIndexer cacheOnlyFullRepoIndexer(
+    public RepoIndexer cacheOnlyFullRepoIndexer(
             final PostgresRawStorage postgresRawStorage,
             final IssueIndexer cacheOnlyIssueIndexer,
             final PullRequestIndexer cacheOnlyPullRequestIndexer,
@@ -291,7 +290,7 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public FullRepoIndexer diffFullRepoIndexer(
+    public RepoIndexer diffFullRepoIndexer(
             final RawStorageReader diffRawStorageReader,
             final IssueIndexer liveIssueIndexer,
             final PullRequestIndexer livePullRequestIndexer,
@@ -306,31 +305,23 @@ public class DomainConfiguration {
     @Bean
     public RepoRefreshJobManager diffRepoRefreshJobManager(
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
-            final FullRepoIndexer diffFullRepoIndexer,
+            final RepoIndexer diffFullRepoIndexer,
+            final RepoIndexer liveRepoIndexer,
             final GithubAppContext githubAppContext,
             final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, diffFullRepoIndexer, githubAppContext, repoRefreshJobConfig);
-    }
-
-    @Bean
-    public RepoRefreshJobManager cachedRepoRefreshJobManager(
-            final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
-            final FullRepoIndexer cachedFullRepoIndexer,
-            final GithubAppContext githubAppContext,
-            final RepoRefreshJobService.Config repoRefreshJobConfig
-    ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cachedFullRepoIndexer, githubAppContext, repoRefreshJobConfig);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, diffFullRepoIndexer, liveRepoIndexer, githubAppContext, repoRefreshJobConfig);
     }
 
     @Bean
     public RepoRefreshJobManager cacheOnlyRepoRefreshJobManager(
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
-            final FullRepoIndexer cacheOnlyFullRepoIndexer,
+            final RepoIndexer cacheOnlyFullRepoIndexer,
+            final RepoIndexer cacheOnlyRepoIndexer,
             final GithubAppContext githubAppContext,
             final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cacheOnlyFullRepoIndexer, githubAppContext, repoRefreshJobConfig);
+        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cacheOnlyFullRepoIndexer, cacheOnlyRepoIndexer, githubAppContext, repoRefreshJobConfig);
     }
 
     @Bean
@@ -354,5 +345,16 @@ public class DomainConfiguration {
     @Bean
     public NotifierJobManager apiNotifier(final ContributionStorage contributionStorage, final ApiClient apiClient, final NotifierJobStorage notifierJobStorage) {
         return new NotifierJobManagerJobService(contributionStorage, apiClient, notifierJobStorage);
+    }
+
+    @Bean
+    public RepoIndexingJobScheduler repoIndexingJobScheduler(final PostgresRepoIndexingJobStorage repoIndexingJobStorage) {
+        return new RepoIndexingJobSchedulerService(repoIndexingJobStorage);
+    }
+
+
+    @Bean
+    public UserIndexingJobScheduler userIndexingJobScheduler(final PostgresUserIndexingJobStorage userIndexingJobStorage) {
+        return new UserIndexingJobSchedulerService(userIndexingJobStorage);
     }
 }

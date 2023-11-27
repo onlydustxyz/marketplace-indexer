@@ -4,7 +4,7 @@ import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.RateLimit;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.FullRepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -17,8 +17,8 @@ import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
-public class RateLimitGuardedFullRepoIndexer implements FullRepoIndexer {
-    final FullRepoIndexer indexer;
+public class RateLimitGuardedFullRepoIndexer implements RepoIndexer {
+    final RepoIndexer indexer;
     final RateLimitService rateLimitService;
     final RateLimitService.Config config;
     final MeterRegistry meterRegistry;
@@ -33,19 +33,27 @@ public class RateLimitGuardedFullRepoIndexer implements FullRepoIndexer {
     }
 
     @Override
-    public Optional<CleanRepo> indexFullRepo(Long repoId) {
+    public Optional<CleanRepo> indexRepo(Long repoId) {
+        sleepIfNeeded();
+        return indexer.indexRepo(repoId);
+    }
+
+    @Override
+    public Optional<CleanRepo> indexRepo(String repoOwner, String repoName) {
+        sleepIfNeeded();
+        return indexer.indexRepo(repoOwner, repoName);
+    }
+
+    private void sleepIfNeeded() {
         final var rateLimit = rateLimitService.rateLimit();
         Gauge
                 .builder("indexer.rate_limit.remaining", rateLimit, RateLimit::remaining)
                 .tag("installationId", githubAppContext.installationId().map(String::valueOf).orElse("null"))
                 .register(meterRegistry);
 
-
         if (rateLimit.remaining() < config.getFullRepoThreshold()) {
             LOGGER.info("Rate limit reached, waiting for reset until {}", rateLimit.resetAt());
             sleepUntil(rateLimit.resetAt());
         }
-
-        return indexer.indexFullRepo(repoId);
     }
 }

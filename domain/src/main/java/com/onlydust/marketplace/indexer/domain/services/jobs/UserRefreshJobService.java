@@ -19,12 +19,7 @@ public class UserRefreshJobService implements UserRefreshJobManager {
     private final UserIndexingJobStorage userIndexingJobStorage;
     private final UserIndexer userIndexer;
     private final Config config;
-
-    @Override
-    public void addUserToRefresh(Long userId) {
-        userIndexingJobStorage.add(userId);
-    }
-
+    
     @Override
     public List<Job> allJobs() {
         final var users = userIndexingJobStorage.usersUpdatedBefore(Instant.now().minusSeconds(config.refreshInterval));
