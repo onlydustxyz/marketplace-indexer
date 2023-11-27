@@ -9,7 +9,6 @@ import lombok.Value;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 @Value
@@ -26,7 +25,7 @@ public class CleanRepo {
     @Builder.Default
     Map<String, Long> languages = new HashMap<>();
     CleanRepo parent;
-    String visibility;
+    Boolean isPublic;
 
 
     public static CleanRepo of(RawRepo repo, CleanAccount owner) {
@@ -41,8 +40,7 @@ public class CleanRepo {
                 .starsCount(repo.getStargazersCount())
                 .forksCount(repo.getForksCount())
                 .hasIssues(repo.getHasIssues())
-                .visibility(Optional.ofNullable(repo.getVisibility())
-                        .orElse(Boolean.TRUE.equals(repo.getIsPrivate()) ? "private" : "public"))
+                .isPublic("public".equals(repo.getVisibility()) || Boolean.FALSE.equals(repo.getIsPrivate()))
                 .build();
     }
 

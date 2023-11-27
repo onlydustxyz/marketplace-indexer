@@ -41,7 +41,7 @@ public class GithubRepo {
                 .hasIssues(repo.getHasIssues())
                 .languages(repo.getLanguages())
                 .parent(repo.getParent() == null ? null : GithubRepo.of(repo.getParent()))
-                .visibility(Visibility.valueOf(repo.getVisibility().toUpperCase()))
+                .visibility(repo.getIsPublic() ? Visibility.PUBLIC : Visibility.PRIVATE)
                 .build();
     }
 

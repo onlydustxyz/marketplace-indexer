@@ -68,7 +68,7 @@ public class InstallationEventProcessorService implements InstallationEventHandl
                 .ifPresent(this::onDeleted);
 
         repoIndexingJobStorage.setInstallationForRepos(event.getInstallationId(), event.getRepos().stream()
-                .map(repo -> new RepoIndexingJobTrigger(repo.getId(), false, repo.getVisibility().equals("public")))
+                .map(repo -> new RepoIndexingJobTrigger(repo.getId(), false, repo.getIsPublic()))
                 .toArray(RepoIndexingJobTrigger[]::new));
 
         githubAppInstallationStorage.save(GithubAppInstallation.of(event, owner, repos));
@@ -76,7 +76,7 @@ public class InstallationEventProcessorService implements InstallationEventHandl
 
     private void onAdded(InstallationAddedEvent event) {
         repoIndexingJobStorage.setInstallationForRepos(event.getInstallationId(), event.getReposAdded().stream()
-                .map(repo -> new RepoIndexingJobTrigger(repo.getId(), false, repo.getVisibility().equals("public")))
+                .map(repo -> new RepoIndexingJobTrigger(repo.getId(), false, repo.getIsPublic()))
                 .toArray(RepoIndexingJobTrigger[]::new));
 
         githubAppInstallationStorage.addRepos(event.getInstallationId(),
