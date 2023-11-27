@@ -22,10 +22,9 @@ import java.util.Date;
 public class RepoIndexingJobEntity {
     @Id
     Long repoId;
-
     Long installationId;
-
     Date suspendedAt;
+    Boolean fullIndexing;
 
     @Enumerated(EnumType.STRING)
     @Type(type = "job_status")
@@ -34,9 +33,10 @@ public class RepoIndexingJobEntity {
     Instant startedAt;
     Instant finishedAt;
 
-    public RepoIndexingJobEntity(Long repoId, Long installationId) {
+    public RepoIndexingJobEntity(Long repoId, Long installationId, Boolean fullIndexing) {
         this.repoId = repoId;
         this.installationId = installationId;
+        this.fullIndexing = fullIndexing;
         this.status = JobStatus.PENDING;
     }
 

@@ -30,12 +30,6 @@ public class RepoIndexingJobStorageComposite implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void add(Long installationId, Long... repoIds) {
-        Arrays.stream(repoIndexingJobRepositories)
-                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.add(installationId, repoIds));
-    }
-
-    @Override
     public void deleteInstallation(Long installationId) {
         Arrays.stream(repoIndexingJobRepositories)
                 .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.deleteInstallation(installationId));
@@ -69,5 +63,17 @@ public class RepoIndexingJobStorageComposite implements RepoIndexingJobStorage {
     public void endJob(Long repoId) {
         Arrays.stream(repoIndexingJobRepositories)
                 .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.endJob(repoId));
+    }
+
+    @Override
+    public void configureRepoForFullIndexing(Long repoId) {
+        Arrays.stream(repoIndexingJobRepositories)
+                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.configureRepoForFullIndexing(repoId));
+    }
+
+    @Override
+    public void setInstallationForRepos(Long installationId, Long... repoIds) {
+        Arrays.stream(repoIndexingJobRepositories)
+                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.setInstallationForRepos(installationId, repoIds));
     }
 }

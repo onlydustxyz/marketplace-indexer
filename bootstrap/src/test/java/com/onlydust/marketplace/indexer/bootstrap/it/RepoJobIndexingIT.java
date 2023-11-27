@@ -60,8 +60,8 @@ public class RepoJobIndexingIT extends IntegrationTest {
 
         // Jobs are pending
         assertThat(repoIndexingJobEntityRepository.findAll(Sort.by("repoId"))).contains(
-                new RepoIndexingJobEntity(BRETZEL_APP, null),
-                new RepoIndexingJobEntity(MARKETPLACE, null)
+                new RepoIndexingJobEntity(BRETZEL_APP, null, true),
+                new RepoIndexingJobEntity(MARKETPLACE, null, true)
         );
 
         // Run all jobs

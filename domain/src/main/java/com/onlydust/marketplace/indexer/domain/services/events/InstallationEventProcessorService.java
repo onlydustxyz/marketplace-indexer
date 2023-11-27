@@ -66,7 +66,7 @@ public class InstallationEventProcessorService implements InstallationEventHandl
         githubAppInstallationStorage.findInstallationIdByAccount(event.getAccount().getId())
                 .ifPresent(this::onDeleted);
 
-        repoIndexingJobStorage.add(event.getInstallationId(), event.getRepos().stream()
+        repoIndexingJobStorage.setInstallationForRepos(event.getInstallationId(), event.getRepos().stream()
                 .map(CleanRepo::getId)
                 .toArray(Long[]::new));
 
@@ -74,7 +74,7 @@ public class InstallationEventProcessorService implements InstallationEventHandl
     }
 
     private void onAdded(InstallationAddedEvent event) {
-        repoIndexingJobStorage.add(event.getInstallationId(), event.getReposAdded().stream()
+        repoIndexingJobStorage.setInstallationForRepos(event.getInstallationId(), event.getReposAdded().stream()
                 .map(CleanRepo::getId)
                 .toArray(Long[]::new));
 

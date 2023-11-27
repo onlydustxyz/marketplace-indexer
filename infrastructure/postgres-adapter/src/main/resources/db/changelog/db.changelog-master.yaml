@@ -61,3 +61,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000028_migrate_code_review_completion_dates.sql
   - include:
       file: db/changelog/changelogs/00000029_add_repos_visibility.sql
+  - include:
+      file: db/changelog/changelogs/00000030_add_repo_indexing_mode.sql
