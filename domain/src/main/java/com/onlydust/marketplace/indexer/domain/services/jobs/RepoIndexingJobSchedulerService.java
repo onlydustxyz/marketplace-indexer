@@ -14,4 +14,9 @@ public class RepoIndexingJobSchedulerService implements RepoIndexingJobScheduler
     public void addRepoToRefresh(Long repoId) {
         repoIndexingJobStorage.configureRepoForFullIndexing(repoId, true);
     }
+
+    @Override
+    public void removeRepoToRefresh(Long repoId) {
+        repoIndexingJobStorage.configureRepoForLightIndexing(repoId);
+    }
 }

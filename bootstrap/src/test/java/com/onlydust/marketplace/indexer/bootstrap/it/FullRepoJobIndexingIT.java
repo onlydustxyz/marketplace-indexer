@@ -50,6 +50,11 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
         return put("/api/v1/indexes/repos/" + repoId);
     }
 
+    private WebTestClient.ResponseSpec removeRepoIndexing(Long repoId) {
+        return delete("/api/v1/indexes/repos/" + repoId);
+    }
+
+
     @Test
     @Order(1)
     public void index_repos() {
@@ -152,6 +157,19 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
         assertThat(issues.get(0).getContributor().getLogin()).isEqualTo("ofux");
     }
 
+    @Test
+    @Order(4)
+    public void should_change_to_light_mode_upon_request() {
+        removeRepoIndexing(BRETZEL_APP).expectStatus().isNoContent();
+        assertThat(repoIndexingJobEntityRepository.findById(BRETZEL_APP).orElseThrow().getFullIndexing()).isFalse();
+    }
+
+    @Test
+    @Order(4)
+    public void should_change_to_full_mode_upon_request() {
+        indexRepo(BRETZEL_APP).expectStatus().isNoContent();
+        assertThat(repoIndexingJobEntityRepository.findById(BRETZEL_APP).orElseThrow().getFullIndexing()).isTrue();
+    }
 
     @Test
     @Order(100)

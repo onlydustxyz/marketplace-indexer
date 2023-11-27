@@ -92,6 +92,10 @@ public class IntegrationTest {
         return client.put().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY").exchange();
     }
 
+    protected WebTestClient.ResponseSpec delete(final String path) {
+        return client.delete().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY").exchange();
+    }
+
     protected WebTestClient.ResponseSpec put(final String path, Map<String, String> headers) {
         final var request = client.put().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY");
         headers.forEach(request::header);

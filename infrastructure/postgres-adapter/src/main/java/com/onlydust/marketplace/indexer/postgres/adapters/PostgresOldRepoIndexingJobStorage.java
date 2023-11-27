@@ -72,4 +72,9 @@ public class PostgresOldRepoIndexingJobStorage implements RepoIndexingJobStorage
     public void setPublic(Long repoId) {
         oldRepoIndexesEntityRepository.save(new OldRepoIndexesEntity(repoId));
     }
+
+    @Override
+    public void configureRepoForLightIndexing(Long repoId) {
+        oldRepoIndexesEntityRepository.deleteById(repoId);
+    }
 }
