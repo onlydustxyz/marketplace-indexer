@@ -78,8 +78,8 @@ public class GithubWebhookIT extends IntegrationTest {
         response.expectStatus().isOk();
 
         assertThat(repoIndexingJobEntityRepository.findAll()).containsExactlyInAnyOrder(
-                new RepoIndexingJobEntity(CAIRO_STREAMS_ID, OLD_INSTALLATION_ID),
-                new RepoIndexingJobEntity(MARKETPLACE_FRONTEND_ID, OLD_INSTALLATION_ID)
+                new RepoIndexingJobEntity(CAIRO_STREAMS_ID, OLD_INSTALLATION_ID, false),
+                new RepoIndexingJobEntity(MARKETPLACE_FRONTEND_ID, OLD_INSTALLATION_ID, false)
         );
         assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(
                 new OldRepoIndexesEntity(CAIRO_STREAMS_ID),

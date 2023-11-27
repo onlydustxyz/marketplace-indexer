@@ -6,10 +6,10 @@ import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEnti
 import lombok.AllArgsConstructor;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @AllArgsConstructor
 public class PostgresOldRepoIndexingJobStorage implements RepoIndexingJobStorage {
@@ -23,11 +23,6 @@ public class PostgresOldRepoIndexingJobStorage implements RepoIndexingJobStorage
     @Override
     public Set<Long> reposUpdatedBefore(Long installationId, Instant since) {
         return Set.of();
-    }
-
-    @Override
-    public void add(Long installationId, Long... repoIds) {
-        oldRepoIndexesEntityRepository.saveAll(Arrays.stream(repoIds).map(OldRepoIndexesEntity::new).toList());
     }
 
     @Override
@@ -52,5 +47,17 @@ public class PostgresOldRepoIndexingJobStorage implements RepoIndexingJobStorage
 
     @Override
     public void endJob(Long repoId) {
+    }
+
+    @Override
+    public void configureRepoForFullIndexing(Long repoId) {
+        oldRepoIndexesEntityRepository.save(new OldRepoIndexesEntity(repoId));
+    }
+
+    @Override
+    public void setInstallationForRepos(Long installationId, Long... repoIds) {
+        oldRepoIndexesEntityRepository.saveAll(Stream.of(repoIds)
+                .map(OldRepoIndexesEntity::new)
+                .toList());
     }
 }

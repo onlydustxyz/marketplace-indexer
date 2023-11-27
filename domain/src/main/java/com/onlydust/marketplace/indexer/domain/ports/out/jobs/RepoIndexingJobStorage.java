@@ -10,8 +10,6 @@ public interface RepoIndexingJobStorage {
 
     Set<Long> reposUpdatedBefore(Long installationId, Instant since);
 
-    void add(Long installationId, Long... repoIds);
-
     void deleteInstallation(Long installationId);
 
     void deleteInstallationForRepos(Long installationId, List<Long> repoIds);
@@ -23,4 +21,8 @@ public interface RepoIndexingJobStorage {
     void failJob(Long repoId);
 
     void endJob(Long repoId);
+
+    void configureRepoForFullIndexing(Long repoId);
+
+    void setInstallationForRepos(Long installationId, Long... repoIds);
 }

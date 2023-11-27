@@ -45,7 +45,7 @@ public class InstallationEventTest {
         assertThat(events.get(0).getAccount().getId()).isEqualTo(onlyDust.getId());
         assertThat(events.get(0).getRepos()).hasSize(1);
         assertThat(events.get(0).getRepos().get(0).getId()).isEqualTo(marketplaceFrontend.getId());
-        verify(repoIndexingJobRepository).add(newInstallationEvent.getInstallation().getId(), marketplaceFrontend.getId());
+        verify(repoIndexingJobRepository).setInstallationForRepos(newInstallationEvent.getInstallation().getId(), marketplaceFrontend.getId());
     }
 
     private void assertCachedEventsAre(RawInstallationEvent... events) {

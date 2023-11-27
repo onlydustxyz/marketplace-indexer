@@ -28,11 +28,6 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void add(Long installationId, Long... repoIds) {
-        repository.saveAll(Arrays.stream(repoIds).map(repoId -> new RepoIndexingJobEntity(repoId, installationId)).toList());
-    }
-
-    @Override
     public void deleteInstallation(Long installationId) {
         repository.deleteInstallationId(installationId);
     }
@@ -75,5 +70,35 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
                 .status(JobStatus.SUCCESS)
                 .finishedAt(Instant.now())
                 .build());
+    }
+
+    @Override
+    public void configureRepoForFullIndexing(Long repoId) {
+        final var job = repository.findById(repoId)
+                .orElse(RepoIndexingJobEntity.builder()
+                        .status(JobStatus.PENDING)
+                        .repoId(repoId)
+                        .build());
+
+        repository.save(job.toBuilder()
+                .fullIndexing(true)
+                .build());
+    }
+
+    @Override
+    public void setInstallationForRepos(Long installationId, Long... repoIds) {
+        final var jobs = Arrays.stream(repoIds).
+                map(repoId -> repository.findById(repoId)
+                        .orElse(RepoIndexingJobEntity.builder()
+                                .repoId(repoId)
+                                .status(JobStatus.PENDING)
+                                .fullIndexing(false)
+                                .build()))
+                .map(job -> job.toBuilder()
+                        .installationId(installationId)
+                        .build())
+                .toList();
+
+        repository.saveAll(jobs);
     }
 }
