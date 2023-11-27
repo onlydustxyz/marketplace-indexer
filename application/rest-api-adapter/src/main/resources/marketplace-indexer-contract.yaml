@@ -39,6 +39,30 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
+    delete:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Indexes
+      summary: Remove repo to the list of repos to index
+      operationId: removeRepoToIndex
+      description: |
+        Remove a repo to the list of repos to index. Does nothing if the repo is not there.
+      parameters:
+        - in: path
+          name: repoId
+          required: true
+          description: The ID of the repo to remove
+          schema:
+            $ref: '#/components/schemas/RepoId'
+      responses:
+        "204":
+          description: 'The repo will no longer be indexed'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
   /api/v1/indexes/users/{userId}:
     put:
       security:

@@ -125,4 +125,12 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
                 .isPublic(true)
                 .build());
     }
+
+    @Override
+    public void configureRepoForLightIndexing(Long repoId) {
+        repository.findById(repoId).ifPresent(
+                job -> repository.save(job.toBuilder()
+                        .fullIndexing(false)
+                        .build()));
+    }
 }

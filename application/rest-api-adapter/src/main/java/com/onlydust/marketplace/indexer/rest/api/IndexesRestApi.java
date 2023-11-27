@@ -28,4 +28,10 @@ public class IndexesRestApi implements IndexesApi {
         repoIndexingJobScheduler.addRepoToRefresh(repoId);
         return ResponseEntity.noContent().build();
     }
+
+    @Override
+    public ResponseEntity<Void> removeRepoToIndex(Long repoId) {
+        repoIndexingJobScheduler.removeRepoToRefresh(repoId);
+        return ResponseEntity.noContent().build();
+    }
 }

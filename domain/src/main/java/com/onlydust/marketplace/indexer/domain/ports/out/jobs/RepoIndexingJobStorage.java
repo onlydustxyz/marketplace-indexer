@@ -31,4 +31,6 @@ public interface RepoIndexingJobStorage {
     void setPrivate(Long repoId);
 
     void setPublic(Long repoId);
+
+    void configureRepoForLightIndexing(Long repoId);
 }
