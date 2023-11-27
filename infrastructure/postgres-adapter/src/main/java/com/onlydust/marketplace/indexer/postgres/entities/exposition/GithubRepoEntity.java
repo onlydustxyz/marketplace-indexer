@@ -27,7 +27,7 @@ public class GithubRepoEntity {
     @Id
     Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     GithubAccountEntity owner;
     String name;
     String ownerLogin;
@@ -42,7 +42,7 @@ public class GithubRepoEntity {
     @Column(columnDefinition = "jsonb")
     Map<String, Long> languages;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     GithubRepoEntity parent;
 
     @Enumerated(EnumType.STRING)
