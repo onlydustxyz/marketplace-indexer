@@ -8,6 +8,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEnti
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
@@ -45,6 +46,8 @@ public class GithubWebhookIT extends IntegrationTest {
     GithubAppInstallationEntityRepository githubAppInstallationEntityRepository;
     @Autowired
     RepoContributorRepository repoContributorRepository;
+    @Autowired
+    GithubRepoEntityRepository githubRepoRepository;
 
     @Test
     void should_reject_upon_invalid_signature() throws URISyntaxException, IOException {
@@ -185,6 +188,40 @@ public class GithubWebhookIT extends IntegrationTest {
 
     @Test
     @Order(4)
+    void should_handle_repo_becoming_private() throws URISyntaxException, IOException {
+        // Given
+        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/cairo-streams-privatized.json").toURI()));
+
+        // When
+        final var response = post(event, "repository");
+
+        // Then
+        response.expectStatus().isOk();
+
+        assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isFalse();
+        assertThat(oldRepoIndexesEntityRepository.findById(CAIRO_STREAMS_ID)).isEmpty();
+        assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getVisibility()).isEqualTo(GithubRepoEntity.Visibility.PRIVATE);
+    }
+
+    @Test
+    @Order(5)
+    void should_handle_repo_becoming_public() throws URISyntaxException, IOException {
+        // Given
+        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/cairo-streams-publicized.json").toURI()));
+
+        // When
+        final var response = post(event, "repository");
+
+        // Then
+        response.expectStatus().isOk();
+
+        assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isTrue();
+        assertThat(oldRepoIndexesEntityRepository.findById(CAIRO_STREAMS_ID)).isPresent();
+        assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getVisibility()).isEqualTo(GithubRepoEntity.Visibility.PUBLIC);
+    }
+
+    @Test
+    @Order(6)
     void should_handle_installation_removed_events() throws URISyntaxException, IOException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events" +
@@ -216,7 +253,7 @@ public class GithubWebhookIT extends IntegrationTest {
     }
 
     @Test
-    @Order(5)
+    @Order(7)
     void should_handle_installation_suspended_event() throws URISyntaxException, IOException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events" +
@@ -251,7 +288,7 @@ public class GithubWebhookIT extends IntegrationTest {
 
 
     @Test
-    @Order(6)
+    @Order(8)
     void should_handle_installation_unsuspended_event() throws URISyntaxException, IOException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events" +
@@ -284,7 +321,7 @@ public class GithubWebhookIT extends IntegrationTest {
     }
 
     @Test
-    @Order(7)
+    @Order(9)
     void should_handle_installation_deleted_event() throws URISyntaxException, IOException {
         // Given
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events" +
@@ -317,7 +354,7 @@ public class GithubWebhookIT extends IntegrationTest {
     }
 
     @Test
-    @Order(8)
+    @Order(10)
     void should_handle_installation_remove_some_repos() throws URISyntaxException, IOException {
         // Given
         final var installationAddedEvent = Files.readString(Paths.get(this.getClass()

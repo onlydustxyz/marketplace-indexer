@@ -27,4 +27,8 @@ public interface RepoIndexingJobStorage {
     void configureRepoForFullIndexing(Long repoId, Boolean isPublic);
 
     void setInstallationForRepos(Long installationId, RepoIndexingJobTrigger... triggers);
+
+    void setPrivate(Long repoId);
+
+    void setPublic(Long repoId);
 }
