@@ -1,7 +1,9 @@
 package com.onlydust.marketplace.indexer.domain.ports.in.jobs;
 
-public interface RepoIndexingJobScheduler {
-    void addRepoToRefresh(Long repoId);
+import java.util.List;
 
-    void removeRepoToRefresh(Long repoId);
+public interface RepoIndexingJobScheduler {
+    void addReposToRefresh(List<Long> repoIds);
+
+    void removeReposToRefresh(List<Long> repoIds);
 }

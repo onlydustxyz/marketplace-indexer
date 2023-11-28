@@ -21,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,22 +49,21 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     @Autowired
     public NotifierJobManager notifierJobManager;
 
-    private WebTestClient.ResponseSpec indexRepo(Long repoId) {
-        return put("/api/v1/indexes/repos/" + repoId);
+    private WebTestClient.ResponseSpec onRepoLinkChanged(List<Long> linkedRepoIds, List<Long> unlinkedRepoIds) {
+        return post("/api/v1/events/on-repo-link-changed", """
+                {
+                    "linkedRepoIds": %s,
+                    "unlinkedRepoIds": %s
+                }
+                """.formatted(Arrays.toString(linkedRepoIds.toArray()), Arrays.toString(unlinkedRepoIds.toArray()))
+        );
     }
-
-    private WebTestClient.ResponseSpec removeRepoIndexing(Long repoId) {
-        return delete("/api/v1/indexes/repos/" + repoId);
-    }
-
 
     @Test
     @Order(1)
     public void index_repos() {
         // Add repos to index (full mode = from REST API)
-        for (final var repoId : new Long[]{BRETZEL_APP, MARKETPLACE}) {
-            indexRepo(repoId).expectStatus().isNoContent();
-        }
+        onRepoLinkChanged(List.of(BRETZEL_APP, MARKETPLACE), List.of()).expectStatus().isNoContent();
 
         // Jobs are pending
         assertThat(repoIndexingJobEntityRepository.findAll(Sort.by("repoId"))).contains(
@@ -160,21 +162,21 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     @Test
     @Order(4)
     public void should_change_to_light_mode_upon_request() {
-        removeRepoIndexing(BRETZEL_APP).expectStatus().isNoContent();
+        onRepoLinkChanged(List.of(), List.of(BRETZEL_APP)).expectStatus().isNoContent();
         assertThat(repoIndexingJobEntityRepository.findById(BRETZEL_APP).orElseThrow().getFullIndexing()).isFalse();
     }
 
     @Test
     @Order(4)
     public void should_change_to_full_mode_upon_request() {
-        indexRepo(BRETZEL_APP).expectStatus().isNoContent();
+        onRepoLinkChanged(List.of(BRETZEL_APP), List.of()).expectStatus().isNoContent();
         assertThat(repoIndexingJobEntityRepository.findById(BRETZEL_APP).orElseThrow().getFullIndexing()).isTrue();
     }
 
     @Test
     @Order(100)
     public void should_notify_api_upon_new_contributions() throws InterruptedException {
-        apiWireMockServer.stubFor(post(urlEqualTo("/api/v1/events/on-contributions-change"))
+        apiWireMockServer.stubFor(com.github.tomakehurst.wiremock.client.WireMock.post(urlEqualTo("/api/v1/events/on-contributions-change"))
                 .withHeader("Api-Key", equalTo("INTERNAL_API_KEY"))
                 .withRequestBody(equalToJson("{\"repoIds\": [%d]}".formatted(MARKETPLACE)))
                 .willReturn(noContent()));

@@ -31,6 +31,7 @@ import java.net.URI;
 import java.util.Map;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.testcontainers.utility.MountableFile.forClasspathResource;
 
 @ActiveProfiles({"it", "local", "api", "github"})
@@ -92,13 +93,18 @@ public class IntegrationTest {
         return client.put().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY").exchange();
     }
 
-    protected WebTestClient.ResponseSpec delete(final String path) {
-        return client.delete().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY").exchange();
-    }
-
     protected WebTestClient.ResponseSpec put(final String path, Map<String, String> headers) {
         final var request = client.put().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY");
         headers.forEach(request::header);
         return request.exchange();
+    }
+
+    protected WebTestClient.ResponseSpec post(final String path, final String body) {
+        return client.post()
+                .uri(getApiURI(path))
+                .header("Api-Key", "BACKEND_API_KEY")
+                .contentType(APPLICATION_JSON)
+                .bodyValue(body)
+                .exchange();
     }
 }

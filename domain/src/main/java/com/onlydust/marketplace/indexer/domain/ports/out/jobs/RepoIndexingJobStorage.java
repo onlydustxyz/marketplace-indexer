@@ -24,7 +24,7 @@ public interface RepoIndexingJobStorage {
 
     void endJob(Long repoId);
 
-    void configureRepoForFullIndexing(Long repoId, Boolean isPublic);
+    void configureReposForFullIndexing(List<Long> repoIds, Boolean isPublic);
 
     void setInstallationForRepos(Long installationId, RepoIndexingJobTrigger... triggers);
 
@@ -32,5 +32,5 @@ public interface RepoIndexingJobStorage {
 
     void setPublic(Long repoId);
 
-    void configureRepoForLightIndexing(Long repoId);
+    void configureRepoForLightIndexing(List<Long> repoIds);
 }

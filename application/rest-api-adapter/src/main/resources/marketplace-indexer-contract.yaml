@@ -14,50 +14,28 @@ servers:
     description: Production
 
 paths:
-  /api/v1/indexes/repos/{repoId}:
-    put:
+  /api/v1/events/on-repo-link-changed:
+    post:
       security:
         - apiKey: [ ]
       tags:
-        - Indexes
-      summary: Add repo to the list of repos to index
-      operationId: addRepoToIndex
+        - Events
+      summary: Notify the indexer upon repo link change
+      operationId: onRepoLinkChanged
       description: |
-        Add repo to the list of repos to index. Does nothing if the repo is already in the list of repos to indexed.
-      parameters:
-        - in: path
-          name: repoId
-          required: true
-          description: The ID of the repo to add
-          schema:
-            $ref: '#/components/schemas/RepoId'
+        Notify the indexer upon:
+          - New repos have been linked to projects. Contributions will be indexed from these repos.
+          - Some repos are no longer linked to any project. Contributions will no longer be indexed from these repos.
+      requestBody:
+        description: The event payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RepoLinkChangedEvent'
       responses:
         "204":
-          description: 'The repo will be indexed soon'
-        "401":
-          $ref: '#/components/responses/UnauthorizedError'
-        "500":
-          $ref: '#/components/responses/InternalServerError'
-
-    delete:
-      security:
-        - apiKey: [ ]
-      tags:
-        - Indexes
-      summary: Remove repo to the list of repos to index
-      operationId: removeRepoToIndex
-      description: |
-        Remove a repo to the list of repos to index. Does nothing if the repo is not there.
-      parameters:
-        - in: path
-          name: repoId
-          required: true
-          description: The ID of the repo to remove
-          schema:
-            $ref: '#/components/schemas/RepoId'
-      responses:
-        "204":
-          description: 'The repo will no longer be indexed'
+          description: 'The repos will be (de-)indexed soon'
         "401":
           $ref: '#/components/responses/UnauthorizedError'
         "500":
@@ -307,6 +285,20 @@ components:
       description: Github organization ID
       example: 1983274
 
+    # EVENTS ==================================================================
+    RepoLinkChangedEvent:
+      type: object
+      properties:
+        linkedRepoIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/RepoId'
+        unlinkedRepoIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/RepoId'
+
+    # RESPONSES ================================================================
     RepoListResponse:
       type: object
       properties:
