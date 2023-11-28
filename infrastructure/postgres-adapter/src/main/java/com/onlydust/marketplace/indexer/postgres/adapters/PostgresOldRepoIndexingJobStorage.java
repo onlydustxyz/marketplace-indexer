@@ -51,9 +51,11 @@ public class PostgresOldRepoIndexingJobStorage implements RepoIndexingJobStorage
     }
 
     @Override
-    public void configureRepoForFullIndexing(Long repoId, Boolean isPublic) {
+    public void configureReposForFullIndexing(List<Long> repoIds, Boolean isPublic) {
         if (isPublic)
-            oldRepoIndexesEntityRepository.save(new OldRepoIndexesEntity(repoId));
+            oldRepoIndexesEntityRepository.saveAll(repoIds.stream()
+                    .map(OldRepoIndexesEntity::new)
+                    .toList());
     }
 
     @Override
@@ -74,7 +76,7 @@ public class PostgresOldRepoIndexingJobStorage implements RepoIndexingJobStorage
     }
 
     @Override
-    public void configureRepoForLightIndexing(Long repoId) {
-        oldRepoIndexesEntityRepository.deleteById(repoId);
+    public void configureRepoForLightIndexing(List<Long> repoIds) {
+        oldRepoIndexesEntityRepository.deleteAllById(repoIds);
     }
 }

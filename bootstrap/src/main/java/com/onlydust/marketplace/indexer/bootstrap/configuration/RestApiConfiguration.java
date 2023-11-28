@@ -9,10 +9,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobSche
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.AccountStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.exposers.UserExposer;
-import com.onlydust.marketplace.indexer.rest.api.IndexesRestApi;
-import com.onlydust.marketplace.indexer.rest.api.IssuesRestApi;
-import com.onlydust.marketplace.indexer.rest.api.PullRequestsRestApi;
-import com.onlydust.marketplace.indexer.rest.api.UsersRestApi;
+import com.onlydust.marketplace.indexer.rest.api.*;
 import com.onlydust.marketplace.indexer.rest.api.exception.OnlyDustExceptionRestHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,9 +42,13 @@ public class RestApiConfiguration {
     }
 
     @Bean
-    public IndexesRestApi indexesRestApi(final UserIndexingJobScheduler userIndexingJobScheduler,
-                                         final RepoIndexingJobScheduler repoIndexingJobScheduler) {
-        return new IndexesRestApi(userIndexingJobScheduler, repoIndexingJobScheduler);
+    public IndexesRestApi indexesRestApi(final UserIndexingJobScheduler userIndexingJobScheduler) {
+        return new IndexesRestApi(userIndexingJobScheduler);
+    }
+
+    @Bean
+    public EventsRestApi eventsRestApi(final RepoIndexingJobScheduler repoIndexingJobScheduler) {
+        return new EventsRestApi(repoIndexingJobScheduler);
     }
 
     @Bean

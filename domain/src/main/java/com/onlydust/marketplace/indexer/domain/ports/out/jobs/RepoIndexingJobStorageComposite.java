@@ -68,9 +68,9 @@ public class RepoIndexingJobStorageComposite implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void configureRepoForFullIndexing(Long repoId, Boolean isPublic) {
+    public void configureReposForFullIndexing(List<Long> repoIds, Boolean isPublic) {
         Arrays.stream(repoIndexingJobRepositories)
-                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.configureRepoForFullIndexing(repoId, isPublic));
+                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.configureReposForFullIndexing(repoIds, isPublic));
     }
 
     @Override
@@ -92,8 +92,8 @@ public class RepoIndexingJobStorageComposite implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void configureRepoForLightIndexing(Long repoId) {
+    public void configureRepoForLightIndexing(List<Long> repoIds) {
         Arrays.stream(repoIndexingJobRepositories)
-                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.configureRepoForLightIndexing(repoId));
+                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.configureRepoForLightIndexing(repoIds));
     }
 }

@@ -77,17 +77,20 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void configureRepoForFullIndexing(Long repoId, Boolean isPublic) {
-        final var job = repository.findById(repoId)
-                .orElse(RepoIndexingJobEntity.builder()
-                        .status(JobStatus.PENDING)
-                        .repoId(repoId)
-                        .isPublic(isPublic)
-                        .build());
+    public void configureReposForFullIndexing(List<Long> repoIds, Boolean isPublic) {
+        final var jobs = repoIds.stream()
+                .map(repoId -> repository.findById(repoId)
+                        .orElse(RepoIndexingJobEntity.builder()
+                                .status(JobStatus.PENDING)
+                                .repoId(repoId)
+                                .isPublic(isPublic)
+                                .build())
+                ).map(job -> job.toBuilder()
+                        .fullIndexing(true)
+                        .build())
+                .toList();
 
-        repository.save(job.toBuilder()
-                .fullIndexing(true)
-                .build());
+        repository.saveAll(jobs);
     }
 
     @Override
@@ -127,10 +130,11 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     }
 
     @Override
-    public void configureRepoForLightIndexing(Long repoId) {
-        repository.findById(repoId).ifPresent(
-                job -> repository.save(job.toBuilder()
-                        .fullIndexing(false)
-                        .build()));
+    public void configureRepoForLightIndexing(List<Long> repoIds) {
+        repository.saveAll(repository.findAllById(repoIds)
+                .stream()
+                .map(job -> job.toBuilder().fullIndexing(false).build())
+                .toList()
+        );
     }
 }
