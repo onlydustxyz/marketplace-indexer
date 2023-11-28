@@ -6,10 +6,8 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstallation;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
-import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawInstallationEventStorage;
 import lombok.AllArgsConstructor;
@@ -24,7 +22,6 @@ public class InstallationEventProcessorService implements InstallationEventHandl
     private final RawInstallationEventStorage rawInstallationEventStorage;
     private final RepoIndexingJobStorage repoIndexingJobStorage;
     private final GithubAppInstallationStorage githubAppInstallationStorage;
-    private final RepoStorage githubRepoStorage;
 
     @Override
     public void process(RawInstallationEvent rawEvent) {
@@ -41,26 +38,6 @@ public class InstallationEventProcessorService implements InstallationEventHandl
             case SUSPEND -> onSuspended((InstallationSuspendedEvent) event);
             case UNSUSPEND -> onUnsuspended((InstallationUnsuspendedEvent) event);
         }
-    }
-
-    @Override
-    public void process(RawRepositoryEvent rawEvent) {
-        final var event = RepositoryEvent.of(rawEvent);
-        if (event.getAction() == null) return;
-        switch (event.getAction()) {
-            case PRIVATIZED -> onPrivatized(event);
-            case PUBLICIZED -> onPublicized(event);
-        }
-    }
-
-    private void onPublicized(RepositoryEvent event) {
-        repoIndexingJobStorage.setPublic(event.getRepository().getId());
-        githubRepoStorage.setPublic(event.getRepository().getId());
-    }
-
-    private void onPrivatized(RepositoryEvent event) {
-        repoIndexingJobStorage.setPrivate(event.getRepository().getId());
-        githubRepoStorage.setPrivate(event.getRepository().getId());
     }
 
     private void onUnsuspended(InstallationUnsuspendedEvent event) {

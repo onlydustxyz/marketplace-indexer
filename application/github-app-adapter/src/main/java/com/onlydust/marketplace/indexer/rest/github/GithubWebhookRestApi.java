@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
+import com.onlydust.marketplace.indexer.domain.ports.in.events.RepositoryEventHandler;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +25,8 @@ public class GithubWebhookRestApi {
     private static final String X_HUB_SIGNATURE_256 = "X-Hub-Signature-256";
     private final ObjectMapper objectMapper;
     private final Config config;
-    private final InstallationEventHandler eventProcessorService;
+    private final InstallationEventHandler installationEventHandler;
+    private final RepositoryEventHandler repositoryEventHandler;
 
     @PostMapping("/github-app/webhook")
     public ResponseEntity<Void> consumeWebhook(final @RequestBody byte[] event,
@@ -34,10 +36,10 @@ public class GithubWebhookRestApi {
 
         switch (type) {
             case "installation", "installation_repositories":
-                eventProcessorService.process(objectMapper.readValue(event, RawInstallationEvent.class));
+                installationEventHandler.process(objectMapper.readValue(event, RawInstallationEvent.class));
                 break;
             case "repository":
-                eventProcessorService.process(objectMapper.readValue(event, RawRepositoryEvent.class));
+                repositoryEventHandler.process(objectMapper.readValue(event, RawRepositoryEvent.class));
                 break;
             default:
                 LOGGER.warn("Unknown event type {}", type);
