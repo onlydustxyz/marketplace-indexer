@@ -34,18 +34,18 @@ public class GithubConfiguration {
     @Bean
     public GithubHttpClient githubHttpClient(final ObjectMapper objectMapper,
                                              final HttpClient httpClient,
-                                             final GithubConfig config,
+                                             final GithubConfig githubConfig,
                                              final GithubTokenProvider tokenProvider) {
-        return new GithubHttpClient(objectMapper, httpClient, config, tokenProvider);
+        return new GithubHttpClient(objectMapper, httpClient, githubConfig, tokenProvider);
     }
 
 
     @Bean
     public GithubHttpClient githubAppHttpClient(final ObjectMapper objectMapper,
                                                 final HttpClient httpClient,
-                                                final GithubConfig config,
+                                                final GithubConfig githubConfigForApp,
                                                 final GithubAppJwtProvider githubAppJwtProvider) {
-        return new GithubHttpClient(objectMapper, httpClient, config, githubAppJwtProvider);
+        return new GithubHttpClient(objectMapper, httpClient, githubConfigForApp, githubAppJwtProvider);
     }
 
     @Bean
