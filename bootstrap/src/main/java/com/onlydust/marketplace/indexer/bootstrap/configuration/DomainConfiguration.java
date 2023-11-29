@@ -47,6 +47,12 @@ public class DomainConfiguration {
     }
 
     @Bean
+    @ConfigurationProperties("infrastructure.github-for-app")
+    GithubConfig githubConfigForApp() {
+        return new GithubConfig();
+    }
+
+    @Bean
     @ConfigurationProperties("infrastructure.github-app")
     GithubAppJwtProvider.Config githubAppConfig() {
         return new GithubAppJwtProvider.Config();
