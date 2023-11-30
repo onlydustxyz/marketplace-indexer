@@ -30,7 +30,6 @@ public class GithubAppContextAdapter implements GithubAppContext, GithubTokenPro
             this.installationId.remove();
             accessToken.remove();
         }
-        callback.run();
     }
 
     @Override
