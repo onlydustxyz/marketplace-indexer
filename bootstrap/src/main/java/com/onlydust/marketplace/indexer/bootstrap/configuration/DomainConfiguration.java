@@ -9,6 +9,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
+import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.NotifierJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorageComposite;
@@ -22,6 +23,7 @@ import com.onlydust.marketplace.indexer.domain.services.exposers.IssueExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.RepoContributorsExposer;
 import com.onlydust.marketplace.indexer.domain.services.exposers.RepoExposer;
+import com.onlydust.marketplace.indexer.domain.services.guards.RateLimitGuardedFullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
 import com.onlydust.marketplace.indexer.domain.services.jobs.*;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
@@ -311,9 +313,16 @@ public class DomainConfiguration {
             final IssueIndexer liveIssueIndexer,
             final PullRequestIndexer livePullRequestIndexer,
             final RepoIndexer liveRepoIndexer,
-            final RepoContributorsStorage repoContributorsStorage) {
+            final RepoContributorsStorage repoContributorsStorage,
+            final RateLimitService rateLimitService,
+            final RateLimitService.Config rateLimitConfig,
+            final MeterRegistry registry,
+            final GithubAppContext githubAppContext
+    ) {
         return new RepoContributorsExposer(
-                new FullRepoIndexingService(diffRawStorageReader, liveIssueIndexer, livePullRequestIndexer, liveRepoIndexer),
+                new RateLimitGuardedFullRepoIndexer(
+                        new FullRepoIndexingService(diffRawStorageReader, liveIssueIndexer, livePullRequestIndexer, liveRepoIndexer),
+                        rateLimitService, rateLimitConfig, registry, githubAppContext),
                 repoContributorsStorage
         );
     }
