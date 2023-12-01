@@ -19,10 +19,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.raw.DiffRawStorageReade
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.events.RepositoryEventProcessorService;
-import com.onlydust.marketplace.indexer.domain.services.exposers.IssueExposer;
-import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestExposer;
-import com.onlydust.marketplace.indexer.domain.services.exposers.RepoContributorsExposer;
-import com.onlydust.marketplace.indexer.domain.services.exposers.RepoExposer;
+import com.onlydust.marketplace.indexer.domain.services.exposers.*;
 import com.onlydust.marketplace.indexer.domain.services.guards.RateLimitGuardedFullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
 import com.onlydust.marketplace.indexer.domain.services.jobs.*;
@@ -153,8 +150,14 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public UserIndexer diffUserIndexer(final RawStorageReader diffRawStorageReader, final MeterRegistry registry) {
-        return new MonitoredUserIndexer(new UserIndexingService(diffRawStorageReader), registry);
+    public UserIndexer diffUserIndexer(final RawStorageReader diffRawStorageReader,
+                                       final MeterRegistry registry,
+                                       final AccountStorage accountStorage
+    ) {
+        return new MonitoredUserIndexer(
+                new UserExposer(
+                        new UserIndexingService(diffRawStorageReader), accountStorage),
+                registry);
     }
 
     @Bean
