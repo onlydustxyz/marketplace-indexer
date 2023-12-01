@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.onlydust.marketplace.indexer.domain.jobs.EventsInboxJob;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
@@ -45,6 +46,8 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
     public JobManager diffRepoRefreshJobManager;
     @Autowired
     GithubWebhookRestApi.Config config;
+    @Autowired
+    EventsInboxJob eventsInboxJob;
 
     @Test
     @Order(1)
@@ -66,6 +69,8 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
             final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_deleted.json").toURI()));
             post(event, "installation").expectStatus().isOk();
         }
+
+        eventsInboxJob.run();
 
         // Run all jobs
         diffRepoRefreshJobManager.createJob().run();

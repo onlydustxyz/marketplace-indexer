@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.onlydust.marketplace.indexer.domain.jobs.NewContributionNotifierJob;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
@@ -45,7 +46,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     @Autowired
     public JobManager diffRepoRefreshJobManager;
     @Autowired
-    public JobManager apiNotifier;
+    public NewContributionNotifierJob newContributionNotifierJob;
 
     private WebTestClient.ResponseSpec onRepoLinkChanged(List<Long> linkedRepoIds, List<Long> unlinkedRepoIds) {
         return post("/api/v1/events/on-repo-link-changed", """
@@ -179,9 +180,9 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
                 .withRequestBody(equalToJson("{\"repoIds\": [%d]}".formatted(MARKETPLACE)))
                 .willReturn(noContent()));
 
-        apiNotifier.createJob().run();
+        newContributionNotifierJob.run();
         Thread.sleep(10);
-        apiNotifier.createJob().run(); // This run will not send any event
+        newContributionNotifierJob.run(); // This run will not send any event
 
         assertThat(apiWireMockServer
                 .countRequestsMatching(postRequestedFor(urlEqualTo("/api/v1/events/on-contributions-change")).build())
