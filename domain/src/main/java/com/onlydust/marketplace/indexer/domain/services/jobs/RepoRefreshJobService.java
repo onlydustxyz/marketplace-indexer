@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.domain.services.jobs;
 import com.onlydust.marketplace.indexer.domain.jobs.Job;
 import com.onlydust.marketplace.indexer.domain.jobs.ParallelJobComposite;
 import com.onlydust.marketplace.indexer.domain.jobs.RepoIndexerJob;
+import com.onlydust.marketplace.indexer.domain.jobs.SequentialJobComposite;
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;

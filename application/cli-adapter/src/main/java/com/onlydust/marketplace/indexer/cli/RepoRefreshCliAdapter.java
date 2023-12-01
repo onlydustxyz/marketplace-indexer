@@ -15,6 +15,6 @@ public class RepoRefreshCliAdapter implements CommandLineRunner {
     @Override
     public void run(String... args) {
         LOGGER.info("Refreshing repos");
-        cacheOnlyRepoRefreshJobManager.createJob().execute();
+        cacheOnlyRepoRefreshJobManager.createJob().run();
     }
 }

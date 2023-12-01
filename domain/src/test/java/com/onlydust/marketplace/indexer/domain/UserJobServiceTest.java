@@ -22,7 +22,7 @@ public class UserJobServiceTest {
 
     @Test
     public void should_triggers_all_jobs() {
-        jobService.createJob().execute();
+        jobService.createJob().run();
         verify(userIndexer).indexUser(1L);
         verify(userIndexer).indexUser(2L);
         verify(userIndexer).indexUser(3L);

@@ -40,7 +40,7 @@ public class RepoJobServiceTest {
 
     @Test
     public void should_triggers_all_jobs() {
-        jobService.createJob().execute();
+        jobService.createJob().run();
         for (Long repoId : Set.of(1L, 3L, 4L, 6L)) {
             verify(fullRepoIndexer).indexRepo(repoId);
             verify(repoIndexingJobRepository).startJob(repoId);

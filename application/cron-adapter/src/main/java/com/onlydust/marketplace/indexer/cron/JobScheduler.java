@@ -19,18 +19,18 @@ public class JobScheduler {
     @Scheduled(fixedDelayString = "${application.cron.repo-refresh-job-delay}")
     public void scheduleRepoRefresherJobs() {
         LOGGER.info("Refreshing repos");
-        diffRepoRefreshJobManager.createJob().execute();
+        diffRepoRefreshJobManager.createJob().run();
     }
 
     @Scheduled(fixedDelayString = "${application.cron.user-refresh-job-delay}")
     public void scheduleUserRefresherJobs() {
         LOGGER.info("Refreshing users");
-        diffUserRefreshJobManager.createJob().execute();
+        diffUserRefreshJobManager.createJob().run();
     }
 
     @Scheduled(fixedDelayString = "${application.cron.api-notifier-job-delay}")
     public void notifyApi() {
         LOGGER.info("Notifying API");
-        apiNotifier.createJob().execute();
+        apiNotifier.createJob().run();
     }
 }

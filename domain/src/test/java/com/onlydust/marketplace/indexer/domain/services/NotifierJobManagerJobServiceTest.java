@@ -29,7 +29,7 @@ class NotifierJobManagerJobServiceTest {
         when(contributionStorage.newContributionsNotification(previousNotificationOn))
                 .thenReturn(new NewContributionsNotification(Set.of(1L, 2L, 3L), newNotificationOn));
 
-        apiNotifierJobService.createJob().execute();
+        apiNotifierJobService.createJob().run();
 
         verify(apiClient).onNewContributions(Set.of(1L, 2L, 3L));
         verify(notifierJobStorage).endJob(new NotifierJob(1L, newNotificationOn));
@@ -43,7 +43,7 @@ class NotifierJobManagerJobServiceTest {
         when(contributionStorage.newContributionsNotification(Instant.EPOCH))
                 .thenReturn(new NewContributionsNotification(Set.of(1L, 2L, 3L), newNotificationOn));
 
-        apiNotifierJobService.createJob().execute();
+        apiNotifierJobService.createJob().run();
 
         verify(apiClient).onNewContributions(Set.of(1L, 2L, 3L));
         verify(notifierJobStorage).endJob(new NotifierJob(1L, newNotificationOn));
@@ -52,7 +52,7 @@ class NotifierJobManagerJobServiceTest {
     @Test
     public void should_not_notify_when_no_new_contributions() {
         when(contributionStorage.newContributionsNotification(any())).thenReturn(new NewContributionsNotification(Set.of(), null));
-        apiNotifierJobService.createJob().execute();
+        apiNotifierJobService.createJob().run();
         verify(apiClient, never()).onNewContributions(any());
     }
 }
