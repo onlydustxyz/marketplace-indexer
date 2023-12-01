@@ -1,9 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
-import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
+import com.onlydust.marketplace.indexer.domain.ports.in.events.EventsInbox;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -20,10 +17,8 @@ public class GithubWebhookConfiguration {
     }
 
     @Bean
-    public GithubWebhookRestApi githubWebhookRestApi(final ObjectMapper objectMapper,
-                                                     final GithubWebhookRestApi.Config githubWebhookConfig,
-                                                     final EventHandler<RawInstallationEvent> installationEventHandler,
-                                                     final EventHandler<RawRepositoryEvent> repositoryEventHandler) {
-        return new GithubWebhookRestApi(objectMapper, githubWebhookConfig, installationEventHandler, repositoryEventHandler);
+    public GithubWebhookRestApi githubWebhookRestApi(final GithubWebhookRestApi.Config githubWebhookConfig,
+                                                     final EventsInbox eventsInbox) {
+        return new GithubWebhookRestApi(githubWebhookConfig, eventsInbox);
     }
 }

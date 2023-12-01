@@ -4,6 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
+import com.onlydust.marketplace.indexer.domain.ports.in.events.EventsInbox;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
@@ -12,6 +13,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
+import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.NotifierJobStorage;
@@ -20,6 +22,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorage
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.DiffRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
+import com.onlydust.marketplace.indexer.domain.services.events.EventInboxService;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.events.RepositoryEventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.exposers.*;
@@ -390,5 +393,10 @@ public class DomainConfiguration {
     @Bean
     public UserIndexingJobScheduler userIndexingJobScheduler(final PostgresUserIndexingJobStorage userIndexingJobStorage) {
         return new UserIndexingJobSchedulerService(userIndexingJobStorage);
+    }
+
+    @Bean
+    public EventsInbox eventsInbox(final EventInboxStorage eventInboxStorage) {
+        return new EventInboxService(eventInboxStorage);
     }
 }

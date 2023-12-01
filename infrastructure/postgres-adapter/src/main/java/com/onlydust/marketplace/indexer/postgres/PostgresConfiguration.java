@@ -2,10 +2,7 @@ package com.onlydust.marketplace.indexer.postgres;
 
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
-import com.onlydust.marketplace.indexer.postgres.repositories.NotifierJobEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -112,5 +109,10 @@ public class PostgresConfiguration {
     @Bean
     public PostgresNotifierJobStorage notifierJobStorage(final NotifierJobEntityRepository notifierJobEntityRepository) {
         return new PostgresNotifierJobStorage(notifierJobEntityRepository);
+    }
+
+    @Bean
+    public PostgresEventInboxStorage postgresEventInboxStorage(final EventsInboxEntityRepository eventsInboxEntityRepository) {
+        return new PostgresEventInboxStorage(eventsInboxEntityRepository);
     }
 }
