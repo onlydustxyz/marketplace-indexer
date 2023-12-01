@@ -1,8 +1,9 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
+import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
-import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
-import com.onlydust.marketplace.indexer.domain.ports.in.events.RepositoryEventHandler;
+import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
@@ -118,10 +119,10 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public InstallationEventHandler installationEventHandler(final PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository,
-                                                             final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
-                                                             final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
-                                                             final GithubAppInstallationStorage githubAppInstallationStorage) {
+    public EventHandler<RawInstallationEvent> installationEventHandler(final PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository,
+                                                                       final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
+                                                                       final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
+                                                                       final GithubAppInstallationStorage githubAppInstallationStorage) {
         return new InstallationEventProcessorService(
                 postgresRawInstallationEventStorageRepository,
                 new RepoIndexingJobStorageComposite(repoIndexingJobRepository, oldRepoIndexesEntityRepository),
@@ -129,9 +130,9 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public RepositoryEventHandler repositoryEventHandler(final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
-                                                         final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
-                                                         final RepoStorage repoStorage) {
+    public EventHandler<RawRepositoryEvent> repositoryEventHandler(final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
+                                                                   final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
+                                                                   final RepoStorage repoStorage) {
         return new RepositoryEventProcessorService(
                 new RepoIndexingJobStorageComposite(repoIndexingJobRepository, oldRepoIndexesEntityRepository),
                 repoStorage);

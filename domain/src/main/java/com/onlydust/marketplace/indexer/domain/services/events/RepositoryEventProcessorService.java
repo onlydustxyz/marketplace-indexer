@@ -2,7 +2,7 @@ package com.onlydust.marketplace.indexer.domain.services.events;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.RepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
-import com.onlydust.marketplace.indexer.domain.ports.in.events.RepositoryEventHandler;
+import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
 @AllArgsConstructor
 @Slf4j
 @Transactional
-public class RepositoryEventProcessorService implements RepositoryEventHandler {
+public class RepositoryEventProcessorService implements EventHandler<RawRepositoryEvent> {
     private final RepoIndexingJobStorage repoIndexingJobStorage;
     private final RepoStorage githubRepoStorage;
 

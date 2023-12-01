@@ -6,7 +6,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstallation;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
-import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
+import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawInstallationEventStorage;
@@ -18,7 +18,7 @@ import javax.transaction.Transactional;
 @AllArgsConstructor
 @Slf4j
 @Transactional
-public class InstallationEventProcessorService implements InstallationEventHandler {
+public class InstallationEventProcessorService implements EventHandler<RawInstallationEvent> {
     private final RawInstallationEventStorage rawInstallationEventStorage;
     private final RepoIndexingJobStorage repoIndexingJobStorage;
     private final GithubAppInstallationStorage githubAppInstallationStorage;
