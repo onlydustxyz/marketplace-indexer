@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.services.jobs;
 
 import com.onlydust.marketplace.indexer.domain.jobs.Job;
+import com.onlydust.marketplace.indexer.domain.jobs.ParallelJobComposite;
 import com.onlydust.marketplace.indexer.domain.jobs.RepoIndexerJob;
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
@@ -13,13 +14,14 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Slf4j
 public class RepoRefreshJobService implements JobManager {
+    private final Executor executor;
     private final RepoIndexingJobStorage repoIndexingJobStorage;
     private final RepoIndexer fullRepoIndexer;
     private final RepoIndexer lightRepoIndexer;
@@ -27,12 +29,13 @@ public class RepoRefreshJobService implements JobManager {
     private final Config config;
 
     @Override
-    public List<Job> allJobs() {
-        return repoIndexingJobStorage.installationIds().stream()
+    public Job createJob() {
+        return new ParallelJobComposite(executor, repoIndexingJobStorage.installationIds().stream()
                 .map(this::createJobForInstallationId)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .toList();
+                .toList()
+        );
     }
 
     private Optional<Job> createJobForInstallationId(Long installationId) {

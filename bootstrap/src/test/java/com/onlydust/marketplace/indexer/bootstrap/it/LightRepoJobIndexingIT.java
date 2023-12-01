@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.domain.jobs.Job;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
@@ -69,7 +68,7 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
         }
 
         // Run all jobs
-        diffRepoRefreshJobManager.allJobs().forEach(Job::run);
+        diffRepoRefreshJobManager.createJob().run();
 
         // Jobs are finished
         for (final var repoId : new Long[]{MARKETPLACE}) {

@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.domain.services;
 
-import com.onlydust.marketplace.indexer.domain.jobs.Job;
 import com.onlydust.marketplace.indexer.domain.models.NewContributionsNotification;
 import com.onlydust.marketplace.indexer.domain.models.NotifierJob;
 import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
@@ -30,7 +29,7 @@ class NotifierJobManagerJobServiceTest {
         when(contributionStorage.newContributionsNotification(previousNotificationOn))
                 .thenReturn(new NewContributionsNotification(Set.of(1L, 2L, 3L), newNotificationOn));
 
-        apiNotifierJobService.allJobs().forEach(Job::execute);
+        apiNotifierJobService.createJob().execute();
 
         verify(apiClient).onNewContributions(Set.of(1L, 2L, 3L));
         verify(notifierJobStorage).endJob(new NotifierJob(1L, newNotificationOn));
@@ -44,7 +43,7 @@ class NotifierJobManagerJobServiceTest {
         when(contributionStorage.newContributionsNotification(Instant.EPOCH))
                 .thenReturn(new NewContributionsNotification(Set.of(1L, 2L, 3L), newNotificationOn));
 
-        apiNotifierJobService.allJobs().forEach(Job::execute);
+        apiNotifierJobService.createJob().execute();
 
         verify(apiClient).onNewContributions(Set.of(1L, 2L, 3L));
         verify(notifierJobStorage).endJob(new NotifierJob(1L, newNotificationOn));
@@ -53,7 +52,7 @@ class NotifierJobManagerJobServiceTest {
     @Test
     public void should_not_notify_when_no_new_contributions() {
         when(contributionStorage.newContributionsNotification(any())).thenReturn(new NewContributionsNotification(Set.of(), null));
-        apiNotifierJobService.allJobs().forEach(Job::execute);
+        apiNotifierJobService.createJob().execute();
         verify(apiClient, never()).onNewContributions(any());
     }
 }

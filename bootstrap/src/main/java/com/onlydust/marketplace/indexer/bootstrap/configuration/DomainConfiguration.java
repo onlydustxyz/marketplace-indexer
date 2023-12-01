@@ -38,6 +38,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 
 @Configuration
 public class DomainConfiguration {
@@ -334,24 +335,26 @@ public class DomainConfiguration {
 
     @Bean
     public JobManager diffRepoRefreshJobManager(
+            final TaskExecutor applicationTaskExecutor,
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
             final RepoIndexer diffFullRepoIndexer,
             final RepoIndexer liveRepoIndexer,
             final GithubAppContext githubAppContext,
             final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, diffFullRepoIndexer, liveRepoIndexer, githubAppContext, repoRefreshJobConfig);
+        return new RepoRefreshJobService(applicationTaskExecutor, repoIndexingJobTriggerRepository, diffFullRepoIndexer, liveRepoIndexer, githubAppContext, repoRefreshJobConfig);
     }
 
     @Bean
     public JobManager cacheOnlyRepoRefreshJobManager(
+            final TaskExecutor applicationTaskExecutor,
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
             final RepoIndexer cacheOnlyFullRepoIndexer,
             final RepoIndexer cacheOnlyRepoIndexer,
             final GithubAppContext githubAppContext,
             final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
-        return new RepoRefreshJobService(repoIndexingJobTriggerRepository, cacheOnlyFullRepoIndexer, cacheOnlyRepoIndexer, githubAppContext, repoRefreshJobConfig);
+        return new RepoRefreshJobService(applicationTaskExecutor, repoIndexingJobTriggerRepository, cacheOnlyFullRepoIndexer, cacheOnlyRepoIndexer, githubAppContext, repoRefreshJobConfig);
     }
 
     @Bean

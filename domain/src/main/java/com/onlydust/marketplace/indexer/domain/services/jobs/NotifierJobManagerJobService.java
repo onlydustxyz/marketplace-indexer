@@ -8,8 +8,6 @@ import com.onlydust.marketplace.indexer.domain.ports.out.exposition.Contribution
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.NotifierJobStorage;
 import lombok.AllArgsConstructor;
 
-import java.util.List;
-
 @AllArgsConstructor
 public class NotifierJobManagerJobService implements JobManager {
     private final ContributionStorage contributionStorage;
@@ -17,7 +15,7 @@ public class NotifierJobManagerJobService implements JobManager {
     private final NotifierJobStorage notifierJobStorage;
 
     @Override
-    public List<Job> allJobs() {
-        return List.of(new NewContributionNotifierJob(contributionStorage, apiClient, notifierJobStorage));
+    public Job createJob() {
+        return new NewContributionNotifierJob(contributionStorage, apiClient, notifierJobStorage);
     }
 }

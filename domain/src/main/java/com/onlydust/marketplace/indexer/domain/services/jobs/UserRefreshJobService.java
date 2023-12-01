@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
-import java.util.List;
 
 @AllArgsConstructor
 @Slf4j
@@ -21,9 +20,9 @@ public class UserRefreshJobService implements JobManager {
     private final Config config;
 
     @Override
-    public List<Job> allJobs() {
+    public Job createJob() {
         final var users = userIndexingJobStorage.usersUpdatedBefore(Instant.now().minusSeconds(config.refreshInterval));
-        return List.of(new UserIndexerJob(userIndexer, users, userIndexingJobStorage));
+        return new UserIndexerJob(userIndexer, users, userIndexingJobStorage);
     }
 
     @Data

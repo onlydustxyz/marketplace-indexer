@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.domain.jobs.Job;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.UserIndexingJobEntity;
@@ -39,7 +38,7 @@ public class UserJobIndexingIT extends IntegrationTest {
         );
 
         // Run all jobs
-        diffUserRefreshJobManager.allJobs().forEach(Job::run);
+        diffUserRefreshJobManager.createJob().run();
 
         // Jobs are finished
         final var jobs = userIndexingJobEntityRepository.findAll();

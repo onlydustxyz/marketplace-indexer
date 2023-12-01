@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.domain.jobs.Job;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
@@ -71,7 +70,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
         );
 
         // Run all jobs
-        diffRepoRefreshJobManager.allJobs().forEach(Job::run);
+        diffRepoRefreshJobManager.createJob().run();
 
         // Jobs are finished
         for (final var repoId : new Long[]{BRETZEL_APP, MARKETPLACE}) {
@@ -139,7 +138,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
                 .willReturn(aResponse().withBodyFile("repos/marketplace-frontend/issues/78-2.json")));
 
         // When
-        diffRepoRefreshJobManager.allJobs().forEach(Job::run);
+        diffRepoRefreshJobManager.createJob().run();
 
         // Then
         /*
@@ -180,9 +179,9 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
                 .withRequestBody(equalToJson("{\"repoIds\": [%d]}".formatted(MARKETPLACE)))
                 .willReturn(noContent()));
 
-        apiNotifier.allJobs().forEach(Job::run);
+        apiNotifier.createJob().run();
         Thread.sleep(10);
-        apiNotifier.allJobs().forEach(Job::run); // This run will not send any event
+        apiNotifier.createJob().run(); // This run will not send any event
 
         assertThat(apiWireMockServer
                 .countRequestsMatching(postRequestedFor(urlEqualTo("/api/v1/events/on-contributions-change")).build())
