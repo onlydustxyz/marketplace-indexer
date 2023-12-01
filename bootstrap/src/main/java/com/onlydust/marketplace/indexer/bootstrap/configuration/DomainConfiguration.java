@@ -12,11 +12,9 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
-import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
-import com.onlydust.marketplace.indexer.domain.ports.out.jobs.NotifierJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorageComposite;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
@@ -28,7 +26,10 @@ import com.onlydust.marketplace.indexer.domain.services.events.RepositoryEventPr
 import com.onlydust.marketplace.indexer.domain.services.exposers.*;
 import com.onlydust.marketplace.indexer.domain.services.guards.RateLimitGuardedFullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
-import com.onlydust.marketplace.indexer.domain.services.jobs.*;
+import com.onlydust.marketplace.indexer.domain.services.jobs.RepoIndexingJobSchedulerService;
+import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
+import com.onlydust.marketplace.indexer.domain.services.jobs.UserIndexingJobSchedulerService;
+import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobService;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
@@ -377,11 +378,6 @@ public class DomainConfiguration {
             final UserRefreshJobService.Config userRefreshJobConfig
     ) {
         return new UserRefreshJobService(userIndexingJobTriggerRepository, cachedUserIndexer, userRefreshJobConfig);
-    }
-
-    @Bean
-    public JobManager apiNotifier(final ContributionStorage contributionStorage, final ApiClient apiClient, final NotifierJobStorage notifierJobStorage) {
-        return new NotifierJobManagerJobService(contributionStorage, apiClient, notifierJobStorage);
     }
 
     @Bean

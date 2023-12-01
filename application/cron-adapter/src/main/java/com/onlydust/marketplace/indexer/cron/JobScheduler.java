@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.cron;
 
 import com.onlydust.marketplace.indexer.domain.jobs.EventsInboxJob;
+import com.onlydust.marketplace.indexer.domain.jobs.NewContributionNotifierJob;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class JobScheduler {
     private final JobManager diffRepoRefreshJobManager;
     private final JobManager diffUserRefreshJobManager;
-    private final JobManager apiNotifier;
+    private final NewContributionNotifierJob newContributionNotifierJob;
     private final EventsInboxJob eventsInboxJob;
 
     @Scheduled(fixedDelayString = "${application.cron.repo-refresh-job-delay}")
@@ -33,7 +34,7 @@ public class JobScheduler {
     @Scheduled(fixedDelayString = "${application.cron.api-notifier-job-delay}")
     public void notifyApi() {
         LOGGER.info("Notifying API");
-        apiNotifier.createJob().run();
+        newContributionNotifierJob.run();
     }
 
     @Scheduled(fixedDelayString = "${application.cron.event-inbox-dequeuer-delay}")
