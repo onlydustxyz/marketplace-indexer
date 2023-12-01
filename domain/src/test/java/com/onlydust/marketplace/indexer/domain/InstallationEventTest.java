@@ -8,7 +8,6 @@ import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
 import com.onlydust.marketplace.indexer.domain.stubs.InstallationStorageStub;
-import com.onlydust.marketplace.indexer.domain.stubs.RawInstallationEventStorageStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,10 +21,9 @@ public class InstallationEventTest {
     final RawRepo marketplaceFrontend = RawStorageWriterStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
     final RepoIndexingJobStorage repoIndexingJobRepository = mock(RepoIndexingJobStorage.class);
     final InstallationStorageStub installationEventRepositoryStub = new InstallationStorageStub();
-    final RawInstallationEventStorageStub rawInstallationEventRepositoryStub = new RawInstallationEventStorageStub();
 
-    final EventHandler eventHandler = new InstallationEventProcessorService(
-            rawInstallationEventRepositoryStub, repoIndexingJobRepository, installationEventRepositoryStub);
+    final EventHandler<RawInstallationEvent> eventHandler = new InstallationEventProcessorService(
+            repoIndexingJobRepository, installationEventRepositoryStub);
     private final RawInstallationEvent newInstallationEvent = RawStorageWriterStub.load("/github/events/new_installation.json", RawInstallationEvent.class);
     private final RawStorageWriterStub rawStorageRepositoryStub = new RawStorageWriterStub();
 
@@ -39,8 +37,6 @@ public class InstallationEventTest {
     public void should_store_raw_events() {
         eventHandler.process(newInstallationEvent);
 
-        assertCachedEventsAre(newInstallationEvent);
-
         final var events = installationEventRepositoryStub.installations();
         assertThat(events).hasSize(1);
         assertThat(events.get(0).getId()).isEqualTo(newInstallationEvent.getInstallation().getId());
@@ -48,9 +44,5 @@ public class InstallationEventTest {
         assertThat(events.get(0).getRepos()).hasSize(1);
         assertThat(events.get(0).getRepos().get(0).getId()).isEqualTo(marketplaceFrontend.getId());
         verify(repoIndexingJobRepository).setInstallationForRepos(newInstallationEvent.getInstallation().getId(), new RepoIndexingJobTrigger(marketplaceFrontend.getId(), false, true));
-    }
-
-    private void assertCachedEventsAre(RawInstallationEvent... events) {
-        assertThat(rawInstallationEventRepositoryStub.events()).containsExactly(events);
     }
 }

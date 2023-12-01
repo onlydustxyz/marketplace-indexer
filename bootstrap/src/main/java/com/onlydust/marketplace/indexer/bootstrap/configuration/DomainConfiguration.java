@@ -38,7 +38,10 @@ import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubAppJwtProvider;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
-import com.onlydust.marketplace.indexer.postgres.adapters.*;
+import com.onlydust.marketplace.indexer.postgres.adapters.PostgresOldRepoIndexingJobStorage;
+import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorage;
+import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRepoIndexingJobStorage;
+import com.onlydust.marketplace.indexer.postgres.adapters.PostgresUserIndexingJobStorage;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -123,12 +126,10 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public EventHandler<RawInstallationEvent> installationEventHandler(final PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository,
-                                                                       final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
+    public EventHandler<RawInstallationEvent> installationEventHandler(final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
                                                                        final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
                                                                        final GithubAppInstallationStorage githubAppInstallationStorage) {
         return new InstallationEventProcessorService(
-                postgresRawInstallationEventStorageRepository,
                 new RepoIndexingJobStorageComposite(repoIndexingJobRepository, oldRepoIndexesEntityRepository),
                 githubAppInstallationStorage);
     }

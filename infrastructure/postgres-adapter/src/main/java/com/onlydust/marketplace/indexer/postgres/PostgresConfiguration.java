@@ -2,7 +2,10 @@ package com.onlydust.marketplace.indexer.postgres;
 
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
-import com.onlydust.marketplace.indexer.postgres.repositories.*;
+import com.onlydust.marketplace.indexer.postgres.repositories.NotifierJobEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -48,11 +51,6 @@ public class PostgresConfiguration {
                 pullRequestReviewsRepository,
                 repoCheckRunsRepository
         );
-    }
-
-    @Bean
-    public PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository(final InstallationEventRepository installationEventRepository) {
-        return new PostgresRawInstallationEventStorageStorage(installationEventRepository);
     }
 
     @Bean
