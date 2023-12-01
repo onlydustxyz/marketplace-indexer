@@ -7,7 +7,9 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.*;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
@@ -331,7 +333,7 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public RepoRefreshJobManager diffRepoRefreshJobManager(
+    public JobManager diffRepoRefreshJobManager(
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
             final RepoIndexer diffFullRepoIndexer,
             final RepoIndexer liveRepoIndexer,
@@ -342,7 +344,7 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public RepoRefreshJobManager cacheOnlyRepoRefreshJobManager(
+    public JobManager cacheOnlyRepoRefreshJobManager(
             final PostgresRepoIndexingJobStorage repoIndexingJobTriggerRepository,
             final RepoIndexer cacheOnlyFullRepoIndexer,
             final RepoIndexer cacheOnlyRepoIndexer,
@@ -353,7 +355,7 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public UserRefreshJobManager diffUserRefreshJobManager(
+    public JobManager diffUserRefreshJobManager(
             final PostgresUserIndexingJobStorage userIndexingJobTriggerRepository,
             final UserIndexer diffUserIndexer,
             final UserRefreshJobService.Config userRefreshJobConfig
@@ -362,7 +364,7 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public UserRefreshJobManager cachedUserRefreshJobManager(
+    public JobManager cachedUserRefreshJobManager(
             final PostgresUserIndexingJobStorage userIndexingJobTriggerRepository,
             final UserIndexer cachedUserIndexer,
             final UserRefreshJobService.Config userRefreshJobConfig
@@ -371,7 +373,7 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public NotifierJobManager apiNotifier(final ContributionStorage contributionStorage, final ApiClient apiClient, final NotifierJobStorage notifierJobStorage) {
+    public JobManager apiNotifier(final ContributionStorage contributionStorage, final ApiClient apiClient, final NotifierJobStorage notifierJobStorage) {
         return new NotifierJobManagerJobService(contributionStorage, apiClient, notifierJobStorage);
     }
 

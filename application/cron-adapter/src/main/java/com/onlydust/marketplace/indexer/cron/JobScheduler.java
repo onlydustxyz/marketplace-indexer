@@ -1,8 +1,6 @@
 package com.onlydust.marketplace.indexer.cron;
 
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.NotifierJobManager;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -17,9 +15,9 @@ import java.util.concurrent.Executor;
 @Profile("job")
 public class JobScheduler {
     private final Executor applicationTaskExecutor;
-    private final RepoRefreshJobManager diffRepoRefreshJobManager;
-    private final UserRefreshJobManager diffUserRefreshJobManager;
-    private final NotifierJobManager notifierJobManager;
+    private final JobManager diffRepoRefreshJobManager;
+    private final JobManager diffUserRefreshJobManager;
+    private final JobManager notifierJobManager;
 
     @Scheduled(fixedDelayString = "${application.cron.repo-refresh-job-delay}")
     public void scheduleRepoRefresherJobs() {

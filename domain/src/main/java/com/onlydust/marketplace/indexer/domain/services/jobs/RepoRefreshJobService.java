@@ -5,7 +5,7 @@ import com.onlydust.marketplace.indexer.domain.jobs.RepoIndexerJob;
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,13 +19,13 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Slf4j
-public class RepoRefreshJobService implements RepoRefreshJobManager {
+public class RepoRefreshJobService implements JobManager {
     private final RepoIndexingJobStorage repoIndexingJobStorage;
     private final RepoIndexer fullRepoIndexer;
     private final RepoIndexer lightRepoIndexer;
     private final GithubAppContext githubAppContext;
     private final Config config;
-    
+
     @Override
     public List<Job> allJobs() {
         return repoIndexingJobStorage.installationIds().stream()

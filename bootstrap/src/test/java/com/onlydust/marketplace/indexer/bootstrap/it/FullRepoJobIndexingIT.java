@@ -1,8 +1,7 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.domain.jobs.Job;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.NotifierJobManager;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
@@ -45,9 +44,9 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     @Autowired
     public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
-    public RepoRefreshJobManager diffRepoRefreshJobManager;
+    public JobManager diffRepoRefreshJobManager;
     @Autowired
-    public NotifierJobManager notifierJobManager;
+    public JobManager apiNotifier;
 
     private WebTestClient.ResponseSpec onRepoLinkChanged(List<Long> linkedRepoIds, List<Long> unlinkedRepoIds) {
         return post("/api/v1/events/on-repo-link-changed", """
@@ -181,9 +180,9 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
                 .withRequestBody(equalToJson("{\"repoIds\": [%d]}".formatted(MARKETPLACE)))
                 .willReturn(noContent()));
 
-        notifierJobManager.allJobs().forEach(Job::run);
+        apiNotifier.allJobs().forEach(Job::run);
         Thread.sleep(10);
-        notifierJobManager.allJobs().forEach(Job::run); // This run will not send any event
+        apiNotifier.allJobs().forEach(Job::run); // This run will not send any event
 
         assertThat(apiWireMockServer
                 .countRequestsMatching(postRequestedFor(urlEqualTo("/api/v1/events/on-contributions-change")).build())

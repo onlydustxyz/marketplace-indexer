@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.cli;
 
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -15,7 +15,7 @@ import java.util.concurrent.FutureTask;
 @Profile("cli")
 public class RepoRefreshCliAdapter implements CommandLineRunner {
     private final TaskExecutor applicationTaskExecutor;
-    private final RepoRefreshJobManager cacheOnlyRepoRefreshJobManager;
+    private final JobManager cacheOnlyRepoRefreshJobManager;
 
     @Override
     public void run(String... args) {
