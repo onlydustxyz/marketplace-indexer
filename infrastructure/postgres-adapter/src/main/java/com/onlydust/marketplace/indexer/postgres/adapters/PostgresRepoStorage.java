@@ -4,12 +4,17 @@ import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoStatsEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoStatsEntityRepository;
 import lombok.AllArgsConstructor;
+
+import java.time.Instant;
 
 @AllArgsConstructor
 public class PostgresRepoStorage implements RepoStorage {
     private final GithubRepoEntityRepository githubRepoEntityRepository;
+    private final GithubRepoStatsEntityRepository githubRepoStatsEntityRepository;
 
     @Override
     public void save(GithubRepo repo) {
@@ -29,6 +34,14 @@ public class PostgresRepoStorage implements RepoStorage {
         final var repo = githubRepoEntityRepository.findById(repoId).orElseThrow(() -> OnlyDustException.notFound("Repo not found"));
         githubRepoEntityRepository.save(repo.toBuilder()
                 .visibility(GithubRepoEntity.Visibility.PUBLIC)
+                .build());
+    }
+
+    @Override
+    public void setLastIndexedTime(Long repoId, Instant lastIndexedTime) {
+        githubRepoStatsEntityRepository.save(GithubRepoStatsEntity.builder()
+                .id(repoId)
+                .lastIndexedAt(lastIndexedTime)
                 .build());
     }
 }

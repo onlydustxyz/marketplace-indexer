@@ -85,8 +85,8 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public PostgresRepoStorage postgresRepoStorage(final GithubRepoEntityRepository githubRepoEntityRepository) {
-        return new PostgresRepoStorage(githubRepoEntityRepository);
+    public PostgresRepoStorage postgresRepoStorage(final GithubRepoEntityRepository githubRepoEntityRepository, final GithubRepoStatsEntityRepository githubRepoStatsEntityRepository) {
+        return new PostgresRepoStorage(githubRepoEntityRepository, githubRepoStatsEntityRepository);
     }
 
     @Bean

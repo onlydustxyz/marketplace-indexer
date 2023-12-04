@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
 import lombok.AllArgsConstructor;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -15,6 +16,7 @@ public class RepoExposer implements RepoIndexer {
 
     private void expose(CleanRepo repo) {
         repoStorage.save(GithubRepo.of(repo));
+        repoStorage.setLastIndexedTime(repo.getId(), Instant.now());
     }
 
     @Override
