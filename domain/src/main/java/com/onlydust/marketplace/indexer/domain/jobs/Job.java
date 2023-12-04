@@ -3,40 +3,35 @@ package com.onlydust.marketplace.indexer.domain.jobs;
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
 public abstract class Job implements Runnable {
-    static final Set<String> runningJobs = new HashSet<>();
+    static final ConcurrentMap<String, Boolean> runningJobs = new ConcurrentHashMap<>();
 
     @Override
     public void run() {
-        if (isRunning()) {
+        if (!lock()) {
             LOGGER.info("Job {} is already running, skipping", name());
             return;
         }
 
         try {
-            start();
+            LOGGER.info("Starting job {}", name());
+            execute();
         } catch (Exception e) {
             LOGGER.error("Job {} failed", name(), OnlyDustException.internalServerError("Job " + name() + " failed", e));
         } finally {
-            stop();
+            unlock();
         }
     }
 
-    private boolean isRunning() {
-        return runningJobs.contains(name());
+    private boolean lock() {
+        return runningJobs.putIfAbsent(name(), true) == null;
     }
 
-    private void start() {
-        LOGGER.info("Starting job {}", name());
-        runningJobs.add(name());
-        execute();
-    }
-
-    private void stop() {
+    private void unlock() {
         runningJobs.remove(name());
         LOGGER.info("Job {} finished", name());
     }
