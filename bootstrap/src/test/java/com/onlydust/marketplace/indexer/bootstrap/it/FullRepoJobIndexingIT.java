@@ -1,8 +1,7 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.domain.jobs.Job;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.NotifierJobManager;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.jobs.NewContributionNotifierJob;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
@@ -45,9 +44,9 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     @Autowired
     public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
-    public RepoRefreshJobManager diffRepoRefreshJobManager;
+    public JobManager diffRepoRefreshJobManager;
     @Autowired
-    public NotifierJobManager notifierJobManager;
+    public NewContributionNotifierJob newContributionNotifierJob;
 
     private WebTestClient.ResponseSpec onRepoLinkChanged(List<Long> linkedRepoIds, List<Long> unlinkedRepoIds) {
         return post("/api/v1/events/on-repo-link-changed", """
@@ -72,7 +71,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
         );
 
         // Run all jobs
-        diffRepoRefreshJobManager.allJobs().forEach(Job::run);
+        diffRepoRefreshJobManager.createJob().run();
 
         // Jobs are finished
         for (final var repoId : new Long[]{BRETZEL_APP, MARKETPLACE}) {
@@ -140,7 +139,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
                 .willReturn(aResponse().withBodyFile("repos/marketplace-frontend/issues/78-2.json")));
 
         // When
-        diffRepoRefreshJobManager.allJobs().forEach(Job::run);
+        diffRepoRefreshJobManager.createJob().run();
 
         // Then
         /*
@@ -181,9 +180,9 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
                 .withRequestBody(equalToJson("{\"repoIds\": [%d]}".formatted(MARKETPLACE)))
                 .willReturn(noContent()));
 
-        notifierJobManager.allJobs().forEach(Job::run);
+        newContributionNotifierJob.run();
         Thread.sleep(10);
-        notifierJobManager.allJobs().forEach(Job::run); // This run will not send any event
+        newContributionNotifierJob.run(); // This run will not send any event
 
         assertThat(apiWireMockServer
                 .countRequestsMatching(postRequestedFor(urlEqualTo("/api/v1/events/on-contributions-change")).build())

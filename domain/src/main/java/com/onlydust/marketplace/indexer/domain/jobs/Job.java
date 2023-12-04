@@ -41,7 +41,7 @@ public abstract class Job implements Runnable {
         LOGGER.info("Job {} finished", name());
     }
 
-    public abstract void execute();
+    protected abstract void execute();
 
     public abstract String name();
 }

@@ -1,10 +1,7 @@
 package com.onlydust.marketplace.indexer.rest.github;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
-import com.onlydust.marketplace.indexer.domain.ports.in.events.InstallationEventHandler;
-import com.onlydust.marketplace.indexer.domain.ports.in.events.RepositoryEventHandler;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawEvent;
+import com.onlydust.marketplace.indexer.domain.ports.in.events.EventsInbox;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,10 +20,8 @@ import java.io.IOException;
 public class GithubWebhookRestApi {
     private static final String X_GITHUB_EVENT = "X-GitHub-Event";
     private static final String X_HUB_SIGNATURE_256 = "X-Hub-Signature-256";
-    private final ObjectMapper objectMapper;
     private final Config config;
-    private final InstallationEventHandler installationEventHandler;
-    private final RepositoryEventHandler repositoryEventHandler;
+    private final EventsInbox inbox;
 
     @PostMapping("/github-app/webhook")
     public ResponseEntity<Void> consumeWebhook(final @RequestBody byte[] event,
@@ -34,17 +29,7 @@ public class GithubWebhookRestApi {
                                                final @RequestHeader(X_HUB_SIGNATURE_256) String signature) throws IOException {
         GithubSignatureVerifier.validateWebhook(event, config.secret, signature);
 
-        switch (type) {
-            case "installation", "installation_repositories":
-                installationEventHandler.process(objectMapper.readValue(event, RawInstallationEvent.class));
-                break;
-            case "repository":
-                repositoryEventHandler.process(objectMapper.readValue(event, RawRepositoryEvent.class));
-                break;
-            default:
-                LOGGER.warn("Unknown event type {}", type);
-        }
-
+        inbox.push(new RawEvent(null, type, event));
         return ResponseEntity.ok().build();
     }
 

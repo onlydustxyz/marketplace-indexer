@@ -1,6 +1,4 @@
-package com.onlydust.marketplace.indexer.domain.services.jobs;
-
-import com.onlydust.marketplace.indexer.domain.jobs.Job;
+package com.onlydust.marketplace.indexer.domain.jobs;
 
 import java.util.Arrays;
 
@@ -13,7 +11,7 @@ public class SequentialJobComposite extends Job {
 
     @Override
     public void execute() {
-        Arrays.stream(jobs).forEach(Job::execute);
+        Arrays.stream(jobs).forEach(Job::run);
     }
 
     @Override

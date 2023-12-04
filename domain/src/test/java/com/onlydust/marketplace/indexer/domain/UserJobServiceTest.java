@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.domain;
 
-import com.onlydust.marketplace.indexer.domain.jobs.Job;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobService;
@@ -23,7 +22,7 @@ public class UserJobServiceTest {
 
     @Test
     public void should_triggers_all_jobs() {
-        jobService.allJobs().forEach(Job::execute);
+        jobService.createJob().run();
         verify(userIndexer).indexUser(1L);
         verify(userIndexer).indexUser(2L);
         verify(userIndexer).indexUser(3L);

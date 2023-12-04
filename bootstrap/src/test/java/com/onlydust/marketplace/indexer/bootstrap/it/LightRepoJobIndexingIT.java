@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.domain.jobs.Job;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoRefreshJobManager;
+import com.onlydust.marketplace.indexer.domain.jobs.EventsInboxJob;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
@@ -43,9 +43,11 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
     @Autowired
     public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
-    public RepoRefreshJobManager diffRepoRefreshJobManager;
+    public JobManager diffRepoRefreshJobManager;
     @Autowired
     GithubWebhookRestApi.Config config;
+    @Autowired
+    EventsInboxJob eventsInboxJob;
 
     @Test
     @Order(1)
@@ -68,8 +70,10 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
             post(event, "installation").expectStatus().isOk();
         }
 
+        eventsInboxJob.run();
+
         // Run all jobs
-        diffRepoRefreshJobManager.allJobs().forEach(Job::run);
+        diffRepoRefreshJobManager.createJob().run();
 
         // Jobs are finished
         for (final var repoId : new Long[]{MARKETPLACE}) {

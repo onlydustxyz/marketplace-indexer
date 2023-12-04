@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.onlydust.marketplace.indexer.domain.jobs.EventsInboxJob;
 import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
@@ -48,6 +49,8 @@ public class GithubWebhookIT extends IntegrationTest {
     RepoContributorRepository repoContributorRepository;
     @Autowired
     GithubRepoEntityRepository githubRepoRepository;
+    @Autowired
+    EventsInboxJob eventsInboxJob;
 
     @Test
     void should_reject_upon_invalid_signature() throws URISyntaxException, IOException {
@@ -74,11 +77,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_created_old.json").toURI()));
         final long OLD_INSTALLATION_ID = 42952632L;
 
-        // When
-        final var response = post(event, "installation");
-
-        // Then
-        response.expectStatus().isOk();
+        processEvent(event, "installation");
 
         assertThat(repoIndexingJobEntityRepository.findAll()).containsExactlyInAnyOrder(
                 new RepoIndexingJobEntity(CAIRO_STREAMS_ID, OLD_INSTALLATION_ID, false, true),
@@ -117,10 +116,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_created_new.json").toURI()));
 
         // When
-        final var response = post(event, "installation");
-
-        // Then
-        response.expectStatus().isOk();
+        processEvent(event, "installation");
 
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
         assertThat(jobs).hasSize(2);
@@ -160,10 +156,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_added.json").toURI()));
 
         // When
-        final var response = post(event, "installation_repositories");
-
-        // Then
-        response.expectStatus().isOk();
+        processEvent(event, "installation_repositories");
 
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
         assertThat(jobs).hasSize(2);
@@ -193,10 +186,7 @@ public class GithubWebhookIT extends IntegrationTest {
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/cairo-streams-privatized.json").toURI()));
 
         // When
-        final var response = post(event, "repository");
-
-        // Then
-        response.expectStatus().isOk();
+        processEvent(event, "repository");
 
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isFalse();
         assertThat(oldRepoIndexesEntityRepository.findById(CAIRO_STREAMS_ID)).isEmpty();
@@ -210,10 +200,7 @@ public class GithubWebhookIT extends IntegrationTest {
         final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/cairo-streams-publicized.json").toURI()));
 
         // When
-        final var response = post(event, "repository");
-
-        // Then
-        response.expectStatus().isOk();
+        processEvent(event, "repository");
 
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isTrue();
         assertThat(oldRepoIndexesEntityRepository.findById(CAIRO_STREAMS_ID)).isPresent();
@@ -228,10 +215,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_removed.json").toURI()));
 
         // When
-        final var response = post(event, "installation_repositories");
-
-        // Then
-        response.expectStatus().isOk();
+        processEvent(event, "installation_repositories");
 
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
         assertThat(jobs).hasSize(2);
@@ -260,10 +244,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_suspended.json").toURI()));
 
         // When
-        final var response = post(event, "installation");
-
-        // Then
-        response.expectStatus().isOk();
+        processEvent(event, "installation");
 
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
         assertThat(jobs).hasSize(2);
@@ -295,10 +276,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_unsuspended.json").toURI()));
 
         // When
-        final var response = post(event, "installation");
-
-        // Then
-        response.expectStatus().isOk();
+        processEvent(event, "installation");
 
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
         assertThat(jobs).hasSize(2);
@@ -328,10 +306,7 @@ public class GithubWebhookIT extends IntegrationTest {
                                                                                  "/installation_deleted.json").toURI()));
 
         // When
-        final var response = post(event, "installation");
-
-        // Then
-        response.expectStatus().isOk();
+        processEvent(event, "installation");
 
         // Job data preserved
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
@@ -363,10 +338,7 @@ public class GithubWebhookIT extends IntegrationTest {
                 .getResource("/github/webhook/events/installation_removed_by_removing_some_repos.json").toURI()));
 
         // When
-        var response = post(installationAddedEvent, "installation");
-
-        // Then
-        response.expectStatus().isOk();
+        processEvent(installationAddedEvent, "installation");
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
@@ -377,10 +349,9 @@ public class GithubWebhookIT extends IntegrationTest {
         assertThat(repos.get(1).getId()).isEqualTo(715033315);
 
         // When
-        response = post(installationRemovedByRemovingSomeReposEvent, "installation_repositories");
+        processEvent(installationRemovedByRemovingSomeReposEvent, "installation_repositories");
 
         // Then
-        response.expectStatus().isOk();
         final var installationsUpdated = githubAppInstallationEntityRepository.findAll();
         assertThat(installationsUpdated).hasSize(1);
         final var reposUpdated =
@@ -395,5 +366,10 @@ public class GithubWebhookIT extends IntegrationTest {
                         config.secret))
                 .bodyValue(event)
                 .exchange();
+    }
+
+    private void processEvent(String event, String installation) {
+        post(event, installation).expectStatus().isOk();
+        eventsInboxJob.run();
     }
 }

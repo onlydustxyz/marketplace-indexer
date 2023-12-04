@@ -65,3 +65,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000030_add_repo_indexing_mode.sql
   - include:
       file: db/changelog/changelogs/00000031_add_repo_visibility_in_jobs.sql
+  - include:
+      file: db/changelog/changelogs/00000032_create_inbox_table.sql

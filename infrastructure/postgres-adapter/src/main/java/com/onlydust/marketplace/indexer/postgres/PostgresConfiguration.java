@@ -54,11 +54,6 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public PostgresRawInstallationEventStorageStorage postgresRawInstallationEventStorageRepository(final InstallationEventRepository installationEventRepository) {
-        return new PostgresRawInstallationEventStorageStorage(installationEventRepository);
-    }
-
-    @Bean
     public PostgresRepoIndexingJobStorage postgresRepoIndexingJobTriggerRepository(final RepoIndexingJobEntityRepository repoIndexingJobTriggerRepository) {
         return new PostgresRepoIndexingJobStorage(repoIndexingJobTriggerRepository);
     }
@@ -112,5 +107,10 @@ public class PostgresConfiguration {
     @Bean
     public PostgresNotifierJobStorage notifierJobStorage(final NotifierJobEntityRepository notifierJobEntityRepository) {
         return new PostgresNotifierJobStorage(notifierJobEntityRepository);
+    }
+
+    @Bean
+    public PostgresEventInboxStorage postgresEventInboxStorage(final EventsInboxEntityRepository eventsInboxEntityRepository) {
+        return new PostgresEventInboxStorage(eventsInboxEntityRepository);
     }
 }
