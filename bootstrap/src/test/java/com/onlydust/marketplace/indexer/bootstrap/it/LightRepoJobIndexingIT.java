@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoStatsEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.PullRequestRepository;
@@ -42,6 +43,8 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
     public GithubRepoEntityRepository githubRepoEntityRepository;
     @Autowired
     public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
+    @Autowired
+    public GithubRepoStatsEntityRepository githubRepoStatsEntityRepository;
     @Autowired
     public JobManager diffRepoRefreshJobManager;
     @Autowired
@@ -81,6 +84,9 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
             assertThat(job.getStartedAt()).isNotNull();
             assertThat(job.getFinishedAt()).isNotNull();
             assertThat(job.getStatus()).isEqualTo(JobStatus.SUCCESS);
+
+            final var stats = githubRepoStatsEntityRepository.findById(repoId).orElseThrow();
+            assertThat(stats.getLastIndexedAt()).isNotNull();
         }
 
         // Some jobs did not run
@@ -89,6 +95,8 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
             assertThat(job.getStartedAt()).isNull();
             assertThat(job.getFinishedAt()).isNull();
             assertThat(job.getStatus()).isEqualTo(JobStatus.PENDING);
+
+            assertThat(githubRepoStatsEntityRepository.findById(repoId)).isEmpty();
         }
     }
 
