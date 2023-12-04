@@ -9,6 +9,9 @@ import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
 import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import com.onlydust.marketplace.indexer.bootstrap.ApplicationIT;
 import com.onlydust.marketplace.indexer.bootstrap.configuration.SwaggerConfiguration;
+import com.onlydust.marketplace.indexer.domain.jobs.EventsInboxJob;
+import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
+import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +69,10 @@ public class IntegrationTest {
     int port;
     @Autowired
     WebTestClient client;
+    @Autowired
+    GithubWebhookRestApi.Config config;
+    @Autowired
+    EventsInboxJob eventsInboxJob;
 
     @DynamicPropertySource
     static void updateProperties(DynamicPropertyRegistry registry) {
@@ -106,5 +113,18 @@ public class IntegrationTest {
                 .contentType(APPLICATION_JSON)
                 .bodyValue(body)
                 .exchange();
+    }
+
+    protected WebTestClient.ResponseSpec postEvent(final String event, String eventTypeHeader) {
+        return client.post().uri(getApiURI("/github-app/webhook")).header("X-GitHub-Event", eventTypeHeader)
+                .header("X-Hub-Signature-256", "sha256=" + GithubSignatureVerifier.hmac(event.getBytes(),
+                        config.secret))
+                .bodyValue(event)
+                .exchange();
+    }
+
+    protected void processEvent(String event, String installation) {
+        postEvent(event, installation).expectStatus().isOk();
+        eventsInboxJob.run();
     }
 }

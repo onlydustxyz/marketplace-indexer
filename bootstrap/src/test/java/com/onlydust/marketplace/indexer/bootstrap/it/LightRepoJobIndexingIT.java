@@ -57,19 +57,19 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
     public void index_repos() throws URISyntaxException, IOException {
         {
             // Add repos to index (light mode = from GitHub app installation)
-            final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_created_new.json").toURI()));
+            final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_created_new.json").toURI()));
             post(event, "installation").expectStatus().isOk();
         }
 
         {
             // Add private repo
-            final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_added_private_repo.json").toURI()));
+            final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_added_private_repo.json").toURI()));
             post(event, "installation_repositories").expectStatus().isOk();
         }
 
         {
             // Uninstall app
-            final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation_deleted.json").toURI()));
+            final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_deleted.json").toURI()));
             post(event, "installation").expectStatus().isOk();
         }
 
