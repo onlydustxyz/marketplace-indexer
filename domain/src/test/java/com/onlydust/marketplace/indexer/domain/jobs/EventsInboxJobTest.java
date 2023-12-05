@@ -17,8 +17,9 @@ class EventsInboxJobTest {
     private final EventHandler<RawRepositoryEvent> repositoryEventHandler = mock(EventHandler.class);
     private final EventHandler<RawStarEvent> starEventHandler = mock(EventHandler.class);
     private final EventHandler<RawIssueEvent> issueEventHandler = mock(EventHandler.class);
+    private final EventHandler<RawPullRequestEvent> pullRequestEventHandler = mock(EventHandler.class);
 
-    private final EventsInboxJob eventsInboxJob = new EventsInboxJob(eventInboxStorage, installationEventHandler, repositoryEventHandler, starEventHandler, issueEventHandler);
+    private final EventsInboxJob eventsInboxJob = new EventsInboxJob(eventInboxStorage, installationEventHandler, repositoryEventHandler, starEventHandler, issueEventHandler, pullRequestEventHandler);
 
     @Test
     public void should_ack_correct_events() {

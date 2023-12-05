@@ -2,10 +2,7 @@ package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.onlydust.marketplace.indexer.domain.jobs.EventsInboxJob;
 import com.onlydust.marketplace.indexer.domain.jobs.NewContributionNotifierJob;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawIssueEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
@@ -21,8 +18,9 @@ public class JobsConfiguration {
                                          final EventHandler<RawInstallationEvent> installationEventHandler,
                                          final EventHandler<RawRepositoryEvent> repositoryEventHandler,
                                          final EventHandler<RawStarEvent> starEventHandler,
-                                         final EventHandler<RawIssueEvent> issueEventHandler) {
-        return new EventsInboxJob(eventInboxStorage, installationEventHandler, repositoryEventHandler, starEventHandler, issueEventHandler);
+                                         final EventHandler<RawIssueEvent> issueEventHandler,
+                                         final EventHandler<RawPullRequestEvent> pullRequestEventHandler) {
+        return new EventsInboxJob(eventInboxStorage, installationEventHandler, repositoryEventHandler, starEventHandler, issueEventHandler, pullRequestEventHandler);
     }
 
     @Bean

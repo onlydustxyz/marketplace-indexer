@@ -4,10 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawIssueEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
@@ -158,6 +155,12 @@ public class DomainConfiguration {
                                                          final Exposer<CleanRepo> repoContributorsExposer,
                                                          final GithubAppContext githubAppContext) {
         return new IssueEventProcessorService(liveIssueIndexer, repoContributorsExposer, githubAppContext);
+    }
+
+    @Bean
+    public EventHandler<RawPullRequestEvent> pullRequestEventHandler(final Exposer<CleanRepo> repoContributorsExposer,
+                                                                     final PullRequestIndexer livePullRequestIndexer) {
+        return new PullRequestEventProcessorService(repoContributorsExposer, livePullRequestIndexer);
     }
 
     @Bean
