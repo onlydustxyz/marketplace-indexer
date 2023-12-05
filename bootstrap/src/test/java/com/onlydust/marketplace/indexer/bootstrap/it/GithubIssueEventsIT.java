@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GithubIssueEventsIT extends IntegrationTest {
     final static Long ISSUE_ID = 2025877285L;
     final static Long OFUX_ID = 595505L;
+    final static Long PIERRE_ID = 16590657L;
     final static Long CAIRO_STREAMS_ID = 493795808L;
 
     @Autowired
@@ -62,5 +63,30 @@ public class GithubIssueEventsIT extends IntegrationTest {
         assertThat(repoContributors).hasSize(1);
         assertThat(repoContributors.get(0).getId().getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
         assertThat(repoContributors.get(0).getId().getContributorId()).isEqualTo(OFUX_ID);
+    }
+    
+    @Test
+    @Order(3)
+    void should_handle_issue_being_modified() {
+        // When
+        processEventsFromPaths("issues",
+                "/github/webhook/events/issues/cairo-streams-issue-29-assigned.json",
+                "/github/webhook/events/issues/cairo-streams-issue-29-unassigned.json"
+        );
+
+        // Then
+        final var issue = githubIssueRepository.findById(ISSUE_ID).orElseThrow();
+        assertThat(issue.getAssignees()).hasSize(1);
+        assertThat(issue.getAssignees().get(0).getLogin()).isEqualTo("PierreOucif");
+
+        final var contributions = contributionRepository.findAll();
+        assertThat(contributions).hasSize(1);
+        assertThat(contributions.get(0).getIssue().getId()).isEqualTo(ISSUE_ID);
+        assertThat(contributions.get(0).getContributor().getLogin()).isEqualTo("PierreOucif");
+
+        final var repoContributors = repoContributorRepository.findAll();
+        assertThat(repoContributors).hasSize(1);
+        assertThat(repoContributors.get(0).getId().getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(repoContributors.get(0).getId().getContributorId()).isEqualTo(PIERRE_ID);
     }
 }
