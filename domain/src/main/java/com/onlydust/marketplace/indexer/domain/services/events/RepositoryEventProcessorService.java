@@ -22,26 +22,12 @@ public class RepositoryEventProcessorService implements EventHandler<RawReposito
     @Override
     public void process(RawRepositoryEvent rawEvent) {
         final var event = RepositoryEvent.of(rawEvent);
+        githubRepoStorage.update(GithubRepo.of(event.getRepository()));
 
         if (event.getAction() == null) return;
         switch (event.getAction()) {
-            case PRIVATIZED -> onPrivatized(event);
-            case PUBLICIZED -> onPublicized(event);
-            case EDITED -> onEdited(event);
+            case PRIVATIZED -> repoIndexingJobStorage.setPrivate(event.getRepository().getId());
+            case PUBLICIZED -> repoIndexingJobStorage.setPublic(event.getRepository().getId());
         }
-    }
-
-    private void onEdited(RepositoryEvent event) {
-        githubRepoStorage.update(GithubRepo.of(event.getRepository()));
-    }
-
-    private void onPublicized(RepositoryEvent event) {
-        repoIndexingJobStorage.setPublic(event.getRepository().getId());
-        githubRepoStorage.setPublic(event.getRepository().getId());
-    }
-
-    private void onPrivatized(RepositoryEvent event) {
-        repoIndexingJobStorage.setPrivate(event.getRepository().getId());
-        githubRepoStorage.setPrivate(event.getRepository().getId());
     }
 }
