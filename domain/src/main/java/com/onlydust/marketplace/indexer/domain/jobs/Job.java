@@ -13,12 +13,12 @@ public abstract class Job implements Runnable {
     @Override
     public void run() {
         if (!lock()) {
-            LOGGER.info("Job {} is already running, skipping", name());
+            LOGGER.debug("Job {} is already running, skipping", name());
             return;
         }
 
         try {
-            LOGGER.info("Starting job {}", name());
+            LOGGER.debug("Starting job {}", name());
             execute();
         } catch (Exception e) {
             LOGGER.error("Job {} failed", name(), OnlyDustException.internalServerError("Job " + name() + " failed", e));
@@ -33,7 +33,7 @@ public abstract class Job implements Runnable {
 
     private void unlock() {
         runningJobs.remove(name());
-        LOGGER.info("Job {} finished", name());
+        LOGGER.debug("Job {} finished", name());
     }
 
     protected abstract void execute();
