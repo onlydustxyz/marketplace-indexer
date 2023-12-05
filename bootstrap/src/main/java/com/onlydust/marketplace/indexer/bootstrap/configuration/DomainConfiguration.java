@@ -159,8 +159,9 @@ public class DomainConfiguration {
 
     @Bean
     public EventHandler<RawPullRequestEvent> pullRequestEventHandler(final Exposer<CleanRepo> repoContributorsExposer,
-                                                                     final PullRequestIndexer livePullRequestIndexer) {
-        return new PullRequestEventProcessorService(repoContributorsExposer, livePullRequestIndexer);
+                                                                     final PullRequestIndexer livePullRequestIndexer,
+                                                                     final GithubAppContext githubAppContext) {
+        return new PullRequestEventProcessorService(repoContributorsExposer, livePullRequestIndexer, githubAppContext);
     }
 
     @Bean

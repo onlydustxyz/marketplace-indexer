@@ -15,4 +15,5 @@ public class RawPullRequestEvent extends JsonDocument {
     @JsonProperty("pull_request")
     RawPullRequest pullRequest;
     RawRepo repository;
+    RawInstallation installation;
 }
