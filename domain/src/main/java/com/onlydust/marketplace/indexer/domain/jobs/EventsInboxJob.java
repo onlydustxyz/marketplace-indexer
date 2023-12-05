@@ -44,7 +44,7 @@ public class EventsInboxJob extends Job {
                     issueEventHandler.process(event.payload(RawIssueEvent.class));
                     eventInboxStorage.ack(event.getId());
                     break;
-                case "pull_request":
+                case "pull_request", "pull_request_review":
                     pullRequestEventHandler.process(event.payload(RawPullRequestEvent.class));
                     eventInboxStorage.ack(event.getId());
                     break;
