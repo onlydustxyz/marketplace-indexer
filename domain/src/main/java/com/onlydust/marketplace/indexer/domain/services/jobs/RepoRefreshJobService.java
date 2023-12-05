@@ -40,7 +40,7 @@ public class RepoRefreshJobService implements JobManager {
     }
 
     private Optional<Job> createJobForInstallationId(Long installationId) {
-        final var repos = repoIndexingJobStorage.reposUpdatedBefore(installationId, Instant.now().minusSeconds(config.refreshInterval));
+        final var repos = repoIndexingJobStorage.reposUpdatedBefore(installationId, Instant.now().minusSeconds(installationId == null ? config.unauthorizedReposrefreshInterval : config.authorizedReposrefreshInterval));
 
         if (repos.isEmpty()) return Optional.empty();
 
@@ -63,6 +63,7 @@ public class RepoRefreshJobService implements JobManager {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Config {
-        Integer refreshInterval;
+        Integer unauthorizedReposrefreshInterval;
+        Integer authorizedReposrefreshInterval;
     }
 }

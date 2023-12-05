@@ -20,7 +20,7 @@ public class RepoJobServiceTest {
     private final RepoIndexer lightRepoIndexer = mock(RepoIndexer.class);
     private final GithubAppContext githubAppContext = new GithubAppContextStub();
     private final Executor executor = Runnable::run;
-    private final RepoRefreshJobService jobService = new RepoRefreshJobService(executor, repoIndexingJobRepository, fullRepoIndexer, lightRepoIndexer, githubAppContext, new RepoRefreshJobService.Config(0));
+    private final RepoRefreshJobService jobService = new RepoRefreshJobService(executor, repoIndexingJobRepository, fullRepoIndexer, lightRepoIndexer, githubAppContext, new RepoRefreshJobService.Config(0, 0));
 
     @BeforeEach
     void setup() {
