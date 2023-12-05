@@ -1,7 +1,9 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubIssueEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -17,9 +19,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GithubIssueEventsIT extends IntegrationTest {
-    final Long ISSUE_ID = 2025877285L;
+    final static Long ISSUE_ID = 2025877285L;
+    final static Long OFUX_ID = 595505L;
+    final static Long CAIRO_STREAMS_ID = 493795808L;
+
     @Autowired
     GithubIssueRepository githubIssueRepository;
+    @Autowired
+    ContributionRepository contributionRepository;
+    @Autowired
+    RepoContributorRepository repoContributorRepository;
 
     @Test
     @Order(1)
@@ -50,5 +59,15 @@ public class GithubIssueEventsIT extends IntegrationTest {
         assertThat(issue.getRepo().getName()).isEqualTo("cairo-streams");
         assertThat(issue.getAssignees()).hasSize(1);
         assertThat(issue.getAssignees().get(0).getLogin()).isEqualTo("ofux");
+
+        final var contributions = contributionRepository.findAll();
+        assertThat(contributions).hasSize(1);
+        assertThat(contributions.get(0).getIssue().getId()).isEqualTo(ISSUE_ID);
+        assertThat(contributions.get(0).getContributor().getLogin()).isEqualTo("ofux");
+
+        final var repoContributors = repoContributorRepository.findAll();
+        assertThat(repoContributors).hasSize(1);
+        assertThat(repoContributors.get(0).getId().getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(repoContributors.get(0).getId().getContributorId()).isEqualTo(OFUX_ID);
     }
 }

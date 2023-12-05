@@ -154,8 +154,9 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public EventHandler<RawIssueEvent> issueEventHandler(final IssueStorage issueStorage) {
-        return new IssueEventProcessorService(issueStorage);
+    public EventHandler<RawIssueEvent> issueEventHandler(final Exposer<CleanIssue> issueExposer,
+                                                         final Exposer<CleanRepo> repoContributorsExposer) {
+        return new IssueEventProcessorService(issueExposer, repoContributorsExposer);
     }
 
     @Bean
