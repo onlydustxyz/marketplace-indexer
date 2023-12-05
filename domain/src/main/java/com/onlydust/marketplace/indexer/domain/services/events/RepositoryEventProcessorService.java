@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.services.events;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.RepositoryEvent;
+import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
@@ -21,11 +22,17 @@ public class RepositoryEventProcessorService implements EventHandler<RawReposito
     @Override
     public void process(RawRepositoryEvent rawEvent) {
         final var event = RepositoryEvent.of(rawEvent);
+
         if (event.getAction() == null) return;
         switch (event.getAction()) {
             case PRIVATIZED -> onPrivatized(event);
             case PUBLICIZED -> onPublicized(event);
+            case EDITED -> onEdited(event);
         }
+    }
+
+    private void onEdited(RepositoryEvent event) {
+        githubRepoStorage.update(GithubRepo.of(event.getRepository()));
     }
 
     private void onPublicized(RepositoryEvent event) {

@@ -44,4 +44,10 @@ public class PostgresRepoStorage implements RepoStorage {
                 .lastIndexedAt(lastIndexedTime)
                 .build());
     }
+
+    @Override
+    public void update(GithubRepo updated) {
+        final var repo = githubRepoEntityRepository.findById(updated.getId()).orElseThrow(() -> OnlyDustException.notFound("Repo not found"));
+        githubRepoEntityRepository.save(repo.updateWith(updated));
+    }
 }

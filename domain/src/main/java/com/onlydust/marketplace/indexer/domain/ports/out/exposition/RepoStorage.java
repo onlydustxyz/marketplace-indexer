@@ -12,4 +12,6 @@ public interface RepoStorage {
     void setPublic(Long repoId);
 
     void setLastIndexedTime(Long repoId, Instant lastIndexedTime);
+
+    void update(GithubRepo updated);
 }

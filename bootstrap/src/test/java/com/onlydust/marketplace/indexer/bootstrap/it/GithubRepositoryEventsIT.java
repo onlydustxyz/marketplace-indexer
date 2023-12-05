@@ -63,4 +63,17 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
         assertThat(oldRepoIndexesEntityRepository.findById(CAIRO_STREAMS_ID)).isPresent();
         assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getVisibility()).isEqualTo(GithubRepoEntity.Visibility.PUBLIC);
     }
+
+    @Test
+    @Order(4)
+    void should_handle_repo_updated() throws URISyntaxException, IOException {
+        // Given
+        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/repository/cairo-streams-edited.json").toURI()));
+
+        // When
+        processEvent(event, "repository");
+
+        // Then
+        assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getDescription()).isEqualTo("Array stream library written in old-fashioned Cairo");
+    }
 }
