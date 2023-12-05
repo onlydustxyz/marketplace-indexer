@@ -13,4 +13,5 @@ import lombok.Value;
 public class RawIssueEvent extends JsonDocument {
     RawIssue issue;
     RawRepo repository;
+    RawInstallation installation;
 }

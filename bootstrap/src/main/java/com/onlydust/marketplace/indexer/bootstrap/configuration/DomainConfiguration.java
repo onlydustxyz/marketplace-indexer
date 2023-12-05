@@ -155,8 +155,9 @@ public class DomainConfiguration {
 
     @Bean
     public EventHandler<RawIssueEvent> issueEventHandler(final IssueIndexer liveIssueIndexer,
-                                                         final Exposer<CleanRepo> repoContributorsExposer) {
-        return new IssueEventProcessorService(liveIssueIndexer, repoContributorsExposer);
+                                                         final Exposer<CleanRepo> repoContributorsExposer,
+                                                         final GithubAppContext githubAppContext) {
+        return new IssueEventProcessorService(liveIssueIndexer, repoContributorsExposer, githubAppContext);
     }
 
     @Bean
