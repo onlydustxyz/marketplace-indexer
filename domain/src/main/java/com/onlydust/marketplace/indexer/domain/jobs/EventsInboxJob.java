@@ -16,6 +16,7 @@ public class EventsInboxJob extends Job {
     private final EventHandler<RawRepositoryEvent> repositoryEventHandler;
     private final EventHandler<RawStarEvent> starEventHandler;
     private final EventHandler<RawIssueEvent> issueEventHandler;
+    private final EventHandler<RawPullRequestEvent> pullRequestEventHandler;
 
     @Override
     protected void execute() {
@@ -41,6 +42,10 @@ public class EventsInboxJob extends Job {
                     break;
                 case "issues":
                     issueEventHandler.process(event.payload(RawIssueEvent.class));
+                    eventInboxStorage.ack(event.getId());
+                    break;
+                case "pull_request":
+                    pullRequestEventHandler.process(event.payload(RawPullRequestEvent.class));
                     eventInboxStorage.ack(event.getId());
                     break;
                 default:
