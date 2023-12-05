@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.domain.jobs;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
 import org.junit.jupiter.api.Test;
@@ -17,8 +18,9 @@ class EventsInboxJobTest {
     private final EventInboxStorage eventInboxStorage = mock(EventInboxStorage.class);
     private final EventHandler<RawInstallationEvent> installationEventHandler = mock(EventHandler.class);
     private final EventHandler<RawRepositoryEvent> repositoryEventHandler = mock(EventHandler.class);
+    private final EventHandler<RawStarEvent> starEventHandler = mock(EventHandler.class);
 
-    private final EventsInboxJob eventsInboxJob = new EventsInboxJob(eventInboxStorage, installationEventHandler, repositoryEventHandler);
+    private final EventsInboxJob eventsInboxJob = new EventsInboxJob(eventInboxStorage, installationEventHandler, repositoryEventHandler, starEventHandler);
 
     @Test
     public void should_ack_correct_events() {
