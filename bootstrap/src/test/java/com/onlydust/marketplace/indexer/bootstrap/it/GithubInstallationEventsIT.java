@@ -15,10 +15,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 
@@ -39,9 +35,9 @@ public class GithubInstallationEventsIT extends IntegrationTest {
     GithubAppInstallationEntityRepository githubAppInstallationEntityRepository;
 
     @Test
-    void should_reject_upon_invalid_signature() throws URISyntaxException, IOException {
+    void should_reject_upon_invalid_signature() {
         // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_created_new.json").toURI()));
+        final var event = "/github/webhook/events/installation/installation_created_new.json";
 
         // When
         final var response = client.post().uri(getApiURI("/github-app/webhook"))
@@ -56,13 +52,14 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
     @Test
     @Order(1)
-    void should_handle_installation_created_event() throws URISyntaxException, IOException {
+    void should_handle_installation_created_event() {
         // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_created_old.json").toURI()));
         final long OLD_INSTALLATION_ID = 42952632L;
 
         // When
-        processEvent(event, "installation");
+        processEventsFromPaths("installation",
+                "/github/webhook/events/installation/installation_created_old.json"
+        );
 
         // Then
         assertThat(repoIndexingJobEntityRepository.findAll()).containsExactlyInAnyOrder(
@@ -96,12 +93,11 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
     @Test
     @Order(2)
-    void should_handle_duplicate_installation_created_event() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_created_new.json").toURI()));
-
+    void should_handle_duplicate_installation_created_event() {
         // When
-        processEvent(event, "installation");
+        processEventsFromPaths("installation",
+                "/github/webhook/events/installation/installation_created_new.json"
+        );
 
         // Then
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
@@ -136,12 +132,11 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
     @Test
     @Order(3)
-    void should_handle_installation_added_events() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_added.json").toURI()));
-
+    void should_handle_installation_added_events() {
         // When
-        processEvent(event, "installation_repositories");
+        processEventsFromPaths("installation_repositories",
+                "/github/webhook/events/installation/installation_added.json"
+        );
 
         // Then
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
@@ -167,12 +162,11 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
     @Test
     @Order(6)
-    void should_handle_installation_removed_events() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_removed.json").toURI()));
-
+    void should_handle_installation_removed_events() {
         // When
-        processEvent(event, "installation_repositories");
+        processEventsFromPaths("installation_repositories",
+                "/github/webhook/events/installation/installation_removed.json"
+        );
 
         // Then
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
@@ -196,12 +190,11 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
     @Test
     @Order(7)
-    void should_handle_installation_suspended_event() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_suspended.json").toURI()));
-
+    void should_handle_installation_suspended_event() {
         // When
-        processEvent(event, "installation");
+        processEventsFromPaths("installation",
+                "/github/webhook/events/installation/installation_suspended.json"
+        );
 
         // Then
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
@@ -228,12 +221,11 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
     @Test
     @Order(8)
-    void should_handle_installation_unsuspended_event() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_unsuspended.json").toURI()));
-
+    void should_handle_installation_unsuspended_event() {
         // When
-        processEvent(event, "installation");
+        processEventsFromPaths("installation",
+                "/github/webhook/events/installation/installation_unsuspended.json"
+        );
 
         // Then
         final var jobs = repoIndexingJobEntityRepository.findAll(Sort.by("repoId"));
@@ -258,12 +250,11 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
     @Test
     @Order(9)
-    void should_handle_installation_deleted_event() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_deleted.json").toURI()));
-
+    void should_handle_installation_deleted_event() {
         // When
-        processEvent(event, "installation");
+        processEventsFromPaths("installation",
+                "/github/webhook/events/installation/installation_deleted.json"
+        );
 
         // Then
         // Job data preserved
@@ -288,15 +279,11 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
     @Test
     @Order(10)
-    void should_handle_installation_remove_some_repos() throws URISyntaxException, IOException {
-        // Given
-        final var installationAddedEvent = Files.readString(Paths.get(this.getClass()
-                .getResource("/github/webhook/events/installation/installation_added_to_update.json").toURI()));
-        final var installationRemovedByRemovingSomeReposEvent = Files.readString(Paths.get(this.getClass()
-                .getResource("/github/webhook/events/installation/installation_removed_by_removing_some_repos.json").toURI()));
-
+    void should_handle_installation_remove_some_repos() {
         // When
-        processEvent(installationAddedEvent, "installation");
+        processEventsFromPaths("installation",
+                "/github/webhook/events/installation/installation_added_to_update.json"
+        );
 
         // Then
         final var installations = githubAppInstallationEntityRepository.findAll();
@@ -308,7 +295,9 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(repos.get(1).getId()).isEqualTo(715033315);
 
         // When
-        processEvent(installationRemovedByRemovingSomeReposEvent, "installation_repositories");
+        processEventsFromPaths("installation_repositories",
+                "/github/webhook/events/installation/installation_removed_by_removing_some_repos.json"
+        );
 
         // Then
         final var installationsUpdated = githubAppInstallationEntityRepository.findAll();

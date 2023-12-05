@@ -10,11 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -29,19 +24,19 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
 
     @Test
     @Order(1)
-    void init() throws URISyntaxException, IOException {
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_created_old.json").toURI()));
-        processEvent(event, "installation");
+    void init() {
+        processEventsFromPaths("installation",
+                "/github/webhook/events/installation/installation_created_old.json"
+        );
     }
 
     @Test
     @Order(2)
-    void should_handle_repo_becoming_private() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/repository/cairo-streams-privatized.json").toURI()));
-
+    void should_handle_repo_becoming_private() {
         // When
-        processEvent(event, "repository");
+        processEventsFromPaths("repository",
+                "/github/webhook/events/repository/cairo-streams-privatized.json"
+        );
 
         // Then
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isFalse();
@@ -51,12 +46,11 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
 
     @Test
     @Order(3)
-    void should_handle_repo_becoming_public() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/repository/cairo-streams-publicized.json").toURI()));
-
+    void should_handle_repo_becoming_public() {
         // When
-        processEvent(event, "repository");
+        processEventsFromPaths("repository",
+                "/github/webhook/events/repository/cairo-streams-publicized.json"
+        );
 
         // Then
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isTrue();
@@ -66,12 +60,11 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
 
     @Test
     @Order(4)
-    void should_handle_repo_updated() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/repository/cairo-streams-edited.json").toURI()));
-
+    void should_handle_repo_updated() {
         // When
-        processEvent(event, "repository");
+        processEventsFromPaths("repository",
+                "/github/webhook/events/repository/cairo-streams-edited.json"
+        );
 
         // Then
         assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getDescription()).isEqualTo("Array stream library written in old-fashioned Cairo");
@@ -79,12 +72,11 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
 
     @Test
     @Order(4)
-    void should_handle_repo_deleted() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/repository/cairo-streams-deleted.json").toURI()));
-
+    void should_handle_repo_deleted() {
         // When
-        processEvent(event, "repository");
+        processEventsFromPaths("repository",
+                "/github/webhook/events/repository/cairo-streams-deleted.json"
+        );
 
         // Then
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID)).isEmpty();

@@ -31,6 +31,9 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Map;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -115,7 +118,7 @@ public class IntegrationTest {
                 .exchange();
     }
 
-    protected WebTestClient.ResponseSpec postEvent(final String event, String eventTypeHeader) {
+    private WebTestClient.ResponseSpec postEvent(final String eventTypeHeader, final String event) {
         return client.post().uri(getApiURI("/github-app/webhook")).header("X-GitHub-Event", eventTypeHeader)
                 .header("X-Hub-Signature-256", "sha256=" + GithubSignatureVerifier.hmac(event.getBytes(),
                         config.secret))
@@ -123,8 +126,16 @@ public class IntegrationTest {
                 .exchange();
     }
 
-    protected void processEvent(String event, String installation) {
-        postEvent(event, installation).expectStatus().isOk();
+    protected void processEventsFromPaths(final String eventType, final String... paths) {
+        Arrays.stream(paths)
+                .map(path -> {
+                    try {
+                        return Files.readString(Paths.get(this.getClass().getResource(path).toURI()));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .forEach(event -> postEvent(eventType, event).expectStatus().isOk());
         eventsInboxJob.run();
     }
 }

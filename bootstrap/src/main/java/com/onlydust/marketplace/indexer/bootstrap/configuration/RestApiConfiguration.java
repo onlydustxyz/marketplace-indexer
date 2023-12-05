@@ -1,14 +1,15 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
+import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.AuthorizationContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
-import com.onlydust.marketplace.indexer.domain.ports.out.exposition.AccountStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobStorage;
-import com.onlydust.marketplace.indexer.domain.services.exposers.UserExposer;
+import com.onlydust.marketplace.indexer.domain.services.indexers.UserExposerIndexer;
 import com.onlydust.marketplace.indexer.rest.api.*;
 import com.onlydust.marketplace.indexer.rest.api.exception.OnlyDustExceptionRestHandler;
 import org.springframework.context.annotation.Bean;
@@ -21,10 +22,10 @@ public class RestApiConfiguration {
     @Bean
     public UsersRestApi usersRestApi(final UserIndexer cachedUserIndexer,
                                      final AuthorizationContext authorizationContext,
-                                     final AccountStorage accountStorage,
+                                     final Exposer<CleanAccount> userExposer,
                                      final UserIndexingJobStorage userIndexingJobStorage) {
         return new UsersRestApi(
-                new UserExposer(cachedUserIndexer, accountStorage),
+                new UserExposerIndexer(cachedUserIndexer, userExposer),
                 authorizationContext,
                 userIndexingJobStorage);
     }
