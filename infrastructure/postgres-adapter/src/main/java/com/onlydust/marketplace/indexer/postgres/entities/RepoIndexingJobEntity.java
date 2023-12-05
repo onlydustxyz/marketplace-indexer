@@ -23,7 +23,7 @@ public class RepoIndexingJobEntity {
     @Id
     Long repoId;
     Long installationId;
-    Date suspendedAt;
+    Date installationSuspendedAt;
     Boolean fullIndexing;
     Boolean isPublic;
 

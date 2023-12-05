@@ -15,14 +15,14 @@ public interface RepoIndexingJobEntityRepository extends JpaRepository<RepoIndex
     @Query("UPDATE RepoIndexingJobEntity SET installationId = NULL WHERE installationId = :installationId")
     void deleteInstallationId(Long installationId);
 
-    @Query(value = "SELECT DISTINCT CASE WHEN suspended_at IS NULL THEN installation_id END FROM indexer.repo_indexing_jobs", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT CASE WHEN installation_suspended_at IS NULL THEN installation_id END FROM indexer.repo_indexing_jobs", nativeQuery = true)
     Set<Long> findAllValidInstallationIds();
 
     @Query("""
             SELECT j
             FROM RepoIndexingJobEntity j
-            WHERE (:installationId IS NULL AND (j.installationId IS NULL OR j.suspendedAt IS NOT NULL) AND j.isPublic = TRUE)
-               OR (:installationId IS NOT NULL AND j.installationId = :installationId AND j.suspendedAt IS NULL)
+            WHERE (:installationId IS NULL AND (j.installationId IS NULL OR j.installationSuspendedAt IS NOT NULL) AND j.isPublic = TRUE)
+               OR (:installationId IS NOT NULL AND j.installationId = :installationId AND j.installationSuspendedAt IS NULL)
                 AND (j.finishedAt IS NULL OR j.finishedAt < :since)
             """)
     Set<RepoIndexingJobEntity> findReposUpdatedBefore(Long installationId, Instant since);
@@ -32,6 +32,6 @@ public interface RepoIndexingJobEntityRepository extends JpaRepository<RepoIndex
     void deleteInstallationIdForRepos(Long installationId, List<Long> repoIds);
 
     @Modifying
-    @Query("UPDATE RepoIndexingJobEntity SET suspendedAt = :suspendedAt WHERE installationId = :installationId")
+    @Query("UPDATE RepoIndexingJobEntity SET installationSuspendedAt = :suspendedAt WHERE installationId = :installationId")
     void setSuspendedAt(Long installationId, Date suspendedAt);
 }

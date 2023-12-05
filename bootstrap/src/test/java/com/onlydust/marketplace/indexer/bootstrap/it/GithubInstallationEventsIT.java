@@ -201,7 +201,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(jobs).hasSize(2);
         assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
         assertThat(jobs.get(0).getInstallationId()).isEqualTo(INSTALLATION_ID);
-        assertThat(jobs.get(0).getSuspendedAt().toInstant()).isEqualTo(ZonedDateTime.parse("2023-11-13T14:21:39Z").toInstant());
+        assertThat(jobs.get(0).getInstallationSuspendedAt().toInstant()).isEqualTo(ZonedDateTime.parse("2023-11-13T14:21:39Z").toInstant());
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isNull();
 
@@ -232,7 +232,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(jobs).hasSize(2);
         assertThat(jobs.get(0).getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
         assertThat(jobs.get(0).getInstallationId()).isEqualTo(INSTALLATION_ID);
-        assertThat(jobs.get(0).getSuspendedAt()).isNull();
+        assertThat(jobs.get(0).getInstallationSuspendedAt()).isNull();
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isNull();
 
