@@ -10,11 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -32,19 +27,17 @@ public class GithubIssueEventsIT extends IntegrationTest {
 
     @Test
     @Order(1)
-    void init() throws URISyntaxException, IOException {
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_created_old.json").toURI()));
-        processEvent(event, "installation");
+    void init() {
+        processEventsFromPaths("installation",
+                "/github/webhook/events/installation/installation_created_old.json");
     }
 
     @Test
     @Order(2)
-    void should_handle_issue_being_created() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/issues/cairo-streams-issue-29-opened.json").toURI()));
-
+    void should_handle_issue_being_created() {
         // When
-        processEvent(event, "issues");
+        processEventsFromPaths("issues",
+                "/github/webhook/events/issues/cairo-streams-issue-29-opened.json");
 
         // Then
         final var issue = githubIssueRepository.findById(ISSUE_ID).orElseThrow();

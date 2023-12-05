@@ -19,11 +19,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -54,26 +49,13 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
 
     @Test
     @Order(1)
-    public void index_repos() throws URISyntaxException, IOException {
-        {
-            // Add repos to index (light mode = from GitHub app installation)
-            final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_created_new.json").toURI()));
-            post(event, "installation").expectStatus().isOk();
-        }
-
-        {
-            // Add private repo
-            final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_added_private_repo.json").toURI()));
-            post(event, "installation_repositories").expectStatus().isOk();
-        }
-
-        {
-            // Uninstall app
-            final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/installation/installation_deleted.json").toURI()));
-            post(event, "installation").expectStatus().isOk();
-        }
-
-        eventsInboxJob.run();
+    public void index_repos() {
+        // Add repos to index (light mode = from GitHub app installation)
+        processEventsFromPaths("installation",
+                "/github/webhook/events/installation/installation_created_new.json", // Add repos to index (light mode = from GitHub app installation)
+                "/github/webhook/events/installation/installation_added_private_repo.json", // Add private repo
+                "/github/webhook/events/installation/installation_deleted.json"             // Uninstall app
+        );
 
         // Run all jobs
         diffRepoRefreshJobManager.createJob().run();
