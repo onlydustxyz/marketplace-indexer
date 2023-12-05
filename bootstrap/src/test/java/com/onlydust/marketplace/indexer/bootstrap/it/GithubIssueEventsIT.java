@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubIssueEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository;
@@ -75,5 +76,22 @@ public class GithubIssueEventsIT extends IntegrationTest {
         assertThat(repoContributors).hasSize(1);
         assertThat(repoContributors.get(0).getId().getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
         assertThat(repoContributors.get(0).getId().getContributorId()).isEqualTo(PIERRE_ID);
+    }
+
+    @Test
+    void should_handle_issue_being_closed() {
+        // When
+        processEventsFromPaths("issues",
+                "/github/webhook/events/issues/cairo-streams-issue-29-closed.json"
+        );
+
+        // Then
+        final var issue = githubIssueRepository.findById(ISSUE_ID).orElseThrow();
+        assertThat(issue.getStatus()).isEqualTo(GithubIssueEntity.Status.CANCELLED);
+
+        final var contributions = contributionRepository.findAll();
+        assertThat(contributions).hasSize(1);
+        assertThat(contributions.get(0).getIssue().getId()).isEqualTo(ISSUE_ID);
+        assertThat(contributions.get(0).getStatus()).isEqualTo(ContributionEntity.Status.CANCELLED);
     }
 }
