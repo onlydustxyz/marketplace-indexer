@@ -1,9 +1,14 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawIssueEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
+import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventsInbox;
@@ -171,11 +176,11 @@ public class DomainConfiguration {
     @Bean
     public UserIndexer diffUserIndexer(final RawStorageReader diffRawStorageReader,
                                        final MeterRegistry registry,
-                                       final AccountStorage accountStorage
+                                       final Exposer<CleanAccount> userExposer
     ) {
         return new MonitoredUserIndexer(
-                new UserExposer(
-                        new UserIndexingService(diffRawStorageReader), accountStorage),
+                new UserExposerIndexer(
+                        new UserIndexingService(diffRawStorageReader), userExposer),
                 registry);
     }
 
@@ -183,15 +188,14 @@ public class DomainConfiguration {
     public IssueIndexer cachedIssueIndexer(final RawStorageReader cachedRawStorageReader,
                                            final UserIndexer cachedUserIndexer,
                                            final RepoIndexer cachedRepoIndexer,
-                                           final ContributionStorage contributionStorage,
-                                           final IssueStorage issueStorage,
+                                           final Exposer<CleanIssue> issueExposer,
                                            final MeterRegistry registry) {
-        return new IssueExposer(
+        return new IssueExposerIndexer(
                 new MonitoredIssueIndexer(
                         new IssueIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer),
                         registry
                 ),
-                contributionStorage, issueStorage
+                issueExposer
         );
     }
 
@@ -199,11 +203,10 @@ public class DomainConfiguration {
     public IssueIndexer cacheOnlyIssueIndexer(final PostgresRawStorage postgresRawStorage,
                                               final UserIndexer cacheOnlyUserIndexer,
                                               final RepoIndexer cacheOnlyRepoIndexer,
-                                              final ContributionStorage contributionStorage,
-                                              final IssueStorage issueStorage) {
-        return new IssueExposer(
+                                              final Exposer<CleanIssue> issueExposer) {
+        return new IssueExposerIndexer(
                 new IssueIndexingService(postgresRawStorage, cacheOnlyUserIndexer, cacheOnlyRepoIndexer),
-                contributionStorage, issueStorage
+                issueExposer
         );
     }
 
@@ -211,15 +214,14 @@ public class DomainConfiguration {
     public IssueIndexer liveIssueIndexer(final RawStorageReader liveRawStorageReader,
                                          final UserIndexer cachedUserIndexer,
                                          final RepoIndexer cachedRepoIndexer,
-                                         final ContributionStorage contributionStorage,
-                                         final IssueStorage issueStorage,
+                                         final Exposer<CleanIssue> issueExposer,
                                          final MeterRegistry registry) {
-        return new IssueExposer(
+        return new IssueExposerIndexer(
                 new MonitoredIssueIndexer(
                         new IssueIndexingService(liveRawStorageReader, cachedUserIndexer, cachedRepoIndexer),
                         registry
                 ),
-                contributionStorage, issueStorage
+                issueExposer
         );
     }
 
@@ -229,18 +231,15 @@ public class DomainConfiguration {
             final UserIndexer cachedUserIndexer,
             final RepoIndexer cachedRepoIndexer,
             final IssueIndexer cachedIssueIndexer,
-            final ContributionStorage contributionStorage,
-            final PullRequestStorage pullRequestStorage,
+            final Exposer<CleanPullRequest> pullRequestExposer,
             final MeterRegistry registry) {
-        return new PullRequestExposer(
+        return new PullRequestExposerIndexer(
                 new MonitoredPullRequestIndexer(
                         new PullRequestIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer),
                         registry),
-                contributionStorage,
-                pullRequestStorage
+                pullRequestExposer
         );
     }
-
 
     @Bean
     public PullRequestIndexer cacheOnlyPullRequestIndexer(
@@ -248,12 +247,10 @@ public class DomainConfiguration {
             final UserIndexer cacheOnlyUserIndexer,
             final RepoIndexer cacheOnlyRepoIndexer,
             final IssueIndexer cacheOnlyIssueIndexer,
-            final ContributionStorage contributionStorage,
-            final PullRequestStorage pullRequestStorage) {
-        return new PullRequestExposer(
+            final Exposer<CleanPullRequest> pullRequestExposer) {
+        return new PullRequestExposerIndexer(
                 new PullRequestIndexingService(postgresRawStorage, cacheOnlyUserIndexer, cacheOnlyRepoIndexer, cacheOnlyIssueIndexer),
-                contributionStorage,
-                pullRequestStorage
+                pullRequestExposer
         );
     }
 
@@ -264,33 +261,30 @@ public class DomainConfiguration {
             final UserIndexer cachedUserIndexer,
             final RepoIndexer cachedRepoIndexer,
             final IssueIndexer cachedIssueIndexer,
-            final ContributionStorage contributionStorage,
-            final PullRequestStorage pullRequestStorage,
+            final Exposer<CleanPullRequest> pullRequestExposer,
             final MeterRegistry registry) {
-        return new PullRequestExposer(
+        return new PullRequestExposerIndexer(
                 new MonitoredPullRequestIndexer(
                         new PullRequestIndexingService(liveRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer),
                         registry),
-                contributionStorage,
-                pullRequestStorage
+                pullRequestExposer
         );
     }
-
 
     @Bean
     public RepoIndexer cachedRepoIndexer(
             final RawStorageReader cachedRawStorageReader,
             final UserIndexer cachedUserIndexer,
-            final RepoStorage postgresRepoStorage) {
-        return new RepoExposer(new RepoIndexingService(cachedRawStorageReader, cachedUserIndexer), postgresRepoStorage);
+            final Exposer<CleanRepo> repoExposer) {
+        return new RepoExposerIndexer(new RepoIndexingService(cachedRawStorageReader, cachedUserIndexer), repoExposer);
     }
 
     @Bean
     public RepoIndexer cacheOnlyRepoIndexer(
             final PostgresRawStorage postgresRawStorage,
             final UserIndexer cacheOnlyUserIndexer,
-            final RepoStorage postgresRepoStorage) {
-        return new RepoExposer(new RepoIndexingService(postgresRawStorage, cacheOnlyUserIndexer), postgresRepoStorage);
+            final Exposer<CleanRepo> repoExposer) {
+        return new RepoExposerIndexer(new RepoIndexingService(postgresRawStorage, cacheOnlyUserIndexer), repoExposer);
     }
 
 
@@ -298,8 +292,8 @@ public class DomainConfiguration {
     public RepoIndexer liveRepoIndexer(
             final RawStorageReader liveRawStorageReader,
             final UserIndexer cachedUserIndexer,
-            final RepoStorage postgresRepoStorage) {
-        return new RepoExposer(new RepoIndexingService(liveRawStorageReader, cachedUserIndexer), postgresRepoStorage);
+            final Exposer<CleanRepo> repoExposer) {
+        return new RepoExposerIndexer(new RepoIndexingService(liveRawStorageReader, cachedUserIndexer), repoExposer);
     }
 
 
@@ -309,10 +303,10 @@ public class DomainConfiguration {
             final IssueIndexer cachedIssueIndexer,
             final PullRequestIndexer cachedPullRequestIndexer,
             final RepoIndexer cachedRepoIndexer,
-            final RepoContributorsStorage repoContributorsStorage) {
-        return new RepoContributorsExposer(
+            final Exposer<CleanRepo> repoContributorsExposer) {
+        return new RepoExposerIndexer(
                 new FullRepoIndexingService(cachedRawStorageReader, cachedIssueIndexer, cachedPullRequestIndexer, cachedRepoIndexer),
-                repoContributorsStorage
+                repoContributorsExposer
         );
     }
 
@@ -322,10 +316,10 @@ public class DomainConfiguration {
             final IssueIndexer cacheOnlyIssueIndexer,
             final PullRequestIndexer cacheOnlyPullRequestIndexer,
             final RepoIndexer cacheOnlyRepoIndexer,
-            final RepoContributorsStorage repoContributorsStorage) {
-        return new RepoContributorsExposer(
+            final Exposer<CleanRepo> repoContributorsExposer) {
+        return new RepoExposerIndexer(
                 new FullRepoIndexingService(postgresRawStorage, cacheOnlyIssueIndexer, cacheOnlyPullRequestIndexer, cacheOnlyRepoIndexer),
-                repoContributorsStorage
+                repoContributorsExposer
         );
     }
 
@@ -335,17 +329,17 @@ public class DomainConfiguration {
             final IssueIndexer liveIssueIndexer,
             final PullRequestIndexer livePullRequestIndexer,
             final RepoIndexer liveRepoIndexer,
-            final RepoContributorsStorage repoContributorsStorage,
+            final Exposer<CleanRepo> repoContributorsExposer,
             final RateLimitService rateLimitService,
             final RateLimitService.Config rateLimitConfig,
             final MeterRegistry registry,
             final GithubAppContext githubAppContext
     ) {
-        return new RepoContributorsExposer(
+        return new RepoExposerIndexer(
                 new RateLimitGuardedFullRepoIndexer(
                         new FullRepoIndexingService(diffRawStorageReader, liveIssueIndexer, livePullRequestIndexer, liveRepoIndexer),
                         rateLimitService, rateLimitConfig, registry, githubAppContext),
-                repoContributorsStorage
+                repoContributorsExposer
         );
     }
 
@@ -405,5 +399,32 @@ public class DomainConfiguration {
     @Bean
     public EventsInbox eventsInbox(final EventInboxStorage eventInboxStorage) {
         return new EventInboxService(eventInboxStorage);
+    }
+
+    @Bean
+    public Exposer<CleanAccount> userExposer(final AccountStorage accountStorage) {
+        return new UserExposer(accountStorage);
+    }
+
+    @Bean
+    public Exposer<CleanIssue> issueExposer(final ContributionStorage contributionStorage,
+                                            final IssueStorage issueStorage) {
+        return new IssueExposer(contributionStorage, issueStorage);
+    }
+
+    @Bean
+    public Exposer<CleanPullRequest> pullRequestExposer(final ContributionStorage contributionStorage,
+                                                        final PullRequestStorage pullRequestStorage) {
+        return new PullRequestExposer(contributionStorage, pullRequestStorage);
+    }
+
+    @Bean
+    public Exposer<CleanRepo> repoExposer(final RepoStorage postgresRepoStorage) {
+        return new RepoExposer(postgresRepoStorage);
+    }
+
+    @Bean
+    public Exposer<CleanRepo> repoContributorsExposer(final RepoContributorsStorage repoContributorsStorage) {
+        return new RepoContributorsExposer(repoContributorsStorage);
     }
 }

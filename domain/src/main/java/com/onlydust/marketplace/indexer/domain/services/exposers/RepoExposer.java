@@ -2,34 +2,19 @@ package com.onlydust.marketplace.indexer.domain.services.exposers;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
 import lombok.AllArgsConstructor;
 
 import java.time.Instant;
-import java.util.Optional;
 
 @AllArgsConstructor
-public class RepoExposer implements RepoIndexer {
-    RepoIndexer indexer;
+public class RepoExposer implements Exposer<CleanRepo> {
     RepoStorage repoStorage;
 
-    private void expose(CleanRepo repo) {
+    @Override
+    public void expose(CleanRepo repo) {
         repoStorage.save(GithubRepo.of(repo));
         repoStorage.setLastIndexedTime(repo.getId(), Instant.now());
-    }
-
-    @Override
-    public Optional<CleanRepo> indexRepo(Long repoId) {
-        final var repo = indexer.indexRepo(repoId);
-        repo.ifPresent(this::expose);
-        return repo;
-    }
-
-    @Override
-    public Optional<CleanRepo> indexRepo(String repoOwner, String repoName) {
-        final var repo = indexer.indexRepo(repoOwner, repoName);
-        repo.ifPresent(this::expose);
-        return repo;
     }
 }

@@ -5,31 +5,20 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCodeReview;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCommit;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubPullRequest;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.PullRequestStorage;
 import lombok.AllArgsConstructor;
 
-import javax.transaction.Transactional;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
-public class PullRequestExposer implements PullRequestIndexer {
-    PullRequestIndexer indexer;
+public class PullRequestExposer implements Exposer<CleanPullRequest> {
     ContributionStorage contributionStorage;
     PullRequestStorage pullRequestStorage;
 
     @Override
-    @Transactional
-    public Optional<CleanPullRequest> indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber) {
-        final var pullRequest = indexer.indexPullRequest(repoOwner, repoName, pullRequestNumber);
-        pullRequest.ifPresent(this::expose);
-
-        return pullRequest;
-    }
-
-    private void expose(CleanPullRequest pullRequest) {
+    public void expose(CleanPullRequest pullRequest) {
         final var fromPullRequest = Stream.of(pullRequest).map(GithubPullRequest::of).map(Contribution::of);
         final var fromCommits = pullRequest.getCommits().stream().map(commit -> GithubCommit.of(commit, pullRequest)).map(Contribution::of);
         final var fromCodeReviewsPending = pullRequest.getReviews().stream()

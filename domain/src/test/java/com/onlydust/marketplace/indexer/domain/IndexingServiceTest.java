@@ -52,13 +52,13 @@ public class IndexingServiceTest {
     final RawStorageReader rawStorageReader = CacheWriteRawStorageReaderDecorator.builder().fetcher(rawStorageReaderStub).cache(rawStorageRepository).build();
     final UserIndexingService userIndexingService = new UserIndexingService(rawStorageReader);
     final RepoIndexingService repoIndexingService = new RepoIndexingService(rawStorageReader, userIndexingService);
-    final IssueIndexer issueIndexer = new IssueExposer(
+    final IssueIndexer issueIndexer = new IssueExposerIndexer(
             new IssueIndexingService(rawStorageReader, userIndexingService, repoIndexingService),
-            contributionRepository, issueStorage
+            new IssueExposer(contributionRepository, issueStorage)
     );
-    final PullRequestIndexer pullRequestIndexer = new PullRequestExposer(
+    final PullRequestIndexer pullRequestIndexer = new PullRequestExposerIndexer(
             new PullRequestIndexingService(rawStorageReader, userIndexingService, repoIndexingService, issueIndexer),
-            contributionRepository, pullRequestStorage
+            new PullRequestExposer(contributionRepository, pullRequestStorage)
     );
     final FullRepoIndexingService fullRepoIndexingService = new FullRepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer, repoIndexingService);
 
