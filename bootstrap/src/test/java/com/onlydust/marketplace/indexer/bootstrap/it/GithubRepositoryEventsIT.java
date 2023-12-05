@@ -76,4 +76,17 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
         // Then
         assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getDescription()).isEqualTo("Array stream library written in old-fashioned Cairo");
     }
+
+    @Test
+    @Order(4)
+    void should_handle_repo_deleted() throws URISyntaxException, IOException {
+        // Given
+        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/repository/cairo-streams-deleted.json").toURI()));
+
+        // When
+        processEvent(event, "repository");
+
+        // Then
+        assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID)).isEmpty();
+    }
 }

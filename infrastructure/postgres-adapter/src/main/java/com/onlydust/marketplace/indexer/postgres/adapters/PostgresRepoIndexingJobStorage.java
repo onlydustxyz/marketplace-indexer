@@ -137,4 +137,9 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
                 .toList()
         );
     }
+
+    @Override
+    public void delete(Long repoId) {
+        repository.deleteById(repoId);
+    }
 }

@@ -28,6 +28,7 @@ public class RepositoryEventProcessorService implements EventHandler<RawReposito
         switch (event.getAction()) {
             case PRIVATIZED -> repoIndexingJobStorage.setPrivate(event.getRepository().getId());
             case PUBLICIZED -> repoIndexingJobStorage.setPublic(event.getRepository().getId());
+            case DELETED -> repoIndexingJobStorage.delete(event.getRepository().getId());
         }
     }
 }

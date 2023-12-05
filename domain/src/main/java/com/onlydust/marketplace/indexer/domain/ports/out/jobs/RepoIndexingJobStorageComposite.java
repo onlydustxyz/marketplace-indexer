@@ -96,4 +96,10 @@ public class RepoIndexingJobStorageComposite implements RepoIndexingJobStorage {
         Arrays.stream(repoIndexingJobRepositories)
                 .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.configureRepoForLightIndexing(repoIds));
     }
+
+    @Override
+    public void delete(Long repoId) {
+        Arrays.stream(repoIndexingJobRepositories)
+                .forEach(repoIndexingJobRepository -> repoIndexingJobRepository.delete(repoId));
+    }
 }
