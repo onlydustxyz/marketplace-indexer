@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
-import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoEntity;
@@ -31,7 +30,9 @@ public class PostgresRepoStorage implements RepoStorage {
 
     @Override
     public void update(GithubRepo updated) {
-        final var repo = githubRepoEntityRepository.findById(updated.getId()).orElseThrow(() -> OnlyDustException.notFound("Repo not found"));
-        githubRepoEntityRepository.save(repo.updateWith(updated));
+        final var repo = githubRepoEntityRepository.findById(updated.getId())
+                .map(r -> r.updateWith(updated))
+                .orElse(GithubRepoEntity.of(updated));
+        githubRepoEntityRepository.save(repo);
     }
 }
