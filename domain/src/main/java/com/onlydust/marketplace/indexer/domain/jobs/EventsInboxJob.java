@@ -1,9 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
 import lombok.AllArgsConstructor;
@@ -18,6 +15,7 @@ public class EventsInboxJob extends Job {
     private final EventHandler<RawInstallationEvent> installationEventHandler;
     private final EventHandler<RawRepositoryEvent> repositoryEventHandler;
     private final EventHandler<RawStarEvent> starEventHandler;
+    private final EventHandler<RawIssueEvent> issueEventHandler;
 
     @Override
     protected void execute() {
@@ -39,6 +37,10 @@ public class EventsInboxJob extends Job {
                     break;
                 case "star":
                     starEventHandler.process(event.payload(RawStarEvent.class));
+                    eventInboxStorage.ack(event.getId());
+                    break;
+                case "issues":
+                    issueEventHandler.process(event.payload(RawIssueEvent.class));
                     eventInboxStorage.ack(event.getId());
                     break;
                 default:

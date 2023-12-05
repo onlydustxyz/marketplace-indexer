@@ -16,7 +16,7 @@ public class RepositoryEvent extends Event {
     public static RepositoryEvent of(RawRepositoryEvent event) {
         return new RepositoryEvent(
                 Action.of(event.getAction()),
-                CleanRepo.of(event.getRepository(), CleanAccount.of(event.getRepository().getOwner()))
+                CleanRepo.of(event.getRepository())
         );
     }
 

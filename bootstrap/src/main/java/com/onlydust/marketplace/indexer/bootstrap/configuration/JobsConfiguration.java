@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.bootstrap.configuration;
 import com.onlydust.marketplace.indexer.domain.jobs.EventsInboxJob;
 import com.onlydust.marketplace.indexer.domain.jobs.NewContributionNotifierJob;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawIssueEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
@@ -19,8 +20,9 @@ public class JobsConfiguration {
     public EventsInboxJob eventsInboxJob(final EventInboxStorage eventInboxStorage,
                                          final EventHandler<RawInstallationEvent> installationEventHandler,
                                          final EventHandler<RawRepositoryEvent> repositoryEventHandler,
-                                         final EventHandler<RawStarEvent> starEventHandler) {
-        return new EventsInboxJob(eventInboxStorage, installationEventHandler, repositoryEventHandler, starEventHandler);
+                                         final EventHandler<RawStarEvent> starEventHandler,
+                                         final EventHandler<RawIssueEvent> issueEventHandler) {
+        return new EventsInboxJob(eventInboxStorage, installationEventHandler, repositoryEventHandler, starEventHandler, issueEventHandler);
     }
 
     @Bean

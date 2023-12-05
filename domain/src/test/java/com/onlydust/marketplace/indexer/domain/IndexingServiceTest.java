@@ -159,7 +159,7 @@ public class IndexingServiceTest {
 
         assertThat(contributionRepository.contributions()).hasSize(1);
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.ISSUE))).hasSize(1);
-        verify(issueStorage, times(1)).saveAll(any());
+        verify(issueStorage, times(1)).save(any());
     }
 
     @Test

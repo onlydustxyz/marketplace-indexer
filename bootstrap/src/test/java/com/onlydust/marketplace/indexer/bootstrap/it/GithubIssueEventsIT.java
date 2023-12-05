@@ -1,9 +1,7 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoEntity;
-import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubIssueEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -19,13 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GithubIssueEventsIT extends IntegrationTest {
-    final Long CAIRO_STREAMS_ID = 493795808L;
+    final Long ISSUE_ID = 2025877285L;
     @Autowired
-    public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
-    @Autowired
-    OldRepoIndexesEntityRepository oldRepoIndexesEntityRepository;
-    @Autowired
-    GithubRepoEntityRepository githubRepoRepository;
+    GithubIssueRepository githubIssueRepository;
 
     @Test
     @Order(1)
@@ -36,44 +30,25 @@ public class GithubIssueEventsIT extends IntegrationTest {
 
     @Test
     @Order(2)
-    void should_handle_repo_becoming_private() throws URISyntaxException, IOException {
+    void should_handle_issue_being_created() throws URISyntaxException, IOException {
         // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/repository/cairo-streams-privatized.json").toURI()));
+        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/issues/cairo-streams-issue-29-opened.json").toURI()));
 
         // When
-        processEvent(event, "repository");
+        processEvent(event, "issues");
 
         // Then
-        assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isFalse();
-        assertThat(oldRepoIndexesEntityRepository.findById(CAIRO_STREAMS_ID)).isEmpty();
-        assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getVisibility()).isEqualTo(GithubRepoEntity.Visibility.PRIVATE);
-    }
-
-    @Test
-    @Order(3)
-    void should_handle_repo_becoming_public() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/repository/cairo-streams-publicized.json").toURI()));
-
-        // When
-        processEvent(event, "repository");
-
-        // Then
-        assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isTrue();
-        assertThat(oldRepoIndexesEntityRepository.findById(CAIRO_STREAMS_ID)).isPresent();
-        assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getVisibility()).isEqualTo(GithubRepoEntity.Visibility.PUBLIC);
-    }
-
-    @Test
-    @Order(4)
-    void should_handle_repo_updated() throws URISyntaxException, IOException {
-        // Given
-        final var event = Files.readString(Paths.get(this.getClass().getResource("/github/webhook/events/repository/cairo-streams-edited.json").toURI()));
-
-        // When
-        processEvent(event, "repository");
-
-        // Then
-        assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getDescription()).isEqualTo("Array stream library written in old-fashioned Cairo");
+        final var issue = githubIssueRepository.findById(ISSUE_ID).orElseThrow();
+        assertThat(issue.getId()).isEqualTo(ISSUE_ID);
+        assertThat(issue.getNumber()).isEqualTo(29);
+        assertThat(issue.getTitle()).isEqualTo("New issue created");
+        assertThat(issue.getBody()).isEqualTo("This issue is created for testing purposes");
+        assertThat(issue.getHtmlUrl()).isEqualTo("https://github.com/onlydustxyz/cairo-streams/issues/29");
+        assertThat(issue.getStatus()).isEqualTo(GithubIssueEntity.Status.OPEN);
+        assertThat(issue.getCreatedAt().toString()).isEqualTo("2023-12-05 10:38:44.0");
+        assertThat(issue.getAuthor().getLogin()).isEqualTo("AnthonyBuisset");
+        assertThat(issue.getRepo().getName()).isEqualTo("cairo-streams");
+        assertThat(issue.getAssignees()).hasSize(1);
+        assertThat(issue.getAssignees().get(0).getLogin()).isEqualTo("ofux");
     }
 }

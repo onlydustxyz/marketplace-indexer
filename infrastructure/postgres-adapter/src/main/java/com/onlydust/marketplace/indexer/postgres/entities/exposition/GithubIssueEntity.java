@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Data
-@Builder(access = AccessLevel.PRIVATE)
+@Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
@@ -70,6 +70,22 @@ public class GithubIssueEntity {
                 .authorLogin(issue.getAuthor().getLogin())
                 .authorHtmlUrl(issue.getAuthor().getHtmlUrl())
                 .authorAvatarUrl(issue.getAuthor().getAvatarUrl())
+                .assignees(issue.getAssignees().stream().map(GithubAccountEntity::of).toList())
+                .build();
+    }
+
+    public GithubIssueEntity updateWith(GithubIssue issue) {
+        return this.toBuilder()
+                .id(issue.getId())
+                .number(issue.getNumber())
+                .title(issue.getTitle())
+                .status(Status.of(issue.getStatus()))
+                .createdAt(issue.getCreatedAt())
+                .closedAt(issue.getClosedAt())
+                .author(GithubAccountEntity.of(issue.getAuthor()))
+                .htmlUrl(issue.getHtmlUrl())
+                .body(issue.getBody())
+                .commentsCount(issue.getCommentsCount())
                 .assignees(issue.getAssignees().stream().map(GithubAccountEntity::of).toList())
                 .build();
     }

@@ -33,6 +33,6 @@ public class IssueExposer implements IssueIndexer {
 
         contributionStorage.deleteAllByRepoIdAndGithubNumber(issue.getRepo().getId(), issue.getNumber());
         contributionStorage.saveAll(contributions);
-        issueStorage.saveAll(GithubIssue.of(issue));
+        issueStorage.save(GithubIssue.of(issue));
     }
 }

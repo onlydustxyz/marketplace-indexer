@@ -1,7 +1,5 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -19,10 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GithubStarEventsIT extends IntegrationTest {
     final Long CAIRO_STREAMS_ID = 493795808L;
-    @Autowired
-    public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
-    @Autowired
-    OldRepoIndexesEntityRepository oldRepoIndexesEntityRepository;
     @Autowired
     GithubRepoEntityRepository githubRepoRepository;
 

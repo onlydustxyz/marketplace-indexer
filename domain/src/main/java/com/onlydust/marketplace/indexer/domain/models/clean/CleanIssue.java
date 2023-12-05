@@ -42,4 +42,8 @@ public class CleanIssue {
                 .comments(issue.getComments())
                 .build();
     }
+
+    public static CleanIssue of(RawIssue issue, CleanRepo repo) {
+        return CleanIssue.of(issue, repo, CleanAccount.of(issue.getAuthor()), issue.getAssignees().stream().map(CleanAccount::of).toList());
+    }
 }

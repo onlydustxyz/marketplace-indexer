@@ -27,6 +27,9 @@ public class CleanRepo {
     CleanRepo parent;
     Boolean isPublic;
 
+    public static CleanRepo of(RawRepo repo) {
+        return CleanRepo.of(repo, CleanAccount.of(repo.getOwner()));
+    }
 
     public static CleanRepo of(RawRepo repo, CleanAccount owner) {
         return CleanRepo
