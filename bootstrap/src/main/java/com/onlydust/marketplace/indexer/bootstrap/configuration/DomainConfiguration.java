@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventsInbox;
@@ -23,6 +24,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.events.EventInboxService;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.events.RepositoryEventProcessorService;
+import com.onlydust.marketplace.indexer.domain.services.events.StarEventProcessorService;
 import com.onlydust.marketplace.indexer.domain.services.exposers.*;
 import com.onlydust.marketplace.indexer.domain.services.guards.RateLimitGuardedFullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
@@ -141,6 +143,11 @@ public class DomainConfiguration {
         return new RepositoryEventProcessorService(
                 new RepoIndexingJobStorageComposite(repoIndexingJobRepository, oldRepoIndexesEntityRepository),
                 repoStorage);
+    }
+
+    @Bean
+    public EventHandler<RawStarEvent> starEventHandler(final RepoStorage repoStorage) {
+        return new StarEventProcessorService(repoStorage);
     }
 
     @Bean
