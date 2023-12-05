@@ -4,15 +4,11 @@ import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubIssue
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GithubIssueEventsIT extends IntegrationTest {
     final static Long ISSUE_ID = 2025877285L;
     final static Long OFUX_ID = 595505L;
@@ -27,14 +23,6 @@ public class GithubIssueEventsIT extends IntegrationTest {
     RepoContributorRepository repoContributorRepository;
 
     @Test
-    @Order(1)
-    void init() {
-        processEventsFromPaths("installation",
-                "/github/webhook/events/installation/installation_created_old.json");
-    }
-
-    @Test
-    @Order(2)
     void should_handle_issue_being_created() {
         // When
         processEventsFromPaths("issues",
@@ -64,9 +52,8 @@ public class GithubIssueEventsIT extends IntegrationTest {
         assertThat(repoContributors.get(0).getId().getRepoId()).isEqualTo(CAIRO_STREAMS_ID);
         assertThat(repoContributors.get(0).getId().getContributorId()).isEqualTo(OFUX_ID);
     }
-    
+
     @Test
-    @Order(3)
     void should_handle_issue_being_modified() {
         // When
         processEventsFromPaths("issues",
