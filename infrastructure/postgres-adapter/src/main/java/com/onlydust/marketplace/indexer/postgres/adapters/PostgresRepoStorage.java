@@ -16,11 +16,6 @@ public class PostgresRepoStorage implements RepoStorage {
     private final GithubRepoStatsEntityRepository githubRepoStatsEntityRepository;
 
     @Override
-    public void save(GithubRepo repo) {
-        githubRepoEntityRepository.save(GithubRepoEntity.of(repo));
-    }
-
-    @Override
     public void setLastIndexedTime(Long repoId, Instant lastIndexedTime) {
         githubRepoStatsEntityRepository.save(GithubRepoStatsEntity.builder()
                 .id(repoId)
@@ -29,7 +24,7 @@ public class PostgresRepoStorage implements RepoStorage {
     }
 
     @Override
-    public void update(GithubRepo updated) {
+    public void save(GithubRepo updated) {
         final var repo = githubRepoEntityRepository.findById(updated.getId())
                 .map(r -> r.updateWith(updated))
                 .orElse(GithubRepoEntity.of(updated));

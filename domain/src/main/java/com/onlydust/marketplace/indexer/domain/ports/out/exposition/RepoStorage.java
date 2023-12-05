@@ -8,6 +8,4 @@ public interface RepoStorage {
     void save(GithubRepo repo);
 
     void setLastIndexedTime(Long repoId, Instant lastIndexedTime);
-
-    void update(GithubRepo updated);
 }
