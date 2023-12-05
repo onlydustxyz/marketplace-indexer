@@ -67,6 +67,20 @@ public class GithubRepoEntity {
                 .build();
     }
 
+    public GithubRepoEntity updateWith(GithubRepo updated) {
+        return this.toBuilder()
+                .name(updated.getName())
+                .htmlUrl(updated.getHtmlUrl())
+                .updatedAt(updated.getUpdatedAt())
+                .description(updated.getDescription())
+                .starsCount(updated.getStarsCount())
+                .forksCount(updated.getForksCount())
+                .hasIssues(updated.getHasIssues())
+                .languages(updated.getLanguages())
+                .visibility(Visibility.of(updated.getVisibility()))
+                .build();
+    }
+
     public enum Visibility {
         PRIVATE, PUBLIC;
 

@@ -33,4 +33,6 @@ public interface RepoIndexingJobStorage {
     void setPublic(Long repoId);
 
     void configureRepoForLightIndexing(List<Long> repoIds);
+
+    void delete(Long repoId);
 }

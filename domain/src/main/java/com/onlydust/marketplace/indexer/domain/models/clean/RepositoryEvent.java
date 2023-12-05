@@ -21,12 +21,13 @@ public class RepositoryEvent extends Event {
     }
 
     public enum Action {
-        PUBLICIZED, PRIVATIZED;
+        PUBLICIZED, PRIVATIZED, DELETED;
 
         public static Action of(String rawAction) {
             return switch (rawAction.toUpperCase()) {
                 case "PUBLICIZED" -> PUBLICIZED;
                 case "PRIVATIZED" -> PRIVATIZED;
+                case "DELETED" -> DELETED;
                 default -> null;
             };
         }
