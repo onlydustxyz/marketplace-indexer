@@ -24,7 +24,7 @@ public class InstallationEventProcessorService implements EventHandler<RawInstal
     @Override
     public void process(RawInstallationEvent rawEvent) {
         final var event = mapRawEvent(rawEvent);
-        if (event.getAction() == null) return;
+        if (event == null || event.getAction() == null) return;
 
         switch (event.getAction()) {
             case ADDED -> onAdded((InstallationAddedEvent) event);
@@ -90,6 +90,8 @@ public class InstallationEventProcessorService implements EventHandler<RawInstal
     private InstallationEvent mapRawEvent(RawInstallationEvent rawEvent) {
         final var action = InstallationEvent.Action.of(rawEvent.getAction());
         final var account = CleanAccount.of(rawEvent.getInstallation().getAccount());
+
+        if (action == null) return null;
 
         return switch (action) {
             case ADDED -> InstallationAddedEvent.of(

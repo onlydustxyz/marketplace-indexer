@@ -54,7 +54,7 @@ public class EventsInboxJob extends Job {
             }
         } catch (Exception e) {
             LOGGER.error("Error processing event: {}", event, e);
-            eventInboxStorage.nack(event.getId(), e.getMessage());
+            eventInboxStorage.nack(event.getId(), e.toString());
         }
     }
 
