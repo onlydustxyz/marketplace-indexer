@@ -7,7 +7,7 @@ import java.util.Optional;
 public interface EventInboxStorage {
     void save(RawEvent event);
 
-    Optional<RawEvent> peek();
+    Optional<RawEvent> peek(String... types);
 
     void ack(Long id);
 

@@ -9,7 +9,8 @@ import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
 import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import com.onlydust.marketplace.indexer.bootstrap.ApplicationIT;
 import com.onlydust.marketplace.indexer.bootstrap.configuration.SwaggerConfiguration;
-import com.onlydust.marketplace.indexer.domain.jobs.EventsInboxJob;
+import com.onlydust.marketplace.indexer.domain.jobs.InstallationEventsInboxJob;
+import com.onlydust.marketplace.indexer.domain.jobs.OtherEventsInboxJob;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import lombok.extern.slf4j.Slf4j;
@@ -75,7 +76,9 @@ public class IntegrationTest {
     @Autowired
     GithubWebhookRestApi.Config config;
     @Autowired
-    EventsInboxJob eventsInboxJob;
+    InstallationEventsInboxJob installationEventsInboxJob;
+    @Autowired
+    OtherEventsInboxJob otherEventsInboxJob;
 
     @DynamicPropertySource
     static void updateProperties(DynamicPropertyRegistry registry) {
@@ -136,6 +139,7 @@ public class IntegrationTest {
                     }
                 })
                 .forEach(event -> postEvent(eventType, event).expectStatus().isOk());
-        eventsInboxJob.run();
+        installationEventsInboxJob.run();
+        otherEventsInboxJob.run();
     }
 }
