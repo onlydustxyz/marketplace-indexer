@@ -18,7 +18,7 @@ public class GithubPullRequestCommitCountEntity {
     Long pullRequestId;
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     GithubAccountEntity author;
 
