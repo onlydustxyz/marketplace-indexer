@@ -127,7 +127,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
         final var repos = installations.get(0).getRepos();
         assertThat(repos).hasSize(1);
-        assertThat(repos.get(0).getId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
+        assertThat(repos.stream().findFirst().get().getId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
     }
 
     @Test
@@ -185,7 +185,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(installations).hasSize(1);
         final var repos = installations.get(0).getRepos();
         assertThat(repos).hasSize(1);
-        assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(repos.stream().findFirst().get().getId()).isEqualTo(CAIRO_STREAMS_ID);
     }
 
     @Test
@@ -214,7 +214,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(installations).hasSize(1);
         final var repos = installations.get(0).getRepos();
         assertThat(repos).hasSize(1);
-        assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(repos.stream().findFirst().get().getId()).isEqualTo(CAIRO_STREAMS_ID);
         assertThat(installations.get(0).getSuspendedAt().toInstant()).isEqualTo(ZonedDateTime.parse("2023-11-13T14:21:39Z").toInstant());
     }
 
@@ -245,7 +245,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(installations).hasSize(1);
         final var repos = installations.get(0).getRepos();
         assertThat(repos).hasSize(1);
-        assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
+        assertThat(repos.stream().findFirst().get().getId()).isEqualTo(CAIRO_STREAMS_ID);
     }
 
     @Test
