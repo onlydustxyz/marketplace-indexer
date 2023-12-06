@@ -5,8 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Entity
 @Data
@@ -29,7 +28,7 @@ public class GithubAppInstallationEntity {
             joinColumns = @JoinColumn(name = "installation_id"),
             inverseJoinColumns = @JoinColumn(name = "repo_id")
     )
-    Set<GithubRepoEntity> repos;
+    List<GithubRepoEntity> repos;
 
     Date suspendedAt;
 
@@ -37,7 +36,7 @@ public class GithubAppInstallationEntity {
         return GithubAppInstallationEntity.builder()
                 .id(installation.getId())
                 .account(GithubAccountEntity.of(installation.getAccount()))
-                .repos(installation.getRepos().stream().map(GithubRepoEntity::of).collect(Collectors.toUnmodifiableSet()))
+                .repos(installation.getRepos().stream().map(GithubRepoEntity::of).toList())
                 .build();
     }
 }
