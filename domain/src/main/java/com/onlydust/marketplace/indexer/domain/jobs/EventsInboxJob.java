@@ -53,7 +53,7 @@ public class EventsInboxJob extends Job {
                     eventInboxStorage.ignore(event.getId(), "Unknown event type: " + event.getType());
             }
         } catch (Exception e) {
-            LOGGER.error("Error processing event: {}", event, e);
+            LOGGER.error("Error processing event: {}", event.toString(), e);
             eventInboxStorage.nack(event.getId(), e.toString());
         }
     }
