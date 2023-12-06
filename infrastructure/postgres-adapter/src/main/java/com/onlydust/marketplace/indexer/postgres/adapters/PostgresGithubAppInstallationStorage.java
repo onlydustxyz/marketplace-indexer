@@ -27,7 +27,13 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
     public void addRepos(Long installationId, List<GithubRepo> repos) {
         final var installation = githubAppInstallationEntityRepository.findById(installationId)
                 .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
-        installation.getRepos().addAll(repos.stream().map(GithubRepoEntity::of).toList());
+
+        installation.getRepos().addAll(
+                repos.stream()
+                        .filter(repo -> installation.getRepos().stream().noneMatch(existing -> existing.getId().equals(repo.getId())))
+                        .map(GithubRepoEntity::of).toList()
+        );
+
         githubAppInstallationEntityRepository.save(installation);
     }
 
