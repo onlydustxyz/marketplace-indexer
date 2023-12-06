@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
@@ -25,6 +26,8 @@ public class GithubInstallationEventsIT extends IntegrationTest {
     final Long MARKETPLACE_FRONTEND_ID = 498695724L;
     final Long CAIRO_STREAMS_ID = 493795808L;
     private final long INSTALLATION_ID = 42952633L;
+    @Autowired
+    public JobManager diffRepoRefreshJobManager;
     @Autowired
     RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
@@ -306,5 +309,26 @@ public class GithubInstallationEventsIT extends IntegrationTest {
                 installationsUpdated.get(0).getRepos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
         assertThat(reposUpdated).hasSize(1);
         assertThat(reposUpdated.get(0).getId()).isEqualTo(715033198);
+    }
+
+    @Test
+    @Order(11)
+    void should_handle_duplicate_repo_added() {
+        // Given
+        processEventsFromPaths("installation",
+                "/github/webhook/events/installation/installation_created_new.json",
+                "/github/webhook/events/installation/installation_added.json"
+        );
+
+        diffRepoRefreshJobManager.createJob().run();
+
+        // When
+        processEventsFromPaths("installation",
+                "/github/webhook/events/installation/installation_added.json"
+        );
+
+        // Then
+        final var installation = githubAppInstallationEntityRepository.findById(INSTALLATION_ID).orElseThrow();
+        assertThat(installation.getRepos()).hasSize(2);
     }
 }
