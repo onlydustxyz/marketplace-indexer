@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.domain.jobs.EventsInboxJob;
+import com.onlydust.marketplace.indexer.domain.jobs.OtherEventsInboxJob;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
@@ -45,7 +45,7 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
     @Autowired
     GithubWebhookRestApi.Config config;
     @Autowired
-    EventsInboxJob eventsInboxJob;
+    OtherEventsInboxJob eventsInboxJob;
 
     @Test
     @Order(1)

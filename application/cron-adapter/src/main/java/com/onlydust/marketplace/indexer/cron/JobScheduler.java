@@ -1,7 +1,8 @@
 package com.onlydust.marketplace.indexer.cron;
 
-import com.onlydust.marketplace.indexer.domain.jobs.EventsInboxJob;
+import com.onlydust.marketplace.indexer.domain.jobs.InstallationEventsInboxJob;
 import com.onlydust.marketplace.indexer.domain.jobs.NewContributionNotifierJob;
+import com.onlydust.marketplace.indexer.domain.jobs.OtherEventsInboxJob;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,8 @@ public class JobScheduler {
     private final JobManager diffRepoRefreshJobManager;
     private final JobManager diffUserRefreshJobManager;
     private final NewContributionNotifierJob newContributionNotifierJob;
-    private final EventsInboxJob eventsInboxJob;
+    private final InstallationEventsInboxJob installationEventsInboxJob;
+    private final OtherEventsInboxJob otherEventsInboxJob;
 
     @Scheduled(fixedDelayString = "${application.cron.repo-refresh-job-delay}")
     public void scheduleRepoRefresherJobs() {
@@ -38,7 +40,12 @@ public class JobScheduler {
     }
 
     @Scheduled(fixedDelayString = "${application.cron.event-inbox-dequeuer-delay}")
-    public void dequeueInbox() {
-        eventsInboxJob.run();
+    public void dequeueInstallationEvents() {
+        installationEventsInboxJob.run();
+    }
+
+    @Scheduled(fixedDelayString = "${application.cron.event-inbox-dequeuer-delay}")
+    public void dequeueOtherEvents() {
+        otherEventsInboxJob.run();
     }
 }

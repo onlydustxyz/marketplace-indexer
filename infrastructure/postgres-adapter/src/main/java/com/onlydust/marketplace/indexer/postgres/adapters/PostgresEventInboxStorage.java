@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.EventsInboxEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.EventsInboxEntityRepository;
 import lombok.AllArgsConstructor;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -19,8 +20,8 @@ public class PostgresEventInboxStorage implements EventInboxStorage {
     }
 
     @Override
-    public Optional<RawEvent> peek() {
-        return eventsInboxEntityRepository.findFirstToProcess()
+    public Optional<RawEvent> peek(String... types) {
+        return eventsInboxEntityRepository.findFirstToProcess(Arrays.stream(types).toList())
                 .map(entity -> new RawEvent(entity.getId(), entity.getType(), entity.getPayload()));
     }
 
