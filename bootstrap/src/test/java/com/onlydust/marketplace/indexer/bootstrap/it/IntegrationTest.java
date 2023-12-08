@@ -14,7 +14,6 @@ import com.onlydust.marketplace.indexer.domain.jobs.OtherEventsInboxJob;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,15 +84,9 @@ public class IntegrationTest {
     static void beforeAll() throws IOException, InterruptedException {
         if (!postgresSQLContainer.isRunning()) {
             postgresSQLContainer.start();
-            assertThat(postgresSQLContainer.execInContainer("bash", "/scripts/backup_db.sh").getExitCode()).isEqualTo(0);
         }
+        assertThat(postgresSQLContainer.execInContainer("psql", "-d", "marketplace_db", "-U", "test", "-f", "/scripts/clean.sql").getExitCode()).isEqualTo(0);
     }
-
-    @AfterAll
-    static void afterAll() throws IOException, InterruptedException {
-        assertThat(postgresSQLContainer.execInContainer("/scripts/restore_db.sh").getExitCode()).isEqualTo(0);
-    }
-
 
     @DynamicPropertySource
     static void updateProperties(DynamicPropertyRegistry registry) {
