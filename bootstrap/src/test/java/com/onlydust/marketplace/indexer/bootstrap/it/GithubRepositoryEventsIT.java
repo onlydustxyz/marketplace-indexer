@@ -80,5 +80,6 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
 
         // Then
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID)).isEmpty();
+        assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getDeletedAt().toString()).isEqualTo("2023-12-05 08:02:21.0");
     }
 }

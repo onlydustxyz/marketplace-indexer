@@ -22,7 +22,12 @@ public class RepositoryEventProcessorService implements EventHandler<RawReposito
     @Override
     public void process(RawRepositoryEvent rawEvent) {
         final var event = RepositoryEvent.of(rawEvent);
-        githubRepoStorage.save(GithubRepo.of(event.getRepository()));
+
+        var repo = GithubRepo.of(event.getRepository());
+        if (RepositoryEvent.Action.DELETED.equals(event.getAction())) {
+            repo = repo.deleted();
+        }
+        githubRepoStorage.save(repo);
 
         if (event.getAction() == null) return;
         switch (event.getAction()) {

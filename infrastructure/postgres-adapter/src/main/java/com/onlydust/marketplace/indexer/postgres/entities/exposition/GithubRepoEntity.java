@@ -37,6 +37,7 @@ public class GithubRepoEntity {
     Long starsCount;
     Long forksCount;
     Boolean hasIssues;
+    Date deletedAt;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
@@ -78,6 +79,7 @@ public class GithubRepoEntity {
                 .hasIssues(updated.getHasIssues())
                 .languages(updated.getLanguages())
                 .visibility(Visibility.of(updated.getVisibility()))
+                .deletedAt(updated.getDeletedAt())
                 .build();
     }
 
