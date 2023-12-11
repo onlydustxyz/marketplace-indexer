@@ -1,6 +1,9 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
+import com.onlydust.marketplace.indexer.postgres.entities.EventsInboxEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
@@ -9,6 +12,8 @@ import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEnti
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.EventsInboxEntityRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -18,6 +23,7 @@ import org.springframework.data.domain.Sort;
 
 import java.time.ZonedDateTime;
 import java.util.Comparator;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GithubInstallationEventsIT extends IntegrationTest {
     final Long MARKETPLACE_FRONTEND_ID = 498695724L;
     final Long CAIRO_STREAMS_ID = 493795808L;
+    final ObjectMapper objectMapper = new ObjectMapper();
     private final long INSTALLATION_ID = 42952633L;
     @Autowired
     public JobManager diffRepoRefreshJobManager;
@@ -36,6 +43,10 @@ public class GithubInstallationEventsIT extends IntegrationTest {
     GithubAccountEntityRepository githubAccountRepository;
     @Autowired
     GithubAppInstallationEntityRepository githubAppInstallationEntityRepository;
+    @Autowired
+    GithubRepoEntityRepository githubRepoEntityRepository;
+    @Autowired
+    EventsInboxEntityRepository eventsInboxEntityRepository;
 
     @Test
     void should_reject_upon_invalid_signature() {
@@ -330,5 +341,45 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         // Then
         final var installation = githubAppInstallationEntityRepository.findById(INSTALLATION_ID).orElseThrow();
         assertThat(installation.getRepos()).hasSize(2);
+    }
+
+
+    @Test
+    @Order(12)
+    void should_handle_recreating_same_repo_with_different_id() {
+        // When
+        processEventsFromPaths("installation_repositories",
+                "/github/webhook/events/installation/installation_added_with_another_repo_id.json"
+        );
+
+        diffRepoRefreshJobManager.createJob().run();
+
+        // Then
+        final var installation = githubAppInstallationEntityRepository.findById(INSTALLATION_ID).orElseThrow();
+        assertThat(installation.getRepos()).hasSize(3);
+        assertThat(githubRepoEntityRepository.findById(493795809L)).isPresent();
+        assertThat(githubRepoEntityRepository.findAll().stream().filter(r -> r.getOwnerLogin().equals("onlydustxyz") && r.getName().equals("cairo-streams"))).hasSize(2);
+    }
+
+    @Test
+    @Order(12)
+    void failed_installation_should_not_block_others() throws JsonProcessingException {
+        // Given
+        eventsInboxEntityRepository.saveAll(List.of(
+                new EventsInboxEntity("installation", mapper.readTree("{\"installation\":{\"id\": 1},\"action\":\"remove\"}")).failed("unable to process"),
+                new EventsInboxEntity("installation", mapper.readTree("{\"installation\":{\"id\": 1},\"action\":\"remove\"}")),
+                new EventsInboxEntity("installation", mapper.readTree("{\"installation\":{\"id\": 2},\"action\":\"remove\"}"))
+        ));
+
+        // When
+        installationEventsInboxJob.run();
+
+        // Then
+        final var processed = eventsInboxEntityRepository.findAll().stream().filter(e -> e.getPayload().at("/installation/id").asInt() == 2).findFirst().orElseThrow();
+        assertThat(processed.getStatus()).isEqualTo(EventsInboxEntity.Status.PROCESSED);
+        final var notProcessed = eventsInboxEntityRepository.findAll().stream().filter(e -> e.getPayload().at("/installation/id").asInt() == 1).toList();
+        assertThat(notProcessed).hasSize(2);
+        assertThat(notProcessed.get(0).getStatus()).isEqualTo(EventsInboxEntity.Status.FAILED);
+        assertThat(notProcessed.get(1).getStatus()).isEqualTo(EventsInboxEntity.Status.PENDING);
     }
 }

@@ -89,7 +89,6 @@ public class InstallationEventProcessorService implements EventHandler<RawInstal
 
     private InstallationEvent mapRawEvent(RawInstallationEvent rawEvent) {
         final var action = InstallationEvent.Action.of(rawEvent.getAction());
-        final var account = CleanAccount.of(rawEvent.getInstallation().getAccount());
 
         if (action == null) return null;
 
@@ -97,14 +96,14 @@ public class InstallationEventProcessorService implements EventHandler<RawInstal
             case ADDED -> InstallationAddedEvent.of(
                     rawEvent,
                     rawEvent.getRepositoriesAdded().stream()
-                            .map(repo -> CleanRepo.of(repo, account))
+                            .map(repo -> CleanRepo.of(repo, CleanAccount.of(rawEvent.getInstallation().getAccount())))
                             .toList());
 
             case CREATED -> InstallationCreatedEvent.of(
                     rawEvent,
                     CleanAccount.of(rawEvent.getInstallation().getAccount()),
                     rawEvent.getRepositories().stream()
-                            .map(repo -> CleanRepo.of(repo, account))
+                            .map(repo -> CleanRepo.of(repo, CleanAccount.of(rawEvent.getInstallation().getAccount())))
                             .toList());
 
             case REMOVED -> InstallationRemovedEvent.of(rawEvent);

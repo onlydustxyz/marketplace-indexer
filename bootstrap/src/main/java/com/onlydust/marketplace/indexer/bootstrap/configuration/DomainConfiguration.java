@@ -20,10 +20,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorageComposite;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheReadRawStorageReaderDecorator;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.DiffRawStorageReaderDecorator;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.*;
 import com.onlydust.marketplace.indexer.domain.services.events.*;
 import com.onlydust.marketplace.indexer.domain.services.exposers.*;
 import com.onlydust.marketplace.indexer.domain.services.guards.RateLimitGuardedFullRepoIndexer;
@@ -139,10 +136,11 @@ public class DomainConfiguration {
     @Bean
     public EventHandler<RawRepositoryEvent> repositoryEventHandler(final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
                                                                    final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
-                                                                   final RepoStorage repoStorage) {
+                                                                   final RepoStorage repoStorage,
+                                                                   final RawStorageWriter rawStorageWriter) {
         return new RepositoryEventProcessorService(
                 new RepoIndexingJobStorageComposite(repoIndexingJobRepository, oldRepoIndexesEntityRepository),
-                repoStorage);
+                repoStorage, rawStorageWriter);
     }
 
     @Bean

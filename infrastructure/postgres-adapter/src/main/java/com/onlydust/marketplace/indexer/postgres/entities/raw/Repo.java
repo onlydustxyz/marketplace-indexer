@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Data
 @Entity
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -29,6 +29,9 @@ public class Repo {
 
     @Type(type = "jsonb")
     RawRepo data;
+
+    @Builder.Default
+    Boolean deleted = Boolean.FALSE;
 
     public static Repo of(RawRepo repo) {
         return Repo.builder().id(repo.getId()).owner(repo.getOwner().getLogin()).name(repo.getName()).data(repo).build();

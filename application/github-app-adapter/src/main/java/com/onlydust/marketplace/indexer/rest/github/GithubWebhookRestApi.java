@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.rest.github;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventsInbox;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
@@ -22,14 +23,15 @@ public class GithubWebhookRestApi {
     private static final String X_HUB_SIGNATURE_256 = "X-Hub-Signature-256";
     private final Config config;
     private final EventsInbox inbox;
+    private final ObjectMapper objectMapper;
 
     @PostMapping("/github-app/webhook")
-    public ResponseEntity<Void> consumeWebhook(final @RequestBody byte[] event,
+    public ResponseEntity<Void> consumeWebhook(final @RequestBody byte[] payload,
                                                final @RequestHeader(X_GITHUB_EVENT) String type,
                                                final @RequestHeader(X_HUB_SIGNATURE_256) String signature) throws IOException {
-        GithubSignatureVerifier.validateWebhook(event, config.secret, signature);
+        GithubSignatureVerifier.validateWebhook(payload, config.secret, signature);
 
-        inbox.push(new RawEvent(null, type, event));
+        inbox.push(RawEvent.of(type, objectMapper.readTree(payload)));
         return ResponseEntity.ok().build();
     }
 

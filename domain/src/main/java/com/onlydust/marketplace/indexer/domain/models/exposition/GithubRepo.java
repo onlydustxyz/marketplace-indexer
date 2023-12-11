@@ -9,13 +9,14 @@ import java.util.Date;
 import java.util.Map;
 
 @Value
-@Builder(access = AccessLevel.PRIVATE)
+@Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 public class GithubRepo {
     Long id;
     GithubAccount owner;
     String name;
     String htmlUrl;
     Date updatedAt;
+    Date deletedAt;
     String description;
     Long starsCount;
     Long forksCount;
@@ -42,6 +43,12 @@ public class GithubRepo {
                 .languages(repo.getLanguages())
                 .parent(repo.getParent() == null ? null : GithubRepo.of(repo.getParent()))
                 .visibility(repo.getIsPublic() ? Visibility.PUBLIC : Visibility.PRIVATE)
+                .build();
+    }
+
+    public GithubRepo deleted() {
+        return this.toBuilder()
+                .deletedAt(updatedAt)
                 .build();
     }
 
