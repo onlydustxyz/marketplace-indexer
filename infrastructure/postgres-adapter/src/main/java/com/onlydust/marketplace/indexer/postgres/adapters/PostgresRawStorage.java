@@ -32,7 +32,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
 
     @Override
     public Optional<RawRepo> repo(String repoOwner, String repoName) {
-        return repoRepository.findByOwnerAndName(repoOwner, repoName).map(Repo::getData);
+        return repoRepository.findByOwnerAndNameAndDeleted(repoOwner, repoName, false).map(Repo::getData);
     }
 
     @Override
