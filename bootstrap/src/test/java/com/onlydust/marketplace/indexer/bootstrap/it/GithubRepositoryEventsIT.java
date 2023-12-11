@@ -1,9 +1,11 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.RepoRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -18,9 +20,13 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
     @Autowired
     public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
+    public JobManager diffRepoRefreshJobManager;
+    @Autowired
     OldRepoIndexesEntityRepository oldRepoIndexesEntityRepository;
     @Autowired
     GithubRepoEntityRepository githubRepoRepository;
+    @Autowired
+    RepoRepository rawRepoStorage;
 
     @Test
     @Order(1)
@@ -73,6 +79,9 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
     @Test
     @Order(4)
     void should_handle_repo_deleted() {
+        // Given
+        diffRepoRefreshJobManager.createJob().run();
+
         // When
         processEventsFromPaths("repository",
                 "/github/webhook/events/repository/cairo-streams-deleted.json"
@@ -81,5 +90,6 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
         // Then
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID)).isEmpty();
         assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getDeletedAt().toString()).isEqualTo("2023-12-05 08:02:21.0");
+        assertThat(rawRepoStorage.findById(CAIRO_STREAMS_ID).orElseThrow().getDeleted()).isTrue();
     }
 }

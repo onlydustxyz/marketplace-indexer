@@ -184,6 +184,11 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     }
 
     @Override
+    public void deleteRepo(Long repoId) {
+        repos.removeIf(repo -> repo.getId().equals(repoId));
+    }
+
+    @Override
     public void saveRepoLanguages(Long repoId, RawLanguages languages) {
         repoLanguages.put(repoId, languages);
     }

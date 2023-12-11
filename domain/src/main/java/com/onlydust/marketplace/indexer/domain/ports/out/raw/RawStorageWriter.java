@@ -21,6 +21,8 @@ public interface RawStorageWriter {
 
     void saveRepo(RawRepo repo);
 
+    void deleteRepo(Long repoId);
+
     void saveRepoLanguages(Long repoId, RawLanguages languages);
 
     void saveClosingIssues(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues);

@@ -132,6 +132,11 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     }
 
     @Override
+    public void deleteRepo(Long repoId) {
+        repoRepository.findById(repoId).ifPresent(r -> repoRepository.save(r.toBuilder().deleted(true).build()));
+    }
+
+    @Override
     public void saveRepoLanguages(Long repoId, RawLanguages languages) {
         repoLanguagesRepository.save(RepoLanguages.of(repoId, languages));
     }
