@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.entities;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
@@ -27,13 +28,13 @@ public class EventsInboxEntity {
     String type;
 
     @Type(type = "jsonb")
-    byte[] payload;
+    JsonNode payload;
     @Enumerated(EnumType.STRING)
     @Type(type = "inbox_status")
     Status status;
     String reason;
 
-    public EventsInboxEntity(String type, byte[] payload) {
+    public EventsInboxEntity(String type, JsonNode payload) {
         this.type = type;
         this.payload = payload;
         this.status = Status.PENDING;

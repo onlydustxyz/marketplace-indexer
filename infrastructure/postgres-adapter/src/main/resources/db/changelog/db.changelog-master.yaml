@@ -75,3 +75,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000035_drop_repo_owner_name_unique_constraint.sql
   - include:
       file: db/changelog/changelogs/00000036_add_github_repos_deleted_at.sql
+  - include:
+      file: db/changelog/changelogs/00000037_add_installation_id_in_events_inbox.sql
