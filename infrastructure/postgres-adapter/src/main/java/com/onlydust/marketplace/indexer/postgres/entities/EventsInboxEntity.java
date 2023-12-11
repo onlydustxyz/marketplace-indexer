@@ -60,7 +60,7 @@ public class EventsInboxEntity {
                 .build();
     }
 
-    private enum Status {
+    public enum Status {
         PENDING, PROCESSED, FAILED, IGNORED
     }
 }
