@@ -9,6 +9,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEnti
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,8 @@ public class GithubInstallationEventsIT extends IntegrationTest {
     GithubAccountEntityRepository githubAccountRepository;
     @Autowired
     GithubAppInstallationEntityRepository githubAppInstallationEntityRepository;
+    @Autowired
+    GithubRepoEntityRepository githubRepoEntityRepository;
 
     @Test
     void should_reject_upon_invalid_signature() {
@@ -330,5 +333,23 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         // Then
         final var installation = githubAppInstallationEntityRepository.findById(INSTALLATION_ID).orElseThrow();
         assertThat(installation.getRepos()).hasSize(2);
+    }
+
+
+    @Test
+    @Order(12)
+    void should_handle_recreating_same_repo_with_different_id() {
+        // When
+        processEventsFromPaths("installation_repositories",
+                "/github/webhook/events/installation/installation_added_with_another_repo_id.json"
+        );
+
+        diffRepoRefreshJobManager.createJob().run();
+
+        // Then
+        final var installation = githubAppInstallationEntityRepository.findById(INSTALLATION_ID).orElseThrow();
+        assertThat(installation.getRepos()).hasSize(3);
+        assertThat(githubRepoEntityRepository.findById(493795809L)).isPresent();
+        assertThat(githubRepoEntityRepository.findAll().stream().filter(r -> r.getOwnerLogin().equals("onlydustxyz") && r.getName().equals("cairo-streams"))).hasSize(2);
     }
 }

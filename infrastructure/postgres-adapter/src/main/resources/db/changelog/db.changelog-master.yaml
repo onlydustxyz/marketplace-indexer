@@ -71,3 +71,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000033_add_repo_last_index_time.sql
   - include:
       file: db/changelog/changelogs/00000034_rename_suspended_at.sql
+  - include:
+      file: db/changelog/changelogs/00000035_drop_repo_owner_name_unique_constraint.sql
