@@ -14,3 +14,12 @@ CREATE TRIGGER indexer_exp_github_repo_languages_set_tech_updated_at
         indexer_exp.github_repo_languages
     FOR EACH ROW
 EXECUTE PROCEDURE set_tech_updated_at();
+
+
+-- Populate the table so that we don't need to perform a full-refresh
+INSERT INTO indexer_exp.github_repo_languages (repo_id, language, line_count)
+SELECT gr.id,
+       l.key,
+       l.value
+FROM indexer_exp.github_repos gr
+         CROSS JOIN LATERAL jsonb_each(gr.languages) l;
