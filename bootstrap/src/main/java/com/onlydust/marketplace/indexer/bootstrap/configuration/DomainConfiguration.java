@@ -145,8 +145,8 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public EventHandler<RawStarEvent> starEventHandler(final RepoStorage repoStorage) {
-        return new StarEventProcessorService(repoStorage);
+    public EventHandler<RawStarEvent> starEventHandler(final RepoIndexer liveRepoIndexer) {
+        return new StarEventProcessorService(liveRepoIndexer);
     }
 
     @Bean
