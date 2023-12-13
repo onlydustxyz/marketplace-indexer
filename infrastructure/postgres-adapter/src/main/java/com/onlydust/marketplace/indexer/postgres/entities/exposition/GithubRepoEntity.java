@@ -39,7 +39,7 @@ public class GithubRepoEntity {
     Boolean hasIssues;
     Date deletedAt;
 
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "repoId")
     List<GithubRepoLanguageEntity> languages;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
