@@ -79,3 +79,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000037_add_installation_id_in_events_inbox.sql
   - include:
       file: db/changelog/changelogs/00000038_normalize_languages.sql
+  - include:
+      file: db/changelog/changelogs/00000039_add_github_repo_languages_fk.sql
