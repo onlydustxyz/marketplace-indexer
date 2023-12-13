@@ -10,7 +10,7 @@ import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
 
 @Entity
 @Data
@@ -39,9 +39,8 @@ public class GithubRepoEntity {
     Boolean hasIssues;
     Date deletedAt;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
-    Map<String, Long> languages;
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
+    List<GithubRepoLanguageEntity> languages;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     GithubRepoEntity parent;
@@ -62,13 +61,26 @@ public class GithubRepoEntity {
                 .starsCount(repo.getStarsCount())
                 .forksCount(repo.getForksCount())
                 .hasIssues(repo.getHasIssues())
-                .languages(repo.getLanguages())
+                .languages(repo.getLanguages().entrySet().stream()
+                        .map(language -> GithubRepoLanguageEntity.builder()
+                                .repoId(repo.getId())
+                                .language(language.getKey())
+                                .lineCount(language.getValue())
+                                .build()).toList())
                 .parent(repo.getParent() == null ? null : GithubRepoEntity.of(repo.getParent()))
                 .visibility(Visibility.of(repo.getVisibility()))
                 .build();
     }
 
     public GithubRepoEntity updateWith(GithubRepo updated) {
+        this.languages.clear();
+        this.languages.addAll(updated.getLanguages().entrySet().stream()
+                .map(language -> GithubRepoLanguageEntity.builder()
+                        .repoId(updated.getId())
+                        .language(language.getKey())
+                        .lineCount(language.getValue())
+                        .build()).toList());
+
         return this.toBuilder()
                 .name(updated.getName())
                 .htmlUrl(updated.getHtmlUrl())
@@ -77,7 +89,6 @@ public class GithubRepoEntity {
                 .starsCount(updated.getStarsCount())
                 .forksCount(updated.getForksCount())
                 .hasIssues(updated.getHasIssues())
-                .languages(updated.getLanguages())
                 .visibility(Visibility.of(updated.getVisibility()))
                 .deletedAt(updated.getDeletedAt())
                 .build();

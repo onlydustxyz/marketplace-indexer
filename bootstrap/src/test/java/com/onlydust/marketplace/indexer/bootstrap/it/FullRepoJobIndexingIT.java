@@ -5,6 +5,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoLanguageEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.RepoContributorEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
@@ -100,8 +102,17 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
 
     @Test
     @Order(2)
+    @Transactional
     public void should_index_repo_with_contributions() {
-        assertThat(githubRepoEntityRepository.findById(MARKETPLACE)).isPresent();
+        final var exposedRepo = githubRepoEntityRepository.findById(MARKETPLACE);
+        assertThat(exposedRepo).isPresent();
+        assertThat(exposedRepo.get().getLanguages()).containsExactlyInAnyOrder(
+                GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("TypeScript").lineCount(2761826L).build(),
+                GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("Shell").lineCount(11474L).build(),
+                GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("CSS").lineCount(5535L).build(),
+                GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("PLpgSQL").lineCount(1372L).build(),
+                GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("JavaScript").lineCount(23763L).build(),
+                GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("HTML").lineCount(1520L).build());
         assertThat(pullRequestsRepository.findAll()).hasSize(2);
         assertThat(issuesRepository.findAll()).hasSize(2);
         /*
@@ -126,6 +137,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
 
     @Test
     @Order(3)
+    @Transactional
     public void should_delete_contributions_before_saving_new_ones() {
         // Given
         githubWireMockServer.stubFor(get(urlEqualTo("/repositories/498695724/pulls?state=all&sort=updated&per_page=100"))
