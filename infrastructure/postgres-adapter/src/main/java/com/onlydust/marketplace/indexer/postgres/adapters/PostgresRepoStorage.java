@@ -8,6 +8,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubR
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoStatsEntityRepository;
 import lombok.AllArgsConstructor;
 
+import javax.transaction.Transactional;
 import java.time.Instant;
 
 @AllArgsConstructor
@@ -24,6 +25,7 @@ public class PostgresRepoStorage implements RepoStorage {
     }
 
     @Override
+    @Transactional
     public void save(GithubRepo updated) {
         final var repo = githubRepoEntityRepository.findById(updated.getId())
                 .map(r -> r.updateWith(updated))
