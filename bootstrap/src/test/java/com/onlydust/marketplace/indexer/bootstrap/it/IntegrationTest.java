@@ -53,6 +53,7 @@ import static org.testcontainers.utility.MountableFile.forClasspathResource;
 @Import(SwaggerConfiguration.class)
 @EnableWireMock({
         @ConfigureWireMock(name = "github", property = "infrastructure.github.baseUri"),
+        @ConfigureWireMock(name = "githubForApp", property = "infrastructure.github-for-app.base-uri", stubLocation = "github"),
         @ConfigureWireMock(name = "api", property = "infrastructure.api-client.baseUri")
 })
 public class IntegrationTest {
@@ -67,6 +68,8 @@ public class IntegrationTest {
     protected final ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
     @InjectWireMock("github")
     protected WireMockServer githubWireMockServer;
+    @InjectWireMock("githubForApp")
+    protected WireMockServer githubForAppWireMockServer;
     @InjectWireMock("api")
     protected WireMockServer apiWireMockServer;
     @LocalServerPort
