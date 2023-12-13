@@ -11,6 +11,8 @@ import com.onlydust.marketplace.indexer.bootstrap.ApplicationIT;
 import com.onlydust.marketplace.indexer.bootstrap.configuration.SwaggerConfiguration;
 import com.onlydust.marketplace.indexer.domain.jobs.InstallationEventsInboxJob;
 import com.onlydust.marketplace.indexer.domain.jobs.OtherEventsInboxJob;
+import com.onlydust.marketplace.indexer.postgres.entities.EventsInboxEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.EventsInboxEntityRepository;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +53,7 @@ import static org.testcontainers.utility.MountableFile.forClasspathResource;
 @Import(SwaggerConfiguration.class)
 @EnableWireMock({
         @ConfigureWireMock(name = "github", property = "infrastructure.github.baseUri"),
+        @ConfigureWireMock(name = "githubForApp", property = "infrastructure.github-for-app.base-uri", stubLocation = "github"),
         @ConfigureWireMock(name = "api", property = "infrastructure.api-client.baseUri")
 })
 public class IntegrationTest {
@@ -65,6 +68,8 @@ public class IntegrationTest {
     protected final ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
     @InjectWireMock("github")
     protected WireMockServer githubWireMockServer;
+    @InjectWireMock("githubForApp")
+    protected WireMockServer githubForAppWireMockServer;
     @InjectWireMock("api")
     protected WireMockServer apiWireMockServer;
     @LocalServerPort
@@ -79,6 +84,8 @@ public class IntegrationTest {
     OtherEventsInboxJob otherEventsInboxJob;
     @Autowired
     JdbcTemplate jdbcTemplate;
+    @Autowired
+    EventsInboxEntityRepository eventsInboxEntityRepository;
 
     @BeforeAll
     static void beforeAll() throws IOException, InterruptedException {
@@ -149,5 +156,11 @@ public class IntegrationTest {
                 .forEach(event -> postEvent(eventType, event).expectStatus().isOk());
         installationEventsInboxJob.run();
         otherEventsInboxJob.run();
+    }
+
+    protected void assertAllEventsAreProcessed(String type) {
+        final var events = eventsInboxEntityRepository.findAll().stream().filter(e -> e.getType().equals(type)).toList();
+        assertThat(events).isNotEmpty();
+        assertThat(events.stream().allMatch(e -> e.getStatus().equals(EventsInboxEntity.Status.PROCESSED)));
     }
 }

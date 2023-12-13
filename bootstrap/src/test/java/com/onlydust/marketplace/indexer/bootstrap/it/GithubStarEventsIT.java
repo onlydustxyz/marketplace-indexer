@@ -1,19 +1,16 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.EventsInboxEntityRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GithubStarEventsIT extends IntegrationTest {
-    final Long CAIRO_STREAMS_ID = 493795808L;
     @Autowired
-    GithubRepoEntityRepository githubRepoRepository;
+    EventsInboxEntityRepository eventsInboxEntityRepository;
 
     @Test
     @Order(1)
@@ -30,8 +27,6 @@ public class GithubStarEventsIT extends IntegrationTest {
         processEventsFromPaths("star",
                 "/github/webhook/events/star/cairo-streams-starred.json"
         );
-
-        // Then
-        assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getStarsCount()).isEqualTo(60);
+        assertAllEventsAreProcessed("star");
     }
 }

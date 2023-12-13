@@ -137,15 +137,16 @@ public class DomainConfiguration {
     public EventHandler<RawRepositoryEvent> repositoryEventHandler(final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
                                                                    final PostgresOldRepoIndexingJobStorage oldRepoIndexesEntityRepository,
                                                                    final RepoStorage repoStorage,
-                                                                   final RawStorageWriter rawStorageWriter) {
+                                                                   final RawStorageWriter rawStorageWriter,
+                                                                   final RepoIndexer liveRepoIndexer) {
         return new RepositoryEventProcessorService(
                 new RepoIndexingJobStorageComposite(repoIndexingJobRepository, oldRepoIndexesEntityRepository),
-                repoStorage, rawStorageWriter);
+                repoStorage, rawStorageWriter, liveRepoIndexer);
     }
 
     @Bean
-    public EventHandler<RawStarEvent> starEventHandler(final RepoStorage repoStorage) {
-        return new StarEventProcessorService(repoStorage);
+    public EventHandler<RawStarEvent> starEventHandler(final RepoIndexer liveRepoIndexer) {
+        return new StarEventProcessorService(liveRepoIndexer);
     }
 
     @Bean

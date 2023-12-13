@@ -4,6 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.clean.RepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
@@ -19,17 +20,17 @@ public class RepositoryEventProcessorService implements EventHandler<RawReposito
     private final RepoIndexingJobStorage repoIndexingJobStorage;
     private final RepoStorage githubRepoStorage;
     private final RawStorageWriter rawStorageWriter;
-
+    private final RepoIndexer repoIndexer;
 
     @Override
     public void process(RawRepositoryEvent rawEvent) {
         final var event = RepositoryEvent.of(rawEvent);
 
-        var repo = GithubRepo.of(event.getRepository());
         if (RepositoryEvent.Action.DELETED.equals(event.getAction())) {
-            repo = repo.deleted();
+            githubRepoStorage.save(GithubRepo.of(event.getRepository()).deleted());
+        } else {
+            repoIndexer.indexRepo(event.getRepository().getId());
         }
-        githubRepoStorage.save(repo);
 
         if (event.getAction() == null) return;
         switch (event.getAction()) {
