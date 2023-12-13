@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.services.events;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
@@ -8,14 +9,14 @@ import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class RepositoryEventProcessorServiceTest {
     final RepoIndexingJobStorage repoIndexingJobStorage = mock(RepoIndexingJobStorage.class);
     final RepoStorage githubRepoStorage = mock(RepoStorage.class);
     final RawStorageWriter rawStorageWriter = mock(RawStorageWriter.class);
-    final RepositoryEventProcessorService repositoryEventProcessorService = new RepositoryEventProcessorService(repoIndexingJobStorage, githubRepoStorage, rawStorageWriter);
+    final RepoIndexer repoIndexer = mock(RepoIndexer.class);
+    final RepositoryEventProcessorService repositoryEventProcessorService = new RepositoryEventProcessorService(repoIndexingJobStorage, githubRepoStorage, rawStorageWriter, repoIndexer);
 
     @Test
     void should_handle_repo_edited_event() {
@@ -26,7 +27,8 @@ class RepositoryEventProcessorServiceTest {
         repositoryEventProcessorService.process(event);
 
         // Then
-        verify(githubRepoStorage).save(argThat(repo -> repo.getId().equals(493795808L)));
+        verify(githubRepoStorage, never()).save(any());
+        verify(repoIndexer).indexRepo(493795808L);
     }
 
     @Test
@@ -38,7 +40,8 @@ class RepositoryEventProcessorServiceTest {
         repositoryEventProcessorService.process(event);
 
         // Then
-        verify(githubRepoStorage).save(argThat(repo -> repo.getId().equals(493795808L)));
+        verify(githubRepoStorage, never()).save(any());
+        verify(repoIndexer).indexRepo(493795808L);
         verify(repoIndexingJobStorage).setPrivate(493795808L);
     }
 
@@ -51,7 +54,8 @@ class RepositoryEventProcessorServiceTest {
         repositoryEventProcessorService.process(event);
 
         // Then
-        verify(githubRepoStorage).save(argThat(repo -> repo.getId().equals(493795808L)));
+        verify(githubRepoStorage, never()).save(any());
+        verify(repoIndexer).indexRepo(493795808L);
         verify(repoIndexingJobStorage).setPublic(493795808L);
     }
 
@@ -65,6 +69,7 @@ class RepositoryEventProcessorServiceTest {
 
         // Then
         verify(githubRepoStorage).save(argThat(repo -> repo.getId().equals(493795808L) && repo.getDeletedAt().equals(event.getRepository().getUpdatedAt())));
+        verify(repoIndexer, never()).indexRepo(any());
         verify(repoIndexingJobStorage).delete(493795808L);
         verify(rawStorageWriter).deleteRepo(493795808L);
     }

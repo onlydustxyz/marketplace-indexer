@@ -11,6 +11,8 @@ import com.onlydust.marketplace.indexer.bootstrap.ApplicationIT;
 import com.onlydust.marketplace.indexer.bootstrap.configuration.SwaggerConfiguration;
 import com.onlydust.marketplace.indexer.domain.jobs.InstallationEventsInboxJob;
 import com.onlydust.marketplace.indexer.domain.jobs.OtherEventsInboxJob;
+import com.onlydust.marketplace.indexer.postgres.entities.EventsInboxEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.raw.EventsInboxEntityRepository;
 import com.onlydust.marketplace.indexer.rest.github.GithubWebhookRestApi;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import lombok.extern.slf4j.Slf4j;
@@ -79,6 +81,8 @@ public class IntegrationTest {
     OtherEventsInboxJob otherEventsInboxJob;
     @Autowired
     JdbcTemplate jdbcTemplate;
+    @Autowired
+    EventsInboxEntityRepository eventsInboxEntityRepository;
 
     @BeforeAll
     static void beforeAll() throws IOException, InterruptedException {
@@ -149,5 +153,11 @@ public class IntegrationTest {
                 .forEach(event -> postEvent(eventType, event).expectStatus().isOk());
         installationEventsInboxJob.run();
         otherEventsInboxJob.run();
+    }
+
+    protected void assertAllEventsAreProcessed(String type) {
+        final var events = eventsInboxEntityRepository.findAll().stream().filter(e -> e.getType().equals(type)).toList();
+        assertThat(events).isNotEmpty();
+        assertThat(events.stream().allMatch(e -> e.getStatus().equals(EventsInboxEntity.Status.PROCESSED)));
     }
 }

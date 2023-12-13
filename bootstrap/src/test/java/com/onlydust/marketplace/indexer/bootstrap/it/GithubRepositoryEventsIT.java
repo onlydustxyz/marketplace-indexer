@@ -1,7 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
-import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
@@ -47,7 +46,7 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
         // Then
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isFalse();
         assertThat(oldRepoIndexesEntityRepository.findById(CAIRO_STREAMS_ID)).isEmpty();
-        assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getVisibility()).isEqualTo(GithubRepoEntity.Visibility.PRIVATE);
+        assertAllEventsAreProcessed("repository");
     }
 
     @Test
@@ -61,7 +60,7 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
         // Then
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isTrue();
         assertThat(oldRepoIndexesEntityRepository.findById(CAIRO_STREAMS_ID)).isPresent();
-        assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getVisibility()).isEqualTo(GithubRepoEntity.Visibility.PUBLIC);
+        assertAllEventsAreProcessed("repository");
     }
 
     @Test
@@ -71,9 +70,7 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
         processEventsFromPaths("repository",
                 "/github/webhook/events/repository/cairo-streams-edited.json"
         );
-
-        // Then
-        assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getDescription()).isEqualTo("Array stream library written in old-fashioned Cairo");
+        assertAllEventsAreProcessed("repository");
     }
 
     @Test
