@@ -36,7 +36,7 @@ application:
     unauthorized-repos-refresh-interval: 60 # 1m
     authorized-repos-refresh-interval: 86400 # 24h
   user-refresh-job:
-    refresh-interval: 86400000 # 24h
+    refresh-interval: 86400 # 24h
 
 spring:
   application:
@@ -81,7 +81,7 @@ spring:
     scheduling:
       pool:
         size: 10
-        
+
 server:
   port: ${PORT}
 management:
