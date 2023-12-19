@@ -76,11 +76,6 @@ public class DiffRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public Optional<RawCheckRuns> checkRuns(Long repoId, String sha) {
-        return fetcher.checkRuns(repoId, sha);
-    }
-
-    @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         return fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
     }

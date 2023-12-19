@@ -1,0 +1,3 @@
+DROP TRIGGER indexer_raw_repo_check_runs_set_tech_updated_at ON indexer_raw.repo_check_runs;
+
+DROP TABLE indexer_raw.repo_check_runs;

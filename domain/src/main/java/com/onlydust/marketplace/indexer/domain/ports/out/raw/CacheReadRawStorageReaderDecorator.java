@@ -76,11 +76,6 @@ public class CacheReadRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public Optional<RawCheckRuns> checkRuns(Long repoId, String sha) {
-        return cache.checkRuns(repoId, sha).or(() -> fetcher.checkRuns(repoId, sha));
-    }
-
-    @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         return cache.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber).or(() -> fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber));
     }

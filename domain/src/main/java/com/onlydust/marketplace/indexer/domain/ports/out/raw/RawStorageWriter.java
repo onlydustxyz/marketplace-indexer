@@ -14,9 +14,7 @@ public interface RawStorageWriter {
     void savePullRequestReviews(Long pullRequestId, List<RawCodeReview> codeReview);
 
     void savePullRequestCommits(Long pullRequestId, List<RawCommit> commits);
-
-    void saveCheckRuns(Long repoId, String sha, RawCheckRuns checkRuns);
-
+    
     void saveIssue(Long repoId, RawIssue issue);
 
     void saveRepo(RawRepo repo);
