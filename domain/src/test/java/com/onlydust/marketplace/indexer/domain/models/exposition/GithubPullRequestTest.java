@@ -48,9 +48,8 @@ class GithubPullRequestTest {
     private GithubPullRequest pullRequest(List<CleanAccount> requestedReviewers, List<String> states) {
         final var codeReviews = states.stream().map(this::codeReview).toList();
         final List<CleanCommit> commits = List.of();
-        final List<CleanCheckRun> checkRuns = List.of();
         final List<CleanIssue> closingIssues = List.of();
-        return GithubPullRequest.of(CleanPullRequest.of(pr1257, marketplaceFrontend, anthony, codeReviews, requestedReviewers, commits, checkRuns, closingIssues));
+        return GithubPullRequest.of(CleanPullRequest.of(pr1257, marketplaceFrontend, anthony, codeReviews, requestedReviewers, commits, closingIssues));
     }
 
     @Test

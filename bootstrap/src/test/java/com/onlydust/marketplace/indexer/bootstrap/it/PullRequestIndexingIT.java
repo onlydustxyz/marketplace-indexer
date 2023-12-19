@@ -27,8 +27,6 @@ public class PullRequestIndexingIT extends IntegrationTest {
     @Autowired
     public PullRequestCommitsRepository pullRequestsCommitsRepository;
     @Autowired
-    public RepoCheckRunsRepository repoCheckRunsRepository;
-    @Autowired
     public PullRequestReviewsRepository pullRequestReviewsRepository;
     @Autowired
     public RepoRepository repoRepository;
@@ -53,7 +51,6 @@ public class PullRequestIndexingIT extends IntegrationTest {
         final var pr1257 = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1257.json"), RawPullRequest.class);
         final var pr1257Reviews = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1257_reviews.json"), RawCodeReview[].class));
         final var pr1257Commits = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1257_commits.json"), RawCommit[].class));
-        final var pr1257CheckRuns = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1257_check_runs.json"), RawCheckRuns.class);
         final var pr1257ClosingIssues = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1257_closing_issues.json"), RawPullRequestClosingIssues.class);
         final var issue78 = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/issues/78.json"), RawIssue.class);
 
@@ -75,7 +72,6 @@ public class PullRequestIndexingIT extends IntegrationTest {
         assertThat(repoRepository.findAll()).containsExactly(Repo.of(marketplaceFrontend));
         assertThat(pullRequestReviewsRepository.findAll()).containsExactly(PullRequestReview.of(pr1257.getId(), pr1257Reviews));
         assertThat(pullRequestsCommitsRepository.findAll()).containsExactly(PullRequestCommits.of(pr1257.getId(), pr1257Commits));
-        assertThat(repoCheckRunsRepository.findAll()).containsExactly(RepoCheckRuns.of(marketplaceFrontend.getId(), pr1257.getHead().getSha(), pr1257CheckRuns));
         assertThat(userRepository.findAll()).containsExactlyInAnyOrder(User.of(pierre), User.of(olivier), User.of(anthony), User.of(onlyDust));
         assertThat(userSocialAccountsRepository.findAll()).containsExactlyInAnyOrder(
                 UserSocialAccounts.of(pierre.getId(), pierreSocialAccounts),
@@ -115,7 +111,6 @@ public class PullRequestIndexingIT extends IntegrationTest {
         final var pr1258 = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1258.json"), RawPullRequest.class);
         final var pr1258Reviews = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1258_reviews.json"), RawCodeReview[].class));
         final var pr1258Commits = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1258_commits.json"), RawCommit[].class));
-        final var pr1258CheckRuns = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1258_check_runs.json"), RawCheckRuns.class);
 
         final var anthony = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
         final var pierre = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/pierre.json"), RawAccount.class);
@@ -131,7 +126,6 @@ public class PullRequestIndexingIT extends IntegrationTest {
         assertThat(pullRequestsRepository.findAll()).contains(PullRequest.of(marketplaceFrontend.getId(), pr1258));
         assertThat(pullRequestReviewsRepository.findAll()).contains(PullRequestReview.of(pr1258.getId(), pr1258Reviews));
         assertThat(pullRequestsCommitsRepository.findAll()).contains(PullRequestCommits.of(pr1258.getId(), pr1258Commits));
-        assertThat(repoCheckRunsRepository.findAll()).contains(RepoCheckRuns.of(marketplaceFrontend.getId(), pr1258.getHead().getSha(), pr1258CheckRuns));
         assertThat(userRepository.findAll()).contains(User.of(pierre), User.of(olivier), User.of(anthony), User.of(onlyDust));
 
         assertThat(contributionRepository.findAll().size()).isEqualTo(7);

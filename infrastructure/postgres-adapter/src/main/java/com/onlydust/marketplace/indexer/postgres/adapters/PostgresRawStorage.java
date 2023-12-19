@@ -23,7 +23,6 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     final PullRequestClosingIssueRepository pullRequestClosingIssueRepository;
     final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository;
     final PullRequestReviewsRepository pullRequestReviewsRepository;
-    final RepoCheckRunsRepository repoCheckRunsRepository;
 
     @Override
     public Optional<RawRepo> repo(Long repoId) {
@@ -81,11 +80,6 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     }
 
     @Override
-    public Optional<RawCheckRuns> checkRuns(Long repoId, String sha) {
-        return repoCheckRunsRepository.findById(new RepoCheckRuns.Id(repoId, sha)).map(RepoCheckRuns::getData);
-    }
-
-    @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         return pullRequestClosingIssueViewRepository.findById(new PullRequestClosingIssues.Id(repoOwner, repoName, pullRequestNumber))
                 .map(PullRequestClosingIssues::getData);
@@ -114,11 +108,6 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     @Override
     public void savePullRequestCommits(Long pullRequestId, List<RawCommit> commits) {
         pullRequestCommitsRepository.save(PullRequestCommits.of(pullRequestId, commits));
-    }
-
-    @Override
-    public void saveCheckRuns(Long repoId, String sha, RawCheckRuns checkRuns) {
-        repoCheckRunsRepository.save(RepoCheckRuns.of(repoId, sha, checkRuns));
     }
 
     @Override

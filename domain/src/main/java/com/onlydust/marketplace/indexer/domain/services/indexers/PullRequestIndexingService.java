@@ -1,8 +1,10 @@
 package com.onlydust.marketplace.indexer.domain.services.indexers;
 
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
-import com.onlydust.marketplace.indexer.domain.models.clean.*;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawCheckRuns;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanCodeReview;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanCommit;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
@@ -14,8 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import static java.util.Objects.isNull;
 
 @AllArgsConstructor
 @Slf4j
@@ -63,12 +63,6 @@ public class PullRequestIndexingService implements PullRequestIndexer {
                 })).filter(Objects::nonNull).toList();
     }
 
-    private List<CleanCheckRun> indexCheckRuns(Long repoId, String sha) {
-        LOGGER.debug("Indexing check runs for repo {} and sha {}", repoId, sha);
-        final var checkRuns = rawStorageReader.checkRuns(repoId, sha).map(RawCheckRuns::getCheckRuns).orElse(List.of());
-        return checkRuns.stream().map(CleanCheckRun::of).toList();
-    }
-
     private List<CleanIssue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         LOGGER.debug("Indexing closing issues for repo {} and pull request {}", repoOwner, pullRequestNumber);
         final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
@@ -99,7 +93,6 @@ public class PullRequestIndexingService implements PullRequestIndexer {
                     return null;
                 })).filter(Objects::nonNull).toList();
                 final var commits = indexPullRequestCommits(repo.getId(), pullRequest.getId(), prNumber);
-                final List<CleanCheckRun> checkRuns = isNull(pullRequest.getHead().getRepo()) ? List.of() : indexCheckRuns(pullRequest.getHead().getRepo().getId(), pullRequest.getHead().getSha());
                 final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName(), pullRequest.getNumber());
                 return CleanPullRequest.of(
                         pullRequest,
@@ -108,7 +101,6 @@ public class PullRequestIndexingService implements PullRequestIndexer {
                         codeReviews,
                         requestedReviewers,
                         commits,
-                        checkRuns,
                         closingIssues
                 );
             });

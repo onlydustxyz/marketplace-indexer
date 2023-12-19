@@ -81,3 +81,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000038_normalize_languages.sql
   - include:
       file: db/changelog/changelogs/00000039_add_github_repo_languages_fk.sql
+  - include:
+      file: db/changelog/changelogs/00000040_drop_ci_checks.sql

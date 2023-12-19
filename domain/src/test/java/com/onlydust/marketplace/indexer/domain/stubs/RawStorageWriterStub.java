@@ -16,7 +16,6 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     final Map<Long, List<RawSocialAccount>> userSocialAccounts = new HashMap<>();
     final Map<Long, List<RawCodeReview>> pullRequestReviews = new HashMap<>();
     final Map<Long, List<RawCommit>> pullRequestCommits = new HashMap<>();
-    final Map<Tuple, RawCheckRuns> checkRuns = new HashMap<>();
     final Map<Tuple, RawPullRequestClosingIssues> closingIssues = new HashMap<>();
     final Map<Long, List<RawPullRequest>> repoPullRequests = new HashMap<>();
     final Map<Long, List<RawIssue>> repoIssues = new HashMap<>();
@@ -91,11 +90,6 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     }
 
     @Override
-    public Optional<RawCheckRuns> checkRuns(Long repoId, String sha) {
-        return Optional.ofNullable(checkRuns.get(Tuple.tuple(repoId, sha)));
-    }
-
-    @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         return Optional.ofNullable(closingIssues.get(Tuple.tuple(repoOwner, repoName, pullRequestNumber)));
     }
@@ -132,10 +126,6 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
         Arrays.stream(issues).forEach(issue -> saveIssue(repoId, issue));
     }
 
-    public void feedWith(Long repoId, String sha, RawCheckRuns checkRuns) {
-        saveCheckRuns(repoId, sha, checkRuns);
-    }
-
     public void feedWith(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues) {
         this.closingIssues.put(Tuple.tuple(repoOwner, repoName, pullRequestNumber), closingIssues);
     }
@@ -164,11 +154,6 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     @Override
     public void savePullRequestCommits(Long pullRequestId, List<RawCommit> commits) {
         pullRequestCommits.put(pullRequestId, commits);
-    }
-
-    @Override
-    public void saveCheckRuns(Long repoId, String sha, RawCheckRuns checkRuns) {
-        this.checkRuns.put(Tuple.tuple(repoId, sha), checkRuns);
     }
 
     @Override
@@ -216,10 +201,6 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
 
     public Map<Long, List<RawCommit>> commits() {
         return pullRequestCommits;
-    }
-
-    public Map<Tuple, RawCheckRuns> checkRuns() {
-        return checkRuns;
     }
 
     public Map<Tuple, RawPullRequestClosingIssues> closingIssues() {
