@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @Tags(@Tag(name = "Users"))
 @AllArgsConstructor
@@ -18,8 +21,8 @@ public class EventsRestApi implements EventsApi {
 
     @Override
     public ResponseEntity<Void> onRepoLinkChanged(RepoLinkChangedEvent event) {
-        repoIndexingJobScheduler.addReposToRefresh(event.getLinkedRepoIds());
-        repoIndexingJobScheduler.removeReposToRefresh(event.getUnlinkedRepoIds());
+        repoIndexingJobScheduler.addReposToRefresh(Optional.ofNullable(event.getLinkedRepoIds()).orElse(List.of()));
+        repoIndexingJobScheduler.removeReposToRefresh(Optional.ofNullable(event.getUnlinkedRepoIds()).orElse(List.of()));
         return ResponseEntity.noContent().build();
     }
 }
