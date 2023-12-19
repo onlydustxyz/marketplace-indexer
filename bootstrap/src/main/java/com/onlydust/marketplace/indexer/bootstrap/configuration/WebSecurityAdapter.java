@@ -32,6 +32,7 @@ public class WebSecurityAdapter extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/v3/api-docs").permitAll()
                 .antMatchers(HttpMethod.GET, "/swagger-resources/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/github-app/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/actuator/health").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(apiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().authenticationEntryPoint(authEntryPoint)
