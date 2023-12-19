@@ -17,6 +17,7 @@
         <module>rest-api-adapter</module>
         <module>github-app-adapter</module>
         <module>cron-adapter</module>
+        <module>cli-adapter</module>
     </modules>
 
     <properties>

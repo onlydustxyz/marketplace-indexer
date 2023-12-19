@@ -16,6 +16,7 @@
 
     <modules>
         <module>postgres-adapter</module>
+        <module>api-client-adapter</module>
         <module>github-api-adapter</module>
     </modules>
 

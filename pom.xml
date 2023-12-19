@@ -9,8 +9,6 @@
         <module>infrastructure</module>
         <module>domain</module>
         <module>coverage</module>
-        <module>application/cli-adapter</module>
-        <module>infrastructure/api-client-adapter</module>
     </modules>
 
     <parent>
