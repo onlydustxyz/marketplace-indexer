@@ -23,6 +23,7 @@ public class GithubRepoLanguageEntity {
     String language;
     Long lineCount;
 
+    @EqualsAndHashCode
     public static class PrimaryKey implements Serializable {
         Long repoId;
         String language;
