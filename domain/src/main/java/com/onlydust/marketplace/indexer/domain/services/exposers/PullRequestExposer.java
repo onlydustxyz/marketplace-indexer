@@ -21,10 +21,6 @@ public class PullRequestExposer implements Exposer<CleanPullRequest> {
     public void expose(CleanPullRequest pullRequest) {
         final var fromPullRequest = Stream.of(pullRequest).map(GithubPullRequest::of).map(Contribution::of);
         final var fromCommits = pullRequest.getCommits().stream().map(commit -> GithubCommit.of(commit, pullRequest)).map(Contribution::of);
-        final var fromCodeReviewsPending = pullRequest.getReviews().stream()
-                .map(review -> GithubCodeReview.of(review, pullRequest))
-                .filter(codeReview -> !codeReview.getState().isCompleted())
-                .map(Contribution::of);
         final var fromCodeReviewsCompleted = pullRequest.getReviews().stream()
                 .map(review -> GithubCodeReview.of(review, pullRequest))
                 .filter(codeReview -> codeReview.getState().isCompleted())
@@ -33,7 +29,7 @@ public class PullRequestExposer implements Exposer<CleanPullRequest> {
                 .map(reviewer -> GithubCodeReview.of(reviewer, pullRequest))
                 .map(Contribution::of);
 
-        final var contributions = Stream.of(fromPullRequest, fromCommits, fromCodeReviewsPending, fromCodeReviewsCompleted, fromRequestedReviewers)
+        final var contributions = Stream.of(fromPullRequest, fromCommits, fromCodeReviewsCompleted, fromRequestedReviewers)
                 .flatMap(s -> s).toArray(Contribution[]::new);
 
         contributionStorage.deleteAllByRepoIdAndGithubNumber(pullRequest.getRepo().getId(), pullRequest.getNumber());
