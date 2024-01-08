@@ -85,3 +85,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000040_drop_ci_checks.sql
   - include:
       file: db/changelog/changelogs/00000041_remove_commented_code_reviews.sql
+  - include:
+      file: db/changelog/changelogs/00000042_remove_github_repos_languages_column.sql
