@@ -6,6 +6,8 @@ import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 
 import java.util.Optional;
 
@@ -22,6 +24,7 @@ public class InstallationEventsInboxJob extends Job {
             process(event.get());
     }
 
+    @Retryable(maxAttempts = 6, backoff = @Backoff(delay = 500, multiplier = 2))
     private void process(RawEvent event) {
         try {
             installationEventHandler.process(event.payload(RawInstallationEvent.class));
