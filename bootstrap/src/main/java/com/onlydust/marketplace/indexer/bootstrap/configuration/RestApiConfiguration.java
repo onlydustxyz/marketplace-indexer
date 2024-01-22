@@ -20,25 +20,17 @@ import org.springframework.context.annotation.Profile;
 @Profile("api")
 public class RestApiConfiguration {
     @Bean
-    public UsersRestApi usersRestApi(final UserIndexer cachedUserIndexer,
-                                     final AuthorizationContext authorizationContext,
-                                     final Exposer<CleanAccount> userExposer,
-                                     final UserIndexingJobStorage userIndexingJobStorage) {
-        return new UsersRestApi(
-                new UserExposerIndexer(cachedUserIndexer, userExposer),
-                authorizationContext,
-                userIndexingJobStorage);
+    public UsersRestApi usersRestApi(final UserIndexer cachedUserIndexer, final AuthorizationContext authorizationContext, final Exposer<CleanAccount> userExposer, final UserIndexingJobStorage userIndexingJobStorage) {
+        return new UsersRestApi(new UserExposerIndexer(cachedUserIndexer, userExposer), authorizationContext, userIndexingJobStorage);
     }
 
     @Bean
-    public IssuesRestApi issuesRestApi(final IssueIndexer cachedIssueIndexer,
-                                       final AuthorizationContext authorizationContext) {
+    public IssuesRestApi issuesRestApi(final IssueIndexer cachedIssueIndexer, final AuthorizationContext authorizationContext) {
         return new IssuesRestApi(cachedIssueIndexer, authorizationContext);
     }
 
     @Bean
-    public PullRequestsRestApi pullRequestRestApi(final PullRequestIndexer cachedPullRequestIndexer,
-                                                  final AuthorizationContext authorizationContext) {
+    public PullRequestsRestApi pullRequestRestApi(final PullRequestIndexer cachedPullRequestIndexer, final AuthorizationContext authorizationContext) {
         return new PullRequestsRestApi(cachedPullRequestIndexer, authorizationContext);
     }
 
@@ -48,8 +40,8 @@ public class RestApiConfiguration {
     }
 
     @Bean
-    public EventsRestApi eventsRestApi(final RepoIndexingJobScheduler repoIndexingJobScheduler) {
-        return new EventsRestApi(repoIndexingJobScheduler);
+    public EventsRestApi eventsRestApi(final RepoIndexingJobScheduler repoIndexingJobScheduler, final UserIndexer diffUserIndexer) {
+        return new EventsRestApi(repoIndexingJobScheduler, diffUserIndexer);
     }
 
     @Bean
