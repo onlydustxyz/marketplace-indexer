@@ -41,6 +41,31 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
+  /api/v1/events/on-user-changed:
+    post:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Events
+      summary: Notify the indexer upon user profile change
+      operationId: onUserChanged
+      description: |
+        Notify the indexer upon user profile change (login, avatar)
+      requestBody:
+        description: The event payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserChangedEvent'
+      responses:
+        "204":
+          description: 'The users have been refreshed'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
   /api/v1/indexes/users/{userId}:
     put:
       security:
@@ -297,6 +322,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RepoId'
+
+    UserChangedEvent:
+      type: object
+      properties:
+        userIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserId'
 
     # RESPONSES ================================================================
     RepoListResponse:
