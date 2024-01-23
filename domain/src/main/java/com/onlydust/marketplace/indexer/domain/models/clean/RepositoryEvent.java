@@ -14,17 +14,15 @@ public class RepositoryEvent extends Event {
     CleanRepo repository;
 
     public static RepositoryEvent of(RawRepositoryEvent event) {
-        return new RepositoryEvent(
-                Action.of(event.getAction()),
-                CleanRepo.of(event.getRepository())
-        );
+        return new RepositoryEvent(Action.of(event.getAction()), CleanRepo.of(event.getRepository()));
     }
 
     public enum Action {
-        PUBLICIZED, PRIVATIZED, DELETED;
+        PUBLICIZED, PRIVATIZED, DELETED, CREATED;
 
         public static Action of(String rawAction) {
             return switch (rawAction.toUpperCase()) {
+                case "CREATED" -> CREATED;
                 case "PUBLICIZED" -> PUBLICIZED;
                 case "PRIVATIZED" -> PRIVATIZED;
                 case "DELETED" -> DELETED;

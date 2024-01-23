@@ -28,11 +28,13 @@ public class RepositoryEventProcessorService implements EventHandler<RawReposito
 
         if (RepositoryEvent.Action.DELETED.equals(event.getAction())) {
             githubRepoStorage.save(GithubRepo.of(event.getRepository()).deleted());
-        } else {
+        } else if (!RepositoryEvent.Action.CREATED.equals(event.getAction())) {
             repoIndexer.indexRepo(event.getRepository().getId());
         }
 
-        if (event.getAction() == null) return;
+        if (event.getAction() == null)
+            return;
+
         switch (event.getAction()) {
             case PRIVATIZED -> repoIndexingJobStorage.setPrivate(event.getRepository().getId());
             case PUBLICIZED -> repoIndexingJobStorage.setPublic(event.getRepository().getId());
