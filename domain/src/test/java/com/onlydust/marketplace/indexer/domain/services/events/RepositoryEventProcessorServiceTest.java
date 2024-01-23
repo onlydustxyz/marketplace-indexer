@@ -73,4 +73,19 @@ class RepositoryEventProcessorServiceTest {
         verify(repoIndexingJobStorage).delete(493795808L);
         verify(rawStorageWriter).deleteRepo(493795808L);
     }
+
+
+    @Test
+    void should_do_nothing_upon_repo_being_created() {
+        // Given
+        final var event = RawStorageWriterStub.load("/github/events/repository/cairo-streams-created.json", RawRepositoryEvent.class);
+
+        // When
+        repositoryEventProcessorService.process(event);
+
+        // Then
+        verify(githubRepoStorage, never()).save(any());
+        verify(repoIndexer, never()).indexRepo(any());
+        verify(repoIndexingJobStorage, never()).startJob(any());
+    }
 }
