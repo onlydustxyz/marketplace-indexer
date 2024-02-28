@@ -1,0 +1,15 @@
+{
+  "request": {
+    "url": "/redirected/repositories/380954304",
+    "method": "GET",
+    "headers": {
+      "Authorization": {
+        "matches": "Bearer (GITHUB_PAT|GITHUB_INSTALLATION_TOKEN)"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "repos/bretzel-app.json"
+  }
+}
