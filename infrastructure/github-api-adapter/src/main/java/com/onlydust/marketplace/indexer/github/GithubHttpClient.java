@@ -3,7 +3,6 @@ package com.onlydust.marketplace.indexer.github;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.HttpStatus;
-import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,6 +14,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.internalServerError;
 
 
 @Slf4j
@@ -29,7 +30,7 @@ public class GithubHttpClient {
         try {
             return objectMapper.readValue(Sanitizer.sanitize(data), classType);
         } catch (IOException e) {
-            throw OnlyDustException.internalServerError("Unable to deserialize github response", e);
+            throw internalServerError("Unable to deserialize github response", e);
         }
     }
 
@@ -38,7 +39,7 @@ public class GithubHttpClient {
             case 200, 201 -> Optional.of(decodeBody(response.body(), responseClass));
             case 403, 404, 422, 451 -> Optional.empty();
             default ->
-                    throw OnlyDustException.internalServerError("Received incorrect status (" + response.statusCode() + ") when fetching github API");
+                    throw internalServerError("Received incorrect status (%s) when fetching github API".formatted(response.statusCode()));
         };
     }
 
@@ -55,9 +56,7 @@ public class GithubHttpClient {
     }
 
     private HttpResponse<byte[]> fetch(String method, URI uri, HttpRequest.BodyPublisher bodyPublisher) {
-        final var requestBuilder = HttpRequest.newBuilder()
-                .uri(overrideHost(uri))
-                .method(method, bodyPublisher);
+        final var requestBuilder = HttpRequest.newBuilder().uri(overrideHost(uri)).method(method, bodyPublisher);
 
         tokenProvider.accessToken().ifPresent(token -> requestBuilder.header("Authorization", "Bearer " + token));
 
@@ -73,33 +72,35 @@ public class GithubHttpClient {
                     if (response.statusCode() == HttpStatus.SC_BAD_GATEWAY) {
                         throw new IOException("502 BAD GATEWAY received");
                     }
-                    return response;
+                    return isRedirect(response) ? redirect(request, response) : response;
                 } catch (IOException e) {
                     LOGGER.warn("Error while fetching github ({}), will retry in {}ms", request.uri(), config.getRetryInterval(), e);
                     Thread.sleep(config.getRetryInterval());
                     LOGGER.info("Retry {}/{}", retryCount + 1, config.getMaxRetries());
                 }
             } catch (InterruptedException e) {
-                throw OnlyDustException.internalServerError("Github fetch (" + request.uri() + ") interrupted", e);
+                throw internalServerError("Github fetch (" + request.uri() + ") interrupted", e);
             }
         }
-        throw OnlyDustException.internalServerError("Unable to fetch Github (" + request.uri() + "). Max retry reached");
+        throw internalServerError("Unable to fetch Github (" + request.uri() + "). Max retry reached");
+    }
+
+    private HttpResponse<byte[]> redirect(HttpRequest request, HttpResponse<byte[]> response) {
+        final var location = response.headers().firstValue("Location").orElseThrow(() -> internalServerError("Redirect without location header"));
+        final var redirectRequest = HttpRequest.newBuilder(request, (n, v) -> true).uri(overrideHost(URI.create(location))).build();
+        return fetch(redirectRequest);
+    }
+
+    private boolean isRedirect(HttpResponse<?> httpResponse) {
+        return httpResponse.statusCode() == HttpStatus.SC_MOVED_PERMANENTLY || httpResponse.statusCode() == HttpStatus.SC_MOVED_TEMPORARILY;
     }
 
     private URI overrideHost(URI uri) {
         final var baseUri = URI.create(config.getBaseUri());
         try {
-            return new URI(
-                    baseUri.getScheme(),
-                    baseUri.getUserInfo(),
-                    baseUri.getHost(),
-                    baseUri.getPort(),
-                    uri.getPath(),
-                    uri.getQuery(),
-                    uri.getFragment()
-            );
+            return new URI(baseUri.getScheme(), baseUri.getUserInfo(), baseUri.getHost(), baseUri.getPort(), uri.getPath(), uri.getQuery(), uri.getFragment());
         } catch (URISyntaxException e) {
-            throw OnlyDustException.internalServerError("Unable to override host in URI", e);
+            throw internalServerError("Unable to override host in URI", e);
         }
     }
 
@@ -114,7 +115,7 @@ public class GithubHttpClient {
             final var httpResponse = fetch("POST", URI.create(config.getBaseUri() + "/graphql"), HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body)));
             return decode(httpResponse, responseClass);
         } catch (JsonProcessingException e) {
-            throw OnlyDustException.internalServerError("Unable to serialize graphql request body", e);
+            throw internalServerError("Unable to serialize graphql request body", e);
         }
     }
 
