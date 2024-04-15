@@ -44,13 +44,21 @@ public class GithubIssueEntity {
     String authorHtmlUrl;
     String authorAvatarUrl;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "github_issues_assignees",
             schema = "indexer_exp",
             joinColumns = @JoinColumn(name = "issue_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     List<GithubAccountEntity> assignees;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "github_issues_labels",
+            schema = "indexer_exp",
+            joinColumns = @JoinColumn(name = "issue_id"),
+            inverseJoinColumns = @JoinColumn(name = "label_id"))
+    List<GithubLabelEntity> labels;
 
     public static GithubIssueEntity of(GithubIssue issue) {
         return GithubIssueEntity.builder()
@@ -72,6 +80,7 @@ public class GithubIssueEntity {
                 .authorHtmlUrl(issue.getAuthor().getHtmlUrl())
                 .authorAvatarUrl(issue.getAuthor().getAvatarUrl())
                 .assignees(issue.getAssignees().stream().map(GithubAccountEntity::of).toList())
+                .labels(issue.getLabels().stream().map(GithubLabelEntity::of).toList())
                 .build();
     }
 
@@ -88,6 +97,7 @@ public class GithubIssueEntity {
                 .body(issue.getBody())
                 .commentsCount(issue.getCommentsCount())
                 .assignees(issue.getAssignees().stream().map(GithubAccountEntity::of).toList())
+                .labels(issue.getLabels().stream().map(GithubLabelEntity::of).toList())
                 .build();
     }
 
