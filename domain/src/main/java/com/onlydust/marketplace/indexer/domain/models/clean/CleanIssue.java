@@ -23,6 +23,7 @@ public class CleanIssue {
     String htmlUrl;
     String body;
     List<CleanAccount> assignees;
+    List<CleanLabel> labels;
     Integer comments;
 
     public static CleanIssue of(RawIssue issue, CleanRepo repo, CleanAccount author, List<CleanAccount> assignees) {
@@ -40,6 +41,7 @@ public class CleanIssue {
                 .body(issue.getBody())
                 .assignees(assignees)
                 .comments(issue.getComments())
+                .labels(issue.getLabels().stream().map(CleanLabel::of).toList())
                 .build();
     }
 

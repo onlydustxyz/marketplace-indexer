@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubIssueEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubLabelEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.RepoContributorEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository;
@@ -9,6 +10,9 @@ import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoCon
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
+
+import static java.util.Comparator.comparing;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GithubIssueEventsIT extends IntegrationTest {
@@ -24,6 +28,7 @@ public class GithubIssueEventsIT extends IntegrationTest {
     RepoContributorRepository repoContributorRepository;
 
     @Test
+    @Transactional
     void should_handle_issue_events() {
         // When
         processEventsFromPaths("issues",
@@ -34,14 +39,36 @@ public class GithubIssueEventsIT extends IntegrationTest {
         assertThat(issue.getId()).isEqualTo(ISSUE_ID);
         assertThat(issue.getNumber()).isEqualTo(78);
         assertThat(issue.getTitle()).isEqualTo("handle github errors gracefully");
-        assertThat(issue.getBody()).isEqualTo("when github returns 404/500/403/... ignore the error and enter best effort mode with not all of the data returned\n");
+        assertThat(issue.getBody()).isEqualTo(
+                "when github returns 404/500/403/... ignore the error and enter best effort mode with not all of the data returned\n");
         assertThat(issue.getHtmlUrl()).isEqualTo("https://github.com/onlydustxyz/marketplace-frontend/issues/78");
         assertThat(issue.getStatus()).isEqualTo(GithubIssueEntity.Status.COMPLETED);
-        assertThat(issue.getCreatedAt().toString()).isEqualTo("2022-07-12 09:55:06.0");
+        assertThat(issue.getCreatedAt().toString()).isEqualTo("Tue Jul 12 09:55:06 UTC 2022");
         assertThat(issue.getAuthor().getLogin()).isEqualTo("AnthonyBuisset");
         assertThat(issue.getRepo().getName()).isEqualTo("marketplace-frontend");
         assertThat(issue.getAssignees()).hasSize(1);
         assertThat(issue.getAssignees().get(0).getLogin()).isEqualTo("AnthonyBuisset");
+        assertThat(issue.getLabels()).hasSize(6);
+
+        final var labels = issue.getLabels().stream().sorted(comparing(GithubLabelEntity::getId)).toList();
+        assertThat(labels.get(0).getId()).isEqualTo(4204558788L);
+        assertThat(labels.get(0).getName()).isEqualTo("Duration: under a day");
+        assertThat(labels.get(0).getDescription()).isEqualTo("wil take up to one day");
+        assertThat(labels.get(1).getId()).isEqualTo(4204558791L);
+        assertThat(labels.get(1).getName()).isEqualTo("Difficulty: easy");
+        assertThat(labels.get(1).getDescription()).isEqualTo("anybody can understand it");
+        assertThat(labels.get(2).getId()).isEqualTo(4204558792L);
+        assertThat(labels.get(2).getName()).isEqualTo("Context: isolated");
+        assertThat(labels.get(2).getDescription()).isEqualTo("no previous knowledge of the codebase required");
+        assertThat(labels.get(3).getId()).isEqualTo(4204558796L);
+        assertThat(labels.get(3).getName()).isEqualTo("Type: feature");
+        assertThat(labels.get(3).getDescription()).isEqualTo("a new feature to implement");
+        assertThat(labels.get(4).getId()).isEqualTo(4204558798L);
+        assertThat(labels.get(4).getName()).isEqualTo("State: open");
+        assertThat(labels.get(4).getDescription()).isEqualTo("ready for contribution");
+        assertThat(labels.get(5).getId()).isEqualTo(4204558800L);
+        assertThat(labels.get(5).getName()).isEqualTo("Techno: rust");
+        assertThat(labels.get(5).getDescription()).isEqualTo("rust");
 
         final var contributions = contributionRepository.findAll();
         assertThat(contributions).hasSize(1);
