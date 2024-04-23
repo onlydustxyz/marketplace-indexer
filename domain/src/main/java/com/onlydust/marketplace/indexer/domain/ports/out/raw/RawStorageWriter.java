@@ -14,7 +14,7 @@ public interface RawStorageWriter {
     void savePullRequestReviews(Long pullRequestId, List<RawCodeReview> codeReview);
 
     void savePullRequestCommits(Long pullRequestId, List<RawCommit> commits);
-    
+
     void saveIssue(Long repoId, RawIssue issue);
 
     void saveRepo(RawRepo repo);
@@ -24,4 +24,6 @@ public interface RawStorageWriter {
     void saveRepoLanguages(Long repoId, RawLanguages languages);
 
     void saveClosingIssues(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues);
+
+    void deleteIssue(Long id);
 }

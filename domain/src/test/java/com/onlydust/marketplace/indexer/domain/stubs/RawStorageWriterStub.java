@@ -183,6 +183,11 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
         this.closingIssues.put(Tuple.tuple(repoOwner, repoName, pullRequestNumber), closingIssues);
     }
 
+    @Override
+    public void deleteIssue(Long id) {
+        repoIssues.values().forEach(issues -> issues.removeIf(issue -> issue.getId().equals(id)));
+    }
+
     public List<RawRepo> repos() {
         return repos;
     }
