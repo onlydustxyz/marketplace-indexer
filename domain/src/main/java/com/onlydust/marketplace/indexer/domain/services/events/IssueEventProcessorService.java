@@ -31,8 +31,8 @@ public class IssueEventProcessorService implements EventHandler<RawIssueEvent> {
 
         if (action.equals("transferred")) {
             rawStorageWriter.deleteIssue(event.getIssue().getId());
-            issueStorage.delete(event.getIssue().getId());
             contributionStorage.deleteAllByRepoIdAndGithubNumber(event.getRepository().getId(), event.getIssue().getNumber());
+            issueStorage.delete(event.getIssue().getId());
         } else {
             githubAppContext.withGithubApp(event.getInstallation().getId(), () ->
                     issueIndexer.indexIssue(event.getRepository().getOwner().getLogin(), event.getRepository().getName(), event.getIssue().getNumber())
