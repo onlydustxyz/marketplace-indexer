@@ -152,8 +152,11 @@ public class DomainConfiguration {
     @Bean
     public EventHandler<RawIssueEvent> issueEventHandler(final IssueIndexer liveIssueIndexer,
                                                          final Exposer<CleanRepo> repoContributorsExposer,
-                                                         final GithubAppContext githubAppContext) {
-        return new IssueEventProcessorService(liveIssueIndexer, repoContributorsExposer, githubAppContext);
+                                                         final GithubAppContext githubAppContext,
+                                                         final RawStorageWriter rawStorageWriter,
+                                                         final IssueStorage issueStorage,
+                                                         final ContributionStorage contributionStorage) {
+        return new IssueEventProcessorService(liveIssueIndexer, repoContributorsExposer, githubAppContext, rawStorageWriter, issueStorage, contributionStorage);
     }
 
     @Bean
@@ -357,7 +360,8 @@ public class DomainConfiguration {
             final GithubAppContext githubAppContext,
             final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
-        return new RepoRefreshJobService(applicationTaskExecutor, repoIndexingJobTriggerRepository, diffFullRepoIndexer, liveRepoIndexer, githubAppContext, repoRefreshJobConfig);
+        return new RepoRefreshJobService(applicationTaskExecutor, repoIndexingJobTriggerRepository, diffFullRepoIndexer, liveRepoIndexer, githubAppContext,
+                repoRefreshJobConfig);
     }
 
     @Bean
@@ -369,7 +373,8 @@ public class DomainConfiguration {
             final GithubAppContext githubAppContext,
             final RepoRefreshJobService.Config repoRefreshJobConfig
     ) {
-        return new RepoRefreshJobService(applicationTaskExecutor, repoIndexingJobTriggerRepository, cacheOnlyFullRepoIndexer, cacheOnlyRepoIndexer, githubAppContext, repoRefreshJobConfig);
+        return new RepoRefreshJobService(applicationTaskExecutor, repoIndexingJobTriggerRepository, cacheOnlyFullRepoIndexer, cacheOnlyRepoIndexer,
+                githubAppContext, repoRefreshJobConfig);
     }
 
     @Bean

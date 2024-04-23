@@ -11,6 +11,7 @@ import lombok.Value;
 @NoArgsConstructor(force = true)
 @ToString(callSuper = true)
 public class RawIssueEvent extends JsonDocument {
+    String action;
     RawIssue issue;
     RawRepo repository;
     RawInstallation installation;

@@ -17,4 +17,9 @@ public class PostgresIssueStorage implements IssueStorage {
                 .orElse(GithubIssueEntity.of(issue));
         issueRepository.save(entity);
     }
+
+    @Override
+    public void delete(Long id) {
+        issueRepository.deleteById(id);
+    }
 }

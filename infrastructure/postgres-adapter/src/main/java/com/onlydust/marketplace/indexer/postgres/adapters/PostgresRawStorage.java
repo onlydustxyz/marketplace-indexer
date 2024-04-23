@@ -134,4 +134,9 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     public void saveClosingIssues(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues) {
         pullRequestClosingIssueRepository.save(PullRequestClosingIssues.of(repoOwner, repoName, pullRequestNumber, closingIssues));
     }
+
+    @Override
+    public void deleteIssue(Long id) {
+        issueRepository.deleteById(id);
+    }
 }
