@@ -89,3 +89,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000042_remove_github_repos_languages_column.sql
   - include:
       file: db/changelog/changelogs/00000043_create_github_labels_table.sql
+  - include:
+      file: db/changelog/changelogs/00000044_create_raw_pull_request_diff.sql
