@@ -38,7 +38,9 @@ public class IndexingServiceTest {
     final RawIssue issue78 = RawStorageWriterStub.load("/github/repos/marketplace-frontend/issues/78.json", RawIssue.class);
     final RawCodeReview[] pr1257Reviews = RawStorageWriterStub.load("/github/repos/marketplace-frontend/pulls/1257_reviews.json", RawCodeReview[].class);
     final RawCommit[] pr1257Commits = RawStorageWriterStub.load("/github/repos/marketplace-frontend/pulls/1257_commits.json", RawCommit[].class);
-    final RawPullRequestClosingIssues pr1257ClosingIssues = RawStorageWriterStub.load("/github/repos/marketplace-frontend/pulls/1257_closing_issues.json", RawPullRequestClosingIssues.class);
+    final RawPullRequestDiff pr1257Diff = RawStorageWriterStub.load("/github/repos/marketplace-frontend/pulls/1257_diff.json", RawPullRequestDiff.class);
+    final RawPullRequestClosingIssues pr1257ClosingIssues = RawStorageWriterStub.load("/github/repos/marketplace-frontend/pulls/1257_closing_issues.json",
+            RawPullRequestClosingIssues.class);
     final RawRepo marketplaceFrontend = RawStorageWriterStub.load("/github/repos/marketplace-frontend.json", RawRepo.class);
     final RawLanguages marketplaceFrontendLanguages = RawStorageWriterStub.load("/github/repos/marketplace-frontend/languages.json", RawLanguages.class);
     final RawRepo marketplaceBackend = RawStorageWriterStub.load("/github/repos/marketplace-backend.json", RawRepo.class);
@@ -59,7 +61,8 @@ public class IndexingServiceTest {
             new PullRequestIndexingService(rawStorageReader, userIndexingService, repoIndexingService, issueIndexer),
             new PullRequestExposer(contributionRepository, pullRequestStorage)
     );
-    final FullRepoIndexingService fullRepoIndexingService = new FullRepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer, repoIndexingService);
+    final FullRepoIndexingService fullRepoIndexingService = new FullRepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer,
+            repoIndexingService);
 
     @BeforeEach
     void setup() {
@@ -76,6 +79,7 @@ public class IndexingServiceTest {
         rawStorageReaderStub.feedWith("onlydustxyz", "marketplace-frontend", 1257L, pr1257ClosingIssues);
         rawStorageReaderStub.feedWith(pr1257.getId(), pr1257Reviews);
         rawStorageReaderStub.feedWith(pr1257.getId(), pr1257Commits);
+        rawStorageReaderStub.feedWith(pr1257.getId(), pr1257Diff);
     }
 
     @Test
@@ -108,9 +112,11 @@ public class IndexingServiceTest {
         assertCachedReposAre(marketplaceFrontend, marketplaceFrontend);
         assertCachedRepoPullRequestsAre(Map.of(marketplaceFrontend.getId(), List.of(pr1257)));
         assertCachedRepoIssuesAre(Map.of(marketplaceFrontend.getId(), List.of(issue78)));
-        assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), pr1257.getNumber()), pr1257ClosingIssues));
+        assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), pr1257.getNumber()),
+                pr1257ClosingIssues));
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
         assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
+        assertCachedPullRequestDiffAre(Map.of(pr1257.getId(), pr1257Diff));
         assertCachedUsersAre(
                 onlyDust, // as PR repo owner
                 anthony, // as PR author
@@ -172,7 +178,8 @@ public class IndexingServiceTest {
                 issue78, // as pr 1257 closing issue
                 issue78  // as repo issue
         )));
-        assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), pr1257.getNumber()), pr1257ClosingIssues));
+        assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), pr1257.getNumber()),
+                pr1257ClosingIssues));
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
         assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
         assertCachedUsersAre(
@@ -207,7 +214,8 @@ public class IndexingServiceTest {
         assertThat(repo.getLanguages().get("Rust")).isEqualTo(817684);
 
         assertCachedReposAre(marketplaceBackend, marketplaceFrontend);
-        assertCachedRepoLanguagesAre(Map.of(marketplaceFrontend.getId(), marketplaceFrontendLanguages, marketplaceBackend.getId(), marketplaceBackendLanguages));
+        assertCachedRepoLanguagesAre(Map.of(marketplaceFrontend.getId(), marketplaceFrontendLanguages, marketplaceBackend.getId(),
+                marketplaceBackendLanguages));
         assertCachedRepoPullRequestsAre(Map.of());
         assertCachedRepoIssuesAre(Map.of());
         assertCachedClosingIssuesAre(Map.of());
@@ -292,6 +300,10 @@ public class IndexingServiceTest {
 
     private void assertCachedCommitsAre(Map<Long, List<RawCommit>> expected) {
         assertThat(rawStorageRepository.commits()).isEqualTo(expected);
+    }
+
+    private void assertCachedPullRequestDiffAre(Map<Long, RawPullRequestDiff> expected) {
+        assertThat(rawStorageRepository.diffs()).isEqualTo(expected);
     }
 
     private void assertCachedClosingIssuesAre(Map<Tuple, RawPullRequestClosingIssues> expected) {

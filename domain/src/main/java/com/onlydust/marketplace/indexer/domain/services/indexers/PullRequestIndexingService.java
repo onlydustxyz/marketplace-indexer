@@ -1,10 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.services.indexers;
 
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanCodeReview;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanCommit;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
+import com.onlydust.marketplace.indexer.domain.models.clean.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
@@ -63,6 +60,16 @@ public class PullRequestIndexingService implements PullRequestIndexer {
                 })).filter(Objects::nonNull).toList();
     }
 
+    private CleanPullRequestDiff indexPullRequestDiff(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        LOGGER.debug("Indexing pull request diff for repo {} and pull request {}", repoId, pullRequestNumber);
+        return rawStorageReader.pullRequestDiff(repoId, pullRequestId, pullRequestNumber)
+                .map(CleanPullRequestDiff::of)
+                .orElseGet(() -> {
+                    LOGGER.warn("Unable to fetch pull request diff");
+                    return null;
+                });
+    }
+
     private List<CleanIssue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         LOGGER.debug("Indexing closing issues for repo {} and pull request {}", repoOwner, pullRequestNumber);
         final var closingIssues = rawStorageReader.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
@@ -84,16 +91,20 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     public Optional<CleanPullRequest> indexPullRequest(String repoOwner, String repoName, Long prNumber) {
         LOGGER.debug("Indexing pull request {} for repo {}/{}", prNumber, repoOwner, repoName);
         return repoIndexer.indexRepo(repoOwner, repoName).flatMap(repo -> {
-            final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber).orElseThrow(() -> OnlyDustException.notFound("Pull request %d/%d not found".formatted(repo.getId(), prNumber)));
+            final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber)
+                    .orElseThrow(() -> OnlyDustException.notFound(("Pull request %d/%d not found").formatted(repo.getId(), prNumber)));
 
             return userIndexer.indexUser(pullRequest.getAuthor().getId()).map(author -> {
                 final var codeReviews = indexPullRequestReviews(repo.getId(), pullRequest.getId(), prNumber);
-                final var requestedReviewers = pullRequest.getRequestedReviewers().stream().map(reviewer -> userIndexer.indexUser(reviewer.getId()).orElseGet(() -> {
-                    LOGGER.warn("User {} not found, skipping requested reviewer {}", reviewer.getId(), reviewer.getLogin());
-                    return null;
-                })).filter(Objects::nonNull).toList();
+                final var requestedReviewers =
+                        pullRequest.getRequestedReviewers().stream().map(reviewer -> userIndexer.indexUser(reviewer.getId()).orElseGet(() -> {
+                            LOGGER.warn("User {} not found, skipping requested reviewer {}", reviewer.getId(), reviewer.getLogin());
+                            return null;
+                        })).filter(Objects::nonNull).toList();
                 final var commits = indexPullRequestCommits(repo.getId(), pullRequest.getId(), prNumber);
-                final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName(), pullRequest.getNumber());
+                final var diff = indexPullRequestDiff(repo.getId(), pullRequest.getId(), prNumber);
+                final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName()
+                        , pullRequest.getNumber());
                 return CleanPullRequest.of(
                         pullRequest,
                         repo,
@@ -101,7 +112,8 @@ public class PullRequestIndexingService implements PullRequestIndexer {
                         codeReviews,
                         requestedReviewers,
                         commits,
-                        closingIssues
+                        closingIssues,
+                        diff
                 );
             });
         });

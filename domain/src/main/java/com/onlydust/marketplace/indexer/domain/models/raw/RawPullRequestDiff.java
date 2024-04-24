@@ -15,6 +15,6 @@ import java.util.List;
 public class RawPullRequestDiff extends JsonDocument {
     List<FileStat> modifiedFiles;
 
-    public record FileStat(String filename, Integer linesAdded, Integer linesDeleted) {
+    public record FileStat(String path, Integer linesAdded, Integer linesDeleted) {
     }
 }

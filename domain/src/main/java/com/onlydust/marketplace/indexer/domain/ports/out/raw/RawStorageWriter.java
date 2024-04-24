@@ -15,6 +15,8 @@ public interface RawStorageWriter {
 
     void savePullRequestCommits(Long pullRequestId, List<RawCommit> commits);
 
+    void savePullRequestDiff(Long pullRequestId, RawPullRequestDiff diff);
+
     void saveIssue(Long repoId, RawIssue issue);
 
     void saveRepo(RawRepo repo);

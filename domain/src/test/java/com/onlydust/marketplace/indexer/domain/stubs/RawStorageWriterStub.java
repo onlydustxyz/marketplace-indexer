@@ -16,6 +16,7 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     final Map<Long, List<RawSocialAccount>> userSocialAccounts = new HashMap<>();
     final Map<Long, List<RawCodeReview>> pullRequestReviews = new HashMap<>();
     final Map<Long, List<RawCommit>> pullRequestCommits = new HashMap<>();
+    final Map<Long, RawPullRequestDiff> pullRequestDiffs = new HashMap<>();
     final Map<Tuple, RawPullRequestClosingIssues> closingIssues = new HashMap<>();
     final Map<Long, List<RawPullRequest>> repoPullRequests = new HashMap<>();
     final Map<Long, List<RawIssue>> repoIssues = new HashMap<>();
@@ -90,6 +91,11 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     }
 
     @Override
+    public Optional<RawPullRequestDiff> pullRequestDiff(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        return Optional.ofNullable(pullRequestDiffs.get(pullRequestId));
+    }
+
+    @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         return Optional.ofNullable(closingIssues.get(Tuple.tuple(repoOwner, repoName, pullRequestNumber)));
     }
@@ -116,6 +122,10 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
 
     public void feedWith(Long pullRequestId, RawCommit... commits) {
         savePullRequestCommits(pullRequestId, Arrays.stream(commits).toList());
+    }
+
+    public void feedWith(Long pullRequestId, RawPullRequestDiff diff) {
+        savePullRequestDiff(pullRequestId, diff);
     }
 
     public void feedWith(Long repoId, RawPullRequest... pullRequests) {
@@ -154,6 +164,11 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     @Override
     public void savePullRequestCommits(Long pullRequestId, List<RawCommit> commits) {
         pullRequestCommits.put(pullRequestId, commits);
+    }
+
+    @Override
+    public void savePullRequestDiff(Long pullRequestId, RawPullRequestDiff diff) {
+        pullRequestDiffs.put(pullRequestId, diff);
     }
 
     @Override
@@ -206,6 +221,10 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
 
     public Map<Long, List<RawCommit>> commits() {
         return pullRequestCommits;
+    }
+
+    public Map<Long, RawPullRequestDiff> diffs() {
+        return pullRequestDiffs;
     }
 
     public Map<Tuple, RawPullRequestClosingIssues> closingIssues() {

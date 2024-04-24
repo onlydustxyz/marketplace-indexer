@@ -20,6 +20,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     final RepoLanguagesRepository repoLanguagesRepository;
     final UserSocialAccountsRepository userSocialAccountsRepository;
     final PullRequestCommitsRepository pullRequestCommitsRepository;
+    final PullRequestDiffRepository pullRequestDiffRepository;
     final PullRequestClosingIssueRepository pullRequestClosingIssueRepository;
     final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository;
     final PullRequestReviewsRepository pullRequestReviewsRepository;
@@ -108,6 +109,11 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     @Override
     public void savePullRequestCommits(Long pullRequestId, List<RawCommit> commits) {
         pullRequestCommitsRepository.save(RawPullRequestCommitsEntity.of(pullRequestId, commits));
+    }
+
+    @Override
+    public void savePullRequestDiff(Long pullRequestId, RawPullRequestDiff diff) {
+        pullRequestDiffRepository.save(RawPullRequestDiffEntity.of(pullRequestId, diff));
     }
 
     @Override
