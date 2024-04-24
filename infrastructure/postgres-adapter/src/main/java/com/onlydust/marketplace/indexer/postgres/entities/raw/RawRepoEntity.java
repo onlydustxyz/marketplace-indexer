@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @Table(name = "repos", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @SQLInsert(sql = "INSERT INTO indexer_raw.repos (data, deleted, name, owner, id) VALUES (?, ?, ?, ?, ?) ON CONFLICT DO NOTHING")
-public class Repo {
+public class RawRepoEntity {
     @Id
     Long id;
 
@@ -35,7 +35,7 @@ public class Repo {
     @Builder.Default
     Boolean deleted = Boolean.FALSE;
 
-    public static Repo of(RawRepo repo) {
-        return Repo.builder().id(repo.getId()).owner(repo.getOwner().getLogin()).name(repo.getName()).data(repo).build();
+    public static RawRepoEntity of(RawRepo repo) {
+        return RawRepoEntity.builder().id(repo.getId()).owner(repo.getOwner().getLogin()).name(repo.getName()).data(repo).build();
     }
 }

@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawCommit;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawCodeReview;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.SQLInsert;
@@ -19,17 +19,17 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Table(name = "pull_request_commits", schema = "indexer_raw")
+@Table(name = "pull_request_reviews", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-@SQLInsert(sql = "INSERT INTO indexer_raw.pull_request_commits (data, pull_request_id) VALUES (?, ?) ON CONFLICT DO NOTHING")
-public class PullRequestCommits {
+@SQLInsert(sql = "INSERT INTO indexer_raw.pull_request_reviews (data, pull_request_id) VALUES (?, ?) ON CONFLICT DO NOTHING")
+public class RawPullRequestReviewEntity {
     @Id
     Long pullRequestId;
 
     @Type(type = "jsonb")
-    List<RawCommit> data;
+    List<RawCodeReview> data;
 
-    public static PullRequestCommits of(Long pullRequestId, List<RawCommit> commits) {
-        return PullRequestCommits.builder().pullRequestId(pullRequestId).data(commits).build();
+    public static RawPullRequestReviewEntity of(Long pullRequestId, List<RawCodeReview> codeReviews) {
+        return RawPullRequestReviewEntity.builder().pullRequestId(pullRequestId).data(codeReviews).build();
     }
 }

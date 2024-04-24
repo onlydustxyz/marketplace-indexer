@@ -23,14 +23,14 @@ import javax.persistence.Table;
 @Table(name = "repo_languages", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @SQLInsert(sql = "INSERT INTO indexer_raw.repo_languages (data, repo_id) VALUES (?, ?) ON CONFLICT DO NOTHING")
-public class RepoLanguages {
+public class RawRepoLanguagesEntity {
     @Id
     Long repoId;
 
     @Type(type = "jsonb")
     RawLanguages data;
 
-    public static RepoLanguages of(Long repoId, RawLanguages languages) {
-        return RepoLanguages.builder().repoId(repoId).data(languages).build();
+    public static RawRepoLanguagesEntity of(Long repoId, RawLanguages languages) {
+        return RawRepoLanguagesEntity.builder().repoId(repoId).data(languages).build();
     }
 }
