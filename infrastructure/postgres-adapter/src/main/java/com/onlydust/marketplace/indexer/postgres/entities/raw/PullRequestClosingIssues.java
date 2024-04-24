@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.postgres.entities.raw;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestClosingIssues;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
+import org.hibernate.annotations.SQLInsert;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -21,6 +22,11 @@ import java.io.Serializable;
 @IdClass(PullRequestClosingIssues.Id.class)
 @Table(name = "pull_request_closing_issues", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+@SQLInsert(sql = """
+                INSERT INTO indexer_raw.pull_request_closing_issues (data, pull_request_number, repo_name, repo_owner)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT DO NOTHING
+        """)
 public class PullRequestClosingIssues {
     @javax.persistence.Id
     String repoOwner;
