@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLInsert;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -21,6 +22,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Table(name = "repo_languages", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+@SQLInsert(sql = "INSERT INTO indexer_raw.repo_languages (data, repo_id) VALUES (?, ?) ON CONFLICT DO NOTHING")
 public class RepoLanguages {
     @Id
     Long repoId;
