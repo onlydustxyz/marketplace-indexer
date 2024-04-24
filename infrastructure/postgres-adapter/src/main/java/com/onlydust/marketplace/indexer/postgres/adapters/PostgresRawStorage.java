@@ -81,6 +81,11 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     }
 
     @Override
+    public Optional<RawPullRequestDiff> pullRequestDiff(Long repoId, Long pullRequestId, Long pullRequestNumber) {
+        return pullRequestDiffRepository.findById(pullRequestId).map(RawPullRequestDiffEntity::getData);
+    }
+
+    @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         return pullRequestClosingIssueViewRepository.findById(new RawPullRequestClosingIssuesEntity.Id(repoOwner, repoName, pullRequestNumber))
                 .map(RawPullRequestClosingIssuesEntity::getData);

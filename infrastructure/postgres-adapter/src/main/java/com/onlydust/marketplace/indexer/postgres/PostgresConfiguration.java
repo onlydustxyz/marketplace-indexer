@@ -37,7 +37,8 @@ public class PostgresConfiguration {
                                                            final PullRequestCommitsRepository pullRequestCommitsRepository,
                                                            final PullRequestClosingIssueRepository pullRequestClosingIssueRepository,
                                                            final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository,
-                                                           final PullRequestReviewsRepository pullRequestReviewsRepository) {
+                                                           final PullRequestReviewsRepository pullRequestReviewsRepository,
+                                                           final PullRequestDiffRepository pullRequestDiffRepository) {
         return new PostgresRawStorage(issueRepository,
                 userRepository,
                 repoRepository,
@@ -45,6 +46,7 @@ public class PostgresConfiguration {
                 repoLanguagesRepository,
                 userSocialAccountsRepository,
                 pullRequestCommitsRepository,
+                pullRequestDiffRepository,
                 pullRequestClosingIssueRepository,
                 pullRequestClosingIssueViewRepository,
                 pullRequestReviewsRepository
@@ -68,7 +70,8 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public ContributionStorage contributionStorageRepository(final ContributionRepository contributionRepository, final ContributionNotificationEntityRepository contributionNotificationEntityRepository) {
+    public ContributionStorage contributionStorageRepository(final ContributionRepository contributionRepository,
+                                                             final ContributionNotificationEntityRepository contributionNotificationEntityRepository) {
         return new PostgresContributionStorage(contributionRepository, contributionNotificationEntityRepository);
     }
 
@@ -83,7 +86,8 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public PostgresRepoStorage postgresRepoStorage(final GithubRepoEntityRepository githubRepoEntityRepository, final GithubRepoStatsEntityRepository githubRepoStatsEntityRepository) {
+    public PostgresRepoStorage postgresRepoStorage(final GithubRepoEntityRepository githubRepoEntityRepository,
+                                                   final GithubRepoStatsEntityRepository githubRepoStatsEntityRepository) {
         return new PostgresRepoStorage(githubRepoEntityRepository, githubRepoStatsEntityRepository);
     }
 
