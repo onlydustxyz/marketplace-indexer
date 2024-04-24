@@ -1,9 +1,0 @@
-{
-    "modifiedFiles": [
-        {
-            "path": "backend/migrations/2023-09-07-141528_migrate-payout-settings/up.sql",
-            "linesAdded": 5,
-            "linesDeleted": 0
-        }
-    ]
-}

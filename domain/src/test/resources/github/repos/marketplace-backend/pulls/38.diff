@@ -1,0 +1,2219 @@
+diff --git a/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/model/Network.java b/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/model/Network.java
+index cc46fe22c..87cd6f1d7 100644
+--- a/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/model/Network.java
++++ b/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/model/Network.java
+@@ -1,6 +1,6 @@
+ package onlydust.com.marketplace.accounting.domain.model;
+
+-import onlydust.com.marketplace.kernel.model.blockchain.*;
++import onlydust.com.marketplace.kernel.model.blockchain.Blockchain;
+
+ import java.util.Optional;
+
+@@ -38,15 +38,4 @@ public static Network fromBlockchain(Blockchain blockchain) {
+             case APTOS -> Network.APTOS;
+         };
+     }
+-
+-    public void validateTransactionReference(String transactionReference) {
+-        switch (this) {
+-            case ETHEREUM -> Ethereum.transactionHash(transactionReference);
+-            case OPTIMISM -> Optimism.transactionHash(transactionReference);
+-            case STARKNET -> StarkNet.transactionHash(transactionReference);
+-            case APTOS -> Aptos.transactionHash(transactionReference);
+-            case SEPA -> {
+-            }
+-        }
+-    }
+ }
+diff --git a/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/port/in/BlockchainFacadePort.java b/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/port/in/BlockchainFacadePort.java
+new file mode 100644
+index 000000000..fb6188b07
+--- /dev/null
++++ b/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/port/in/BlockchainFacadePort.java
+@@ -0,0 +1,9 @@
++package onlydust.com.marketplace.accounting.domain.port.in;
++
++import onlydust.com.marketplace.kernel.model.blockchain.Blockchain;
++
++import java.time.ZonedDateTime;
++
++public interface BlockchainFacadePort {
++    ZonedDateTime getTransactionTimestamp(Blockchain blockchain, String reference);
++}
+diff --git a/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/port/out/BlockchainTransactionStoragePort.java b/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/port/out/BlockchainTransactionStoragePort.java
+new file mode 100644
+index 000000000..527652639
+--- /dev/null
++++ b/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/port/out/BlockchainTransactionStoragePort.java
+@@ -0,0 +1,7 @@
++package onlydust.com.marketplace.accounting.domain.port.out;
++
++import java.util.Optional;
++
++public interface BlockchainTransactionStoragePort<TRX, REF> {
++    Optional<TRX> get(REF reference);
++}
+diff --git a/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/service/BlockchainService.java b/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/service/BlockchainService.java
+new file mode 100644
+index 000000000..6635d9c82
+--- /dev/null
++++ b/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/service/BlockchainService.java
+@@ -0,0 +1,31 @@
++package onlydust.com.marketplace.accounting.domain.service;
++
++import lombok.AllArgsConstructor;
++import onlydust.com.marketplace.accounting.domain.port.in.BlockchainFacadePort;
++import onlydust.com.marketplace.accounting.domain.port.out.BlockchainTransactionStoragePort;
++import onlydust.com.marketplace.kernel.model.blockchain.*;
++import onlydust.com.marketplace.kernel.model.blockchain.aptos.AptosTransaction;
++import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmTransaction;
++import onlydust.com.marketplace.kernel.model.blockchain.starknet.StarknetTransaction;
++
++import java.time.ZonedDateTime;
++
++import static onlydust.com.marketplace.kernel.exception.OnlyDustException.notFound;
++
++@AllArgsConstructor
++public class BlockchainService implements BlockchainFacadePort {
++    private final BlockchainTransactionStoragePort<EvmTransaction, EvmTransaction.Hash> ethereumTransactionStoragePort;
++    private final BlockchainTransactionStoragePort<EvmTransaction, EvmTransaction.Hash> optimismTransactionStoragePort;
++    private final BlockchainTransactionStoragePort<AptosTransaction, AptosTransaction.Hash> aptosTransactionStoragePort;
++    private final BlockchainTransactionStoragePort<StarknetTransaction, StarknetTransaction.Hash> starknetTransactionStoragePort;
++
++    @Override
++    public ZonedDateTime getTransactionTimestamp(Blockchain blockchain, String reference) {
++        return (switch (blockchain) {
++            case ETHEREUM -> ethereumTransactionStoragePort.get(Ethereum.transactionHash(reference)).map(EvmTransaction::timestamp);
++            case OPTIMISM -> optimismTransactionStoragePort.get(Optimism.transactionHash(reference)).map(EvmTransaction::timestamp);
++            case APTOS -> aptosTransactionStoragePort.get(Aptos.transactionHash(reference)).map(AptosTransaction::timestamp);
++            case STARKNET -> starknetTransactionStoragePort.get(StarkNet.transactionHash(reference)).map(StarknetTransaction::timestamp);
++        }).orElseThrow(() -> notFound("Transaction %s not found on blockchain %s".formatted(reference, blockchain)));
++    }
++}
+diff --git a/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/service/PaymentService.java b/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/service/PaymentService.java
+index 26cbecc64..13ff04e5d 100644
+--- a/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/service/PaymentService.java
++++ b/accounting-domain/src/main/java/onlydust/com/marketplace/accounting/domain/service/PaymentService.java
+@@ -8,6 +8,7 @@
+ import onlydust.com.marketplace.accounting.domain.model.RewardId;
+ import onlydust.com.marketplace.accounting.domain.model.billingprofile.Wallet;
+ import onlydust.com.marketplace.accounting.domain.port.in.AccountingFacadePort;
++import onlydust.com.marketplace.accounting.domain.port.in.BlockchainFacadePort;
+ import onlydust.com.marketplace.accounting.domain.port.in.PaymentPort;
+ import onlydust.com.marketplace.accounting.domain.port.out.AccountingRewardStoragePort;
+ import onlydust.com.marketplace.accounting.domain.port.out.InvoiceStoragePort;
+@@ -16,7 +17,6 @@
+ import onlydust.com.marketplace.kernel.pagination.Page;
+ import org.springframework.transaction.annotation.Transactional;
+
+-import java.time.ZonedDateTime;
+ import java.util.Comparator;
+ import java.util.List;
+ import java.util.Map;
+@@ -31,6 +31,7 @@ public class PaymentService implements PaymentPort {
+     private final AccountingRewardStoragePort accountingRewardStoragePort;
+     private final InvoiceStoragePort invoiceStoragePort;
+     private final AccountingFacadePort accountingFacadePort;
++    private final BlockchainFacadePort blockchainFacadePort;
+
+     @NonNull
+     private static Map<RewardId, Wallet> walletsPerRewardForNetwork(Map<RewardId, Invoice> rewardInvoices, Network network) {
+@@ -50,12 +51,10 @@ public void markPaymentAsPaid(Payment.Id paymentId, String transactionReference)
+             throw badRequest("Batch payment %s is already paid".formatted(paymentId.value()));
+         }
+
+-        payment.network().validateTransactionReference(transactionReference);
+-
+         final Payment updatedPayment = payment.toBuilder()
+                 .status(Payment.Status.PAID)
+                 .transactionHash(transactionReference)
+-                .confirmedAt(ZonedDateTime.now()) // TODO use the transaction timestamp
++                .confirmedAt(blockchainFacadePort.getTransactionTimestamp(payment.network().blockchain().orElseThrow(), transactionReference))
+                 .build();
+
+         accountingFacadePort.confirm(updatedPayment);
+diff --git a/accounting-domain/src/test/java/onlydust/com/marketplace/accounting/domain/service/PaymentServiceTest.java b/accounting-domain/src/test/java/onlydust/com/marketplace/accounting/domain/service/PaymentServiceTest.java
+index 36d90bcc7..804933e35 100644
+--- a/accounting-domain/src/test/java/onlydust/com/marketplace/accounting/domain/service/PaymentServiceTest.java
++++ b/accounting-domain/src/test/java/onlydust/com/marketplace/accounting/domain/service/PaymentServiceTest.java
+@@ -6,13 +6,17 @@
+ import onlydust.com.marketplace.accounting.domain.model.billingprofile.PayoutInfo;
+ import onlydust.com.marketplace.accounting.domain.model.billingprofile.VerificationStatus;
+ import onlydust.com.marketplace.accounting.domain.model.user.UserId;
++import onlydust.com.marketplace.accounting.domain.port.in.BlockchainFacadePort;
+ import onlydust.com.marketplace.accounting.domain.port.out.AccountingRewardStoragePort;
++import onlydust.com.marketplace.accounting.domain.port.out.BlockchainTransactionStoragePort;
+ import onlydust.com.marketplace.accounting.domain.port.out.InvoiceStoragePort;
+ import onlydust.com.marketplace.accounting.domain.stubs.ERC20Tokens;
+ import onlydust.com.marketplace.accounting.domain.view.BillingProfileView;
+ import onlydust.com.marketplace.kernel.exception.OnlyDustException;
+ import onlydust.com.marketplace.kernel.model.bank.BankAccount;
++import onlydust.com.marketplace.kernel.model.blockchain.Ethereum;
+ import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmAccountAddress;
++import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmTransaction;
+ import onlydust.com.marketplace.kernel.model.blockchain.evm.ethereum.Name;
+ import onlydust.com.marketplace.kernel.model.blockchain.evm.ethereum.WalletLocator;
+ import onlydust.com.marketplace.kernel.model.blockchain.starknet.StarknetAccountAddress;
+@@ -41,7 +45,13 @@ public class PaymentServiceTest {
+     private final AccountingRewardStoragePort accountingRewardStoragePort = mock(AccountingRewardStoragePort.class);
+     private final AccountingService accountingService = mock(AccountingService.class);
+     private final InvoiceStoragePort invoiceStoragePort = mock(InvoiceStoragePort.class);
+-    private final PaymentService rewardService = new PaymentService(accountingRewardStoragePort, invoiceStoragePort, accountingService);
++    private final BlockchainTransactionStoragePort ethereumTransactionStoragePort = mock(BlockchainTransactionStoragePort.class);
++    private final BlockchainFacadePort blockchainFacadePort = new BlockchainService(
++            ethereumTransactionStoragePort,
++            mock(BlockchainTransactionStoragePort.class),
++            mock(BlockchainTransactionStoragePort.class),
++            mock(BlockchainTransactionStoragePort.class));
++    private final PaymentService rewardService = new PaymentService(accountingRewardStoragePort, invoiceStoragePort, accountingService, blockchainFacadePort);
+
+     List<Invoice.Id> invoiceIds;
+     List<Invoice> invoices;
+@@ -243,6 +253,8 @@ void should_update_batch_payment_and_linked_rewards_with_transaction_hash() {
+
+         // When
+         when(accountingRewardStoragePort.findPayment(batchPaymentId)).thenReturn(Optional.of(payment));
++        when(ethereumTransactionStoragePort.get(Ethereum.transactionHash(transactionHash)))
++                .thenReturn(Optional.of(new EvmTransaction(Ethereum.transactionHash(transactionHash), ZonedDateTime.now())));
+         rewardService.markPaymentAsPaid(batchPaymentId, transactionHash);
+
+         // Then
+diff --git a/application/rest-api-adapter/src/main/java/onlydust/com/marketplace/api/rest/api/adapter/BackofficeAccountingManagementRestApi.java b/application/rest-api-adapter/src/main/java/onlydust/com/marketplace/api/rest/api/adapter/BackofficeAccountingManagementRestApi.java
+index 4b2950cba..ad6941afb 100644
+--- a/application/rest-api-adapter/src/main/java/onlydust/com/marketplace/api/rest/api/adapter/BackofficeAccountingManagementRestApi.java
++++ b/application/rest-api-adapter/src/main/java/onlydust/com/marketplace/api/rest/api/adapter/BackofficeAccountingManagementRestApi.java
+@@ -7,10 +7,7 @@
+ import onlydust.com.backoffice.api.contract.model.*;
+ import onlydust.com.marketplace.accounting.domain.model.*;
+ import onlydust.com.marketplace.accounting.domain.model.billingprofile.BillingProfile;
+-import onlydust.com.marketplace.accounting.domain.port.in.AccountingFacadePort;
+-import onlydust.com.marketplace.accounting.domain.port.in.AccountingRewardPort;
+-import onlydust.com.marketplace.accounting.domain.port.in.BillingProfileFacadePort;
+-import onlydust.com.marketplace.accounting.domain.port.in.PaymentPort;
++import onlydust.com.marketplace.accounting.domain.port.in.*;
+ import onlydust.com.marketplace.accounting.domain.view.RewardDetailsView;
+ import onlydust.com.marketplace.api.rest.api.adapter.authentication.AuthenticatedBackofficeUserService;
+ import onlydust.com.marketplace.api.rest.api.adapter.mapper.BackOfficeMapper;
+@@ -19,13 +16,10 @@
+ import onlydust.com.marketplace.kernel.pagination.Page;
+ import onlydust.com.marketplace.kernel.pagination.PaginationHelper;
+ import onlydust.com.marketplace.kernel.pagination.SortDirection;
+-import onlydust.com.marketplace.project.domain.port.input.RewardFacadePort;
+-import onlydust.com.marketplace.project.domain.port.input.UserFacadePort;
+ import org.springframework.http.HttpStatus;
+ import org.springframework.http.ResponseEntity;
+ import org.springframework.web.bind.annotation.RestController;
+
+-import java.time.ZonedDateTime;
+ import java.util.List;
+ import java.util.Optional;
+ import java.util.UUID;
+@@ -41,12 +35,11 @@
+ @AllArgsConstructor
+ public class BackofficeAccountingManagementRestApi implements BackofficeAccountingManagementApi {
+     private final AccountingFacadePort accountingFacadePort;
+-    private final RewardFacadePort rewardFacadePort;
+-    private final UserFacadePort userFacadePort;
+     private final AccountingRewardPort accountingRewardPort;
+     private final PaymentPort paymentPort;
+     private final BillingProfileFacadePort billingProfileFacadePort;
+     private final AuthenticatedBackofficeUserService authenticatedBackofficeUserService;
++    private final BlockchainFacadePort blockchainFacadePort;
+
+     @Override
+     public ResponseEntity<AccountResponse> createSponsorAccount(UUID sponsorUuid, CreateAccountRequest createAccountRequest) {
+@@ -155,10 +148,15 @@ public ResponseEntity<Void> unallocateBudgetFromProject(UUID projectId, ProjectB
+
+     @Override
+     public ResponseEntity<Void> payReward(UUID rewardId, PayRewardRequest payRewardRequest) {
++        final var network = mapTransactionNetwork(payRewardRequest.getNetwork());
++        final var transactionTimestamp = blockchainFacadePort.getTransactionTimestamp(
++                network.blockchain().orElseThrow(),
++                payRewardRequest.getReference());
++
+         accountingFacadePort.pay(
+                 RewardId.of(rewardId),
+-                ZonedDateTime.now(),
+-                mapTransactionNetwork(payRewardRequest.getNetwork()),
++                transactionTimestamp,
++                network,
+                 payRewardRequest.getReference());
+
+         return ResponseEntity.noContent().build();
+diff --git a/bootstrap/src/main/java/onlydust/com/marketplace/api/bootstrap/configuration/BackofficeConfiguration.java b/bootstrap/src/main/java/onlydust/com/marketplace/api/bootstrap/configuration/BackofficeConfiguration.java
+index a364c63fb..96f819cea 100644
+--- a/bootstrap/src/main/java/onlydust/com/marketplace/api/bootstrap/configuration/BackofficeConfiguration.java
++++ b/bootstrap/src/main/java/onlydust/com/marketplace/api/bootstrap/configuration/BackofficeConfiguration.java
+@@ -8,8 +8,6 @@
+ import onlydust.com.marketplace.api.rest.api.adapter.authentication.token.QueryParamTokenAuthenticationService;
+ import onlydust.com.marketplace.project.domain.port.input.BackofficeFacadePort;
+ import onlydust.com.marketplace.project.domain.port.input.HackathonFacadePort;
+-import onlydust.com.marketplace.project.domain.port.input.RewardFacadePort;
+-import onlydust.com.marketplace.project.domain.port.input.UserFacadePort;
+ import onlydust.com.marketplace.project.domain.port.output.BackofficeStoragePort;
+ import onlydust.com.marketplace.project.domain.service.BackofficeService;
+ import org.springframework.context.annotation.Bean;
+@@ -52,14 +50,14 @@ public BackofficeInvoicingManagementRestApi backofficeInvoicingManagementRestApi
+     @Bean
+     public BackofficeAccountingManagementRestApi backofficeAccountingManagementRestApi(
+             final AccountingFacadePort accountingFacadePort,
+-            final RewardFacadePort rewardFacadePort,
+-            final UserFacadePort userFacadePort,
+             final AccountingRewardPort accountingRewardPort,
+             final PaymentPort paymentPort,
+             final BillingProfileFacadePort billingProfileFacadePort,
+-            final AuthenticatedBackofficeUserService authenticatedBackofficeUserService) {
+-        return new BackofficeAccountingManagementRestApi(accountingFacadePort, rewardFacadePort, userFacadePort, accountingRewardPort,
+-                paymentPort, billingProfileFacadePort, authenticatedBackofficeUserService);
++            final AuthenticatedBackofficeUserService authenticatedBackofficeUserService,
++            final BlockchainFacadePort blockchainFacadePort
++    ) {
++        return new BackofficeAccountingManagementRestApi(accountingFacadePort, accountingRewardPort,
++                paymentPort, billingProfileFacadePort, authenticatedBackofficeUserService, blockchainFacadePort);
+     }
+
+     @Bean
+@@ -79,9 +77,10 @@ public AccountingRewardPort accountingRewardPort(final AccountingRewardStoragePo
+     @Bean
+     public PaymentPort batchPaymentPort(final AccountingRewardStoragePort accountingRewardStoragePort,
+                                         final InvoiceStoragePort invoiceStoragePort,
+-                                        final AccountingFacadePort accountingFacadePort) {
++                                        final AccountingFacadePort accountingFacadePort,
++                                        final BlockchainFacadePort blockchainFacadePort) {
+         return new PaymentService(accountingRewardStoragePort, invoiceStoragePort,
+-                accountingFacadePort);
++                accountingFacadePort, blockchainFacadePort);
+     }
+
+     @Bean
+diff --git a/bootstrap/src/main/java/onlydust/com/marketplace/api/bootstrap/configuration/DomainConfiguration.java b/bootstrap/src/main/java/onlydust/com/marketplace/api/bootstrap/configuration/DomainConfiguration.java
+index 2683e46d0..616606592 100644
+--- a/bootstrap/src/main/java/onlydust/com/marketplace/api/bootstrap/configuration/DomainConfiguration.java
++++ b/bootstrap/src/main/java/onlydust/com/marketplace/api/bootstrap/configuration/DomainConfiguration.java
+@@ -3,16 +3,21 @@
+ import lombok.NonNull;
+ import onlydust.com.marketplace.accounting.domain.ERC20ProviderFactory;
+ import onlydust.com.marketplace.accounting.domain.port.in.AccountingFacadePort;
++import onlydust.com.marketplace.accounting.domain.port.in.BlockchainFacadePort;
+ import onlydust.com.marketplace.accounting.domain.port.in.CurrencyFacadePort;
+ import onlydust.com.marketplace.accounting.domain.port.out.*;
++import onlydust.com.marketplace.accounting.domain.service.BlockchainService;
+ import onlydust.com.marketplace.accounting.domain.service.CurrencyService;
+ import onlydust.com.marketplace.api.infrastructure.accounting.AccountingServiceAdapter;
++import onlydust.com.marketplace.api.infura.adapters.InfuraEvmTransactionStorageAdapter;
++import onlydust.com.marketplace.api.infura.adapters.StarknetInfuraTransactionStorageAdapter;
+ import onlydust.com.marketplace.api.postgres.adapter.PostgresGithubAdapter;
+ import onlydust.com.marketplace.api.postgres.adapter.PostgresOutboxAdapter;
+ import onlydust.com.marketplace.api.postgres.adapter.PostgresRewardAdapter;
+ import onlydust.com.marketplace.api.postgres.adapter.PostgresUserAdapter;
+ import onlydust.com.marketplace.api.postgres.adapter.entity.write.BillingProfileVerificationEventEntity;
+ import onlydust.com.marketplace.kernel.jobs.OutboxConsumerJob;
++import onlydust.com.marketplace.kernel.model.blockchain.aptos.AptosTransaction;
+ import onlydust.com.marketplace.kernel.port.output.*;
+ import onlydust.com.marketplace.project.domain.gateway.DateProvider;
+ import onlydust.com.marketplace.project.domain.job.IndexerApiOutboxConsumer;
+@@ -27,7 +32,9 @@
+ import org.springframework.context.annotation.Configuration;
+ import org.springframework.retry.annotation.EnableRetry;
+
++import java.time.ZonedDateTime;
+ import java.util.Date;
++import java.util.Optional;
+ import java.util.UUID;
+
+ @Configuration
+@@ -231,4 +238,19 @@ public EcosystemFacadePort ecosystemFacadePort(final EcosystemStorage ecosystemS
+     public HackathonFacadePort hackathonFacadePort(final HackathonStoragePort hackathonStoragePort) {
+         return new HackathonService(hackathonStoragePort);
+     }
++
++    @Bean
++    public BlockchainTransactionStoragePort<AptosTransaction, AptosTransaction.Hash> aptosTransactionStorageAdapter() {
++        // TODO find and use Aptos SDK
++        return reference -> Optional.of(new AptosTransaction(reference, ZonedDateTime.now()));
++    }
++
++    @Bean
++    public BlockchainFacadePort blockchainFacadePort(final InfuraEvmTransactionStorageAdapter ethereumTransactionStorageAdapter,
++                                                     final InfuraEvmTransactionStorageAdapter optimismTransactionStorageAdapter,
++                                                     final StarknetInfuraTransactionStorageAdapter starknetTransactionStoragePort,
++                                                     final BlockchainTransactionStoragePort<AptosTransaction, AptosTransaction.Hash> aptosTransactionStorageAdapter) {
++        return new BlockchainService(ethereumTransactionStorageAdapter, optimismTransactionStorageAdapter, aptosTransactionStorageAdapter,
++                starknetTransactionStoragePort);
++    }
+ }
+diff --git a/bootstrap/src/main/java/onlydust/com/marketplace/api/bootstrap/configuration/InfuraConfiguration.java b/bootstrap/src/main/java/onlydust/com/marketplace/api/bootstrap/configuration/InfuraConfiguration.java
+index ef1b738db..66d0407d3 100644
+--- a/bootstrap/src/main/java/onlydust/com/marketplace/api/bootstrap/configuration/InfuraConfiguration.java
++++ b/bootstrap/src/main/java/onlydust/com/marketplace/api/bootstrap/configuration/InfuraConfiguration.java
+@@ -29,6 +29,11 @@ public InfuraEvmAccountAddressValidatorAdapter infuraEvmAccountAddressValidatorA
+         return new InfuraEvmAccountAddressValidatorAdapter(ethereumProperties);
+     }
+
++    @Bean
++    public InfuraEvmTransactionStorageAdapter ethereumTransactionStorageAdapter(final InfuraClient.Properties ethereumProperties) {
++        return new InfuraEvmTransactionStorageAdapter(ethereumProperties);
++    }
++
+     @Bean
+     @ConfigurationProperties("infrastructure.optimism")
+     public InfuraClient.Properties optimismProperties() {
+@@ -40,6 +45,11 @@ public EthInfuraERC20ProviderAdapter optimismERC20Provider(final InfuraClient.Pr
+         return new EthInfuraERC20ProviderAdapter(optimismProperties);
+     }
+
++    @Bean
++    public InfuraEvmTransactionStorageAdapter optimismTransactionStorageAdapter(final InfuraClient.Properties optimismProperties) {
++        return new InfuraEvmTransactionStorageAdapter(optimismProperties);
++    }
++
+     @Bean
+     @ConfigurationProperties("infrastructure.starknet")
+     public InfuraClient.Properties starknetProperties() {
+@@ -55,4 +65,9 @@ public StarknetInfuraERC20ProviderAdapter starknetERC20Provider(final InfuraClie
+     public StarknetInfuraAccountValidatorAdapter starknetInfuraAccountValidatorAdapter(final InfuraClient.Properties starknetProperties) {
+         return new StarknetInfuraAccountValidatorAdapter(starknetProperties);
+     }
++
++    @Bean
++    public StarknetInfuraTransactionStorageAdapter starknetInfuraTransactionStorageAdapter(final InfuraClient.Properties starknetProperties) {
++        return new StarknetInfuraTransactionStorageAdapter(starknetProperties);
++    }
+ }
+diff --git a/bootstrap/src/test/java/onlydust/com/marketplace/api/bootstrap/helper/WireMockInitializer.java b/bootstrap/src/test/java/onlydust/com/marketplace/api/bootstrap/helper/WireMockInitializer.java
+index 67bcc9364..47ae8d2cf 100644
+--- a/bootstrap/src/test/java/onlydust/com/marketplace/api/bootstrap/helper/WireMockInitializer.java
++++ b/bootstrap/src/test/java/onlydust/com/marketplace/api/bootstrap/helper/WireMockInitializer.java
+@@ -26,6 +26,7 @@ public void initialize(final @NonNull ConfigurableApplicationContext context) {
+                 .beanName("starknetWireMockServer")
+                 .stubLocation("starknet")
+                 .property("infrastructure.starknet.base-uri")
++//                .recordFrom("https://starknet-mainnet.infura.io/v3")
+                 .build()
+                 .register(context);
+
+diff --git a/bootstrap/src/test/java/onlydust/com/marketplace/api/bootstrap/it/api/feature/RewardStatusIT.java b/bootstrap/src/test/java/onlydust/com/marketplace/api/bootstrap/it/api/feature/RewardStatusIT.java
+index 5aa5fea8d..72ea8d529 100644
+--- a/bootstrap/src/test/java/onlydust/com/marketplace/api/bootstrap/it/api/feature/RewardStatusIT.java
++++ b/bootstrap/src/test/java/onlydust/com/marketplace/api/bootstrap/it/api/feature/RewardStatusIT.java
+@@ -14,6 +14,7 @@
+ import onlydust.com.marketplace.accounting.domain.model.billingprofile.*;
+ import onlydust.com.marketplace.accounting.domain.model.user.GithubUserId;
+ import onlydust.com.marketplace.accounting.domain.model.user.UserId;
++import onlydust.com.marketplace.accounting.domain.port.in.BlockchainFacadePort;
+ import onlydust.com.marketplace.accounting.domain.port.in.CurrencyFacadePort;
+ import onlydust.com.marketplace.accounting.domain.port.out.*;
+ import onlydust.com.marketplace.accounting.domain.service.*;
+@@ -85,6 +86,9 @@ public class RewardStatusIT extends AbstractMarketplaceApiIT {
+     AccountingObserver accountingObserver;
+     @Autowired
+     InvoiceService invoiceService;
++    @Autowired
++    BlockchainFacadePort blockchainFacadePort;
++
+     final AuthenticatedBackofficeUserService authenticatedBackofficeUserService = mock(AuthenticatedBackofficeUserService.class);
+
+     private final Double strkToUsd1 = 2.5;
+@@ -3849,13 +3853,12 @@ void should_display_reward_statuses_given_completed() {
+         ));
+         final var backofficeAccountingManagementRestApi = new BackofficeAccountingManagementRestApi(
+                 accountingService,
+-                rewardService,
+-                userFacadePort,
+                 new onlydust.com.marketplace.accounting.domain.service.RewardService(accountingRewardStoragePort, mailNotificationPort, accountingService,
+                         sponsorStoragePort),
+-                new PaymentService(accountingRewardStoragePort, invoiceStoragePort, accountingService),
++                new PaymentService(accountingRewardStoragePort, invoiceStoragePort, accountingService, blockchainFacadePort),
+                 billingProfileService,
+-                authenticatedBackofficeUserService);
++                authenticatedBackofficeUserService,
++                blockchainFacadePort);
+         backofficeAccountingManagementRestApi.payReward(individualBPAdminRewardId1,
+                 new PayRewardRequest().network(TransactionNetwork.ETHEREUM).reference("0xb1c3579ffbe3eabe6f88c58a037367dee7de6c06262cfecc3bd2e8c013cc5156"));
+         backofficeAccountingManagementRestApi.payReward(companyBPAdmin1RewardId1,
+diff --git a/bootstrap/src/test/java/onlydust/com/marketplace/api/bootstrap/it/bo/BackOfficeAccountingApiIT.java b/bootstrap/src/test/java/onlydust/com/marketplace/api/bootstrap/it/bo/BackOfficeAccountingApiIT.java
+index 0d29838d9..1ed607858 100644
+--- a/bootstrap/src/test/java/onlydust/com/marketplace/api/bootstrap/it/bo/BackOfficeAccountingApiIT.java
++++ b/bootstrap/src/test/java/onlydust/com/marketplace/api/bootstrap/it/bo/BackOfficeAccountingApiIT.java
+@@ -13,12 +13,14 @@
+ import onlydust.com.marketplace.accounting.domain.port.out.BillingProfileStoragePort;
+ import onlydust.com.marketplace.accounting.domain.port.out.PdfStoragePort;
+ import onlydust.com.marketplace.accounting.domain.service.CachedAccountBookProvider;
++import onlydust.com.marketplace.accounting.domain.view.ShortBillingProfileView;
+ import onlydust.com.marketplace.api.contract.model.CreateRewardResponse;
+ import onlydust.com.marketplace.api.postgres.adapter.repository.AccountBookEventRepository;
+ import onlydust.com.marketplace.api.postgres.adapter.repository.AccountBookRepository;
+ import onlydust.com.marketplace.api.postgres.adapter.repository.RewardStatusRepository;
+ import onlydust.com.marketplace.api.postgres.adapter.repository.SponsorAccountRepository;
+ import onlydust.com.marketplace.kernel.model.blockchain.Ethereum;
++import onlydust.com.marketplace.kernel.model.blockchain.StarkNet;
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.MethodOrderer;
+ import org.junit.jupiter.api.Test;
+@@ -586,7 +588,7 @@ void should_update_sponsor_account() {
+     }
+
+     @Test
+-    void should_allocate_budget_to_project_and_pay_rewards() {
++    void should_allocate_budget_to_project_and_pay_rewards_on_ethereum() {
+         // Given
+         final var antho = userAuthHelper.authenticateAnthony();
+         final var ofux = userAuthHelper.authenticateOlivier();
+@@ -829,6 +831,263 @@ void should_allocate_budget_to_project_and_pay_rewards() {
+                         """);
+     }
+
++    @Test
++    void should_allocate_budget_to_project_and_pay_rewards_on_starknet() {
++        // Given
++        final var antho = userAuthHelper.authenticateAnthony();
++        final var ofux = userAuthHelper.authenticateOlivier();
++
++        client
++                .post()
++                .uri(getApiURI(POST_CURRENCIES))
++                .contentType(APPLICATION_JSON)
++                .header("Api-Key", apiKey())
++                .bodyValue("""
++                        {
++                            "type": "CRYPTO",
++                            "standard": "ERC20",
++                            "blockchain": "STARKNET",
++                            "address": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8"
++                        }
++                        """)
++                .exchange()
++                .expectStatus()
++                .isOk();
++
++        final var accountId = client.post()
++                .uri(getApiURI(POST_SPONSORS_ACCOUNTS.formatted(REDBULL)))
++                .header("Api-Key", apiKey())
++                .contentType(APPLICATION_JSON)
++                .bodyValue("""
++                        {
++                            "currencyId": "%s",
++                            "receipt": {
++                                "reference": "0x01",
++                                "amount": 100,
++                                "network": "STARKNET",
++                                "thirdPartyName": "RedBull",
++                                "thirdPartyAccountNumber": "red-bull.stark"
++                            }
++                        }
++                        """.formatted(USDC))
++                .exchange()
++                .expectStatus()
++                .isOk()
++                .expectBody(AccountResponse.class)
++                .returnResult()
++                .getResponseBody().getId();
++
++        // Given
++        client.post()
++                .uri(getApiURI(POST_PROJECTS_BUDGETS_ALLOCATE.formatted(KAAPER)))
++                .header("Api-Key", apiKey())
++                .contentType(APPLICATION_JSON)
++                .bodyValue("""
++                        {
++                            "sponsorAccountId": "%s",
++                            "amount": 100
++                        }
++                        """.formatted(accountId))
++                .exchange()
++                .expectStatus()
++                .isNoContent();
++
++        indexerApiWireMockServer.stubFor(WireMock.put(
++                        WireMock.urlEqualTo("/api/v1/users/%d".formatted(ofux.user().getGithubUserId())))
++                .withHeader("Content-Type", equalTo("application/json"))
++                .withHeader("Api-Key", equalTo("some-indexer-api-key"))
++                .willReturn(ResponseDefinitionBuilder.okForEmptyJson()));
++
++        // When
++        final var rewardId = client.post()
++                .uri(getApiURI(PROJECTS_REWARDS.formatted(KAAPER)))
++                .header("Authorization", BEARER_PREFIX + antho.jwt())
++                .contentType(APPLICATION_JSON)
++                .bodyValue("""
++                        {
++                            "recipientId": "%d",
++                            "amount": 30,
++                            "currencyId": "%s",
++                            "items": [{
++                                "type": "PULL_REQUEST",
++                                "id": "1703880973",
++                                "number": 325,
++                                "repoId": 698096830
++                            }]
++                        }
++                        """.formatted(ofux.user().getGithubUserId(), USDC))
++                .exchange()
++                .expectStatus()
++                .isOk()
++                .expectBody(CreateRewardResponse.class)
++                .returnResult().getResponseBody().getId();
++
++        // Then
++        client.get()
++                .uri(getApiURI(GET_SPONSORS_ACCOUNTS.formatted(REDBULL)))
++                .header("Api-Key", apiKey())
++                .exchange()
++                .expectStatus()
++                .isOk()
++                .expectBody()
++                .jsonPath("$.accounts[0].initialBalance").isEqualTo(100)
++                .jsonPath("$.accounts[0].currentBalance").isEqualTo(100)
++                .jsonPath("$.accounts[0].initialAllowance").isEqualTo(100)
++                .jsonPath("$.accounts[0].currentAllowance").isEqualTo(0)
++                .jsonPath("$.accounts[0].debt").isEqualTo(0)
++                .jsonPath("$.accounts[0].awaitingPaymentAmount").isEqualTo(30)
++        ;
++
++        // When
++        invoiceReward(UserId.of(ofux.user().getId()), KAAPER, RewardId.of(rewardId));
++
++        // When
++        client.post()
++                .uri(getApiURI(POST_REWARDS_PAY.formatted(rewardId)))
++                .header("Api-Key", apiKey())
++                .contentType(APPLICATION_JSON)
++                .bodyValue("""
++                        {
++                            "network": "STARKNET",
++                            "reference": "0x16096a49c236dfdbc5808c31a1d6eee90a082ca5717366a73b03a2eb80cd252"
++                        }
++                        """)
++                .exchange()
++                .expectStatus()
++                .isNoContent();
++
++        client.get()
++                .uri(getApiURI(String.format(ME_REWARD, rewardId)))
++                .header("Authorization", BEARER_PREFIX + ofux.jwt())
++                // Then
++                .exchange()
++                .expectStatus()
++                .is2xxSuccessful()
++                .expectBody()
++                .json("""
++
++                        {
++                           "amount": {
++                             "amount": 30,
++                             "prettyAmount": 30,
++                             "currency": {
++                               "id": "562bbf65-8a71-4d30-ad63-520c0d68ba27",
++                               "code": "USDC",
++                               "name": "USD Coin",
++                               "logoUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
++                               "decimals": 6
++                             },
++                             "usdEquivalent": 30.30,
++                             "usdConversionRate": 1.01
++                           },
++                           "status": "COMPLETE",
++                           "unlockDate": null,
++                           "from": {
++                             "githubUserId": 43467246,
++                             "login": "AnthonyBuisset",
++                             "avatarUrl": "https://onlydust-app-images.s3.eu-west-1.amazonaws.com/11725380531262934574.webp",
++                             "isRegistered": true
++                           },
++                           "to": {
++                             "githubUserId": 595505,
++                             "login": "ofux",
++                             "avatarUrl": "https://onlydust-app-images.s3.eu-west-1.amazonaws.com/5494259449694867225.webp",
++                             "isRegistered": true
++                           },
++                           "project": {
++                             "id": "298a547f-ecb6-4ab2-8975-68f4e9bf7b39",
++                             "slug": "kaaper",
++                             "name": "kaaper",
++                             "logoUrl": null,
++                             "shortDescription": "Documentation generator for Cairo projects.",
++                             "visibility": "PUBLIC"
++                           },
++                           "receipt": {
++                             "type": "CRYPTO",
++                             "walletAddress": "0x0788b45a11Ee333293a1d4389430009529bC97D814233C2A5137c4F5Ff949905",
++                             "transactionReference": "0x16096a49c236dfdbc5808c31a1d6eee90a082ca5717366a73b03a2eb80cd252",
++                             "transactionReferenceLink": "https://starkscan.co/tx/0x016096a49c236dfdbc5808c31a1d6eee90a082ca5717366a73b03a2eb80cd252"
++                           }
++                         }
++                         """
++                );
++
++        client.get()
++                .uri(getApiURI(GET_SPONSORS_ACCOUNTS.formatted(REDBULL)))
++                .header("Api-Key", apiKey())
++                .exchange()
++                .expectStatus()
++                .isOk()
++                .expectBody()
++                .jsonPath("$.accounts[0].initialBalance").isEqualTo(100)
++                .jsonPath("$.accounts[0].currentBalance").isEqualTo(70)
++                .jsonPath("$.accounts[0].initialAllowance").isEqualTo(100)
++                .jsonPath("$.accounts[0].currentAllowance").isEqualTo(0)
++                .jsonPath("$.accounts[0].debt").isEqualTo(0)
++                .jsonPath("$.accounts[0].awaitingPaymentAmount").isEqualTo(0)
++        ;
++
++        client.get()
++                .uri(getApiURI(GET_SPONSORS_TRANSACTIONS.formatted(REDBULL), Map.of(
++                        "pageIndex", "0",
++                        "pageSize", "10"
++                )))
++                .header("Api-Key", apiKey())
++                .exchange()
++                .expectStatus()
++                .isOk()
++                .expectBody()
++                .json("""
++                        {
++                          "totalPageNumber": 1,
++                          "totalItemNumber": 2,
++                          "hasMore": false,
++                          "nextPageIndex": 0,
++                          "transactions": [
++                            {
++                              "type": "ALLOCATION",
++                              "network": "STARKNET",
++                              "lockedUntil": null,
++                              "project": {
++                                "name": "kaaper",
++                                "logoUrl": null
++                              },
++                              "amount": {
++                                "amount": -100,
++                                "currency": {
++                                  "id": "562bbf65-8a71-4d30-ad63-520c0d68ba27",
++                                  "code": "USDC",
++                                  "name": "USD Coin",
++                                  "logoUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
++                                  "decimals": 6
++                                },
++                                "dollarsEquivalent": 101.00,
++                                "conversionRate": 1.01
++                              }
++                            },
++                            {
++                              "type": "DEPOSIT",
++                              "network": "STARKNET",
++                              "lockedUntil": null,
++                              "project": null,
++                              "amount": {
++                                "amount": 100,
++                                "currency": {
++                                  "id": "562bbf65-8a71-4d30-ad63-520c0d68ba27",
++                                  "code": "USDC",
++                                  "name": "USD Coin",
++                                  "logoUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
++                                  "decimals": 6
++                                },
++                                "dollarsEquivalent": 101.00,
++                                "conversionRate": 1.01
++                              }
++                            }
++                          ]
++                        }
++                        """);
++    }
++
+     @Test
+     void should_get_billing_profile() {
+         final var billingProfileId = BillingProfile.Id.of("1253b889-e5d5-49ee-8e8a-21405ccab8a6");
+@@ -876,7 +1135,6 @@ void should_get_billing_profile() {
+                         """);
+     }
+
+-
+     @Test
+     void should_get_current_month_rewarded_amounts() {
+         final var billingProfileId = BillingProfile.Id.of("9cae91ac-e70f-426f-af0d-e35c1d3578ed");
+@@ -929,19 +1187,30 @@ void should_get_current_month_rewarded_amounts() {
+     }
+
+     private Invoice.Id invoiceReward(UserId userId, ProjectId projectId, RewardId rewardId) {
+-        final var billingProfile = billingProfileFacadePort.createIndividualBillingProfile(userId, "Personal", null);
+-        billingProfileStoragePort.updateBillingProfileStatus(billingProfile.id(), VerificationStatus.VERIFIED);
+-        billingProfileStoragePort.saveKyc(billingProfile.kyc().toBuilder()
++        final var billingProfileId = billingProfileFacadePort.getBillingProfilesForUser(userId)
++                .stream().filter(bp -> bp.getType() == BillingProfile.Type.INDIVIDUAL)
++                .findFirst()
++                .map(ShortBillingProfileView::getId)
++                .orElseGet(() -> billingProfileFacadePort.createIndividualBillingProfile(userId, "Personal", null).id());
++
++        final var billingProfile = billingProfileStoragePort.findById(billingProfileId).orElseThrow();
++
++        billingProfileStoragePort.updateBillingProfileStatus(billingProfile.getId(), VerificationStatus.VERIFIED);
++        billingProfileStoragePort.saveKyc(billingProfile.getKyc().toBuilder()
+                 .firstName(faker.name().firstName())
+                 .address(faker.address().fullAddress())
+                 .consideredUsPersonQuestionnaire(false)
+                 .idDocumentCountry(Country.fromIso3("FRA"))
+                 .country(Country.fromIso3("FRA"))
+                 .build());
+-        billingProfileFacadePort.updatePayoutInfo(billingProfile.id(), userId, PayoutInfo.builder().ethWallet(Ethereum.wallet("ofux.eth")).build());
+-        payoutPreferenceFacadePort.setPayoutPreference(projectId, billingProfile.id(), userId);
++        billingProfileFacadePort.updatePayoutInfo(billingProfile.getId(), userId,
++                PayoutInfo.builder()
++                        .ethWallet(Ethereum.wallet("ofux.eth"))
++                        .starknetAddress(StarkNet.accountAddress("0x0788b45a11Ee333293a1d4389430009529bC97D814233C2A5137c4F5Ff949905"))
++                        .build());
++        payoutPreferenceFacadePort.setPayoutPreference(projectId, billingProfile.getId(), userId);
+
+-        final var invoiceId = billingProfileFacadePort.previewInvoice(userId, billingProfile.id(), List.of(rewardId)).id();
++        final var invoiceId = billingProfileFacadePort.previewInvoice(userId, billingProfile.getId(), List.of(rewardId)).id();
+         final var pdf = new ByteArrayInputStream(faker.lorem().paragraph().getBytes());
+
+         when(pdfStoragePort.upload(eq(invoiceId.value() + ".pdf"), any())).then(invocation -> {
+@@ -949,7 +1218,7 @@ private Invoice.Id invoiceReward(UserId userId, ProjectId projectId, RewardId re
+             return new URL("https://s3.storage.com/%s".formatted(fileName));
+         });
+
+-        billingProfileFacadePort.uploadGeneratedInvoice(userId, billingProfile.id(), invoiceId, pdf);
++        billingProfileFacadePort.uploadGeneratedInvoice(userId, billingProfile.getId(), invoiceId, pdf);
+
+         return invoiceId;
+     }
+diff --git a/bootstrap/src/test/resources/wiremock/ethereum/__files/body-eth_getBlockByHash.json b/bootstrap/src/test/resources/wiremock/ethereum/__files/body-eth_getBlockByHash.json
+new file mode 100644
+index 000000000..c68ae0deb
+--- /dev/null
++++ b/bootstrap/src/test/resources/wiremock/ethereum/__files/body-eth_getBlockByHash.json
+@@ -0,0 +1,299 @@
++{
++    "jsonrpc": "2.0",
++    "id": {{jsonPath request.body '$.id'}},
++    "result": {
++        "baseFeePerGas": "0x4559c801b",
++        "blobGasUsed": "0x0",
++        "difficulty": "0x0",
++        "excessBlobGas": "0x0",
++        "extraData": "0x7273796e632d6275696c6465722e78797a",
++        "gasLimit": "0x1c9c380",
++        "gasUsed": "0xf41ded",
++        "hash": "0x7fe3898aeb58060650930be8db994227e9ddfd59b704277931dbe60ec2393ccd",
++        "logsBloom": "0x4fa33c30e97c218313793758cd0578c13a4dc6841d8b11120f18eca837fa9ac17402c6c1b9bbcbebea813d008957118d6e6be404ddd164e0033df22cb6af6f06d1f7c99b5bf1dfed4846f5af8056c93c8d1354e557f49f0d16404010bfe4d3a4fff54096cf47b0c12ddc4241be82ef59e499b153b012b694de6f04b6115bac7233f0bfc800c7f14dc889bf24454635e7c2e501e16b97e1fbbb1c2bcf6cf43a164260e42dfa94ab060a347fe6bfd1dcee3c8dc1a84751101ac47098d24d0e86efad823112ea442d46cbe89dbf0b77d4cf16d83f06c78bc994a10f2757320aff64fc50fae9e1560079b36678e6ecd0badcd0bdf4510b884662193cbc032a01ced9",
++        "miner": "0x1f9090aae28b8a3dceadf281b0f12828e676c326",
++        "mixHash": "0xbf241878e9ce6978f5d765463849454d8ef0ab396b95fc45c5801d930e21360d",
++        "nonce": "0x0000000000000000",
++        "number": "0x12ce534",
++        "parentBeaconBlockRoot": "0x8ff8b1b60c51bcba374b00273a452b7854d766d53d6f036883b6e59ededf1f87",
++        "parentHash": "0xdc2c351464daed29600e5bc21a6d08014e4aeaeca1c1c53154bc06701b1a2969",
++        "receiptsRoot": "0x8eea551c96ddc0f9ac51f2c1c0066fc803f22d8e2288ad6be5defeb4bcd08ea7",
++        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
++        "size": "0x110b6",
++        "stateRoot": "0xc15f1b7102ccccebd870a20374110d3ce88edd5f4f12372b70d2881f1ad712f7",
++        "timestamp": "0x6627eab3",
++        "totalDifficulty": "0xc70d815d562d3cfa955",
++        "transactions": [
++            "0x9d5551bc7ebb0dec11782880886ef8106a8fd2e1c54a8887658281c1594fddd8",
++            "0xde9592113b0643ea8a12c9fc64f4486a8f45a8b3c6c3f3d29f3545dbc09a0724",
++            "0x51b19cc68f6a6448b5016b7b6e28e50a0b84cd13321551b6bb9029adce52ae58",
++            "0x060f25a5978e9c4550c0d7ea91a13f74249d5abfcbe8e4106b144f80c2fd53b4",
++            "0x863732904c66a4f6ac5b55fd1e655443e6171f9f9751a1af01e44d466c7eb631",
++            "0x1e27fef379b677fdbed3e8eac66a1ab84215265a4834e40aa6d9d6023f0fafb3",
++            "0xe026ca7cf53c5d830e4dc683021899cafa2e3ed1e0c494e17e9a036d277a908c",
++            "0x972e555effa8f007616aead37ba544910d9b8a49fcc833122428a8e709257e2e",
++            "0xdfc079b68ac9f74630b431718205723ab83fd5c0ed266f210e23993d4f17cd39",
++            "0x634bc68ac6eee06640a7ac568654227abd4d71b2e05a0e304f32709e6e12dd07",
++            "0x5636529d9b3d43b2eef7738617d535bb3d323ea811cbe1266572e2c59833a0e7",
++            "0x934004fac0b9e8dd6eb815e2b18aee587bb19938738dc6dcec43e9f7cfa7a35d",
++            "0x7f0f3e3f9119f8a54534a61188f33af80cbad96894711f5f397bc68ad624daec",
++            "0x445c6a08b9a228eccfb1b3db6b30c7fc56d63819a5a27f976851f19caf535c52",
++            "0xcb223d37905fea6a6798c90dba9310ba434b66f9efda2f0894f8bcf8990ed265",
++            "0x8cbef83efa9e7e4834a7056a26ebfe16a8800f799216d98e01720b5cbb448d21",
++            "0xe2e0533d9559e500f02f312b5533abfe69b5855b939828f988cf4d6b140974dc",
++            "0x6b43f334231b5770411039bd559f6224cd5b5889966c812e1c7b0bc454a87770",
++            "0x7228f4cc67a77a40b3516bbb9c767dd8e1d011b91a9cb4366b2f5a990fedf647",
++            "0xeec7c14d027a64d5cd33921c6cb82abe87a16aa1b4545b43575b4ee4c4c22557",
++            "0x3cb2de7d568a398e7a0573cb2f1c155a301440ae49b6d4e914a87d4b1d79a786",
++            "0xcbaefecc0914a40d62535b891146c82fb0fb42770322acaa4c1cd7f8ab65ff98",
++            "0x6e46f3573c2600b316b5eb024a949b5ead4b3fbd4da5bd9494e1eea461293d56",
++            "0xdd154f458670909914bcb43a423fe84e9b5822cdb9b51191b0cc78af93fdb1d2",
++            "0x12f4bb2c5f3763772079bbc9edf25f56d759b00e73acee9d9ce36c4fb16e9312",
++            "0x999d0f7a786086798d8c4e7d48594d05697ae2aacf1dcb290e98acd584d2d57c",
++            "0x2067215c1eaef6a8344914226eab335605a0b068f6de02e57e6ae42286bd1901",
++            "0xbff30496521adb1ea76ec3301e772945e49f2fa8d8d3d26448d086b9561ef75b",
++            "0x43a3f82f38ac3797c2e0f1a416f5ae240e6b633118a2d3409992c53db734571a",
++            "0x25583aa92193741596764ee645d6b7b4bb7a60dd540fbcd64287afb843c78369",
++            "0x51fc6460632c6ebcf5d31f5b3fcfc3e8d3e0ee9c385228b328f050dae1fe0778",
++            "0xf5f10a049657c35250326162705dbefe56e1da9d9702d0bc7306de2833d7f34e",
++            "0x9292b1f333a341d2024d4bfd3f1d5af0b5eae75ab9a67788f6d616465f3b0392",
++            "0xbd350efca7f82a3256de95300d3cfce1f782495f3bb0210ee99f0b2255e29f81",
++            "0x78b303d61cc81f7d505e6c852434902c3c1a1a1a1441b9fe70d3c497081adf1c",
++            "0xe268c77ce057226c52be8407beb3642e6350302059603048207a91191235b238",
++            "0x1989c2097eed6aa4124aad8a52a2ab0da6ff02fe2dc9164c92c4492b27e3e3dd",
++            "0x869f7a2e3d327d9a4a0c227cd750286ba5c3da9f53695a0381a6f2438fc82bb9",
++            "0x46fd4dc490e8284807abd3d1a366be086a7ee23bb22d17f5d937ac63aeee26c9",
++            "0x8f30d9ef3a4ded2a72e9ef94e210aa8f694583336b314970bb56620b554551ec",
++            "0x51ea9aa6bd9e7cd01312a4bb1c18ee3da2146c9984a96688c83f7fe40aef7d8b",
++            "0xf92ce0f1c6b9104cd781b48237ca549ced33f1044a726728741f969f5dc1d177",
++            "0x8607ebd8934110c3c521efb5992b98820d3451c1c86f47c1125bdd1d35977ee2",
++            "0x5bcb806692c68deff0e8a7a2a93c962ccd7228664c9a778572c719cf855744ef",
++            "0xb285050c88aaf4742b9c8ca14bf670e90a23de44ce5ab864448186cf2ddb0fe8",
++            "0x242a142dc25df4f22caba7532fdaf3581520aa9a3b0b5e6e734b3c05498b1c4c",
++            "0x116355650e0a0a7350ead7701620bd19ca7c9052d4453477f4c93847e60c8280",
++            "0xd5deebd3377359a46e307211ec34c8ae421705bd82a1c12e9c077b90a1d6f721",
++            "0xdb98a2100c0ccaa6c309b5a7345fddf8abb9bf1f31f22a165e5171b1dfe16974",
++            "0xd780c59febecfdad42d0e0cdf2df287d30da4b1542e9f7dd1b2556b43154737d",
++            "0x6285b67a5f93a6ae4bf2e640c55306034c1dff6ed6b486b051a9d25c36ef737f",
++            "0x564358779e0ef2bc2d6af000d426ec54e5044407833afeb477122da9cd93e5f4",
++            "0x3471a2610e9f04b748c6521ae8e6bf8aef7cfd34575dd054e474e20615d31aad",
++            "0xe94f5d08891463297356eaed4f654d3654c01db851d4c1437c98ac744717c07e",
++            "0x6bc4e34544ef9165db936ce9125234452c5114fead163467f07b10aeeda50a71",
++            "0x4a6a4044b77e098017724a795d630d0bc5f45b548eee1e19337ada32805c23dd",
++            "0xc0d28d6eeeb00b58c8c06a8c43830de4af528de198d34ebeb995acd07c7a1e4a",
++            "0x2712387452ae54e6279b01dd57411ba3781788b870fdba29be45c732c54a7a98",
++            "0xc82170842b672c4b5be66ec3a5b4838ff169140bdb02edd644c39877f352820e",
++            "0x56fe47e7cc76f88e8e92cf794af2606018bed6ef06e88d2772cec420e72a644a",
++            "0xa00a3fd5e2131d78b455b7d1512f20c2e011c97e4274e8e0140b7aa6999df953",
++            "0xe4d7894266fbe957faeb6c5f95267d01d32daa7d0d900909ef3dfa877391fe19",
++            "0xe7a6f019d0b44ec9106c207f0a27d64f77eb3c5fc8cf43777584708e98c0b0b0",
++            "0x9f8c784c033c89a004530998fca79af3fa7b897eb5067217c0bed9ef1efaeab3",
++            "0xde0508062ecb2ae6e3de990071429196bf2b58201442a413f4bab6a49f254c2c",
++            "0xbfa1e8e85a92d87af9fcccf7e92b1885ca8557d74903e9ab100ab2c6770dcb87",
++            "0x68bed21ff9e2af1736a9f17384a92fa11f53bd428955c9d3338f7e071a2f0ba5",
++            "0xd82cd81d43c15d055a4d925a3bfa0a423facb442b216fb545e92ae8e078b2020",
++            "0xa322beb093ebd4ae3a4bdfeb1f24141008bfa4007d058d2a25bf2e133aa3dc23",
++            "0xc5fb0cdb0d8db0b2a2cd1af040c97f6d62ead79e424f70e030257871f1ded2cd",
++            "0x817d3417b1c33b6fe57e17ce6e366e4678f8639f12f266eb13b0b2f1f33f555d",
++            "0xc20bbda72c2b0e9e8555302ff198f59c11acf71988ba52cfa1aed77d4c6ce10c",
++            "0xf3ff8ae4c90ea429da916c78447f84840e6c7b71bb669c76908a5647f0598463",
++            "0xbf3b6dc00f7acc1668687a5d2a4949f1f4996dad93377af1e8de3d2daead7ff0",
++            "0x7c4f4e0f7f91aee46fb68f2a8b7a1f0e554c19f6cd69663267203c1eb14b8f2a",
++            "0x42686aed5681558783fcaadff9e363dc610b6b50f715c0e82efd687b0b825bf7",
++            "0xf0e913f22d5a3598da7cc20b7e5a85d2a6d61d0eee81e6bebaf4226e5370304d",
++            "0x64745b49163f15f4287bc0dd2df8d9ce30cf856becebee0687f52da558ac9cf7",
++            "0x769d3d1832f4807018710288a30118adaf723481821862acd8ddd426c000ecd3",
++            "0x7336e6ca331c716f8d42d8e6003f3e2be0076dd3eb01aee5708d9d6156de7588",
++            "0xe34d0c032d3da147ca9fe6efc56d1e6ce742de5e639dc5407f6a25fae9ae0ec8",
++            "0x9c23c94b4f84b078cf898a549042e18a64cb1f97c6a71e510fde6bd850a1c1a1",
++            "0x773b0be0aaffb41dc621e94d7c5c64c64cdecd22ff8b8644972dce3c43a3e8dc",
++            "0x71d25c8dfb6e5281e778151f4b1da7dd3f540a95a2a093894c0b7ce362e71136",
++            "0xa4cee5e47c07cc773fbbd4a3487dad2d80df3cf0f0944a759fd04c1d1cb31938",
++            "0xf329739ef32b86b95f9992e0c380d00f150d1608c354ee75bf25d31a15979f54",
++            "0xc1266a0b34de43a41293144daceda630d7e4d6fa6ded606d8716325ffa6a1e08",
++            "0xe62d29e4dc4c9a4f41b090162c62c6d3ed02a05c67297397babdabe4975c40a1",
++            "0xd99bf12b3881fbc79375874b7fed123cc597436f0c9baa3b41fd3fcbe79b7ec8",
++            "0x36880482924448b8addb38e42c3d8c6d3960416fc23ee857c60fe15e6cc64aa8",
++            "0x73f0cc11668504eeb31afb7eb370fdaa45d85fdbf0b9488aa6a7c856edbcf96f",
++            "0x7ffd0901fa5061f080bdc6942c45e5d2d63110b660ca7fd070fc358462063e6f",
++            "0x95992787c21f37b80524f15a6cf217047fc760d4929839899bbd6eb43ed1079a",
++            "0xddac1defc2e668e07e166e521e98ae0ebb86012bab1d1a875101ae13c8104444",
++            "0xd1e2d6a68d9aa7890f07c0b47fbd6457e79dccfb58a6a3569e60fa6a6339e520",
++            "0x37fc20db59881fd00f4df80d12b973ba0b319045e243cbf199f2d3b57f44ea1a",
++            "0x68bdd230673e0aeebc3692a9ffd704703d344f673edb76f5727a458a8c342bce",
++            "0xaea585412fec40d78def271018f1a0de41fe7147e37bfd64fb0f805d4cb4812c",
++            "0x51a741cd81fa053234169d53b7ca30eba5c5279ae65a66fc443554598d3624b6",
++            "0xd5f799e0000dac1128bd85c3441e516ee0c7219b49690b9030a358dd93894c88",
++            "0x8e60d49d64cc1aa871c0bb988c2eae8f9864bf7023b6ec4138a420a4edf7710b",
++            "0x1fe30d8a663e556f4f1442afd64f8d8731989ddd241f1a2bdfa39bb4232363a4",
++            "0x13ddd6e6ce97265fb996f361bcd6420ee08f5665903e6191c950933673df6ac1",
++            "0x9ddb4413568498c8e0d4eaba72a6a6947fb9c28993e718e73f60ade60bdb3198",
++            "0x69a0a8db191f89c4d5eaeec54fefe056afda514b61574d1faa7f2044707b3444",
++            "0x3dcd8942710e6157a3cab261287ec00e7b152c9a360b2b90a44fa6c63af52724",
++            "0xbab2f20c5132c8329960e62e5e257b94369314bd36ba1d29e16671cce101f331",
++            "0xbf0105ce9ceb6809437d2aea9883754db29688cf48d6cda70137c61a782e3257",
++            "0x6431bdbed2339359a8d07d59145e2446417c6c1d01473bf7b9ad7c9af7e9cea8",
++            "0xbe32ef271a9b4a4a869f57f61e4e5fc8eb2dee9ebc69e4fba5634ffa9b4a4e40",
++            "0x3f19b8f15383a8af4a3ebae183ef1ec658a72b8fdef0968c14621586f93adbcb",
++            "0x5b56caaf546e100af55539df72919a18b87df1ec0823bc4469464abbd1f38d58",
++            "0x3fd431aa30b9325707a0d3a6dc6b66b3e8e29693fb3ff424c7cb2b613f23c9a1",
++            "0x0d313980684385ed6ab0c5a9d30c2cbc714fc9bf093239deddc8ec56d8eb327c",
++            "0x46fda9295bba79026ebe9fad65d1956c382d447fca02238240218ea1af5cd58b",
++            "0xc57475793ec34401db51280b1ebb809c48be75a9c573fd7d6c3ba5f47ce9e8c6",
++            "0xe48fba430868d8e56414a774409b9c34bae1a9e1521d312cd1a07ac60faa2bad",
++            "0x44b270052824ec834e3eb39450bd56dda9484acbb76fd1b90cb25084c4143341",
++            "0x4ea8769f17ba38259ba17785d49d6a14e71c332a6a3d72c048ae4c06ca884f0b",
++            "0xe9b1b7d9c875a8b857bae370a66f56d8e7f3188e0a14d3845acbf625742ba4a6",
++            "0x71ebcc435e5dbfa0a0774108346c5f444afa0013d6470531a17a790ff09849da",
++            "0x664feb1631554170896325abf387106e6f3eff3c24fa69c998d54b1971d3a490",
++            "0xca7d38a219e26edae1c0ddd0264aeb1559475053344ba4e598513d010b78044c",
++            "0xe35764062f1cfc1dd583775479ad35f5f6da81bbf858874f2d9a9836f23ae26f",
++            "0xa36556a07089b30f14fae27b361c89cbba5048b6a61fee16c657607df2ffb836",
++            "0xe95fe20f18a329dc4c7f2301b27de55a9eb89f6217397569605a689b208914d1",
++            "0x6c8c4ad559c24b2d27681b21ca1f838904178a317f189943f6b08207e83de2f9",
++            "0x072738d83edefe588ae38177e329590aa83e6e8d16b79eb342ba802b3182987e",
++            "0x65081115620c0c1d1041242e94b4083cb0d61b64d781224d3cd0a9acdccf6a29",
++            "0x3fd6ffa3d80a47f6f0371179065c92541d208090d9a3f4c51d1d0dd1f07ee516",
++            "0xae83214c3aef1324ac26aa0e088d8aeefc2e5f3a43b12ab05636a4ec955cd538",
++            "0x4c9626814e8e221cf025ed8f4d96b705c5f26cffc687ddb72a1ec1babdf04087",
++            "0xc6a41e168928c85004ce696489b4fc0db5b5b5a355a9c972a65807edb2c3e210",
++            "0x42013f292a4f01d9f9fabcd8bc773cdefc01f18eb51094fd2e812416865289f7",
++            "0x76c548a4690022b5263fb62efe392bc7c8bc000d6c603f2ba721829f799532b4",
++            "0x9462e7f7a5189e0bc695f4c4fc566d4d91363eae8d1f33b26b43cad668e4184c",
++            "0x84714f95b68c9e064e564466788a50eaa4961a76dfe71d0a22ff0715e240dcff",
++            "0x367be41e83e9316dcd4833b1d3495a28462c31623efb855c4b46855c903fd68a",
++            "0xb9d5e0abad5ed6f30773573a003ad10b9b75bda36828a4bc7590588976d5ce05",
++            "0x7e6d69aecde51f44e6f41da94a7c8e7470ec59fde8d72755cf0af8191114027e",
++            "0x4deb93edc05a8becd53590acb7ec02189b94785602406854123d177476bf2b4c",
++            "0x5e69deabc9e238759beff98909ed900bacd91d85ba25cc9c5b57d9cb2ffa70e6",
++            "0x4910d90f5e8c1961a6b9b919566ff35c2d163beb1256f6ddd888c80de31c9143",
++            "0xaf8e9326057f504e4ac9a9fd75382a95c819dd0abc1c6cdfd8de545c5fc5b54d",
++            "0x68bdaac1757f083bc9a81dc9b728293743af57abf51005dd4fba3a34ac81ca3b",
++            "0x6931c614d8fa467d9abd948bcc8619a94baff107f6b6dd6fd2f95dc7106b835e",
++            "0x0430009b410c4ebbbf7e34fdecc88aedb69e2827650ef04211c433ea1e33414b",
++            "0xc41334be28fca83e562ac23bf91df86f42aecb295bd7a71f5835bbe75901e48c",
++            "0x038ab33b7b852a516a58176d3fa82d6b06303a876e8cd23edef0a493af2b2426",
++            "0x3ffd6345582a3fc6f33cbc697f3411a43415f79b650446a26b7e1e85f2f9ca4a",
++            "0x7e0b95114f6e24acd5f2b350f064289116002de3d554ea3e5876c5efbb84688c",
++            "0xf52d51687303652c5c95dc9121ec5a3c3d20e524a93f95b4cf4370e5b87ced11",
++            "0xabea951b6095cce23ed5e6b28a5d698cb092b13b61a0a7421b974e177b22341d",
++            "0x75fc24062e6730b1e909c2d77b6fff1a0dfd68614891e4f0a045fa670ba9b295",
++            "0xcef3defc33e24bba92d65071770ab95c15cef951cce7cdeba7bb08e6bf0a2f7e",
++            "0xb3a0951858309cc281c69e49c285717dc1d4657b57941a96bc4707c5141fe879",
++            "0xda9e28419c65f76682fdc37a183ea3789779cb5e3b8903e8e5d54eebc7549880",
++            "0xee3c12832147e338b08bdfe7e9ec6624b59318e79bdc83ecc1798ae709cb7984",
++            "0xb0bb337912e77f886c7401dd37be685d905829374e127f00dbb56e4175fe4067",
++            "0x07a504d65f89c28c3923c144068f1ac28b7d10bacee85f615e40405fe766fff1",
++            "0x8e2ca4098fd93cd20f22eddf2d69370b00b6a9c9ab83d4c6c18b41b8c63f5f0a",
++            "0x75790822155eb209eed5d8eea1b94ba9bc570ada6a4dc0bea6042619978deefd",
++            "0xc9d609b983bdf676a006ef6f0c2e2172de50b665c1791071048c9b30cb1b676a",
++            "0xd01204ad5124339645e30c4405b582f0f615f2a945b259a890b596fcdbb4fa2e",
++            "0xc3b4e308f065bb924df9879ccf5c7b8f043149cd744ebed02d8a8cb6d235f67d",
++            "0xc6b9eb70b0a3827a2787b665a0fd3b1f1748e11c15e3245d0ea81c90549c99be",
++            "0x14e4f4e16accf64ec29799ffd99f6dfd57b571a657a33024d6d4358a3d417b2e",
++            "0x576ae2ab979bd048c935e2ac05e00d18f5bfd3fb73828906e58ca00302bea51a",
++            "0xeb291110ef0388cda78bfaccaa830ad7e59af078bcf5171f51d92a99db751b84"
++        ],
++        "transactionsRoot": "0x52d5e158aff9cc78b40dc30f0361bc8df812067b9ad0ddab4bcb4fc79a6971a7",
++        "uncles": [],
++        "withdrawals": [
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x1145483",
++                "index": "0x28f662b",
++                "validatorIndex": "0x107614"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x1139fcf",
++                "index": "0x28f662c",
++                "validatorIndex": "0x107615"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x11420e8",
++                "index": "0x28f662d",
++                "validatorIndex": "0x107616"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x11535d6",
++                "index": "0x28f662e",
++                "validatorIndex": "0x107617"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x1144b9c",
++                "index": "0x28f662f",
++                "validatorIndex": "0x107618"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x112dd11",
++                "index": "0x28f6630",
++                "validatorIndex": "0x107619"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x1137c10",
++                "index": "0x28f6631",
++                "validatorIndex": "0x10761a"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x3b4815f",
++                "index": "0x28f6632",
++                "validatorIndex": "0x10761b"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x114f593",
++                "index": "0x28f6633",
++                "validatorIndex": "0x10761c"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x1138833",
++                "index": "0x28f6634",
++                "validatorIndex": "0x10761d"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x114e2df",
++                "index": "0x28f6635",
++                "validatorIndex": "0x10761e"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x113f686",
++                "index": "0x28f6636",
++                "validatorIndex": "0x10761f"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x114ff5a",
++                "index": "0x28f6637",
++                "validatorIndex": "0x107620"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x3ac30c2",
++                "index": "0x28f6638",
++                "validatorIndex": "0x107621"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x117d9e7",
++                "index": "0x28f6639",
++                "validatorIndex": "0x107622"
++            },
++            {
++                "address": "0xd4e11c28e04c0c2bf370b7a9989498b7ea02493f",
++                "amount": "0x116f53a",
++                "index": "0x28f663a",
++                "validatorIndex": "0x107623"
++            }
++        ],
++        "withdrawalsRoot": "0x1aebdd321d58da736cd6e41578c2d2412e56898a6dc8850cb26913e413f693a6"
++    }
++}
+\ No newline at end of file
+diff --git a/bootstrap/src/test/resources/wiremock/ethereum/__files/body-eth_getTransactionByHash.json b/bootstrap/src/test/resources/wiremock/ethereum/__files/body-eth_getTransactionByHash.json
+new file mode 100644
+index 000000000..de629a91d
+--- /dev/null
++++ b/bootstrap/src/test/resources/wiremock/ethereum/__files/body-eth_getTransactionByHash.json
+@@ -0,0 +1,26 @@
++{
++    "jsonrpc": "2.0",
++    "id": {{jsonPath request.body '$.id'}},
++    "result": {
++        "accessList": [],
++        "blockHash": "0x7fe3898aeb58060650930be8db994227e9ddfd59b704277931dbe60ec2393ccd",
++        "blockNumber": "0x12ce534",
++        "chainId": "0x1",
++        "from": "0x1f9090aae28b8a3dceadf281b0f12828e676c326",
++        "gas": "0xa003",
++        "gasPrice": "0x4559c801b",
++        "hash": "0xeb291110ef0388cda78bfaccaa830ad7e59af078bcf5171f51d92a99db751b84",
++        "input": "0x",
++        "maxFeePerGas": "0x4559c801b",
++        "maxPriorityFeePerGas": "0x0",
++        "nonce": "0x8df64",
++        "r": "0x3127143b5419e0304cd8c74166b41d85af527dc4b3cb462d016f4d7a40678230",
++        "s": "0x2a10ba32bd7f20598832ee14ddd69fb6236b9a6a8ee074343cfddb0e49f1e6c0",
++        "to": "0xb060429d14266d06a8be63281205668be823604f",
++        "transactionIndex": "0xa8",
++        "type": "0x2",
++        "v": "0x1",
++        "value": "0x67abc1b5a030a2",
++        "yParity": "0x1"
++    }
++}
+diff --git a/bootstrap/src/test/resources/wiremock/ethereum/mappings/eth_getBlockByHash.json b/bootstrap/src/test/resources/wiremock/ethereum/mappings/eth_getBlockByHash.json
+new file mode 100644
+index 000000000..eafd4a77a
+--- /dev/null
++++ b/bootstrap/src/test/resources/wiremock/ethereum/mappings/eth_getBlockByHash.json
+@@ -0,0 +1,27 @@
++{
++    "request": {
++        "url": "/INFURA_API_KEY",
++        "method": "POST",
++        "bodyPatterns": [
++            {
++                "equalToJson": {
++                    "jsonrpc": "2.0",
++                    "method": "eth_getBlockByHash",
++                    "params": [
++                        "0x7fe3898aeb58060650930be8db994227e9ddfd59b704277931dbe60ec2393ccd",
++                        false
++                    ]
++                },
++                "ignoreArrayOrder": true,
++                "ignoreExtraElements": true
++            }
++        ]
++    },
++    "response": {
++        "status": 200,
++        "bodyFileName": "body-eth_getBlockByHash.json",
++        "headers": {
++            "Content-Type": "application/json"
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/bootstrap/src/test/resources/wiremock/ethereum/mappings/eth_getTransactionByHash.json b/bootstrap/src/test/resources/wiremock/ethereum/mappings/eth_getTransactionByHash.json
+new file mode 100644
+index 000000000..3548d95cb
+--- /dev/null
++++ b/bootstrap/src/test/resources/wiremock/ethereum/mappings/eth_getTransactionByHash.json
+@@ -0,0 +1,23 @@
++{
++    "request": {
++        "url": "/INFURA_API_KEY",
++        "method": "POST",
++        "bodyPatterns": [
++            {
++                "equalToJson": {
++                    "jsonrpc": "2.0",
++                    "method": "eth_getTransactionByHash"
++                },
++                "ignoreArrayOrder": true,
++                "ignoreExtraElements": true
++            }
++        ]
++    },
++    "response": {
++        "status": 200,
++        "bodyFileName": "body-eth_getTransactionByHash.json",
++        "headers": {
++            "Content-Type": "application/json"
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/bootstrap/src/test/resources/wiremock/starknet/__files/body-starknet_getBlockWithTxHashes.json b/bootstrap/src/test/resources/wiremock/starknet/__files/body-starknet_getBlockWithTxHashes.json
+new file mode 100644
+index 000000000..4fe4b23c1
+--- /dev/null
++++ b/bootstrap/src/test/resources/wiremock/starknet/__files/body-starknet_getBlockWithTxHashes.json
+@@ -0,0 +1,207 @@
++{
++    "jsonrpc": "2.0",
++    "id": {{jsonPath request.body '$.id'}},
++    "result": {
++        "block_hash": "0x29369230c32633ec9950456a363d8d919c8e4bc5d6b783ba89772051c7b4366",
++        "block_number": 635185,
++        "l1_gas_price": {
++            "price_in_wei": "0x3cb359a03"
++        },
++        "new_root": "0x2be25c37fa4d0c08ee641a304f9acfa334f19077ddd2b8ee838dcb6699077bd",
++        "parent_hash": "0x4f9b9a58eb6cf3663c5e0930657de461392cde3af823d297afc71501e1ca2eb",
++        "sequencer_address": "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8",
++        "starknet_version": "0.13.1.1",
++        "status": "ACCEPTED_ON_L2",
++        "timestamp": 1713898290,
++        "transactions": [
++            "0x210b9a1edd9ef203b0cf1c37c76b69489bde0352935ffdd6463e06672e7dc3",
++            "0x223c05961fd1c9d5be339f16c1377e2b508aad05a76a6120b53af2b3d43fa4b",
++            "0x61c2b0b9f5440325db8162a5364d7e46ee9c83d0a98072e69db01f015b7c6e9",
++            "0x831fb94579abf83051aa405c54d327533d4f36ee605e5aac803314794acc57",
++            "0x5cbc89e209365d775a9bf0f50cf9d59e9d472e9de8f37328ecf86fe02c00296",
++            "0x14d6ec4897f38c0f7f6ab2635cc049954b4ab47a565410867fe01b837631c47",
++            "0x2d7b56b8022dc61b812c394454adadc15c1a96a12e545d7a694dbfce99bef33",
++            "0x23b6b0ae036d821949ca3a0af00cbb979b67fce010c5e8b646354fbd835882",
++            "0x7c943a9b48d0bdbd055a8c8f8b7ef1231bdc98ebe960fada7720c9604cb3f73",
++            "0x36c106ea07a93ba868f0cc759abebb758d794452e590d1719ca568fa21df7fc",
++            "0x7e557d440352306963e78bf1c3b2bdf90252bfe198f65a75b56dba68f22819a",
++            "0x5b4da0d7bdd0a3c52b88f62efe46e75dcd9b71c42b7325b7cabeab90291002a",
++            "0x5448673152b2af0b33810215cdce58873bfb316a30d4b935d80f791bc04364",
++            "0x5b853f187bea8f8d7b7db0dba25ecaefbc8c0147d8779ae953b2f34248dc2b2",
++            "0x470da9560a89e9c43540d267e9549ce0d448603e556280543ddf2a96ed17fb1",
++            "0x38b0b3d9b0ce54ac9dfa808dcdc5fb3e324f1b37b9eb1d58bdd5481ff0b4e8c",
++            "0x43fd642ee52759b8fe42e0647c431408b073fefe457d6bfb8ee4d6c73497f01",
++            "0x72e308b955d0a8ea2dd56f9f03e32dce614cfb409952186968360e86230e162",
++            "0x2f609b0c03fec603ec253af45e77c674989a060bcc781e4055088a0e4cad24",
++            "0x1ca07fcda465f9cde213ed8c650e0931d84e7c860f81695f63a37a15367e527",
++            "0x107101a3a5b51584203b4b7ae24413e3967383933eaf044331eb8fa257444c1",
++            "0x103fcfcc33e48f9a9033e9da59f1e4f469a05b5f34ccfeceefec64d76c595c4",
++            "0x3a718045b97733e4018eea7e13c3c18b3e7bc6e18e3b6ff2708445fc28360f2",
++            "0x700a1a8a9e1580f8c172c8dbafd412391b01f0b18b40ebfcd95cfbf39069068",
++            "0x11ebc88b22e3de71e2df023eefec1c6b7c8fdfc68faa93b0adf960581fe97b3",
++            "0x633a219615545ecf107c05c601864f9d019de5a4f49606e71d91fd56a71fd1",
++            "0x76f614f7ce97821e2adc16954eb04d9bd6a84bd95e554fd20484eb219b0c9c3",
++            "0x63a8c080cd45f4ad78d93b192cb75474890c999d201cd7441ae594265c27b3a",
++            "0x3a4e9abebfdccb88de392a8bb54366340fd2339258548342fd6a58ce0b2a566",
++            "0x1921e8a26434599ccaa68f1f87658dd89ae1396e8cff3076c572b54b3fe963a",
++            "0x2ae75686610c22f4e813449cd28169649574d53076b0c9aac9ff8606900b06f",
++            "0x1185d7ac2c3870d55e32acc49a333641424e43b6fa70698f8b9b37c04869814",
++            "0x109ce05dd9b1584a4d6589d79049bc61d7d576dfd2fcd9ce5af3ecfe96fdd8e",
++            "0x33ddb694d93c3ae246248d8e160b176d0c35a0c8359b9cc99dadc26a95c84a7",
++            "0x7cbbce7c00d7f33245574e086680a3013ebed1dedad7015673b3dda432ddb9c",
++            "0x538dd0f4887738f0642e4551e8463aa40704ca2fcdc75ef844636742a789094",
++            "0x397a1a3afc0e1a2d08643066cc51d41c33f055209cd4b52fd019614d9dc4a37",
++            "0x74f264658806b068fd54f4726ee577f05e5ad3dc9af01ea095160559619e78d",
++            "0x221d0adf6377630b570064968fce27d320f85f848a3cbd9bfdc90b9cbb8a8ef",
++            "0x1898f1ff16460d21db698d9a145a2569769b04fab1fd2ecde69328c8974d0c5",
++            "0x27f8d8f6bc6c453ad6125aa770b821d66a1ae07959aeef0a8672b6bc2ffa1de",
++            "0x2203b402f26553e7beb685b1063a527c18e3d7a72fac07645500e66d5e5d770",
++            "0xe2f05231da16d2a5624743a787f698fb1cf440ed968c3919aecbc954b5b27d",
++            "0x4b17b3b56cf3cdef23064c56e8e614def39d6655e51c31017d5cd6c87e821f4",
++            "0x2fd26553b3d96032808d08ef2c0c9ab69355a76e7d480a85ea43e80626ffebd",
++            "0x27e0fde2269d98cd10a31ce7c9da5b3ca7f5e90ef2c1d3f508d8fc504313f3f",
++            "0x65b89c59e53b7fcc708b7ef32cff4c04b32b3896d77be3356ab648e6c31203e",
++            "0xcdf6c46db3b656d89ca2048f052e7b505297bb3fa45b54323f600eec59a9a4",
++            "0x5f2f173bc4aa4a2820493fb8c92530047a1662631f005dcb18e89df33da0a7c",
++            "0x312e6d4338d7431a99724634a78ef515bc130eba244f01d1449c0b0487c1d96",
++            "0x10910c0fcea3cb4c7621dcbe85c9420239697fd3d662772f262c9e8a6ab3edc",
++            "0x2437a97319b14e2e27b31f80784c3c0c35744614003fcf1782d29393507871d",
++            "0x20ff5533975ce1421b26ae92b2ce92d672c2a5c356a2f5393225bf627b9d1c4",
++            "0x3eb4ea04b06b6a3166b937b9cc22d4c20cd34aa4c8d691ad38849aee2865ea5",
++            "0x9ff87393e7aa6a07fc1861301671c55bc76573725716ff94a0975e0fcb8b3a",
++            "0x57ed051c971f90ab1642edc472923fb0c644537e9afa00e90b3c580767e2657",
++            "0x7d94dccb333eddd92d9f8fd96dfb88b7f634a28b9b7d77b148f04c9211e5fe8",
++            "0x4c9d3445a7a15e8b38fa6fd4bc21275f42f59db9a4e805b7d009805ee0c34d7",
++            "0x7d7fb77f96eaf52134819f663f709e6dd1b2c2f358c10a7661557dd49400cd3",
++            "0x3a7b843db039acbc8342132aa165281d604489fab0b5b752f3b1b9dfb171bef",
++            "0x570017e7d6dd197f27c23a196e988e7280b82572b701bac6ab61ee6cf4227e8",
++            "0x2639d64848cd826d77d945bf2aad172a1bccd889db165b440220939b2fb2c48",
++            "0x3cc6d844515ee3a383e1fb379d581e61fcc3968f75ae076136972e8951fad63",
++            "0x1bdc4975768bc0c05329abfb2d30d90954cc90283d87d052cf16a139cfdabe",
++            "0x7681b80d8b316fc36833d4cefdc44869d711f9eb9dfd66f717aa4bcd269998b",
++            "0x7ab5ba4cd0f78a4df0a4b246535c1ae613f4898599aeadfd55cf9001c64986e",
++            "0x6c0f9485ef5198a5fc1af3705fdd9c58d140fb39347768b020196d55e00d30a",
++            "0x257962e569e14f11cda7bbd4b86f934d7b160d0d5edb1cc03d73ffc2a8f3e34",
++            "0x453fbdfc901c6aed9ebdea20e5962e38b15567622b3b29f410210662accb8c2",
++            "0x591eda184b554f15bba029237c151f9a62d4971a6a27929d03ddddb1713ac0f",
++            "0x3bd63067d64ac47719827a0e5ac83bc807efdbf3ed72b223450158ca97d8797",
++            "0x6a26f0204bbafefba1f0294b77596954639b9d6a7dd19153c87190aeb9b0932",
++            "0x6ac784e5b93c09055dbba62eac538c5992228923c3cdad71759b530e1de299e",
++            "0x2c9ac420c6fb7d90d030a80dd738f1a803f7e380a8449ee8f554e1948459086",
++            "0x3888dbe4c8f084ae80dd47f27d5c38b474afb578305a1047c5a7e4f527425ff",
++            "0x4146db789e289b3b4c9dca5aa0ba9c079bd79c621f3adb49d9a4df558ad5d0c",
++            "0xef193dccb24129cf55fa442d1a3731c27d9ca6d96b3040eacecf71bbb78b47",
++            "0x6d09095f1a878be3e42d26310a46c55fb551d45e6130a4ce1d6086818c4db8d",
++            "0x4cd0a6a696ed809d3e73163d3c60629a52fee572e293876062e1278186cec7e",
++            "0xe2db06b125922d9a913051f44b314a036d80990e9c77c384d8817ca48891d8",
++            "0x441ebfe3fa252cb4cad5e3e55f45cbab10b7babc6af09f3a0dfe21cf49e1880",
++            "0xe4616282406144aeafa383aeb2f1058d5d6779befdc254edc4a43132bf4977",
++            "0x4891b42517f31b3e22770bcb32f250e6b460430b40332fd414330367584b91",
++            "0x7e47e64d584e646f631261a3c3e89b771d7f541b789295a82f292a29700995d",
++            "0x6ed0b8907206ce3a19da05096f94f92fde27ebf31380a1600346d46dff6c1ef",
++            "0x17c721f7cb55ecff23f1de04098577e43a9901f0357e51f4bf239f265ef3e30",
++            "0x13810e7242ed8710741910a31ce3bc41925d19284a8e4cd131b84c5ff53ec67",
++            "0x7699c5e61f345a8cab2455bf2fe22e9dfc13d13c2f8c8146a9d6b1bad9f5d8e",
++            "0xa0581aee6d46da90dd3f8a02878239e10a11a34b40074c16b13919b6a0f429",
++            "0x2858d92bdc30aa1399c8f328fc4991b3c8065ad27ffe2036e827af18b477f42",
++            "0x2db98f8535394bfaa29f7077748ea2421ce46d35c59948d2415aec319831248",
++            "0x143243f4650d98412bd872dce48f47e2165de786513ea80097bb05bf9503cc1",
++            "0x7f94069e4b3d6261a2b6426e6111ba1a5fabba6d16fd6e025f8fc5d4a9da060",
++            "0x2c8c63488fb6332e20a0fb9f30bc0b26b20f6c25f3be663b55502d384783cc8",
++            "0x57beb288cd54535c842df81c0118987334d4179f238bd6ba357a60ead50259b",
++            "0x53b330526d205502f1febb6ee4d710e8875babdff32713b971f073fbd580089",
++            "0x7b3071b8c8faef89012b2d0f5b6d41f10ec01a747c6cedb692b4cd1a7b8a88a",
++            "0x32f8275e2bb8a904c6e0b0a49b7576fff84bb516d2ac3ef25aef15f24783c48",
++            "0x52cc50105d81c69a2c02ecd91ae9209d870356217ee26097a4fba7baee5d647",
++            "0x38a0376fce6c5c128537f33cc14dc7d51328b18360d66220199e69e5e358721",
++            "0x6280bba817da276741184fe55bd3f5a9ea51b4e4c1ccc0ed3662f3eb7bc90d4",
++            "0x708d0b558f534c2b27afe4a5f1d5e9d9a2193941fcd334a41be092631725d21",
++            "0x1dc2eca5d2337d51ec48732524a34e00e510b6f1d9c7c9991a620e0090f0f4",
++            "0x35a9dd6d434f748d472b55d2642abdc284a3eb2a5e6f2162afdb9cf86e8a7c6",
++            "0x3273b12a3d64c551b0776412d84b40bc2ddcdcca9c3082dddf04687d9b77f96",
++            "0x2886bf306bea8459d1ea465358335e77e6c513f9642084885ceb08340480bf8",
++            "0x3b4029847f519ad4e89fc28bd054a8f40da86f9e5a9d239fe9aec6199ac478f",
++            "0x3e326c28e3533d82ab7da126d4cfe50a09e73131d29b379a23dc3bc1978dbef",
++            "0x3e63a1840289c089273b30d1e5f1b7b8b603ae94ed98143846ea1f4788e05d4",
++            "0x54932c4c434657368621fa8d2d56e1bcef7ec02e0df876b5332edc43633103d",
++            "0x33fd1175cceba7d19c23858290fafae09f8ff2d2f56a8bfc907f67bb2a117ad",
++            "0x52e4f9ba2523acf3c8e0bd724ef8336348f59b8a9730f6d0c55596ce80dc832",
++            "0x2bbea761e71edb01d1cfb111950918c67ab58167c139a511791fd35ca3ccccd",
++            "0x54a5c5b7c3932efb6190ef58aafe66c09f623f38fbae2b9004521451cdeb322",
++            "0xcb0704c316443c71b50dc4576a7ba52ce2349a7edf757607d9c9a02c36254c",
++            "0x6c93d0ac2c4d2fbddde020ceb270886f4bf173a3634c5aa558bea574a1c4ca4",
++            "0x62d1a7713d87d5aa32f6875716bb1bd75507b2d071bd1c15c96e0a3714f05e5",
++            "0x5465e30d6f89de02a3421cc3704334f6cc8748a4d608b22cdad19dced35d570",
++            "0x72d89b4e8ad93c72bf49f72fa78f0ada49039cdf8eabbcbcc0023100822356d",
++            "0x5da32f2ee151ce6264d705d4643187f8cba00a04e225b55a60261030728711a",
++            "0x69fceeda12ab90f09c8c414c7251de0246553d322320ce85ec9f43aea58b3dc",
++            "0x522efd6f1d317aa56bc1914aa2d9c38f8ed5b65f5224180a8502928fbc62517",
++            "0x6b0782f8f577ae6048e5848f77322a6a4f06f05b38517cae134218306f5e130",
++            "0x41432432f9bb01f466d78c1b4e007161368fba553b055ee8b8229f26308d78e",
++            "0xb8e8db7e1c7102317c6f7c33c041db54f1f266995095153833700d44d56928",
++            "0x7b263e7e24fc53bb193313303e327afa20acb2b028a3137afcb0d6691e9ff4",
++            "0x25d2ac96234067c21d80d93fe54cf02cd952535bfda586219162bd82857b76d",
++            "0x13118c8d40f3797d100c458aee70d32f0f4afa581c86acb55b5e83b9ab5a539",
++            "0x49905129d1c840ef724708aab715996496ae517567f67c8cb0ec264878a0e5b",
++            "0x283811c5f7d28a32cb358560141414f7e58e9af71fbdbbb57a5ccf6625498a7",
++            "0x2906f02d28029ce73593decb230b3fec1747b9e2a417ff3956223cb7185047b",
++            "0x7e22a3fe7036514e2b05c484a9f8251a608e87ae628e4efb56dbd69b5c88377",
++            "0x1bb57b7c885ee7d11cc9b15f4547acdabfafb2edaddad434c72f80385daacff",
++            "0x266501ac8bc76f5f945601bdc82d85df3529f74bcaedd417ac1fba033ec8155",
++            "0x2950f0b910f2ec81126d5ffed455f6fb39744ae5e9d96f0230bcaa3f2b02a98",
++            "0x7f6e53ad357ef1adff1bb0cbd50659f0ef5b1a36fcd62adc851bfa52ab40ee0",
++            "0x7809052b2550d7e08eaf7ad7fcfae341b59c263465ff31b75cb18a84fd8b7a4",
++            "0xa5e5e08ae5b302b90216affe9065d7350313ac4d9dcb64f4c44356cf030e87",
++            "0x3ffe4961aef82e9d848eb8a4c9f8a3f503eeab64b3891da5d467a6cabf7df53",
++            "0x5880172fd02f0dabed6a9dc5e7ae73eb51838ef2f4f3de4f1f8001a6ffb66f7",
++            "0x36bf5816991a8aa9377dc685e4e2c4fcea597a0bad25d9d493098903fac050f",
++            "0xe707e40b4fcebeca6e065faa9618cd557bfbb493dde13265f37978e13aa28f",
++            "0x41a6526046cdf0281bab8dc355bb4d0623b0cb97b49f20aa3836ce42554bb23",
++            "0x4739a22f2c2dcf9fce2cd58fbaad8b7756139d0399bd482f4f8d392da3abaa6",
++            "0x2b21233049f09b986bc9e5389cacd36422d73fe87c136f3f2af38c3cd01639c",
++            "0xa19ab2b8400b41f0334099a46f27772adcbaff6da5d3c2e1ea3f8fe86bc693",
++            "0x506c993dee0e2c0912d09074200f31099cdc066488edd423fc74c23060e8a6a",
++            "0x41085e2f7447cbf2642e130b5ddd43dcb03e9079a466c1223a4bb980aa5af6b",
++            "0x2fed083f700137a8f18ca1f6a6d30c849f5fceb0b5237c5ac212130f2e36233",
++            "0x26d6e7803ce5cadb86fe8737826584b89baa8984af0e35555077cf9f4c0450c",
++            "0x645a15b6bc53d9f2d90a942581fdc39f618c39cc0e872e1163d106fa9b19479",
++            "0x762e246861cf8e425df55758ea42211cec3e7ddc6586c235509ae0d84e58149",
++            "0x1866aed4087d9693be99711202a65871740ee57c1abe9cd06872daea7048830",
++            "0x696717776a4fc2b2ee9aa68cfe22a0b08dd3cb98881c36d7520f6b95de18847",
++            "0x7187b8e0b36a56c06e8594672c8cf98dfe84397af30de9a7dedb19c337a16b",
++            "0x4ca43ed0329ca988c1adf22f47ffc83de21cb1597a8ea86cfdda6e5c7fe7e97",
++            "0x7b2716d4edd97c349aacf3b6c0c07aa56f208b4b0f634b87040e9e5cd41cb17",
++            "0x6426425a3e6dc2d28f5d5c220178e7edca694730660377f2518092f56fb7981",
++            "0x5172a281152db0ed76265c67035278014d2b9ce0d039afc9cc56bd0dd3a089a",
++            "0x3d36c394e7b6a92b11897b3c5a6e979590d0930a588ec0310f1912d1858bdaf",
++            "0x1aac90802ac81068998667ad57e9446dcf91513e542a28755c32d3d47d0550",
++            "0x69a5a704556935526322239bcdec0487c3f606d2107bc0c0777102e2e562d28",
++            "0x65cfc5ffcf912876b37c754793ba44f18a1e0a0ea5a7f28c61560980cae9b56",
++            "0x272bf8e2f13a27cf90b39ab8da6676dc0f08aa715cb096c563ad9b1e2068ff0",
++            "0x7fa017ff4c261f9e935ffe40f353e9e5de6a50f76cb9b85449b1ecac2bf4257",
++            "0x1f7281dbe49c1c48649e243feccb87e599955c596eaaf5e7f7a8678efc7d8a1",
++            "0x4d988a0adc9663072001d49780c2909dce06c30e2fcb70adf22c57e543b0fff",
++            "0x26a5c03b9203634708dbeecfb80694bfba7f9aaf7c4fea914326c1ab973a6dd",
++            "0x56f75b4e15b2b6201c301b7c3a9f00e3d351c2453da00c6b16369c330b5ae70",
++            "0x49b2df0699aa7dc045d4be61ed41bb30c91fe460a185c5b3bf4c2f6f779935b",
++            "0x2736aadbe17a03294db36a1ddec822c084f2cecd036d9c3466867c091f652cd",
++            "0x12a2058d5d4dbc5c4d3c8bad944a429a7fd415adaa55ce90c1dda0c0736e4",
++            "0x54467f446c1e4d7bfeb9e51fb5fd80c4c50e64a28b32b51c60c4ae8d23d6b9f",
++            "0x38a62ad3f31baf09c8d75409ac1a9a84045e6b2e9efe8b1cfb4db69d274be8a",
++            "0x27bf38230673224dd9de9356496b90f57f0f24c3a2693c9130392863b6882ee",
++            "0x6d31465637d4e18d74e9a833aff86d2950f02f7ae3a040b5b2060d1efe77195",
++            "0x32da9b0353d4ad7b4010592fc45569c5daf329bee6ca5ec08290dca88a44db8",
++            "0x324d43a6eac3f6a599734b612c17c31506a4007b8cdf694ae08ca34d10c4250",
++            "0x1d7852acf039e6b2976c6bfed4eed0b4032c013d39bd327ceeb94d9b5aaa963",
++            "0x688b0bf769d392e1d0b1bea499d4b33a31eeb7da7b85c15a35d9ab32aeefd3e",
++            "0x28e9c94af717e9e37fba8db993867f3a64a4f1378ae0a7ab8a8aee41ac4f58a",
++            "0x570a9c5933fe21bec9cade69682d356d0266136d6e2b798df5e61b89952dfba",
++            "0xc2e884d52b49b465eccf93caee810f400c043a99b456291b81c2fb127f2610",
++            "0x2f4a0b63881d306aff748d254529ab466ade500ef979c7d1751c1de6539483d",
++            "0x4d6383a229d18fa71aa683bc4563728d5be59aad481f4ed537a4044f6dd2feb",
++            "0x5ce9ceb94987c4eddc34d545028213b24cfaa27a3a46bb3ed2e95aabc0f20e8",
++            "0x7b653181920095c65e959f90f93583c066d7d69a2e998c14b59eeed4f5a1cf5",
++            "0x16096a49c236dfdbc5808c31a1d6eee90a082ca5717366a73b03a2eb80cd252"
++        ]
++    }
++}
+\ No newline at end of file
+diff --git a/bootstrap/src/test/resources/wiremock/starknet/__files/body-starknet_getTransactionReceipt.json b/bootstrap/src/test/resources/wiremock/starknet/__files/body-starknet_getTransactionReceipt.json
+new file mode 100644
+index 000000000..7e435617a
+--- /dev/null
++++ b/bootstrap/src/test/resources/wiremock/starknet/__files/body-starknet_getTransactionReceipt.json
+@@ -0,0 +1,267 @@
++{
++    "jsonrpc": "2.0",
++    "id": {{jsonPath request.body '$.id'}},
++    "result": {
++        "actual_fee": "0x1dd0e0f2782e5e",
++        "block_hash": "0x29369230c32633ec9950456a363d8d919c8e4bc5d6b783ba89772051c7b4366",
++        "block_number": 635185,
++        "events": [
++            {
++                "data": [
++                    "0x34f8ebe031e4b76de56020b69a42b919139f58cb6e574026fad69b1031b1500",
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0x480d923f5a15c5b",
++                    "0x0"
++                ],
++                "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
++                "keys": [
++                    "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9"
++                ]
++            },
++            {
++                "data": [
++                    "0x5e2a",
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0x480d923f5a15c5b"
++                ],
++                "from_address": "0x34f8ebe031e4b76de56020b69a42b919139f58cb6e574026fad69b1031b1500",
++                "keys": [
++                    "0x35cc0235f835cc84da50813dc84eb10a75e24a21d74d6d86278c0f037cb7429"
++                ]
++            },
++            {
++                "data": [
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0x4c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
++                    "0x480d923f5a15c5b",
++                    "0x0"
++                ],
++                "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
++                "keys": [
++                    "0x134692b230b9e1ffa39098904722134159652b09c5bc41d88d6698779d228ff"
++                ]
++            },
++            {
++                "data": [
++                    "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
++                    "0x33b731afa8f66e85f7ba97d",
++                    "0x33db0a73c9ad191876d3b68"
++                ],
++                "from_address": "0x4c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
++                "keys": [
++                    "0x30c296ae369716818de77cb5b71ce9cda7cc2c0e8456f474e0abb1ae8d017da"
++                ]
++            },
++            {
++                "data": [
++                    "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
++                    "0x378f2d24ccda7b88b3e41",
++                    "0x15e139000b520b97d9f6c5"
++                ],
++                "from_address": "0x4c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
++                "keys": [
++                    "0xa2fb82b5656725dad81c7112b2c4ef0119096677c3c0fd82632d0a74f07666"
++                ]
++            },
++            {
++                "data": [
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
++                    "0x480d923f5a15c5b"
++                ],
++                "from_address": "0x4c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
++                "keys": [
++                    "0x9149d2123147c5f43d258257fef0b7b969db78269369ebcf5ebb9eef8592f2"
++                ]
++            },
++            {
++                "data": [
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0x4c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
++                    "0x0",
++                    "0x0"
++                ],
++                "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
++                "keys": [
++                    "0x134692b230b9e1ffa39098904722134159652b09c5bc41d88d6698779d228ff"
++                ]
++            },
++            {
++                "data": [
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0x4c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
++                    "0x480d923f5a15c5b",
++                    "0x0"
++                ],
++                "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
++                "keys": [
++                    "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9"
++                ]
++            },
++            {
++                "data": [
++                    "0x0",
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0x480d923f5a15c5b",
++                    "0x0"
++                ],
++                "from_address": "0x6d8fa671ef84f791b7f601fa79fea8f6ceb70b5fa84189e3159d532162efc21",
++                "keys": [
++                    "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9"
++                ]
++            },
++            {
++                "data": [
++                    "0x1b7ce1905ab616e58e38ff3ff0a4b15717b0dbcfa4776f042c9aa22739de0c1",
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0xac8debc425e77cd",
++                    "0x0"
++                ],
++                "from_address": "0x585c32b625999e6e5e78645ff8df7a9001cf5cf3eb6b80ccdd16cb64bd3a34",
++                "keys": [
++                    "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9"
++                ]
++            },
++            {
++                "data": [
++                    "0x343",
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0xac8debc425e77cd"
++                ],
++                "from_address": "0x1b7ce1905ab616e58e38ff3ff0a4b15717b0dbcfa4776f042c9aa22739de0c1",
++                "keys": [
++                    "0x35cc0235f835cc84da50813dc84eb10a75e24a21d74d6d86278c0f037cb7429"
++                ]
++            },
++            {
++                "data": [
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0x4c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
++                    "0xac8debc425e77cd",
++                    "0x0"
++                ],
++                "from_address": "0x585c32b625999e6e5e78645ff8df7a9001cf5cf3eb6b80ccdd16cb64bd3a34",
++                "keys": [
++                    "0x134692b230b9e1ffa39098904722134159652b09c5bc41d88d6698779d228ff"
++                ]
++            },
++            {
++                "data": [
++                    "0x585c32b625999e6e5e78645ff8df7a9001cf5cf3eb6b80ccdd16cb64bd3a34",
++                    "0x33b2e3c9fd0803ce8000000",
++                    "0x33b2e3c9fd0803ce8000000"
++                ],
++                "from_address": "0x4c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
++                "keys": [
++                    "0x30c296ae369716818de77cb5b71ce9cda7cc2c0e8456f474e0abb1ae8d017da"
++                ]
++            },
++            {
++                "data": [
++                    "0x585c32b625999e6e5e78645ff8df7a9001cf5cf3eb6b80ccdd16cb64bd3a34",
++                    "0x0",
++                    "0x0"
++                ],
++                "from_address": "0x4c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
++                "keys": [
++                    "0xa2fb82b5656725dad81c7112b2c4ef0119096677c3c0fd82632d0a74f07666"
++                ]
++            },
++            {
++                "data": [
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0x585c32b625999e6e5e78645ff8df7a9001cf5cf3eb6b80ccdd16cb64bd3a34",
++                    "0xac8debc425e77cd"
++                ],
++                "from_address": "0x4c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
++                "keys": [
++                    "0x9149d2123147c5f43d258257fef0b7b969db78269369ebcf5ebb9eef8592f2"
++                ]
++            },
++            {
++                "data": [
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0x4c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
++                    "0x0",
++                    "0x0"
++                ],
++                "from_address": "0x585c32b625999e6e5e78645ff8df7a9001cf5cf3eb6b80ccdd16cb64bd3a34",
++                "keys": [
++                    "0x134692b230b9e1ffa39098904722134159652b09c5bc41d88d6698779d228ff"
++                ]
++            },
++            {
++                "data": [
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0x4c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
++                    "0xac8debc425e77cd",
++                    "0x0"
++                ],
++                "from_address": "0x585c32b625999e6e5e78645ff8df7a9001cf5cf3eb6b80ccdd16cb64bd3a34",
++                "keys": [
++                    "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9"
++                ]
++            },
++            {
++                "data": [
++                    "0x0",
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0xac8debc425e77cd",
++                    "0x0"
++                ],
++                "from_address": "0x2a28036ec5007c05c5611281a7d740c71a26d0305f7e9a4fa2f751d252a9f0d",
++                "keys": [
++                    "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9"
++                ]
++            },
++            {
++                "data": [
++                    "0x6",
++                    "0x1",
++                    "0x1",
++                    "0x1",
++                    "0x1",
++                    "0x0",
++                    "0x1",
++                    "0x1",
++                    "0x1",
++                    "0x1",
++                    "0x0"
++                ],
++                "from_address": "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                "keys": [
++                    "0x1dcde06aabdbca2f80aa51392b345d7549d7757aa855f7e37f5d335ac8243b1",
++                    "0x16096a49c236dfdbc5808c31a1d6eee90a082ca5717366a73b03a2eb80cd252"
++                ]
++            },
++            {
++                "data": [
++                    "0x1bf76b64e503aed0e0ad7949fba3a5bd07cd9e1ca8f3babc50292c95f79dbfc",
++                    "0x1176a1bd84444c89232ec27754698e5d2e7e1a7f1539f12027f28b23ec9f3d8",
++                    "0x1dd0e0f2782e5e",
++                    "0x0"
++                ],
++                "from_address": "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
++                "keys": [
++                    "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9"
++                ]
++            }
++        ],
++        "execution_resources": {
++            "bitwise_builtin_applications": "0x4",
++            "ec_op_builtin_applications": "0x3",
++            "ecdsa_builtin_applications": "0x0",
++            "keccak_builtin_applications": "0x0",
++            "memory_holes": "0x0",
++            "pedersen_builtin_applications": "0xb5",
++            "poseidon_builtin_applications": "0x0",
++            "range_check_builtin_applications": "0x7c3",
++            "steps": "0x12a15"
++        },
++        "execution_status": "SUCCEEDED",
++        "finality_status": "ACCEPTED_ON_L2",
++        "messages_sent": [],
++        "transaction_hash": "0x16096a49c236dfdbc5808c31a1d6eee90a082ca5717366a73b03a2eb80cd252",
++        "type": "INVOKE"
++    }
++}
+\ No newline at end of file
+diff --git a/bootstrap/src/test/resources/wiremock/starknet/mappings/starknet_getTransactionReceipt.json b/bootstrap/src/test/resources/wiremock/starknet/mappings/starknet_getTransactionReceipt.json
+new file mode 100644
+index 000000000..b28d51fdd
+--- /dev/null
++++ b/bootstrap/src/test/resources/wiremock/starknet/mappings/starknet_getTransactionReceipt.json
+@@ -0,0 +1,23 @@
++{
++    "request": {
++        "url": "/INFURA_API_KEY",
++        "method": "POST",
++        "bodyPatterns": [
++            {
++                "equalToJson": {
++                    "jsonrpc": "2.0",
++                    "method": "starknet_getTransactionReceipt"
++                },
++                "ignoreArrayOrder": true,
++                "ignoreExtraElements": true
++            }
++        ]
++    },
++    "response": {
++        "status": 200,
++        "bodyFileName": "body-starknet_getTransactionReceipt.json",
++        "headers": {
++            "Content-Type": "application/json"
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/bootstrap/src/test/resources/wiremock/starknet/mappings/starknet_starknet_getBlockWithTxHashes.json b/bootstrap/src/test/resources/wiremock/starknet/mappings/starknet_starknet_getBlockWithTxHashes.json
+new file mode 100644
+index 000000000..5e819efff
+--- /dev/null
++++ b/bootstrap/src/test/resources/wiremock/starknet/mappings/starknet_starknet_getBlockWithTxHashes.json
+@@ -0,0 +1,28 @@
++{
++    "request": {
++        "url": "/INFURA_API_KEY",
++        "method": "POST",
++        "bodyPatterns": [
++            {
++                "equalToJson": {
++                    "jsonrpc": "2.0",
++                    "method": "starknet_getBlockWithTxHashes",
++                    "params": {
++                        "block_id": {
++                            "block_hash": "0x29369230c32633ec9950456a363d8d919c8e4bc5d6b783ba89772051c7b4366"
++                        }
++                    }
++                },
++                "ignoreArrayOrder": true,
++                "ignoreExtraElements": true
++            }
++        ]
++    },
++    "response": {
++        "status": 200,
++        "bodyFileName": "body-starknet_getBlockWithTxHashes.json",
++        "headers": {
++            "Content-Type": "application/json"
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/infrastructure/infura-adapter/pom.xml b/infrastructure/infura-adapter/pom.xml
+index eed20c7ed..5079f3541 100644
+--- a/infrastructure/infura-adapter/pom.xml
++++ b/infrastructure/infura-adapter/pom.xml
+@@ -17,7 +17,7 @@
+         <maven.compiler.target>17</maven.compiler.target>
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+         <web3j.version>4.10.3</web3j.version>
+-        <starknet.version>0.10.1</starknet.version>
++        <starknet.version>0.8.2</starknet.version>
+     </properties>
+
+     <dependencies>
+diff --git a/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/InfuraClient.java b/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/InfuraClient.java
+index e679a06d6..c8547bd39 100644
+--- a/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/InfuraClient.java
++++ b/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/InfuraClient.java
+@@ -6,9 +6,15 @@
+ import onlydust.com.marketplace.kernel.model.blockchain.Blockchain;
+ import org.web3j.crypto.Credentials;
+ import org.web3j.protocol.Web3j;
++import org.web3j.protocol.core.methods.response.EthBlock;
++import org.web3j.protocol.core.methods.response.EthTransaction;
+ import org.web3j.protocol.http.HttpService;
+ import org.web3j.tx.gas.DefaultGasProvider;
+
++import java.io.IOException;
++
++import static onlydust.com.marketplace.kernel.exception.OnlyDustException.internalServerError;
++
+ public class InfuraClient {
+     protected final Web3j web3j;
+     protected final DefaultGasProvider gasPriceProvider;
+@@ -29,6 +35,22 @@ public Blockchain blockchain() {
+         return properties.blockchain;
+     }
+
++    protected EthTransaction getTransactionByHash(String hash) {
++        try {
++            return web3j.ethGetTransactionByHash(hash).send();
++        } catch (IOException e) {
++            throw internalServerError("Unable to fetch transaction by hash %s".formatted(hash), e);
++        }
++    }
++
++    protected EthBlock getBlockByHash(String hash, boolean fullTransactionObjects) {
++        try {
++            return web3j.ethGetBlockByHash(hash, fullTransactionObjects).send();
++        } catch (IOException e) {
++            throw internalServerError("Unable to fetch block by hash %s".formatted(hash), e);
++        }
++    }
++
+     @Data
+     @AllArgsConstructor
+     @NoArgsConstructor
+diff --git a/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/InfuraEvmTransactionStorageAdapter.java b/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/InfuraEvmTransactionStorageAdapter.java
+new file mode 100644
+index 000000000..fc61ee872
+--- /dev/null
++++ b/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/InfuraEvmTransactionStorageAdapter.java
+@@ -0,0 +1,29 @@
++package onlydust.com.marketplace.api.infura.adapters;
++
++import lombok.extern.slf4j.Slf4j;
++import onlydust.com.marketplace.accounting.domain.port.out.BlockchainTransactionStoragePort;
++import onlydust.com.marketplace.api.infura.InfuraClient;
++import onlydust.com.marketplace.kernel.model.blockchain.Ethereum;
++import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmTransaction;
++
++import java.time.Instant;
++import java.time.ZoneOffset;
++import java.util.Optional;
++
++@Slf4j
++public class InfuraEvmTransactionStorageAdapter extends InfuraClient implements BlockchainTransactionStoragePort<EvmTransaction, EvmTransaction.Hash> {
++    public InfuraEvmTransactionStorageAdapter(Properties properties) {
++        super(properties);
++    }
++
++    @Override
++    public Optional<EvmTransaction> get(EvmTransaction.Hash reference) {
++        return getTransactionByHash(reference.toString()).getTransaction()
++                .map(tx -> {
++                    final var block = getBlockByHash(tx.getBlockHash(), false).getBlock();
++                    return new EvmTransaction(
++                            Ethereum.transactionHash(tx.getHash()),
++                            Instant.ofEpochSecond(block.getTimestamp().longValue()).atZone(ZoneOffset.UTC));
++                });
++    }
++}
+diff --git a/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/StarknetInfuraAccountValidatorAdapter.java b/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/StarknetInfuraAccountValidatorAdapter.java
+index d413444e1..77d13eb4c 100644
+--- a/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/StarknetInfuraAccountValidatorAdapter.java
++++ b/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/StarknetInfuraAccountValidatorAdapter.java
+@@ -2,6 +2,7 @@
+
+ import com.swmansion.starknet.data.types.Call;
+ import com.swmansion.starknet.data.types.Felt;
++import com.swmansion.starknet.data.types.StarknetChainId;
+ import com.swmansion.starknet.provider.Provider;
+ import com.swmansion.starknet.provider.rpc.JsonRpcProvider;
+ import onlydust.com.marketplace.accounting.domain.port.out.WalletValidator;
+@@ -19,7 +20,7 @@ public class StarknetInfuraAccountValidatorAdapter implements WalletValidator<St
+     Provider provider;
+
+     public StarknetInfuraAccountValidatorAdapter(final InfuraClient.Properties properties) {
+-        provider = new JsonRpcProvider("%s/%s".formatted(properties.getBaseUri(), properties.getApiKey()));
++        provider = new JsonRpcProvider("%s/%s".formatted(properties.getBaseUri(), properties.getApiKey()), StarknetChainId.MAINNET);
+     }
+
+     @Override
+diff --git a/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/StarknetInfuraERC20ProviderAdapter.java b/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/StarknetInfuraERC20ProviderAdapter.java
+index 75f9ef008..ab4497ac0 100644
+--- a/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/StarknetInfuraERC20ProviderAdapter.java
++++ b/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/StarknetInfuraERC20ProviderAdapter.java
+@@ -2,6 +2,7 @@
+
+ import com.swmansion.starknet.data.types.Call;
+ import com.swmansion.starknet.data.types.Felt;
++import com.swmansion.starknet.data.types.StarknetChainId;
+ import com.swmansion.starknet.data.types.Uint256;
+ import com.swmansion.starknet.provider.Provider;
+ import com.swmansion.starknet.provider.rpc.JsonRpcProvider;
+@@ -24,7 +25,7 @@ public class StarknetInfuraERC20ProviderAdapter implements ERC20Provider {
+     Blockchain blockchain;
+
+     public StarknetInfuraERC20ProviderAdapter(final InfuraClient.Properties properties) {
+-        provider = new JsonRpcProvider("%s/%s".formatted(properties.getBaseUri(), properties.getApiKey()));
++        provider = new JsonRpcProvider("%s/%s".formatted(properties.getBaseUri(), properties.getApiKey()), StarknetChainId.MAINNET);
+         blockchain = properties.getBlockchain();
+         assert blockchain == Blockchain.STARKNET;
+     }
+diff --git a/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/StarknetInfuraTransactionStorageAdapter.java b/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/StarknetInfuraTransactionStorageAdapter.java
+new file mode 100644
+index 000000000..8a03ec142
+--- /dev/null
++++ b/infrastructure/infura-adapter/src/main/java/onlydust/com/marketplace/api/infura/adapters/StarknetInfuraTransactionStorageAdapter.java
+@@ -0,0 +1,38 @@
++package onlydust.com.marketplace.api.infura.adapters;
++
++import com.swmansion.starknet.data.types.Felt;
++import com.swmansion.starknet.data.types.StarknetChainId;
++import com.swmansion.starknet.data.types.transactions.ProcessedInvokeTransactionReceipt;
++import com.swmansion.starknet.provider.Provider;
++import com.swmansion.starknet.provider.rpc.JsonRpcProvider;
++import onlydust.com.marketplace.accounting.domain.port.out.BlockchainTransactionStoragePort;
++import onlydust.com.marketplace.api.infura.InfuraClient;
++import onlydust.com.marketplace.kernel.model.blockchain.StarkNet;
++import onlydust.com.marketplace.kernel.model.blockchain.starknet.StarknetTransaction;
++
++import java.time.Instant;
++import java.time.ZoneOffset;
++import java.util.Optional;
++
++public class StarknetInfuraTransactionStorageAdapter implements BlockchainTransactionStoragePort<StarknetTransaction, StarknetTransaction.Hash> {
++    Provider provider;
++
++    public StarknetInfuraTransactionStorageAdapter(final InfuraClient.Properties properties) {
++        provider = new JsonRpcProvider("%s/%s".formatted(properties.getBaseUri(), properties.getApiKey()), StarknetChainId.MAINNET);
++    }
++
++    @Override
++    public Optional<StarknetTransaction> get(StarknetTransaction.Hash reference) {
++        final var receipt = provider.getTransactionReceipt(Felt.fromHex(reference.toString())).send();
++
++        if (receipt instanceof ProcessedInvokeTransactionReceipt invokeReceipt) {
++            final var block = provider.getBlockWithTxHashes(invokeReceipt.getBlockHash()).send();
++            return Optional.of(new StarknetTransaction(
++                    StarkNet.transactionHash(receipt.getHash().hexString()),
++                    Instant.ofEpochSecond(block.getTimestamp()).atZone(ZoneOffset.UTC))
++            );
++        }
++
++        return Optional.empty();
++    }
++}
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/Aptos.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/Aptos.java
+index b721028b0..f818901c2 100644
+--- a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/Aptos.java
++++ b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/Aptos.java
+@@ -1,15 +1,15 @@
+ package onlydust.com.marketplace.kernel.model.blockchain;
+
+
+-import onlydust.com.marketplace.kernel.model.blockchain.aptos.AptosAccountAddress;
+ import onlydust.com.marketplace.kernel.model.blockchain.aptos.AptoScan;
+-import onlydust.com.marketplace.kernel.model.blockchain.aptos.TransactionHash;
++import onlydust.com.marketplace.kernel.model.blockchain.aptos.AptosAccountAddress;
++import onlydust.com.marketplace.kernel.model.blockchain.aptos.AptosTransaction;
+
+ public interface Aptos {
+-    BlockExplorer<TransactionHash> BLOCK_EXPLORER = new AptoScan();
++    BlockExplorer<AptosTransaction.Hash> BLOCK_EXPLORER = new AptoScan();
+
+-    static TransactionHash transactionHash(String value) {
+-        return new TransactionHash(value);
++    static AptosTransaction.Hash transactionHash(String value) {
++        return new AptosTransaction.Hash(value);
+     }
+
+     static AptosAccountAddress accountAddress(String value) {
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/Ethereum.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/Ethereum.java
+index 1af4ceb87..0ec91b277 100644
+--- a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/Ethereum.java
++++ b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/Ethereum.java
+@@ -4,16 +4,16 @@
+ import onlydust.com.marketplace.kernel.exception.OnlyDustException;
+ import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmAccountAddress;
+ import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmContractAddress;
+-import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmTransactionHash;
++import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmTransaction;
+ import onlydust.com.marketplace.kernel.model.blockchain.evm.ethereum.EtherScan;
+ import onlydust.com.marketplace.kernel.model.blockchain.evm.ethereum.Name;
+ import onlydust.com.marketplace.kernel.model.blockchain.evm.ethereum.WalletLocator;
+
+ public interface Ethereum {
+-    BlockExplorer<EvmTransactionHash> BLOCK_EXPLORER = new EtherScan();
++    BlockExplorer<EvmTransaction.Hash> BLOCK_EXPLORER = new EtherScan();
+
+-    static EvmTransactionHash transactionHash(String value) {
+-        return new EvmTransactionHash(value);
++    static EvmTransaction.Hash transactionHash(String value) {
++        return new EvmTransaction.Hash(value);
+     }
+
+     static EvmAccountAddress accountAddress(String value) {
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/Optimism.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/Optimism.java
+index 5cbdc228e..eb3a6fe7d 100644
+--- a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/Optimism.java
++++ b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/Optimism.java
+@@ -3,14 +3,14 @@
+
+ import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmAccountAddress;
+ import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmContractAddress;
+-import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmTransactionHash;
++import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmTransaction;
+ import onlydust.com.marketplace.kernel.model.blockchain.evm.optimism.EtherScan;
+
+ public interface Optimism {
+-    BlockExplorer<EvmTransactionHash> BLOCK_EXPLORER = new EtherScan();
++    BlockExplorer<EvmTransaction.Hash> BLOCK_EXPLORER = new EtherScan();
+
+-    static EvmTransactionHash transactionHash(String value) {
+-        return new EvmTransactionHash(value);
++    static EvmTransaction.Hash transactionHash(String value) {
++        return new EvmTransaction.Hash(value);
+     }
+
+     static EvmAccountAddress accountAddress(String value) {
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/StarkNet.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/StarkNet.java
+index e9a73bb8b..58d68b36d 100644
+--- a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/StarkNet.java
++++ b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/StarkNet.java
+@@ -3,13 +3,13 @@
+ import onlydust.com.marketplace.kernel.model.blockchain.starknet.StarkScan;
+ import onlydust.com.marketplace.kernel.model.blockchain.starknet.StarknetAccountAddress;
+ import onlydust.com.marketplace.kernel.model.blockchain.starknet.StarknetContractAddress;
+-import onlydust.com.marketplace.kernel.model.blockchain.starknet.StarknetTransactionHash;
++import onlydust.com.marketplace.kernel.model.blockchain.starknet.StarknetTransaction;
+
+ public interface StarkNet {
+-    BlockExplorer<StarknetTransactionHash> BLOCK_EXPLORER = new StarkScan();
++    BlockExplorer<StarknetTransaction.Hash> BLOCK_EXPLORER = new StarkScan();
+
+-    static StarknetTransactionHash transactionHash(String value) {
+-        return new StarknetTransactionHash(value);
++    static StarknetTransaction.Hash transactionHash(String value) {
++        return new StarknetTransaction.Hash(value);
+     }
+
+     static StarknetAccountAddress accountAddress(String value) {
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/aptos/AptoScan.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/aptos/AptoScan.java
+index cc63ebd19..24e231e26 100644
+--- a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/aptos/AptoScan.java
++++ b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/aptos/AptoScan.java
+@@ -4,11 +4,11 @@
+
+ import java.net.URI;
+
+-public class AptoScan implements BlockExplorer<TransactionHash> {
++public class AptoScan implements BlockExplorer<AptosTransaction.Hash> {
+     private static final String BASE_URL = "https://aptoscan.com";
+
+     @Override
+-    public URI url(TransactionHash version) {
++    public URI url(AptosTransaction.Hash version) {
+         return URI.create(BASE_URL + "/version/" + version.toString());
+     }
+ }
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/aptos/AptosTransaction.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/aptos/AptosTransaction.java
+new file mode 100644
+index 000000000..9da53a282
+--- /dev/null
++++ b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/aptos/AptosTransaction.java
+@@ -0,0 +1,17 @@
++package onlydust.com.marketplace.kernel.model.blockchain.aptos;
++
++import lombok.EqualsAndHashCode;
++import lombok.NonNull;
++
++import java.time.ZonedDateTime;
++
++public record AptosTransaction(Hash hash, ZonedDateTime timestamp) {
++    @EqualsAndHashCode(callSuper = true)
++    public static class Hash extends onlydust.com.marketplace.kernel.model.blockchain.Hash {
++        private static final int MAX_BYTE_COUNT = 32;
++
++        public Hash(final @NonNull String address) {
++            super(MAX_BYTE_COUNT, address);
++        }
++    }
++}
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/aptos/TransactionHash.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/aptos/TransactionHash.java
+deleted file mode 100644
+index bb9219104..000000000
+--- a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/aptos/TransactionHash.java
++++ /dev/null
+@@ -1,14 +0,0 @@
+-package onlydust.com.marketplace.kernel.model.blockchain.aptos;
+-
+-import lombok.EqualsAndHashCode;
+-import lombok.NonNull;
+-import onlydust.com.marketplace.kernel.model.blockchain.Hash;
+-
+-@EqualsAndHashCode(callSuper = true)
+-public class TransactionHash extends Hash {
+-    private static final int MAX_BYTE_COUNT = 32;
+-
+-    public TransactionHash(final @NonNull String address) {
+-        super(MAX_BYTE_COUNT, address);
+-    }
+-}
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/EvmTransaction.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/EvmTransaction.java
+new file mode 100644
+index 000000000..e60bb06b0
+--- /dev/null
++++ b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/EvmTransaction.java
+@@ -0,0 +1,18 @@
++package onlydust.com.marketplace.kernel.model.blockchain.evm;
++
++import lombok.EqualsAndHashCode;
++import lombok.NonNull;
++
++import java.time.ZonedDateTime;
++
++public record EvmTransaction(Hash hash, ZonedDateTime timestamp) {
++
++    @EqualsAndHashCode(callSuper = true)
++    public static class Hash extends onlydust.com.marketplace.kernel.model.blockchain.Hash {
++        private static final int MAX_BYTE_COUNT = 32;
++
++        public Hash(final @NonNull String address) {
++            super(MAX_BYTE_COUNT, address);
++        }
++    }
++}
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/EvmTransactionHash.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/EvmTransactionHash.java
+deleted file mode 100644
+index 68b283fdb..000000000
+--- a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/EvmTransactionHash.java
++++ /dev/null
+@@ -1,14 +0,0 @@
+-package onlydust.com.marketplace.kernel.model.blockchain.evm;
+-
+-import lombok.EqualsAndHashCode;
+-import lombok.NonNull;
+-import onlydust.com.marketplace.kernel.model.blockchain.Hash;
+-
+-@EqualsAndHashCode(callSuper = true)
+-public class EvmTransactionHash extends Hash {
+-    private static final int MAX_BYTE_COUNT = 32;
+-
+-    public EvmTransactionHash(final @NonNull String address) {
+-        super(MAX_BYTE_COUNT, address);
+-    }
+-}
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/ethereum/EtherScan.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/ethereum/EtherScan.java
+index ad75a8af1..82a9bffe5 100644
+--- a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/ethereum/EtherScan.java
++++ b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/ethereum/EtherScan.java
+@@ -1,15 +1,15 @@
+ package onlydust.com.marketplace.kernel.model.blockchain.evm.ethereum;
+
+ import onlydust.com.marketplace.kernel.model.blockchain.BlockExplorer;
+-import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmTransactionHash;
++import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmTransaction;
+
+ import java.net.URI;
+
+-public class EtherScan implements BlockExplorer<EvmTransactionHash> {
++public class EtherScan implements BlockExplorer<EvmTransaction.Hash> {
+     private static final String BASE_URL = "https://etherscan.io";
+
+     @Override
+-    public URI url(EvmTransactionHash transactionHash) {
++    public URI url(EvmTransaction.Hash transactionHash) {
+         return URI.create(BASE_URL + "/tx/" + transactionHash);
+     }
+ }
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/optimism/EtherScan.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/optimism/EtherScan.java
+index 53e2fc862..9a7e013ba 100644
+--- a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/optimism/EtherScan.java
++++ b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/evm/optimism/EtherScan.java
+@@ -1,15 +1,15 @@
+ package onlydust.com.marketplace.kernel.model.blockchain.evm.optimism;
+
+ import onlydust.com.marketplace.kernel.model.blockchain.BlockExplorer;
+-import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmTransactionHash;
++import onlydust.com.marketplace.kernel.model.blockchain.evm.EvmTransaction;
+
+ import java.net.URI;
+
+-public class EtherScan implements BlockExplorer<EvmTransactionHash> {
++public class EtherScan implements BlockExplorer<EvmTransaction.Hash> {
+     private static final String BASE_URL = "https://optimistic.etherscan.io";
+
+     @Override
+-    public URI url(EvmTransactionHash transactionHash) {
++    public URI url(EvmTransaction.Hash transactionHash) {
+         return URI.create(BASE_URL + "/tx/" + transactionHash);
+     }
+ }
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/starknet/StarkScan.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/starknet/StarkScan.java
+index 293bcaa8d..1bb075ae0 100644
+--- a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/starknet/StarkScan.java
++++ b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/starknet/StarkScan.java
+@@ -4,11 +4,11 @@
+
+ import java.net.URI;
+
+-public class StarkScan implements BlockExplorer<StarknetTransactionHash> {
++public class StarkScan implements BlockExplorer<StarknetTransaction.Hash> {
+     private static final String BASE_URL = "https://starkscan.co";
+
+     @Override
+-    public URI url(StarknetTransactionHash transactionHash) {
++    public URI url(StarknetTransaction.Hash transactionHash) {
+         return URI.create(BASE_URL + "/tx/" + transactionHash);
+     }
+ }
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/starknet/StarknetTransaction.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/starknet/StarknetTransaction.java
+new file mode 100644
+index 000000000..9b2f9cd9c
+--- /dev/null
++++ b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/starknet/StarknetTransaction.java
+@@ -0,0 +1,17 @@
++package onlydust.com.marketplace.kernel.model.blockchain.starknet;
++
++import lombok.EqualsAndHashCode;
++import lombok.NonNull;
++
++import java.time.ZonedDateTime;
++
++public record StarknetTransaction(onlydust.com.marketplace.kernel.model.blockchain.Hash hash, ZonedDateTime timestamp) {
++    @EqualsAndHashCode(callSuper = true)
++    public static class Hash extends onlydust.com.marketplace.kernel.model.blockchain.Hash {
++        private static final int MAX_BYTE_COUNT = 32;
++
++        public Hash(final @NonNull String address) {
++            super(MAX_BYTE_COUNT, address);
++        }
++    }
++}
+diff --git a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/starknet/StarknetTransactionHash.java b/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/starknet/StarknetTransactionHash.java
+deleted file mode 100644
+index 40b7148e0..000000000
+--- a/kernel/src/main/java/onlydust/com/marketplace/kernel/model/blockchain/starknet/StarknetTransactionHash.java
++++ /dev/null
+@@ -1,14 +0,0 @@
+-package onlydust.com.marketplace.kernel.model.blockchain.starknet;
+-
+-import lombok.EqualsAndHashCode;
+-import lombok.NonNull;
+-import onlydust.com.marketplace.kernel.model.blockchain.Hash;
+-
+-@EqualsAndHashCode(callSuper = true)
+-public class StarknetTransactionHash extends Hash {
+-    private static final int MAX_BYTE_COUNT = 32;
+-
+-    public StarknetTransactionHash(final @NonNull String address) {
+-        super(MAX_BYTE_COUNT, address);
+-    }
+-}
