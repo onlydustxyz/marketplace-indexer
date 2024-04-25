@@ -19,7 +19,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-@IdClass(PullRequestClosingIssues.Id.class)
+@IdClass(RawPullRequestClosingIssuesEntity.Id.class)
 @Table(name = "pull_request_closing_issues", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @SQLInsert(sql = """
@@ -27,7 +27,7 @@ import java.io.Serializable;
                 VALUES (?, ?, ?, ?)
                 ON CONFLICT DO NOTHING
         """)
-public class PullRequestClosingIssues {
+public class RawPullRequestClosingIssuesEntity {
     @javax.persistence.Id
     String repoOwner;
 
@@ -40,8 +40,8 @@ public class PullRequestClosingIssues {
     @Type(type = "jsonb")
     RawPullRequestClosingIssues data;
 
-    public static PullRequestClosingIssues of(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues) {
-        return PullRequestClosingIssues.builder()
+    public static RawPullRequestClosingIssuesEntity of(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues) {
+        return RawPullRequestClosingIssuesEntity.builder()
                 .repoOwner(repoOwner)
                 .repoName(repoName)
                 .pullRequestNumber(pullRequestNumber)

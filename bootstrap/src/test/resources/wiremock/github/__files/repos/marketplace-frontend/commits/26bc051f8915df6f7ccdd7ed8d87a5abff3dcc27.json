@@ -1,0 +1,171 @@
+{
+    "sha": "26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+    "node_id": "C_kwDOHbl-LNoAKDI2YmMwNTFmODkxNWRmNmY3Y2NkZDdlZDhkODdhNWFiZmYzZGNjMjc",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-21T19:50:50Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-21T19:50:50Z"
+        },
+        "message": "move event listener trait in domain",
+        "tree": {
+            "sha": "0f4e4562eab507e5ca011baff4141b22f5b18ac0",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/trees/0f4e4562eab507e5ca011baff4141b22f5b18ac0"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/commits/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+        "comment_count": 0,
+        "verification": {
+            "verified": false,
+            "reason": "unsigned",
+            "signature": null,
+            "payload": null
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+    "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "97d9ef141cc72852aa8b10877f7dc37c6fa62520",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/97d9ef141cc72852aa8b10877f7dc37c6fa62520",
+            "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/97d9ef141cc72852aa8b10877f7dc37c6fa62520"
+        }
+    ],
+    "stats": {
+        "total": 34,
+        "additions": 19,
+        "deletions": 15
+    },
+    "files": [
+        {
+            "sha": "4620d672254bbac109220926dbd608efc828d2de",
+            "filename": "backend/common/domain/src/event/listener.rs",
+            "status": "added",
+            "additions": 8,
+            "deletions": 0,
+            "changes": 8,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fcommon%2Fdomain%2Fsrc%2Fevent%2Flistener.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fcommon%2Fdomain%2Fsrc%2Fevent%2Flistener.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Fdomain%2Fsrc%2Fevent%2Flistener.rs?ref=26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+            "patch": "@@ -0,0 +1,8 @@\n+use async_trait::async_trait;\n+\n+use crate::SubscriberCallbackError;\n+\n+#[async_trait]\n+pub trait Listener<E>: Send + Sync {\n+\tasync fn on_event(&self, event: E) -> Result<(), SubscriberCallbackError>;\n+}"
+        },
+        {
+            "sha": "3eba40ac4ed817fe093adada4aad61aab6dbff0a",
+            "filename": "backend/common/domain/src/event/mod.rs",
+            "status": "renamed",
+            "additions": 3,
+            "deletions": 0,
+            "changes": 3,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fcommon%2Fdomain%2Fsrc%2Fevent%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fcommon%2Fdomain%2Fsrc%2Fevent%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Fdomain%2Fsrc%2Fevent%2Fmod.rs?ref=26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+            "patch": "@@ -4,6 +4,9 @@ use serde::{Deserialize, Serialize};\n \n use crate::{ApplicationEvent, BudgetEvent, MessagePayload, PaymentEvent, ProjectEvent};\n \n+mod listener;\n+pub use listener::Listener;\n+\n #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]\n pub enum Event {\n \tApplication(ApplicationEvent),",
+            "previous_filename": "backend/common/domain/src/event.rs"
+        },
+        {
+            "sha": "416bc3ae759e573c8845eb17a23bb4d7d5a8a29c",
+            "filename": "backend/common/domain/src/lib.rs",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 1,
+            "changes": 2,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fcommon%2Fdomain%2Fsrc%2Flib.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fcommon%2Fdomain%2Fsrc%2Flib.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Fdomain%2Fsrc%2Flib.rs?ref=26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+            "patch": "@@ -4,7 +4,7 @@ mod value_objects;\n pub use value_objects::*;\n \n mod event;\n-pub use event::Event;\n+pub use event::{Event, Listener as EventListener};\n \n pub mod services;\n "
+        },
+        {
+            "sha": "4236ee31592bd5a0f249aa850bd5574ba379ed37",
+            "filename": "backend/event-listeners/src/bin/refresh/refresher/mod.rs",
+            "status": "modified",
+            "additions": 2,
+            "deletions": 2,
+            "changes": 4,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fmod.rs?ref=26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+            "patch": "@@ -3,8 +3,8 @@ use std::{str::FromStr, sync::Arc};\n use anyhow::{anyhow, Result};\n use async_trait::async_trait;\n use derive_more::Constructor;\n-use domain::{Event, EventSourcable, EventStore, Identified};\n-use event_listeners::listeners::{EventListener, *};\n+use domain::{Event, EventListener, EventSourcable, EventStore, Identified};\n+use event_listeners::listeners::*;\n use infrastructure::{database, event_store::Named};\n use itertools::Itertools;\n use olog::info;"
+        },
+        {
+            "sha": "53a74bb85a164bdbdfddc3c21bf6caa6e8f294cd",
+            "filename": "backend/event-listeners/src/listeners/logger.rs",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 3,
+            "changes": 4,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Flogger.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Flogger.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Flogger.rs?ref=26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+            "patch": "@@ -1,11 +1,9 @@\n use anyhow::Result;\n use async_trait::async_trait;\n-use domain::SubscriberCallbackError;\n+use domain::{EventListener, SubscriberCallbackError};\n use olog::info;\n use serde_json::Value;\n \n-use super::EventListener;\n-\n pub struct Logger;\n \n #[async_trait]"
+        },
+        {
+            "sha": "5df17d9f62d60f1b3671f71da7fc9bc1741846d1",
+            "filename": "backend/event-listeners/src/listeners/mod.rs",
+            "status": "modified",
+            "additions": 3,
+            "deletions": 7,
+            "changes": 10,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fmod.rs?ref=26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+            "patch": "@@ -6,8 +6,9 @@ pub mod webhook;\n use std::sync::Arc;\n \n use anyhow::Result;\n-use async_trait::async_trait;\n-use domain::{currencies, LogErr, MessagePayload, Subscriber, SubscriberCallbackError};\n+use domain::{\n+\tcurrencies, EventListener, LogErr, MessagePayload, Subscriber, SubscriberCallbackError,\n+};\n use infrastructure::{\n \tamqp::{CommandSubscriberDecorator, UniqueMessage},\n \tcoinmarketcap, database, event_bus,\n@@ -33,11 +34,6 @@ pub async fn bootstrap(config: Config) -> Result<Vec<JoinHandle<()>>> {\n \tspawn_all(config, reqwest, database, coinmarketcap).await\n }\n \n-#[async_trait]\n-pub trait EventListener<E>: Send + Sync {\n-\tasync fn on_event(&self, event: E) -> Result<(), SubscriberCallbackError>;\n-}\n-\n pub async fn spawn_all(\n \tconfig: Config,\n \treqwest: reqwest::Client,"
+        },
+        {
+            "sha": "16c3831da19ad043b68870d6ba8d116e7f723864",
+            "filename": "backend/event-listeners/src/listeners/webhook/mod.rs",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 2,
+            "changes": 3,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fwebhook%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fwebhook%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fwebhook%2Fmod.rs?ref=26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+            "patch": "@@ -7,10 +7,9 @@ use tracing::instrument;\n use url::Url;\n \n mod event;\n+use domain::EventListener;\n use event::Event as WebHookEvent;\n \n-use super::EventListener;\n-\n #[derive(new)]\n pub struct EventWebHook {\n \tclient: reqwest::Client,"
+        }
+    ]
+}

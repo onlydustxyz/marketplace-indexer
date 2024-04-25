@@ -1,0 +1,316 @@
+{
+    "sha": "043d570d55b1b705a4d03a006ef77da82159f142",
+    "node_id": "C_kwDOHbl-LNoAKDA0M2Q1NzBkNTViMWI3MDVhNGQwM2EwMDZlZjc3ZGE4MjE1OWYxNDI",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-21T20:19:49Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-21T20:19:49Z"
+        },
+        "message": "make bus destination an infrastructure detail",
+        "tree": {
+            "sha": "7a0a446eaf1299a96ee53a8638ea81ca54735d0c",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/trees/7a0a446eaf1299a96ee53a8638ea81ca54735d0c"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/commits/043d570d55b1b705a4d03a006ef77da82159f142",
+        "comment_count": 0,
+        "verification": {
+            "verified": false,
+            "reason": "unsigned",
+            "signature": null,
+            "payload": null
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/043d570d55b1b705a4d03a006ef77da82159f142",
+    "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/043d570d55b1b705a4d03a006ef77da82159f142",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/043d570d55b1b705a4d03a006ef77da82159f142/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27",
+            "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/26bc051f8915df6f7ccdd7ed8d87a5abff3dcc27"
+        }
+    ],
+    "stats": {
+        "total": 179,
+        "additions": 87,
+        "deletions": 92
+    },
+    "files": [
+        {
+            "sha": "6b3e3424e262262c019f8ab1396147f86e754d01",
+            "filename": "backend/api/src/application/project/remove_leader.rs",
+            "status": "modified",
+            "additions": 6,
+            "deletions": 9,
+            "changes": 15,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fapi%2Fsrc%2Fapplication%2Fproject%2Fremove_leader.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fapi%2Fsrc%2Fapplication%2Fproject%2Fremove_leader.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fapplication%2Fproject%2Fremove_leader.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -1,12 +1,11 @@\n use std::sync::Arc;\n \n-use domain::{\n-\tAggregateRepository, Destination, DomainError, Event, Project, ProjectId, Publisher, UserId,\n-};\n-use event_store::bus::QUEUE_NAME as EVENT_STORE_QUEUE;\n+use domain::{AggregateRepository, DomainError, Event, Project, ProjectId, Publisher, UserId};\n use infrastructure::amqp::UniqueMessage;\n use tracing::instrument;\n \n+use crate::domain::Publishable;\n+\n pub struct Usecase {\n \tevent_publisher: Arc<dyn Publisher<UniqueMessage<Event>>>,\n \tproject_repository: AggregateRepository<Project>,\n@@ -31,15 +30,13 @@ impl Usecase {\n \t) -> Result<(), DomainError> {\n \t\tlet project = self.project_repository.find_by_id(project_id)?;\n \n-\t\tlet events = project\n+\t\tproject\n \t\t\t.unassign_leader(*user_id)\n \t\t\t.map_err(|e| DomainError::InvalidInputs(e.into()))?\n \t\t\t.map(Event::from)\n \t\t\t.map(UniqueMessage::new)\n-\t\t\t.collect::<Vec<_>>();\n-\n-\t\tself.event_publisher\n-\t\t\t.publish_many(Destination::queue(EVENT_STORE_QUEUE), &events)\n+\t\t\t.collect::<Vec<_>>()\n+\t\t\t.publish(self.event_publisher.clone())\n \t\t\t.await?;\n \n \t\tOk(())"
+        },
+        {
+            "sha": "fb54fce215d4b8c8fa1ed029ec357a22afa939b9",
+            "filename": "backend/api/src/domain/publishable.rs",
+            "status": "modified",
+            "additions": 2,
+            "deletions": 3,
+            "changes": 5,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fapi%2Fsrc%2Fdomain%2Fpublishable.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fapi%2Fsrc%2Fdomain%2Fpublishable.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fdomain%2Fpublishable.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -1,7 +1,6 @@\n use std::sync::Arc;\n \n-use domain::{Destination, Message, Publisher, PublisherError};\n-use event_store::bus::QUEUE_NAME as EVENT_STORE_QUEUE;\n+use domain::{Message, Publisher, PublisherError};\n \n #[async_trait]\n pub trait Publishable<M: Message> {\n@@ -11,7 +10,7 @@ pub trait Publishable<M: Message> {\n #[async_trait]\n impl<M: Message + Sync + Send> Publishable<M> for Vec<M> {\n \tasync fn publish(&self, publisher: Arc<dyn Publisher<M>>) -> Result<(), PublisherError> {\n-\t\tpublisher.publish_many(Destination::queue(EVENT_STORE_QUEUE), self).await?;\n+\t\tpublisher.publish_many(self).await?;\n \t\tOk(())\n \t}\n }"
+        },
+        {
+            "sha": "3fbb73eea0ddda6cbf5dee6ac575edb3ae025310",
+            "filename": "backend/api/src/presentation/bootstrap.rs",
+            "status": "modified",
+            "additions": 7,
+            "deletions": 2,
+            "changes": 9,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fapi%2Fsrc%2Fpresentation%2Fbootstrap.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fapi%2Fsrc%2Fpresentation%2Fbootstrap.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fpresentation%2Fbootstrap.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -2,6 +2,7 @@ use std::sync::Arc;\n \n use anyhow::Result;\n use domain::AggregateRepository;\n+use event_store::bus::QUEUE_NAME as EVENT_STORE_QUEUE;\n use infrastructure::{amqp, amqp::CommandPublisherDecorator, database, github};\n use rocket::{Build, Rocket};\n \n@@ -31,9 +32,14 @@ pub async fn bootstrap(config: Config) -> Result<Rocket<Build>> {\n \t\tArc::new(\n \t\t\tamqp::Bus::new(config.amqp.clone())\n \t\t\t\t.await?\n+\t\t\t\t.as_publisher(amqp::Destination::queue(EVENT_STORE_QUEUE))\n \t\t\t\t.into_command_publisher(database.clone(), expected_processing_count_per_event()),\n \t\t),\n-\t\tArc::new(amqp::Bus::new(config.amqp.clone()).await?),\n+\t\tArc::new(\n+\t\t\tamqp::Bus::new(config.amqp.clone())\n+\t\t\t\t.await?\n+\t\t\t\t.as_publisher(amqp::Destination::queue(EVENT_STORE_QUEUE)),\n+\t\t),\n \t\tAggregateRepository::new(database.clone()),\n \t\tAggregateRepository::new(database.clone()),\n \t\tAggregateRepository::new(database.clone()),\n@@ -53,7 +59,6 @@ pub async fn bootstrap(config: Config) -> Result<Rocket<Build>> {\n \t\tdusty_bot_api_client,\n \t\tArc::new(ens::Client::new(config.web3)?),\n \t\tsimple_storage,\n-\t\tArc::new(amqp::Bus::new(config.amqp).await?),\n \t\tArc::new(github_client_pat_factory),\n \t);\n \tOk(rocket_build)"
+        },
+        {
+            "sha": "00279046a9834c77493725b8565bf0e59515d876",
+            "filename": "backend/api/src/presentation/graphql/context.rs",
+            "status": "modified",
+            "additions": 3,
+            "deletions": 3,
+            "changes": 6,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fapi%2Fsrc%2Fpresentation%2Fgraphql%2Fcontext.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fapi%2Fsrc%2Fpresentation%2Fgraphql%2Fcontext.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fpresentation%2Fgraphql%2Fcontext.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -1,8 +1,8 @@\n use std::sync::Arc;\n \n-use domain::{AggregateRepository, GithubUserId, Payment, Project, UserId};\n+use domain::{AggregateRepository, Event, GithubUserId, Payment, Project, Publisher, UserId};\n use infrastructure::{\n-\tamqp,\n+\tamqp::UniqueMessage,\n \tdatabase::{ImmutableRepository, Repository},\n \tgithub,\n };\n@@ -54,7 +54,7 @@ impl Context {\n \t\tgithub_api_client: Arc<github::Client>,\n \t\tens: Arc<ens::Client>,\n \t\tsimple_storage: Arc<dyn ImageStoreService>,\n-\t\tbus: Arc<amqp::Bus>,\n+\t\tbus: Arc<dyn Publisher<UniqueMessage<Event>>>,\n \t) -> Self {\n \t\tSelf {\n \t\t\tcaller_permissions,"
+        },
+        {
+            "sha": "f2ea98f974d2a68286c8f873cb8953bdb094a819",
+            "filename": "backend/api/src/presentation/http/mod.rs",
+            "status": "modified",
+            "additions": 2,
+            "deletions": 4,
+            "changes": 6,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fapi%2Fsrc%2Fpresentation%2Fhttp%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fapi%2Fsrc%2Fpresentation%2Fhttp%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fpresentation%2Fhttp%2Fmod.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -4,7 +4,7 @@ use ::domain::{AggregateRepository, Project};\n use domain::{Budget, Event, GithubFetchService, Payment, Publisher};\n pub use http::Config;\n use infrastructure::{\n-\tamqp::{self, CommandMessage, UniqueMessage},\n+\tamqp::{CommandMessage, UniqueMessage},\n \tdatabase::{ImmutableRepository, Repository},\n \tgithub,\n };\n@@ -53,7 +53,6 @@ pub fn serve(\n \tdusty_bot_service: Arc<dyn DustyBotService>,\n \tens: Arc<ens::Client>,\n \tsimple_storage: Arc<dyn ImageStoreService>,\n-\tbus: Arc<amqp::Bus>,\n \tgithub_client_pat_factory: Arc<GithubClientPatFactory>,\n ) -> Rocket<Build> {\n \tlet update_user_profile_info_usecase = application::user::update_profile_info::Usecase::new(\n@@ -69,7 +68,7 @@ pub fn serve(\n \t);\n \n \tlet cancel_payment_usecase =\n-\t\tapplication::payment::cancel::Usecase::new(bus.clone(), payment_repository.clone());\n+\t\tapplication::payment::cancel::Usecase::new(command_bus.clone(), payment_repository.clone());\n \n \trocket::custom(http::config::rocket(\"backend/api/Rocket.toml\"))\n \t\t.manage(config.http.clone())\n@@ -92,7 +91,6 @@ pub fn serve(\n \t\t.manage(github_api_client)\n \t\t.manage(ens)\n \t\t.manage(simple_storage)\n-\t\t.manage(bus)\n \t\t.manage(update_user_profile_info_usecase)\n \t\t.manage(create_github_issue_usecase)\n \t\t.manage(github_client_pat_factory)"
+        },
+        {
+            "sha": "f8566b13613886f14d36b2a1dcd8e674c7b7a126",
+            "filename": "backend/api/src/presentation/http/routes/graphql.rs",
+            "status": "modified",
+            "additions": 4,
+            "deletions": 4,
+            "changes": 8,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fapi%2Fsrc%2Fpresentation%2Fhttp%2Froutes%2Fgraphql.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fapi%2Fsrc%2Fpresentation%2Fhttp%2Froutes%2Fgraphql.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fpresentation%2Fhttp%2Froutes%2Fgraphql.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -1,8 +1,8 @@\n use std::sync::Arc;\n \n-use domain::{AggregateRepository, Payment, Project};\n+use domain::{AggregateRepository, Event, Payment, Project, Publisher};\n use infrastructure::{\n-\tamqp::{self},\n+\tamqp::UniqueMessage,\n \tdatabase::{ImmutableRepository, Repository},\n \tgithub,\n };\n@@ -43,7 +43,7 @@ pub async fn get_graphql_handler(\n \tonboarding_repository: &State<Arc<dyn Repository<Onboarding>>>,\n \tcontact_informations_repository: &State<Arc<dyn ContactInformationsRepository>>,\n \tgithub_api_client: &State<Arc<github::Client>>,\n-\tbus: &State<Arc<amqp::Bus>>,\n+\tbus: &State<Arc<dyn Publisher<UniqueMessage<Event>>>>,\n \tens: &State<Arc<ens::Client>>,\n \tsimple_storage: &State<Arc<dyn ImageStoreService>>,\n ) -> GraphQLResponse {\n@@ -86,7 +86,7 @@ pub async fn post_graphql_handler(\n \tonboarding_repository: &State<Arc<dyn Repository<Onboarding>>>,\n \tcontact_informations_repository: &State<Arc<dyn ContactInformationsRepository>>,\n \tgithub_api_client: &State<Arc<github::Client>>,\n-\tbus: &State<Arc<amqp::Bus>>,\n+\tbus: &State<Arc<dyn Publisher<UniqueMessage<Event>>>>,\n \tens: &State<Arc<ens::Client>>,\n \tsimple_storage: &State<Arc<dyn ImageStoreService>>,\n ) -> GraphQLResponse {"
+        },
+        {
+            "sha": "130e08f8ec13e28cf6386c44682e5bd415c58070",
+            "filename": "backend/common/domain/src/lib.rs",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 1,
+            "changes": 2,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Fdomain%2Fsrc%2Flib.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Fdomain%2Fsrc%2Flib.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Fdomain%2Fsrc%2Flib.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -21,7 +21,7 @@ pub use error::*;\n \n mod messaging;\n pub use messaging::{\n-\tDestination, Message, Payload as MessagePayload, Publisher, PublisherError, Subscriber,\n+\tMessage, Payload as MessagePayload, Publisher, PublisherError, Subscriber,\n \tSubscriberCallbackError, SubscriberError,\n };\n "
+        },
+        {
+            "sha": "fbd3027cc01d827596465082a80c7fba0854fbc9",
+            "filename": "backend/common/domain/src/messaging/mod.rs",
+            "status": "modified",
+            "additions": 0,
+            "deletions": 3,
+            "changes": 3,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fmod.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -10,6 +10,3 @@ mod subscriber;\n pub use subscriber::{\n \tCallbackError as SubscriberCallbackError, Error as SubscriberError, Subscriber,\n };\n-\n-mod destination;\n-pub use destination::Destination;"
+        },
+        {
+            "sha": "6559aac0824d57edaa89fbd141cfbf314a8c92e8",
+            "filename": "backend/common/domain/src/messaging/publisher/composite.rs",
+            "status": "modified",
+            "additions": 5,
+            "deletions": 5,
+            "changes": 10,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fpublisher%2Fcomposite.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fpublisher%2Fcomposite.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fpublisher%2Fcomposite.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -4,7 +4,7 @@ use async_trait::async_trait;\n use derive_new::new;\n \n use super::Error;\n-use crate::{Destination, Message};\n+use crate::Message;\n \n #[derive(new)]\n pub struct Publisher<M: Message + Send + Sync> {\n@@ -13,16 +13,16 @@ pub struct Publisher<M: Message + Send + Sync> {\n \n #[async_trait]\n impl<M: Message + Send + Sync> super::Publisher<M> for Publisher<M> {\n-\tasync fn publish(&self, destination: Destination, message: &M) -> Result<(), Error> {\n+\tasync fn publish(&self, message: &M) -> Result<(), Error> {\n \t\tfor p in &self.publishers {\n-\t\t\tp.publish(destination.clone(), message).await?;\n+\t\t\tp.publish(message).await?;\n \t\t}\n \t\tOk(())\n \t}\n \n-\tasync fn publish_many(&self, destination: Destination, messages: &[M]) -> Result<(), Error> {\n+\tasync fn publish_many(&self, messages: &[M]) -> Result<(), Error> {\n \t\tfor p in &self.publishers {\n-\t\t\tp.publish_many(destination.clone(), messages).await?;\n+\t\t\tp.publish_many(messages).await?;\n \t\t}\n \t\tOk(())\n \t}"
+        },
+        {
+            "sha": "eb4f9af92aaaca148e301dddf42595a0ba9dce15",
+            "filename": "backend/common/domain/src/messaging/publisher/mod.rs",
+            "status": "modified",
+            "additions": 13,
+            "deletions": 21,
+            "changes": 34,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fpublisher%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fpublisher%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fpublisher%2Fmod.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -3,7 +3,7 @@ use async_trait::async_trait;\n use mockall::automock;\n use thiserror::Error;\n \n-use super::{Destination, Message};\n+use super::Message;\n \n pub mod composite;\n \n@@ -20,10 +20,10 @@ pub enum Error {\n #[async_trait]\n #[cfg_attr(test, automock)]\n pub trait Publisher<M: Message + Sync + Send>: Send + Sync {\n-\tasync fn publish(&self, destination: Destination, message: &M) -> Result<(), Error>;\n-\tasync fn publish_many(&self, destination: Destination, messages: &[M]) -> Result<(), Error> {\n+\tasync fn publish(&self, message: &M) -> Result<(), Error>;\n+\tasync fn publish_many(&self, messages: &[M]) -> Result<(), Error> {\n \t\tfor message in messages {\n-\t\t\tself.publish(destination.clone(), message).await?;\n+\t\t\tself.publish(message).await?;\n \t\t}\n \t\tOk(())\n \t}\n@@ -50,12 +50,8 @@ mod tests {\n \n \t#[async_trait]\n \timpl Publisher<TestMessage> for TestPublisher {\n-\t\tasync fn publish(\n-\t\t\t&self,\n-\t\t\tdestination: Destination,\n-\t\t\tmessage: &TestMessage,\n-\t\t) -> Result<(), Error> {\n-\t\t\tself.0.publish(destination, message).await\n+\t\tasync fn publish(&self, message: &TestMessage) -> Result<(), Error> {\n+\t\t\tself.0.publish(message).await\n \t\t}\n \t}\n \timpl Extractor for TestMessage {\n@@ -71,32 +67,28 @@ mod tests {\n \n \t#[rstest]\n \tasync fn publish_many_messages() {\n-\t\tlet destination = Destination::Queue(\"test_queue\".to_string());\n \t\tlet mut publisher = MockPublisher::<TestMessage>::new();\n \n \t\tpublisher\n \t\t\t.expect_publish()\n-\t\t\t.with(eq(destination.clone()), eq(TestMessage::Msg1))\n+\t\t\t.with(eq(TestMessage::Msg1))\n \t\t\t.once()\n-\t\t\t.returning(|_, _| async { Ok(()) }.boxed());\n+\t\t\t.returning(|_| async { Ok(()) }.boxed());\n \n \t\tpublisher\n \t\t\t.expect_publish()\n-\t\t\t.with(eq(destination.clone()), eq(TestMessage::Msg2))\n+\t\t\t.with(eq(TestMessage::Msg2))\n \t\t\t.once()\n-\t\t\t.returning(|_, _| async { Ok(()) }.boxed());\n+\t\t\t.returning(|_| async { Ok(()) }.boxed());\n \n \t\tpublisher\n \t\t\t.expect_publish()\n-\t\t\t.with(eq(destination.clone()), eq(TestMessage::Msg3))\n+\t\t\t.with(eq(TestMessage::Msg3))\n \t\t\t.once()\n-\t\t\t.returning(|_, _| async { Ok(()) }.boxed());\n+\t\t\t.returning(|_| async { Ok(()) }.boxed());\n \n \t\tlet result = TestPublisher(publisher)\n-\t\t\t.publish_many(\n-\t\t\t\tdestination,\n-\t\t\t\t&[TestMessage::Msg1, TestMessage::Msg2, TestMessage::Msg3],\n-\t\t\t)\n+\t\t\t.publish_many(&[TestMessage::Msg1, TestMessage::Msg2, TestMessage::Msg3])\n \t\t\t.await;\n \t\tassert!(result.is_ok(), \"{}\", result.err().unwrap());\n \t}"
+        },
+        {
+            "sha": "52567fc350dc3f501b8197059e7450adda1bf1b0",
+            "filename": "backend/common/infrastructure/src/amqp/bus/destination.rs",
+            "status": "renamed",
+            "additions": 0,
+            "deletions": 0,
+            "changes": 0,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fbus%2Fdestination.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fbus%2Fdestination.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fbus%2Fdestination.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "previous_filename": "backend/common/domain/src/messaging/destination.rs"
+        },
+        {
+            "sha": "2c1055b41c980ca3b7a80e41579792f5f75ac79b",
+            "filename": "backend/common/infrastructure/src/amqp/bus/mod.rs",
+            "status": "renamed",
+            "additions": 17,
+            "deletions": 0,
+            "changes": 17,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fbus%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fbus%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fbus%2Fmod.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -14,6 +14,11 @@ use tokio_stream::StreamExt;\n \n use super::Config;\n \n+mod destination;\n+mod publisher;\n+mod subscriber;\n+pub use destination::Destination;\n+\n const DELIVERY_MODE_PERSISTENT: u8 = 2;\n \n #[derive(Debug, Error)]\n@@ -50,6 +55,13 @@ impl Bus {\n \t\t})\n \t}\n \n+\tpub fn as_publisher(self, destination: Destination) -> PublisherBus {\n+\t\tPublisherBus {\n+\t\t\tbus: self,\n+\t\t\tdestination,\n+\t\t}\n+\t}\n+\n \tpub async fn with_queue(\n \t\tself,\n \t\tqueue_name: String,\n@@ -156,6 +168,11 @@ impl ConsumableBus {\n \t}\n }\n \n+pub struct PublisherBus {\n+\tbus: Bus,\n+\tdestination: Destination,\n+}\n+\n lazy_static! {\n \tstatic ref CONNECTION: Mutex<Option<Weak<Connection>>> = Mutex::new(None);\n }",
+            "previous_filename": "backend/common/infrastructure/src/amqp/bus.rs"
+        },
+        {
+            "sha": "3e63971ac3c625a4f785b78dba6a6d789f497b17",
+            "filename": "backend/common/infrastructure/src/amqp/bus/publisher.rs",
+            "status": "renamed",
+            "additions": 6,
+            "deletions": 5,
+            "changes": 11,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fbus%2Fpublisher.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fbus%2Fpublisher.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fbus%2Fpublisher.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -1,18 +1,19 @@\n use anyhow::anyhow;\n use async_trait::async_trait;\n-use domain::{Destination, Message, Publisher, PublisherError};\n+use domain::{Message, Publisher, PublisherError};\n \n-use super::Bus;\n+use super::{Destination, PublisherBus};\n \n #[async_trait]\n-impl<M: Message + Send + Sync> Publisher<M> for Bus {\n-\tasync fn publish(&self, destination: Destination, message: &M) -> Result<(), PublisherError> {\n-\t\tlet (exchange_name, routing_key) = match destination {\n+impl<M: Message + Send + Sync> Publisher<M> for PublisherBus {\n+\tasync fn publish(&self, message: &M) -> Result<(), PublisherError> {\n+\t\tlet (exchange_name, routing_key) = match self.destination.clone() {\n \t\t\tDestination::Queue(name) => (String::new(), name),\n \t\t\tDestination::Exchange(name) => (name, String::new()),\n \t\t};\n \n \t\tlet confirmation = self\n+\t\t\t.bus\n \t\t\t.publish(&exchange_name, &routing_key, &serde_json::to_vec(message)?)\n \t\t\t.await\n \t\t\t.map_err(|e| PublisherError::Send(anyhow!(e)))?;",
+            "previous_filename": "backend/common/infrastructure/src/amqp/publisher.rs"
+        },
+        {
+            "sha": "12db45a9c16c08b328084de7fdf0ca4f6d0212c6",
+            "filename": "backend/common/infrastructure/src/amqp/bus/subscriber.rs",
+            "status": "renamed",
+            "additions": 0,
+            "deletions": 0,
+            "changes": 0,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fbus%2Fsubscriber.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fbus%2Fsubscriber.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fbus%2Fsubscriber.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "previous_filename": "backend/common/infrastructure/src/amqp/subscriber.rs"
+        },
+        {
+            "sha": "072995e42081b0c3125647def905515f71763bf6",
+            "filename": "backend/common/infrastructure/src/amqp/command/publisher.rs",
+            "status": "modified",
+            "additions": 3,
+            "deletions": 9,
+            "changes": 12,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fcommand%2Fpublisher.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fcommand%2Fpublisher.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fcommand%2Fpublisher.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -1,9 +1,7 @@\n use std::sync::Arc;\n \n use async_trait::async_trait;\n-use domain::{\n-\tCommandAggregateId, CommandId, CommandRepository, Destination, Event, Publisher, PublisherError,\n-};\n+use domain::{CommandAggregateId, CommandId, CommandRepository, Event, Publisher, PublisherError};\n use olog::IntoField;\n \n use super::CommandMessage;\n@@ -58,16 +56,12 @@ impl<P> Publisher<CommandMessage<Event>> for CommandPublisher<P>\n where\n \tP: Publisher<UniqueMessage<Event>>,\n {\n-\tasync fn publish(\n-\t\t&self,\n-\t\tdestination: Destination,\n-\t\tmessage: &CommandMessage<Event>,\n-\t) -> Result<(), PublisherError> {\n+\tasync fn publish(&self, message: &CommandMessage<Event>) -> Result<(), PublisherError> {\n \t\tself.upsert_command(\n \t\t\t&message.command_id(),\n \t\t\tmessage.inner().payload().clone().into(),\n \t\t)?;\n-\t\tself.publisher.publish(destination, message.inner()).await.map_err(|error| {\n+\t\tself.publisher.publish(message.inner()).await.map_err(|error| {\n \t\t\tself.cancel_command(&message.command_id());\n \t\t\terror\n \t\t})"
+        },
+        {
+            "sha": "62589bb17f1fde10317defdc9e91b6314f0d21ab",
+            "filename": "backend/common/infrastructure/src/amqp/mod.rs",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 4,
+            "changes": 5,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Finfrastructure%2Fsrc%2Famqp%2Fmod.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -1,12 +1,9 @@\n mod bus;\n-pub use bus::{Bus, ConsumableBus, Error as BusError};\n+pub use bus::{Bus, ConsumableBus, Destination, Error as BusError};\n \n mod config;\n pub use config::Config;\n \n-mod publisher;\n-mod subscriber;\n-\n mod unique_message;\n pub use unique_message::UniqueMessage;\n "
+        },
+        {
+            "sha": "1544a26023f6135ca80423bc84a7acc2b305fd2b",
+            "filename": "backend/common/testing/src/context/amqp.rs",
+            "status": "modified",
+            "additions": 7,
+            "deletions": 5,
+            "changes": 12,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Ftesting%2Fsrc%2Fcontext%2Famqp.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fcommon%2Ftesting%2Fsrc%2Fcontext%2Famqp.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Ftesting%2Fsrc%2Fcontext%2Famqp.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -1,8 +1,8 @@\n use std::{collections::HashMap, sync::Arc};\n \n use anyhow::{anyhow, Result};\n-use domain::{Destination, Event, Publisher, Subscriber, SubscriberCallbackError};\n-use infrastructure::amqp::{self, Bus, BusError, ConsumableBus, UniqueMessage};\n+use domain::{Event, Publisher, Subscriber, SubscriberCallbackError};\n+use infrastructure::amqp::{self, Bus, BusError, ConsumableBus, Destination, UniqueMessage};\n use lapin::options::QueueDeclareOptions;\n use serde_json::Value;\n use testcontainers::{\n@@ -74,7 +74,9 @@ impl<'docker> Context<'docker> {\n \t\t\t_container: container,\n \t\t\tconfig: config.clone(),\n \t\t\tlisteners,\n-\t\t\tpublisher: Arc::new(Bus::new(config).await?),\n+\t\t\tpublisher: Arc::new(\n+\t\t\t\tBus::new(config).await?.as_publisher(Destination::queue(\"quote_sync\")),\n+\t\t\t),\n \t\t\tkill_channels,\n \t\t})\n \t}\n@@ -91,8 +93,8 @@ impl<'docker> Context<'docker> {\n \t\t\t.map(|value| serde_json::from_value(value).expect(\"Unable to deserialize message\"))\n \t}\n \n-\tpub async fn publish<E: Into<Event>>(&self, destination: Destination, event: E) -> Result<()> {\n-\t\tself.publisher.publish(destination, &UniqueMessage::new(event.into())).await?;\n+\tpub async fn publish<E: Into<Event>>(&self, event: E) -> Result<()> {\n+\t\tself.publisher.publish(&UniqueMessage::new(event.into())).await?;\n \t\tOk(())\n \t}\n }"
+        },
+        {
+            "sha": "0599940ec4bcd0d8a544d84b0028d2e1c3559aec",
+            "filename": "backend/event-listeners/tests/quote_sync_upon_budget_creation_it.rs",
+            "status": "modified",
+            "additions": 5,
+            "deletions": 8,
+            "changes": 13,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fevent-listeners%2Ftests%2Fquote_sync_upon_budget_creation_it.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fevent-listeners%2Ftests%2Fquote_sync_upon_budget_creation_it.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Ftests%2Fquote_sync_upon_budget_creation_it.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -1,6 +1,6 @@\n use anyhow::Result;\n use chrono::Utc;\n-use domain::{currencies, BudgetId, Destination};\n+use domain::{currencies, BudgetId};\n use event_listeners::models::CryptoUsdQuote;\n use fixtures::*;\n use infrastructure::database::{enums::Currency, ImmutableRepository};\n@@ -40,13 +40,10 @@ impl<'a> Test<'a> {\n \t\t// When\n \t\tself.context\n \t\t\t.amqp\n-\t\t\t.publish(\n-\t\t\t\tDestination::queue(\"quote_sync\"),\n-\t\t\t\tdomain::BudgetEvent::Created {\n-\t\t\t\t\tid: BudgetId::new(),\n-\t\t\t\t\tcurrency: currencies::ETH,\n-\t\t\t\t},\n-\t\t\t)\n+\t\t\t.publish(domain::BudgetEvent::Created {\n+\t\t\t\tid: BudgetId::new(),\n+\t\t\t\tcurrency: currencies::ETH,\n+\t\t\t})\n \t\t\t.await?;\n \n \t\t// Then"
+        },
+        {
+            "sha": "b37c7e96802e773b1f267ea4103b655cb896533d",
+            "filename": "backend/event-store/src/main.rs",
+            "status": "modified",
+            "additions": 5,
+            "deletions": 6,
+            "changes": 11,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fevent-store%2Fsrc%2Fmain.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/043d570d55b1b705a4d03a006ef77da82159f142/backend%2Fevent-store%2Fsrc%2Fmain.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-store%2Fsrc%2Fmain.rs?ref=043d570d55b1b705a4d03a006ef77da82159f142",
+            "patch": "@@ -2,11 +2,9 @@ use std::sync::Arc;\n \n use ::olog::info;\n use anyhow::Result;\n-use backend_domain::{\n-\tDestination, Event, Identified, Publisher, Subscriber, SubscriberCallbackError,\n-};\n+use backend_domain::{Event, Identified, Publisher, Subscriber, SubscriberCallbackError};\n use backend_infrastructure::{\n-\tamqp::{self, Bus, UniqueMessage},\n+\tamqp::{self, Bus, Destination, UniqueMessage},\n \tconfig,\n \tdatabase::{self, init_pool, Client as DatabaseClient},\n \tevent_bus::EXCHANGE_NAME,\n@@ -31,7 +29,8 @@ async fn main() -> Result<()> {\n \tlet _tracer = Tracer::init(config.tracer, \"event_store\")?;\n \n \tlet inbound_event_bus = bus::consumer(config.amqp.clone()).await?;\n-\tlet outbound_event_bus = Arc::new(Bus::new(config.amqp).await?);\n+\tlet outbound_event_bus =\n+\t\tArc::new(Bus::new(config.amqp).await?.as_publisher(Destination::exchange(EXCHANGE_NAME)));\n \tlet database = Arc::new(DatabaseClient::new(init_pool(config.database)?));\n \n \tinbound_event_bus\n@@ -67,7 +66,7 @@ async fn publish(\n \tlet message = message.copy();\n \n \tpublisher\n-\t\t.publish(Destination::exchange(EXCHANGE_NAME), &message)\n+\t\t.publish(&message)\n \t\t.await\n \t\t.map_err(|e| SubscriberCallbackError::Fatal(e.into()))?;\n \tOk(())"
+        }
+    ]
+}

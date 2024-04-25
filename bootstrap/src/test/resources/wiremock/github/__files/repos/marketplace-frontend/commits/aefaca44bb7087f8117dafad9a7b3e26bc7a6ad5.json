@@ -1,0 +1,98 @@
+{
+    "sha": "aefaca44bb7087f8117dafad9a7b3e26bc7a6ad5",
+    "node_id": "C_kwDOHbl-LNoAKGFlZmFjYTQ0YmI3MDg3ZjgxMTdkYWZhZDlhN2IzZTI2YmM3YTZhZDU",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-22T10:53:50Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-22T10:54:07Z"
+        },
+        "message": "run projections as sync publisher",
+        "tree": {
+            "sha": "9ad0a6b8e15371078858b766e671f4a132d5fb07",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/trees/9ad0a6b8e15371078858b766e671f4a132d5fb07"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/commits/aefaca44bb7087f8117dafad9a7b3e26bc7a6ad5",
+        "comment_count": 0,
+        "verification": {
+            "verified": false,
+            "reason": "unsigned",
+            "signature": null,
+            "payload": null
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/aefaca44bb7087f8117dafad9a7b3e26bc7a6ad5",
+    "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/aefaca44bb7087f8117dafad9a7b3e26bc7a6ad5",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/aefaca44bb7087f8117dafad9a7b3e26bc7a6ad5/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "be0989e6d2fab91d4a75f3b1016cf292221f1bd2",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/be0989e6d2fab91d4a75f3b1016cf292221f1bd2",
+            "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/be0989e6d2fab91d4a75f3b1016cf292221f1bd2"
+        }
+    ],
+    "stats": {
+        "total": 18,
+        "additions": 17,
+        "deletions": 1
+    },
+    "files": [
+        {
+            "sha": "6d819d0794aee8905f56c6af5eb50dfbe10f59a3",
+            "filename": "backend/api/src/presentation/bootstrap.rs",
+            "status": "modified",
+            "additions": 17,
+            "deletions": 1,
+            "changes": 18,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/aefaca44bb7087f8117dafad9a7b3e26bc7a6ad5/backend%2Fapi%2Fsrc%2Fpresentation%2Fbootstrap.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/aefaca44bb7087f8117dafad9a7b3e26bc7a6ad5/backend%2Fapi%2Fsrc%2Fpresentation%2Fbootstrap.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fpresentation%2Fbootstrap.rs?ref=aefaca44bb7087f8117dafad9a7b3e26bc7a6ad5",
+            "patch": "@@ -9,7 +9,7 @@ use infrastructure::{\n use rocket::{Build, Rocket};\n \n use crate::{\n-\tdomain::projectors,\n+\tdomain::projectors::{self, projections},\n \tinfrastructure::{simple_storage, web3::ens},\n \tpresentation::{graphql, http, http::github_client_pat_factory::GithubClientPatFactory},\n \tConfig,\n@@ -33,6 +33,22 @@ pub async fn bootstrap(config: Config) -> Result<Rocket<Build>> {\n \t\tArc::new(EventPublisher::new(\n \t\t\tprojectors::event_store::Projector::new(database.clone()),\n \t\t)),\n+\t\tArc::new(EventPublisher::new(projections::Projector::new(\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t\tdatabase.clone(),\n+\t\t))),\n \t\tArc::new(\n \t\t\tamqp::Bus::new(config.amqp.clone())\n \t\t\t\t.await?"
+        }
+    ]
+}

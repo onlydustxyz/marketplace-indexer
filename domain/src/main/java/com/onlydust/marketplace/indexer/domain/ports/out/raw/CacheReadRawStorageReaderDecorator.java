@@ -67,16 +67,19 @@ public class CacheReadRawStorageReaderDecorator implements RawStorageReader {
 
     @Override
     public Optional<List<RawCodeReview>> pullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return cache.pullRequestReviews(repoId, pullRequestId, pullRequestNumber).or(() -> fetcher.pullRequestReviews(repoId, pullRequestId, pullRequestNumber));
+        return cache.pullRequestReviews(repoId, pullRequestId, pullRequestNumber)
+                .or(() -> fetcher.pullRequestReviews(repoId, pullRequestId, pullRequestNumber));
     }
 
     @Override
     public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return cache.pullRequestCommits(repoId, pullRequestId, pullRequestNumber).or(() -> fetcher.pullRequestCommits(repoId, pullRequestId, pullRequestNumber));
+        return cache.pullRequestCommits(repoId, pullRequestId, pullRequestNumber)
+                .or(() -> fetcher.pullRequestCommits(repoId, pullRequestId, pullRequestNumber));
     }
 
     @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
-        return cache.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber).or(() -> fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber));
+        return cache.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber)
+                .or(() -> fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber));
     }
 }

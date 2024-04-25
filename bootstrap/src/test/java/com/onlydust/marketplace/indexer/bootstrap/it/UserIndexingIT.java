@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
-import com.onlydust.marketplace.indexer.postgres.entities.raw.User;
-import com.onlydust.marketplace.indexer.postgres.entities.raw.UserSocialAccounts;
+import com.onlydust.marketplace.indexer.postgres.entities.raw.RawUserEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.raw.RawUserSocialAccountsEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserRepository;
@@ -51,10 +51,11 @@ public class UserIndexingIT extends IntegrationTest {
         response.expectStatus().isNoContent();
 
         final var expectedUser = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
-        assertThat(userRepository.findAll()).containsExactly(User.of(expectedUser));
+        assertThat(userRepository.findAll()).containsExactly(RawUserEntity.of(expectedUser));
 
-        final var expectedUserSocialAccounts = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony_social_accounts.json"), RawSocialAccount[].class);
-        assertThat(userSocialAccountsRepository.findAll()).containsExactly(UserSocialAccounts.of(ANTHONY, Arrays.asList(expectedUserSocialAccounts)));
+        final var expectedUserSocialAccounts = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony_social_accounts.json")
+                , RawSocialAccount[].class);
+        assertThat(userSocialAccountsRepository.findAll()).containsExactly(RawUserSocialAccountsEntity.of(ANTHONY, Arrays.asList(expectedUserSocialAccounts)));
 
         assertThat(githubAccountEntityRepository.findById(ANTHONY)).isPresent();
         assertThat(userIndexingJobEntityRepository.findById(ANTHONY)).isPresent();

@@ -14,8 +14,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.internalServerError;
+import static java.util.function.Function.identity;
 
 
 @Slf4j
@@ -34,12 +36,11 @@ public class GithubHttpClient {
         }
     }
 
-    public <ResponseBody> Optional<ResponseBody> decode(HttpResponse<byte[]> response, Class<ResponseBody> responseClass) {
+    public <ResponseBody> Optional<ResponseBody> decode(HttpResponse<byte[]> response, Function<byte[], ResponseBody> bodyConsumer) {
         return switch (response.statusCode()) {
-            case 200, 201 -> Optional.of(decodeBody(response.body(), responseClass));
+            case 200, 201 -> Optional.of(bodyConsumer.apply(response.body()));
             case 403, 404, 422, 451 -> Optional.empty();
-            default ->
-                    throw internalServerError("Received incorrect status (%s) when fetching github API".formatted(response.statusCode()));
+            default -> throw internalServerError("Received incorrect status (%s) when fetching github API".formatted(response.statusCode()));
         };
     }
 
@@ -106,14 +107,20 @@ public class GithubHttpClient {
 
     public <ResponseBody> Optional<ResponseBody> get(String path, Class<ResponseBody> responseClass) {
         final var httpResponse = fetch(path);
-        return decode(httpResponse, responseClass);
+        return decode(httpResponse, body -> decodeBody(body, responseClass));
+    }
+
+    public Optional<byte[]> get(String path) {
+        final var httpResponse = fetch(path);
+        return decode(httpResponse, identity());
     }
 
     public <ResponseBody> Optional<ResponseBody> graphql(String query, Object variables, Class<ResponseBody> responseClass) {
         try {
             final var body = Map.of("query", query, "variables", variables);
-            final var httpResponse = fetch("POST", URI.create(config.getBaseUri() + "/graphql"), HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body)));
-            return decode(httpResponse, responseClass);
+            final var httpResponse = fetch("POST", URI.create(config.getBaseUri() + "/graphql"),
+                    HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body)));
+            return decode(httpResponse, b -> decodeBody(b, responseClass));
         } catch (JsonProcessingException e) {
             throw internalServerError("Unable to serialize graphql request body", e);
         }
@@ -121,6 +128,6 @@ public class GithubHttpClient {
 
     public <ResponseBody> Optional<ResponseBody> post(String path, Class<ResponseBody> responseClass) {
         final var httpResponse = fetch("POST", path);
-        return decode(httpResponse, responseClass);
+        return decode(httpResponse, body -> decodeBody(body, responseClass));
     }
 }

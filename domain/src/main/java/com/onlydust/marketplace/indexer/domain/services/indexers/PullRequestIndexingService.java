@@ -25,7 +25,6 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     private final RepoIndexer repoIndexer;
     private final IssueIndexer issueIndexer;
 
-
     private List<CleanCodeReview> indexPullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         LOGGER.debug("Indexing pull request reviews for repo {} and pull request {}", repoId, pullRequestId);
         final var codeReviews = rawStorageReader.pullRequestReviews(repoId, pullRequestId, pullRequestNumber)
@@ -84,16 +83,19 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     public Optional<CleanPullRequest> indexPullRequest(String repoOwner, String repoName, Long prNumber) {
         LOGGER.debug("Indexing pull request {} for repo {}/{}", prNumber, repoOwner, repoName);
         return repoIndexer.indexRepo(repoOwner, repoName).flatMap(repo -> {
-            final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber).orElseThrow(() -> OnlyDustException.notFound("Pull request %d/%d not found".formatted(repo.getId(), prNumber)));
+            final var pullRequest = rawStorageReader.pullRequest(repo.getId(), prNumber)
+                    .orElseThrow(() -> OnlyDustException.notFound(("Pull request %d/%d not found").formatted(repo.getId(), prNumber)));
 
             return userIndexer.indexUser(pullRequest.getAuthor().getId()).map(author -> {
                 final var codeReviews = indexPullRequestReviews(repo.getId(), pullRequest.getId(), prNumber);
-                final var requestedReviewers = pullRequest.getRequestedReviewers().stream().map(reviewer -> userIndexer.indexUser(reviewer.getId()).orElseGet(() -> {
-                    LOGGER.warn("User {} not found, skipping requested reviewer {}", reviewer.getId(), reviewer.getLogin());
-                    return null;
-                })).filter(Objects::nonNull).toList();
+                final var requestedReviewers =
+                        pullRequest.getRequestedReviewers().stream().map(reviewer -> userIndexer.indexUser(reviewer.getId()).orElseGet(() -> {
+                            LOGGER.warn("User {} not found, skipping requested reviewer {}", reviewer.getId(), reviewer.getLogin());
+                            return null;
+                        })).filter(Objects::nonNull).toList();
                 final var commits = indexPullRequestCommits(repo.getId(), pullRequest.getId(), prNumber);
-                final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName(), pullRequest.getNumber());
+                final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName()
+                        , pullRequest.getNumber());
                 return CleanPullRequest.of(
                         pullRequest,
                         repo,

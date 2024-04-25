@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawCodeReview;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.SQLInsert;
@@ -13,23 +13,23 @@ import javax.persistence.Table;
 import java.util.List;
 
 
-@Data
 @Entity
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Table(name = "pull_request_reviews", schema = "indexer_raw")
+@Table(name = "user_social_accounts", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-@SQLInsert(sql = "INSERT INTO indexer_raw.pull_request_reviews (data, pull_request_id) VALUES (?, ?) ON CONFLICT DO NOTHING")
-public class PullRequestReview {
+@SQLInsert(sql = "INSERT INTO indexer_raw.user_social_accounts (data, user_id) VALUES (?, ?) ON CONFLICT DO NOTHING")
+public class RawUserSocialAccountsEntity {
     @Id
-    Long pullRequestId;
+    Long userId;
 
     @Type(type = "jsonb")
-    List<RawCodeReview> data;
+    List<RawSocialAccount> data;
 
-    public static PullRequestReview of(Long pullRequestId, List<RawCodeReview> codeReviews) {
-        return PullRequestReview.builder().pullRequestId(pullRequestId).data(codeReviews).build();
+    public static RawUserSocialAccountsEntity of(Long userId, List<RawSocialAccount> socialAccounts) {
+        return RawUserSocialAccountsEntity.builder().userId(userId).data(socialAccounts).build();
     }
 }

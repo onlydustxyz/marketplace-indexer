@@ -11,6 +11,7 @@ import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -68,5 +69,18 @@ class GithubPullRequestTest {
 
         assertThat(pullRequest(List.of(), List.of()).getReviewState())
                 .isEqualTo(GithubPullRequest.ReviewState.PENDING_REVIEWER);
+    }
+
+    @Test
+    void should_extract_main_file_extensions() {
+
+        final var commits = List.of(
+                CleanCommit.builder().modifiedFiles(Map.of("File1.rs", 10, "File2.rs", 5)).build(),
+                CleanCommit.builder().modifiedFiles(Map.of("File3.js", 5, "File4.js", 5)).build(),
+                CleanCommit.builder().modifiedFiles(Map.of("File5.sh", 1)).build()
+        );
+
+        assertThat(GithubPullRequest.extractMainFileExtensions(commits))
+                .containsExactly("rs", "js");
     }
 }

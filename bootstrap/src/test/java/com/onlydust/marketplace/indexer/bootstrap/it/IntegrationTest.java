@@ -8,6 +8,7 @@ import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
 import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
 import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import com.onlydust.marketplace.indexer.bootstrap.ApplicationIT;
+import com.onlydust.marketplace.indexer.bootstrap.WireMockInitializer;
 import com.onlydust.marketplace.indexer.bootstrap.configuration.SwaggerConfiguration;
 import com.onlydust.marketplace.indexer.domain.jobs.InstallationEventsInboxJob;
 import com.onlydust.marketplace.indexer.domain.jobs.OtherEventsInboxJob;
@@ -25,6 +26,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -51,9 +53,8 @@ import static org.testcontainers.utility.MountableFile.forClasspathResource;
 @Testcontainers
 @Slf4j
 @Import(SwaggerConfiguration.class)
+@ContextConfiguration(initializers = WireMockInitializer.class)
 @EnableWireMock({
-        @ConfigureWireMock(name = "github", property = "infrastructure.github.baseUri"),
-        @ConfigureWireMock(name = "githubForApp", property = "infrastructure.github-for-app.base-uri", stubLocation = "github"),
         @ConfigureWireMock(name = "api", property = "infrastructure.api-client.baseUri")
 })
 public class IntegrationTest {
@@ -66,9 +67,9 @@ public class IntegrationTest {
             .withCopyFileToContainer(forClasspathResource("scripts/"), "/scripts");
 
     protected final ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
-    @InjectWireMock("github")
+    @Autowired
     protected WireMockServer githubWireMockServer;
-    @InjectWireMock("githubForApp")
+    @Autowired
     protected WireMockServer githubForAppWireMockServer;
     @InjectWireMock("api")
     protected WireMockServer apiWireMockServer;

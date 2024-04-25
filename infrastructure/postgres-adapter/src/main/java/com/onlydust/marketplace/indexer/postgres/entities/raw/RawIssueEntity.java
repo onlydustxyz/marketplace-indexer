@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @Table(name = "issues", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @SQLInsert(sql = "INSERT INTO indexer_raw.issues (data, number, repo_id, id) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING")
-public class Issue {
+public class RawIssueEntity {
     @Id
     Long id;
 
@@ -32,7 +32,7 @@ public class Issue {
     @Type(type = "jsonb")
     RawIssue data;
 
-    public static Issue of(Long repoId, RawIssue issue) {
-        return Issue.builder().id(issue.getId()).repoId(repoId).number(issue.getNumber()).data(issue).build();
+    public static RawIssueEntity of(Long repoId, RawIssue issue) {
+        return RawIssueEntity.builder().id(issue.getId()).repoId(repoId).number(issue.getNumber()).data(issue).build();
     }
 }

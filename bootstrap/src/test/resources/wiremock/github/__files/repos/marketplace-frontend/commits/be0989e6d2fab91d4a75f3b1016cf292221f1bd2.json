@@ -1,0 +1,123 @@
+{
+    "sha": "be0989e6d2fab91d4a75f3b1016cf292221f1bd2",
+    "node_id": "C_kwDOHbl-LNoAKGJlMDk4OWU2ZDJmYWI5MWQ0YTc1ZjNiMTAxNmNmMjkyMjIxZjFiZDI",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-22T10:53:40Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-22T10:54:06Z"
+        },
+        "message": "move projections from event-listeners to api",
+        "tree": {
+            "sha": "2fd9529f5f2c1c0f9b1bfa6a589d7432d8173f83",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/trees/2fd9529f5f2c1c0f9b1bfa6a589d7432d8173f83"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/commits/be0989e6d2fab91d4a75f3b1016cf292221f1bd2",
+        "comment_count": 0,
+        "verification": {
+            "verified": false,
+            "reason": "unsigned",
+            "signature": null,
+            "payload": null
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/be0989e6d2fab91d4a75f3b1016cf292221f1bd2",
+    "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/be0989e6d2fab91d4a75f3b1016cf292221f1bd2",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/be0989e6d2fab91d4a75f3b1016cf292221f1bd2/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "37d08c97a6ac0002ecc6555d1a3328781d93d9f3",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/37d08c97a6ac0002ecc6555d1a3328781d93d9f3",
+            "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/37d08c97a6ac0002ecc6555d1a3328781d93d9f3"
+        }
+    ],
+    "stats": {
+        "total": 28,
+        "additions": 3,
+        "deletions": 25
+    },
+    "files": [
+        {
+            "sha": "7a67e0e7e9bd8b074a2046cfa9e955080ce3e7dd",
+            "filename": "backend/api/src/domain/projectors/mod.rs",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 0,
+            "changes": 1,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/be0989e6d2fab91d4a75f3b1016cf292221f1bd2/backend%2Fapi%2Fsrc%2Fdomain%2Fprojectors%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/be0989e6d2fab91d4a75f3b1016cf292221f1bd2/backend%2Fapi%2Fsrc%2Fdomain%2Fprojectors%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fdomain%2Fprojectors%2Fmod.rs?ref=be0989e6d2fab91d4a75f3b1016cf292221f1bd2",
+            "patch": "@@ -1 +1,2 @@\n pub mod event_store;\n+pub mod projections;"
+        },
+        {
+            "sha": "4344fb4b893504454b7496575320685f8ed657ac",
+            "filename": "backend/api/src/domain/projectors/projections.rs",
+            "status": "renamed",
+            "additions": 2,
+            "deletions": 3,
+            "changes": 5,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/be0989e6d2fab91d4a75f3b1016cf292221f1bd2/backend%2Fapi%2Fsrc%2Fdomain%2Fprojectors%2Fprojections.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/be0989e6d2fab91d4a75f3b1016cf292221f1bd2/backend%2Fapi%2Fsrc%2Fdomain%2Fprojectors%2Fprojections.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fdomain%2Fprojectors%2Fprojections.rs?ref=be0989e6d2fab91d4a75f3b1016cf292221f1bd2",
+            "patch": "@@ -4,14 +4,13 @@ use anyhow::Result;\n use async_trait::async_trait;\n use derive_new::new;\n use domain::{\n-\tApplicationEvent, BudgetEvent, Event, PaymentEvent, PaymentWorkItem, ProjectEvent,\n-\tSubscriberCallbackError,\n+\tApplicationEvent, BudgetEvent, Event, EventListener, PaymentEvent, PaymentWorkItem,\n+\tProjectEvent, SubscriberCallbackError,\n };\n use infrastructure::database::{ImmutableRepository, Repository};\n use rust_decimal::Decimal;\n use tracing::instrument;\n \n-use super::EventListener;\n use crate::models::*;\n \n #[allow(clippy::too_many_arguments)]",
+            "previous_filename": "backend/event-listeners/src/listeners/projections.rs"
+        },
+        {
+            "sha": "52b939877c914705e763a86c382b8fdb8ab9b9f8",
+            "filename": "backend/event-listeners/src/listeners/mod.rs",
+            "status": "modified",
+            "additions": 0,
+            "deletions": 22,
+            "changes": 22,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/be0989e6d2fab91d4a75f3b1016cf292221f1bd2/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/be0989e6d2fab91d4a75f3b1016cf292221f1bd2/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fmod.rs?ref=be0989e6d2fab91d4a75f3b1016cf292221f1bd2",
+            "patch": "@@ -1,5 +1,4 @@\n pub mod logger;\n-pub mod projections;\n pub mod quote_syncer;\n pub mod webhook;\n \n@@ -40,27 +39,6 @@ pub async fn spawn_all(\n ) -> Result<Vec<JoinHandle<()>>> {\n \tlet mut handles = vec![\n \t\tLogger.spawn(event_bus::event_consumer(config.amqp.clone(), \"logger\").await?),\n-\t\tprojections::Projector::new(\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t\tdatabase.clone(),\n-\t\t)\n-\t\t.spawn(\n-\t\t\tevent_bus::event_consumer(config.amqp.clone(), \"projections\")\n-\t\t\t\t.await?\n-\t\t\t\t.into_command_subscriber(database.clone()),\n-\t\t),\n \t\tquote_syncer::Projector::new(database.clone(), coinmarketcap).spawn(\n \t\t\tevent_bus::event_consumer(config.amqp.clone(), \"quote_sync\")\n \t\t\t\t.await?"
+        }
+    ]
+}

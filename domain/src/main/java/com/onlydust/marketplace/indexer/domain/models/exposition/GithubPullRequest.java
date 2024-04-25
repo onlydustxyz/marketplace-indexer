@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.models.exposition;
 
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanCommit;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import lombok.Builder;
 import lombok.Value;
@@ -9,9 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.reducing;
+
 @Value
 @Builder
 public class GithubPullRequest {
+    public static final double FILE_EXTENSION_RELEVANCE_THRESHOLD = 0.2;
+
     Long id;
     GithubRepo repo;
     Long number;
@@ -28,6 +34,7 @@ public class GithubPullRequest {
     List<GithubIssue> closingIssues;
     ReviewState reviewState;
     Map<GithubAccount, Long> commitCounts;
+    List<String> mainFileExtensions;
 
     public static GithubPullRequest of(CleanPullRequest pullRequest) {
         return GithubPullRequest.builder()
@@ -47,9 +54,26 @@ public class GithubPullRequest {
                 .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssue::of).toList())
                 .reviewState(aggregateReviewState(pullRequest))
                 .commitCounts(pullRequest.getCommits().stream()
-                        .collect(Collectors.groupingBy(c -> GithubAccount.of(c.getAuthor()), Collectors.counting()))
+                        .collect(groupingBy(c -> GithubAccount.of(c.getAuthor()), Collectors.counting()))
                 )
+                .mainFileExtensions(extractMainFileExtensions(pullRequest.getCommits()))
                 .build();
+    }
+
+    static List<String> extractMainFileExtensions(List<CleanCommit> commits) {
+        final var extensions = commits.stream()
+                .flatMap(c -> c.getModifiedFiles().entrySet().stream())
+                .collect(groupingBy(e -> fileExtension(e.getKey()), reducing(0, Map.Entry::getValue, Integer::sum)));
+
+        final var total = extensions.values().stream().mapToInt(Integer::intValue).sum();
+        return extensions.entrySet().stream()
+                .filter(e -> e.getValue() / (double) total > FILE_EXTENSION_RELEVANCE_THRESHOLD)
+                .map(Map.Entry::getKey)
+                .toList();
+    }
+
+    private static String fileExtension(String filePath) {
+        return filePath.substring(filePath.lastIndexOf('.') + 1);
     }
 
     private static ReviewState aggregateReviewState(CleanPullRequest pullRequest) {

@@ -22,21 +22,21 @@ import javax.persistence.Table;
 @Table(name = "pull_requests", schema = "indexer_raw")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @SQLInsert(sql = "INSERT INTO indexer_raw.pull_requests (data, number, repo_id, id) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING")
-public class PullRequest {
+public class RawPullRequestEntity {
     @Id
     Long id;
 
     @EqualsAndHashCode.Exclude
     @ManyToOne
-    Repo repo;
+    RawRepoEntity repo;
 
     Long number;
 
     @Type(type = "jsonb")
     RawPullRequest data;
 
-    public static PullRequest of(Long repoId, RawPullRequest pullRequest) {
-        final var repo = Repo.builder().id(repoId).build();
-        return PullRequest.builder().id(pullRequest.getId()).repo(repo).number(pullRequest.getNumber()).data(pullRequest).build();
+    public static RawPullRequestEntity of(Long repoId, RawPullRequest pullRequest) {
+        final var repo = RawRepoEntity.builder().id(repoId).build();
+        return RawPullRequestEntity.builder().id(pullRequest.getId()).repo(repo).number(pullRequest.getNumber()).data(pullRequest).build();
     }
 }

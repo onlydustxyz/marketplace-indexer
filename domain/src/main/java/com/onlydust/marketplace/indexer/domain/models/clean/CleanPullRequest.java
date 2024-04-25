@@ -54,7 +54,8 @@ public class CleanPullRequest {
                 .build();
     }
 
-    public static CleanPullRequest of(RawPullRequest pullRequest, CleanRepo repo, CleanAccount author, List<CleanCodeReview> reviews, List<CleanAccount> requestedReviewers, List<CleanCommit> commits, List<CleanIssue> closingIssues) {
+    public static CleanPullRequest of(RawPullRequest pullRequest, CleanRepo repo, CleanAccount author, List<CleanCodeReview> reviews,
+                                      List<CleanAccount> requestedReviewers, List<CleanCommit> commits, List<CleanIssue> closingIssues) {
         return CleanPullRequest.of(pullRequest, repo, author).toBuilder()
                 .reviews(reviews)
                 .requestedReviewers(requestedReviewers)
