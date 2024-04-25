@@ -21,7 +21,7 @@ public class CleanCommit {
                 .author(author)
                 .modifiedFiles(commit.getFiles().stream()
                         .map(f -> Map.entry(f.getFilename(), f.getChanges()))
-                        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue)))
+                        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Integer::sum)))
                 .build();
     }
 }
