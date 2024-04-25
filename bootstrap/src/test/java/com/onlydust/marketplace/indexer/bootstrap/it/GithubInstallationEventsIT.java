@@ -4,11 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.EventsInboxEntity;
-import com.onlydust.marketplace.indexer.postgres.entities.OldRepoIndexesEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoEntity;
-import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
@@ -38,8 +36,6 @@ public class GithubInstallationEventsIT extends IntegrationTest {
     @Autowired
     RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
-    OldRepoIndexesEntityRepository oldRepoIndexesEntityRepository;
-    @Autowired
     GithubAccountEntityRepository githubAccountRepository;
     @Autowired
     GithubAppInstallationEntityRepository githubAppInstallationEntityRepository;
@@ -54,7 +50,8 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         final var event = "/github/webhook/events/installation/installation_created_new.json";
 
         // When
-        final var response = client.post().uri(getApiURI("/github-app/webhook")).header("X-GitHub-Event", "installation").header("X-Hub-Signature-256", "sha256=invalid").bodyValue(event).exchange();
+        final var response = client.post().uri(getApiURI("/github-app/webhook")).header("X-GitHub-Event", "installation").header("X-Hub-Signature-256",
+                "sha256=invalid").bodyValue(event).exchange();
 
         // Then
         response.expectStatus().isUnauthorized();
@@ -70,10 +67,11 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         processEventsFromPaths("installation", "/github/webhook/events/installation/installation_created_old.json");
 
         // Then
-        assertThat(repoIndexingJobEntityRepository.findAll()).containsExactlyInAnyOrder(new RepoIndexingJobEntity(CAIRO_STREAMS_ID, OLD_INSTALLATION_ID, false, true), new RepoIndexingJobEntity(MARKETPLACE_FRONTEND_ID, OLD_INSTALLATION_ID, false, true));
-        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(new OldRepoIndexesEntity(CAIRO_STREAMS_ID), new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID));
+        assertThat(repoIndexingJobEntityRepository.findAll()).containsExactlyInAnyOrder(new RepoIndexingJobEntity(CAIRO_STREAMS_ID, OLD_INSTALLATION_ID,
+                false, true), new RepoIndexingJobEntity(MARKETPLACE_FRONTEND_ID, OLD_INSTALLATION_ID, false, true));
 
-        final var account = GithubAccountEntity.builder().id(98735558L).login("onlydustxyz").type(GithubAccountEntity.Type.ORGANIZATION).avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4").htmlUrl("https://github.com/onlydustxyz").build();
+        final var account = GithubAccountEntity.builder().id(98735558L).login("onlydustxyz").type(GithubAccountEntity.Type.ORGANIZATION).avatarUrl("https" +
+                                                                                                                                                   "://avatars.githubusercontent.com/u/98735558?v=4").htmlUrl("https://github.com/onlydustxyz").build();
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
@@ -100,9 +98,8 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isEqualTo(INSTALLATION_ID);
 
-        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(new OldRepoIndexesEntity(CAIRO_STREAMS_ID), new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID));
-
-        final var account = GithubAccountEntity.builder().id(98735558L).login("onlydustxyz").type(GithubAccountEntity.Type.ORGANIZATION).avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4").htmlUrl("https://github.com/onlydustxyz").build();
+        final var account = GithubAccountEntity.builder().id(98735558L).login("onlydustxyz").type(GithubAccountEntity.Type.ORGANIZATION).avatarUrl("https" +
+                                                                                                                                                   "://avatars.githubusercontent.com/u/98735558?v=4").htmlUrl("https://github.com/onlydustxyz").build();
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
@@ -128,8 +125,6 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isEqualTo(INSTALLATION_ID);
 
-        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(new OldRepoIndexesEntity(CAIRO_STREAMS_ID), new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID));
-
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
         final var repos = installations.get(0).getRepos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
@@ -152,8 +147,6 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isNull();
 
-        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID), new OldRepoIndexesEntity(CAIRO_STREAMS_ID));
-
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
         final var repos = installations.get(0).getRepos();
@@ -175,8 +168,6 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(jobs.get(0).getInstallationSuspendedAt().toInstant()).isEqualTo(ZonedDateTime.parse("2023-11-13T14:21:39Z").toInstant());
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isNull();
-
-        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID), new OldRepoIndexesEntity(CAIRO_STREAMS_ID));
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
@@ -202,8 +193,6 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isNull();
 
-        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID), new OldRepoIndexesEntity(CAIRO_STREAMS_ID));
-
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
         final var repos = installations.get(0).getRepos();
@@ -225,8 +214,6 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(jobs.get(0).getInstallationId()).isNull();
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isNull();
-
-        assertThat(oldRepoIndexesEntityRepository.findAll()).containsExactlyInAnyOrder(new OldRepoIndexesEntity(MARKETPLACE_FRONTEND_ID), new OldRepoIndexesEntity(CAIRO_STREAMS_ID));
 
         // Installation removed
         assertThat(githubAppInstallationEntityRepository.findAll()).isEmpty();
@@ -264,7 +251,8 @@ public class GithubInstallationEventsIT extends IntegrationTest {
     @Order(11)
     void should_handle_duplicate_repo_added() {
         // Given
-        processEventsFromPaths("installation", "/github/webhook/events/installation/installation_created_new.json", "/github/webhook/events/installation/installation_added.json");
+        processEventsFromPaths("installation", "/github/webhook/events/installation/installation_created_new.json", "/github/webhook/events/installation" +
+                                                                                                                    "/installation_added.json");
 
         diffRepoRefreshJobManager.createJob().run();
 
@@ -296,13 +284,18 @@ public class GithubInstallationEventsIT extends IntegrationTest {
     @Order(12)
     void failed_installation_should_not_block_others() throws JsonProcessingException {
         // Given
-        eventsInboxEntityRepository.saveAll(List.of(new EventsInboxEntity("installation", mapper.readTree("{\"installation\":{\"id\": 1},\"action\":\"remove\"}")).failed("unable to process"), new EventsInboxEntity("installation", mapper.readTree("{\"installation\":{\"id\": 1},\"action\":\"remove\"}")), new EventsInboxEntity("installation", mapper.readTree("{\"installation\":{\"id\": 2},\"action\":\"remove\"}"))));
+        eventsInboxEntityRepository.saveAll(List.of(new EventsInboxEntity("installation", mapper.readTree("{\"installation\":{\"id\": 1}," +
+                                                                                                          "\"action\":\"remove\"}")).failed("unable to " +
+                                                                                                                                            "process"),
+                new EventsInboxEntity("installation", mapper.readTree("{\"installation\":{\"id\": 1},\"action\":\"remove\"}")), new EventsInboxEntity(
+                        "installation", mapper.readTree("{\"installation\":{\"id\": 2},\"action\":\"remove\"}"))));
 
         // When
         installationEventsInboxJob.run();
 
         // Then
-        final var processed = eventsInboxEntityRepository.findAll().stream().filter(e -> e.getPayload().at("/installation/id").asInt() == 2).findFirst().orElseThrow();
+        final var processed =
+                eventsInboxEntityRepository.findAll().stream().filter(e -> e.getPayload().at("/installation/id").asInt() == 2).findFirst().orElseThrow();
         assertThat(processed.getStatus()).isEqualTo(EventsInboxEntity.Status.PROCESSED);
         final var notProcessed = eventsInboxEntityRepository.findAll().stream().filter(e -> e.getPayload().at("/installation/id").asInt() == 1).toList();
         assertThat(notProcessed).hasSize(2);
