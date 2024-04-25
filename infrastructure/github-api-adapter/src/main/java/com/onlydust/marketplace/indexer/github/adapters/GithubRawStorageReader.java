@@ -78,7 +78,7 @@ public class GithubRawStorageReader implements RawStorageReader {
 
     @Override
     public Optional<RawPullRequestDiff> pullRequestDiff(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        final var diff = client.get("/repositories/" + repoId + "/pulls/" + pullRequestNumber + ".diff", byte[].class);
+        final var diff = client.get("/repositories/" + repoId + "/pulls/" + pullRequestNumber + ".diff");
         return diff.map(RawPullRequestDiff::of);
     }
 
