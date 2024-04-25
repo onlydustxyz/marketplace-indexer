@@ -1,7 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
-import com.onlydust.marketplace.indexer.postgres.repositories.OldRepoIndexesEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.RepoRepository;
@@ -20,8 +19,6 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
     public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
     public JobManager diffRepoRefreshJobManager;
-    @Autowired
-    OldRepoIndexesEntityRepository oldRepoIndexesEntityRepository;
     @Autowired
     GithubRepoEntityRepository githubRepoRepository;
     @Autowired
@@ -45,7 +42,6 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
 
         // Then
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isFalse();
-        assertThat(oldRepoIndexesEntityRepository.findById(CAIRO_STREAMS_ID)).isEmpty();
         assertAllEventsAreProcessed("repository");
     }
 
@@ -59,7 +55,6 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
 
         // Then
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isTrue();
-        assertThat(oldRepoIndexesEntityRepository.findById(CAIRO_STREAMS_ID)).isPresent();
         assertAllEventsAreProcessed("repository");
     }
 
