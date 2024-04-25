@@ -60,7 +60,7 @@ public class GithubPullRequest {
                 .build();
     }
 
-    static List<String> extractMainFileExtensions(List<CleanCommit> commits) {
+    public static List<String> extractMainFileExtensions(List<CleanCommit> commits) {
         final var extensions = commits.stream()
                 .flatMap(c -> c.getModifiedFiles().entrySet().stream())
                 .collect(groupingBy(e -> fileExtension(e.getKey()), reducing(0, Map.Entry::getValue, Integer::sum)));
