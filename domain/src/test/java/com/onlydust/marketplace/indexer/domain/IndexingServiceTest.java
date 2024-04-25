@@ -14,6 +14,7 @@ import com.onlydust.marketplace.indexer.domain.services.exposers.PullRequestExpo
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
 import com.onlydust.marketplace.indexer.domain.stubs.ContributionStorageStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
+import lombok.SneakyThrows;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,7 +78,7 @@ public class IndexingServiceTest {
         rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), issue78);
         rawStorageReaderStub.feedWith("onlydustxyz", "marketplace-frontend", 1257L, pr1257ClosingIssues);
         rawStorageReaderStub.feedWith(pr1257.getId(), pr1257Reviews);
-        rawStorageReaderStub.feedWith(pr1257.getId(), pr1257Commits);
+        rawStorageReaderStub.feedWith(pr1257.getId(), details(pr1257Commits));
     }
 
     @Test
@@ -113,7 +114,7 @@ public class IndexingServiceTest {
         assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), pr1257.getNumber()),
                 pr1257ClosingIssues));
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
-        assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
+        assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(details(pr1257Commits)).toList()));
         assertCachedUsersAre(
                 onlyDust, // as PR repo owner
                 anthony, // as PR author
@@ -178,7 +179,7 @@ public class IndexingServiceTest {
         assertCachedClosingIssuesAre(Map.of(Tuple.tuple(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), pr1257.getNumber()),
                 pr1257ClosingIssues));
         assertCachedCodeReviewsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Reviews).toList()));
-        assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(pr1257Commits).toList()));
+        assertCachedCommitsAre(Map.of(pr1257.getId(), Arrays.stream(details(pr1257Commits)).toList()));
         assertCachedUsersAre(
                 onlyDust,// as repo owner
                 onlyDust,// as PR repo owner
@@ -265,6 +266,15 @@ public class IndexingServiceTest {
         when(issueIndexer.indexIssue(any(), any(), any())).thenThrow(new RuntimeException("Unable to index issue"));
 
         indexer.indexRepo(marketplaceFrontend.getId()).orElseThrow();
+    }
+
+    private RawCommit[] details(RawCommit[] commits) {
+        return Arrays.stream(commits).map(this::details).toArray(RawCommit[]::new);
+    }
+
+    @SneakyThrows
+    private RawCommit details(RawCommit commit) {
+        return RawStorageWriterStub.load("/github/repos/marketplace-frontend/commits/%s.json".formatted(commit.getSha()), RawCommit.class);
     }
 
     private void assertCachedReposAre(RawRepo... repos) {
