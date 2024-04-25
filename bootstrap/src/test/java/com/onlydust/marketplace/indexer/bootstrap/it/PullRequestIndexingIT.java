@@ -110,6 +110,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
         final var githubPullRequest = githubPullRequestRepository.findAll().stream().findFirst().orElseThrow();
         assertThat(githubPullRequest.getCreatedAt().toString()).isEqualTo("2023-09-21 12:42:45.0");
         assertThat(githubPullRequest.getCommitCount()).isEqualTo(1);
+        assertThat(githubPullRequest.getMainFileExtensions()).containsExactly("rs");
         final var commitCounts = githubPullRequest.getCommitCounts().stream().findFirst().orElseThrow();
         assertThat(commitCounts.getPullRequestId()).isEqualTo(pr1257.getId());
         assertThat(commitCounts.getAuthor().getId()).isEqualTo(anthony.getId());
