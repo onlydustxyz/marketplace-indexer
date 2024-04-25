@@ -1,0 +1,256 @@
+{
+    "sha": "7c12af9e5545a604909323fb63dd17a4e3037221",
+    "node_id": "C_kwDOHbl-LNoAKDdjMTJhZjllNTU0NWE2MDQ5MDkzMjNmYjYzZGQxN2E0ZTMwMzcyMjE",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-22T10:53:08Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-22T10:54:07Z"
+        },
+        "message": "move refresh binary in api",
+        "tree": {
+            "sha": "4c5f82fb089a8ec8638549ddde38c8bd57a00765",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/trees/4c5f82fb089a8ec8638549ddde38c8bd57a00765"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/commits/7c12af9e5545a604909323fb63dd17a4e3037221",
+        "comment_count": 0,
+        "verification": {
+            "verified": false,
+            "reason": "unsigned",
+            "signature": null,
+            "payload": null
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/7c12af9e5545a604909323fb63dd17a4e3037221",
+    "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/7c12af9e5545a604909323fb63dd17a4e3037221",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/7c12af9e5545a604909323fb63dd17a4e3037221/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "aefaca44bb7087f8117dafad9a7b3e26bc7a6ad5",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/aefaca44bb7087f8117dafad9a7b3e26bc7a6ad5",
+            "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/aefaca44bb7087f8117dafad9a7b3e26bc7a6ad5"
+        }
+    ],
+    "stats": {
+        "total": 189,
+        "additions": 185,
+        "deletions": 4
+    },
+    "files": [
+        {
+            "sha": "25e2ff77fb03858e40389f3055618a0d9db49951",
+            "filename": "backend/Cargo.lock",
+            "status": "modified",
+            "additions": 4,
+            "deletions": 0,
+            "changes": 4,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2FCargo.lock",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2FCargo.lock",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2FCargo.lock?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "patch": "@@ -174,7 +174,9 @@ dependencies = [\n  \"assert_matches\",\n  \"async-trait\",\n  \"chrono\",\n+ \"clap\",\n  \"derive\",\n+ \"derive-new\",\n  \"derive_more\",\n  \"derive_setters\",\n  \"diesel\",\n@@ -189,6 +191,7 @@ dependencies = [\n  \"image\",\n  \"infer\",\n  \"infrastructure\",\n+ \"itertools\",\n  \"jsonwebtoken\",\n  \"juniper\",\n  \"juniper_rocket\",\n@@ -207,6 +210,7 @@ dependencies = [\n  \"rust_decimal_macros\",\n  \"serde\",\n  \"serde_json\",\n+ \"sha2 0.10.7\",\n  \"testcontainers\",\n  \"testing\",\n  \"thiserror\","
+        },
+        {
+            "sha": "27ee8c6674a90fcc8ba39c72c01e42629741afee",
+            "filename": "backend/api/Cargo.toml",
+            "status": "modified",
+            "additions": 6,
+            "deletions": 0,
+            "changes": 6,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2FCargo.toml",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2FCargo.toml",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2FCargo.toml?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "patch": "@@ -51,6 +51,9 @@ juniper = \"0.15.11\"\n juniper_rocket = \"0.8.2\"\n rocket = { version = \"0.5.0-rc.2\", features = [\"json\", \"uuid\"] }\n \n+# CLI\n+clap = { version = \"4.1.4\", features = [\"derive\"] }\n+\n # AWS\n rusoto_core = \"0.48.0\"\n rusoto_s3 = \"0.48.0\"\n@@ -74,9 +77,12 @@ chrono = \"0.4\"\n \n # Utils\n derive_more = \"0.99.17\"\n+derive-new = \"0.5.9\"\n derive_setters = \"0.1.5\"\n dotenv = \"0.15.0\"\n infer = \"0.12.0\"\n+itertools = \"0.10.5\"\n+sha2 = \"0.10.7\"\n rust_decimal = { version = \"1.29.1\", features = [\"db-diesel2-postgres\"] }\n rust_decimal_macros = \"1.26\"\n tokio-retry = \"0.3\""
+        },
+        {
+            "sha": "505e5acd7e32adc574b41a4e697bca404c004707",
+            "filename": "backend/api/Procfile",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 0,
+            "changes": 1,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2FProcfile",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2FProcfile",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2FProcfile?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "patch": "@@ -2,3 +2,4 @@ web: ROCKET_PORT=$PORT ./backend/target/release/api\n events_sanity_checks: RUST_LOG=info ./backend/target/release/events_sanity_checks\n quotes_syncer: RUST_LOG=info ./backend/target/release/quotes_syncer\n hasura: ./hasura/hasura.sh\n+refresh: RUST_LOG=info ./backend/target/release/refresh"
+        },
+        {
+            "sha": "42fa4c740f73157857eb5149df770c60ea3689e7",
+            "filename": "backend/api/src/bin/refresh/app.yaml",
+            "status": "renamed",
+            "additions": 0,
+            "deletions": 0,
+            "changes": 0,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Fapp.yaml",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Fapp.yaml",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Fapp.yaml?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "previous_filename": "backend/event-listeners/src/bin/refresh/app.yaml"
+        },
+        {
+            "sha": "0bef968cd2df14fddebf5e591825ff22f2d3e29e",
+            "filename": "backend/api/src/bin/refresh/cli.rs",
+            "status": "added",
+            "additions": 20,
+            "deletions": 0,
+            "changes": 20,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Fcli.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Fcli.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Fcli.rs?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "patch": "@@ -0,0 +1,20 @@\n+use clap::{ArgGroup, Parser};\n+\n+/// Refresh any aggregate\n+#[derive(Parser, Debug)]\n+#[command(author, about, long_about)]\n+#[command(group(ArgGroup::new(\"ids\").required(true).args([\"id\", \"all\"]),\n+))]\n+pub struct Args {\n+\t/// Name of the aggregate\n+\t#[arg(short, long)]\n+\tpub name: String,\n+\n+\t/// Aggregate ID\n+\t#[arg(short, long)]\n+\tpub id: Vec<String>,\n+\n+\t/// Aggregate ID\n+\t#[arg(short, long)]\n+\tpub all: bool,\n+}"
+        },
+        {
+            "sha": "bf39cbf5976136b43bae7ad9c35406727b52e74e",
+            "filename": "backend/api/src/bin/refresh/main.rs",
+            "status": "renamed",
+            "additions": 6,
+            "deletions": 2,
+            "changes": 8,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Fmain.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Fmain.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Fmain.rs?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "patch": "@@ -2,10 +2,10 @@ use std::sync::Arc;\n \n use ::infrastructure::config;\n use anyhow::{anyhow, Result};\n+use api::Config;\n use clap::Parser;\n use domain::{Application, Budget, Payment, Project};\n use dotenv::dotenv;\n-use event_listeners::Config;\n use futures::future::try_join_all;\n use infrastructure::{database, tracing::Tracer};\n \n@@ -28,7 +28,11 @@ async fn main() -> Result<()> {\n \trefresher::create::<Project>(database.clone()).register(&mut registry, \"Project\")?;\n \trefresher::create::<Payment>(database.clone()).register(&mut registry, \"Payment\")?;\n \n-\tlet (aggregate_name, aggregate_ids, all_ids) = cli::Args::parse().dissolve();\n+\tlet cli::Args {\n+\t\tname: aggregate_name,\n+\t\tid: aggregate_ids,\n+\t\tall: all_ids,\n+\t} = cli::Args::parse();\n \n \tlet refresher = registry.get(&aggregate_name).ok_or_else(|| anyhow!(\"Aggregate not found\"))?;\n ",
+            "previous_filename": "backend/event-listeners/src/bin/refresh/main.rs"
+        },
+        {
+            "sha": "94c88f04ca1610b633238027848d30ae9e72af94",
+            "filename": "backend/api/src/bin/refresh/refresher/mod.rs",
+            "status": "renamed",
+            "additions": 1,
+            "deletions": 1,
+            "changes": 2,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fmod.rs?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "patch": "@@ -1,10 +1,10 @@\n use std::{str::FromStr, sync::Arc};\n \n use anyhow::{anyhow, Result};\n+use api::domain::projectors::projections;\n use async_trait::async_trait;\n use derive_more::Constructor;\n use domain::{Event, EventListener, EventSourcable, EventStore, Identified};\n-use event_listeners::listeners::*;\n use infrastructure::{database, event_store::Named};\n use itertools::Itertools;\n use olog::info;",
+            "previous_filename": "backend/event-listeners/src/bin/refresh/refresher/mod.rs"
+        },
+        {
+            "sha": "d47e998921a0d4da6e88c4e747e0bdf84092e662",
+            "filename": "backend/api/src/bin/refresh/refresher/registry.rs",
+            "status": "renamed",
+            "additions": 0,
+            "deletions": 0,
+            "changes": 0,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fregistry.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fregistry.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fapi%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fregistry.rs?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "previous_filename": "backend/event-listeners/src/bin/refresh/refresher/registry.rs"
+        },
+        {
+            "sha": "7ea82d903aac93e704c097947e02393e9b1dbe66",
+            "filename": "backend/event-listeners/Procfile",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 1,
+            "changes": 2,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fevent-listeners%2FProcfile",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fevent-listeners%2FProcfile",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2FProcfile?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "patch": "@@ -1,4 +1,4 @@\n event-listeners: ./backend/target/release/listeners\n-refresh: RUST_LOG=info ./backend/target/release/refresh\n+refresh: RUST_LOG=info ./backend/target/release/refresh_deprecated\n github-indexer: ./backend/target/release/github-indexer\n web: ROCKET_PORT=$PORT ./backend/target/release/event-listeners"
+        },
+        {
+            "sha": "42fa4c740f73157857eb5149df770c60ea3689e7",
+            "filename": "backend/event-listeners/src/bin/refresh-deprecated/app.yaml",
+            "status": "added",
+            "additions": 28,
+            "deletions": 0,
+            "changes": 28,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Fapp.yaml",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Fapp.yaml",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Fapp.yaml?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "patch": "@@ -0,0 +1,28 @@\n+default:\n+  github:\n+    base_url: $GITHUB_BASE_URL\n+    personal_access_tokens: $GITHUB_PAT\n+    max_calls_per_request: $GITHUB_MAX_CALLS_PER_REQUEST\n+  tracer:\n+    json: false\n+    ansi: true\n+    location: false\n+  amqp:\n+    connection_retry_interval_ms: 6000\n+    connection_retry_count: 1\n+  http:\n+    api_keys: []\n+\n+local:\n+  database:\n+    url: postgres://postgres:postgres@localhost/marketplace_db\n+    pool_max_size: 3\n+  amqp:\n+    url: \"amqp://127.0.0.1:5672/%2f\"\n+\n+production:\n+  database:\n+    url: $DATABASE_URL\n+    pool_max_size: 3\n+  amqp:\n+    url: $CLOUDAMQP_URL"
+        },
+        {
+            "sha": "6244ded14b256f837605da0501fb8888abfb47a5",
+            "filename": "backend/event-listeners/src/bin/refresh-deprecated/cli.rs",
+            "status": "renamed",
+            "additions": 0,
+            "deletions": 0,
+            "changes": 0,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Fcli.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Fcli.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Fcli.rs?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "previous_filename": "backend/event-listeners/src/bin/refresh/cli.rs"
+        },
+        {
+            "sha": "d9d4ca5b3f0b0ea001e98efc526b507efc1d5775",
+            "filename": "backend/event-listeners/src/bin/refresh-deprecated/main.rs",
+            "status": "added",
+            "additions": 36,
+            "deletions": 0,
+            "changes": 36,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Fmain.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Fmain.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Fmain.rs?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "patch": "@@ -0,0 +1,36 @@\n+use ::infrastructure::config;\n+use anyhow::{anyhow, Result};\n+use clap::Parser;\n+use dotenv::dotenv;\n+use event_listeners::Config;\n+use futures::future::try_join_all;\n+use infrastructure::tracing::Tracer;\n+\n+mod refresher;\n+use refresher::Registry;\n+\n+mod cli;\n+\n+#[tokio::main]\n+async fn main() -> Result<()> {\n+\tdotenv().ok();\n+\tlet config: Config = config::load(\"backend/event-listeners/src/bin/refresh/app.yaml\")?;\n+\tlet _tracer = Tracer::init(config.tracer, \"refresh\")?;\n+\n+\tlet registry = Registry::new();\n+\n+\tlet (aggregate_name, aggregate_ids, all_ids) = cli::Args::parse().dissolve();\n+\n+\tlet refresher = registry.get(&aggregate_name).ok_or_else(|| anyhow!(\"Aggregate not found\"))?;\n+\n+\tlet aggregate_ids = match all_ids {\n+\t\ttrue => refresher.all_ids()?,\n+\t\tfalse => aggregate_ids,\n+\t};\n+\n+\tlet handles = aggregate_ids.iter().map(|id| refresher.refresh(id));\n+\n+\ttry_join_all(handles).await?;\n+\n+\tOk(())\n+}"
+        },
+        {
+            "sha": "086257ea3a46ca2b7e13e9d607adcefc2a082817",
+            "filename": "backend/event-listeners/src/bin/refresh-deprecated/refresher/mod.rs",
+            "status": "added",
+            "additions": 61,
+            "deletions": 0,
+            "changes": 61,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Frefresher%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Frefresher%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Frefresher%2Fmod.rs?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "patch": "@@ -0,0 +1,61 @@\n+use std::{str::FromStr, sync::Arc};\n+\n+use anyhow::{anyhow, Result};\n+use async_trait::async_trait;\n+use derive_more::Constructor;\n+use domain::{Event, EventListener, EventSourcable, EventStore, Identified};\n+use itertools::Itertools;\n+use olog::info;\n+pub use registry::{Registrable, Registry};\n+\n+mod registry;\n+\n+#[derive(Constructor)]\n+pub struct Refresher<A: EventSourcable> {\n+\tevent_store: Arc<dyn EventStore<A>>,\n+\tprojector: Arc<dyn EventListener<Event>>,\n+}\n+\n+#[async_trait]\n+pub trait Refreshable {\n+\tfn all_ids(&self) -> Result<Vec<String>>;\n+\tasync fn refresh(&self, id: &str) -> Result<()>;\n+}\n+\n+#[async_trait]\n+impl<A: EventSourcable> Refreshable for Refresher<A>\n+where\n+\tEvent: From<A::Event>,\n+\tA::Id: FromStr,\n+{\n+\tfn all_ids(&self) -> Result<Vec<String>> {\n+\t\tlet ids = self\n+\t\t\t.event_store\n+\t\t\t.list()\n+\t\t\t.map_err(|_| anyhow!(\"Could not list event ids from store\"))?\n+\t\t\t.into_iter()\n+\t\t\t.map(|e| e.id().to_string())\n+\t\t\t.unique()\n+\t\t\t.collect();\n+\n+\t\tOk(ids)\n+\t}\n+\n+\tasync fn refresh(&self, id: &str) -> Result<()> {\n+\t\tinfo!(\n+\t\t\t\"Refreshing {} {id}\",\n+\t\t\tstd::any::type_name::<A>().split(':').last().unwrap_or_default()\n+\t\t);\n+\t\tlet id = A::Id::from_str(id).map_err(|_| anyhow!(\"Unable to parse aggregate id\"))?;\n+\t\tlet events = self.event_store.list_by_id(&id)?;\n+\n+\t\tif events.is_empty() {\n+\t\t\treturn Err(anyhow!(\"No event found\"));\n+\t\t}\n+\n+\t\tfor event in events {\n+\t\t\tself.projector.on_event(event.into()).await?;\n+\t\t}\n+\t\tOk(())\n+\t}\n+}"
+        },
+        {
+            "sha": "d47e998921a0d4da6e88c4e747e0bdf84092e662",
+            "filename": "backend/event-listeners/src/bin/refresh-deprecated/refresher/registry.rs",
+            "status": "added",
+            "additions": 21,
+            "deletions": 0,
+            "changes": 21,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Frefresher%2Fregistry.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/7c12af9e5545a604909323fb63dd17a4e3037221/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Frefresher%2Fregistry.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh-deprecated%2Frefresher%2Fregistry.rs?ref=7c12af9e5545a604909323fb63dd17a4e3037221",
+            "patch": "@@ -0,0 +1,21 @@\n+use std::{collections::HashMap, sync::Arc};\n+\n+use anyhow::{anyhow, Result};\n+\n+use super::Refreshable;\n+\n+pub type Registry = HashMap<String, Arc<dyn Refreshable>>;\n+\n+pub trait Registrable {\n+\tfn register(self, registry: &mut Registry, key: &'static str) -> Result<()>;\n+}\n+\n+impl<R: Refreshable + 'static> Registrable for R {\n+\tfn register(self, registry: &mut Registry, key: &'static str) -> Result<()> {\n+\t\tif registry.insert(key.to_string(), Arc::new(self)).is_some() {\n+\t\t\treturn Err(anyhow!(\"Refresher already exists\"))?;\n+\t\t}\n+\n+\t\tOk(())\n+\t}\n+}"
+        }
+    ]
+}

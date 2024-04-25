@@ -1,0 +1,230 @@
+{
+    "sha": "0c3d6d7497a2ae51f389c2b901c13221ad2dfd22",
+    "node_id": "C_kwDOHbl-LNoAKDBjM2Q2ZDc0OTdhMmFlNTFmMzg5YzJiOTAxYzEzMjIxYWQyZGZkMjI",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-21T15:56:31Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-21T15:56:31Z"
+        },
+        "message": "merge all database projectors",
+        "tree": {
+            "sha": "d74f33363a8adbd046b6c9e9e591d82ca176a21a",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/trees/d74f33363a8adbd046b6c9e9e591d82ca176a21a"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/commits/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22",
+        "comment_count": 0,
+        "verification": {
+            "verified": false,
+            "reason": "unsigned",
+            "signature": null,
+            "payload": null
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22",
+    "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "1e95589128a1166f1eb718c6324f42507837977d",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/1e95589128a1166f1eb718c6324f42507837977d",
+            "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/1e95589128a1166f1eb718c6324f42507837977d"
+        }
+    ],
+    "stats": {
+        "total": 664,
+        "additions": 263,
+        "deletions": 401
+    },
+    "files": [
+        {
+            "sha": "307fcaf3fe4e373d4bcc014fadef2be9b9f5c490",
+            "filename": "backend/event-listeners/src/bin/refresh/main.rs",
+            "status": "modified",
+            "additions": 5,
+            "deletions": 4,
+            "changes": 9,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Fmain.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Fmain.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Fmain.rs?ref=0c3d6d7497a2ae51f389c2b901c13221ad2dfd22",
+            "patch": "@@ -3,6 +3,7 @@ use std::sync::Arc;\n use ::infrastructure::config;\n use anyhow::{anyhow, Result};\n use clap::Parser;\n+use domain::{Application, Budget, Payment, Project};\n use dotenv::dotenv;\n use event_listeners::Config;\n use futures::future::try_join_all;\n@@ -22,10 +23,10 @@ async fn main() -> Result<()> {\n \n \tlet mut registry = Registry::new();\n \n-\trefresher::application::create(database.clone()).register(&mut registry, \"Application\")?;\n-\trefresher::budget::create(database.clone()).register(&mut registry, \"Budget\")?;\n-\trefresher::project::create(database.clone()).register(&mut registry, \"Project\")?;\n-\trefresher::payment::create(database.clone()).register(&mut registry, \"Payment\")?;\n+\trefresher::create::<Application>(database.clone()).register(&mut registry, \"Application\")?;\n+\trefresher::create::<Budget>(database.clone()).register(&mut registry, \"Budget\")?;\n+\trefresher::create::<Project>(database.clone()).register(&mut registry, \"Project\")?;\n+\trefresher::create::<Payment>(database.clone()).register(&mut registry, \"Payment\")?;\n \n \tlet (aggregate_name, aggregate_ids, all_ids) = cli::Args::parse().dissolve();\n "
+        },
+        {
+            "sha": "3515e85eb94567f9ce189192309ac36eebac6e2d",
+            "filename": "backend/event-listeners/src/bin/refresh/refresher/application.rs",
+            "status": "removed",
+            "additions": 0,
+            "deletions": 13,
+            "changes": 13,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fapplication.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fapplication.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fapplication.rs?ref=1e95589128a1166f1eb718c6324f42507837977d",
+            "patch": "@@ -1,13 +0,0 @@\n-use std::sync::Arc;\n-\n-use domain::Application;\n-use event_listeners::listeners::*;\n-use infrastructure::database;\n-\n-use super::{Refreshable, Refresher};\n-\n-pub fn create(database: Arc<database::Client>) -> impl Refreshable {\n-\tlet application_projector = application::Projector::new(database.clone());\n-\n-\tRefresher::<Application>::new(database, vec![Arc::new(application_projector)])\n-}"
+        },
+        {
+            "sha": "9b650e859afbcc4754e7534749422f8b51794fb6",
+            "filename": "backend/event-listeners/src/bin/refresh/refresher/budget.rs",
+            "status": "removed",
+            "additions": 0,
+            "deletions": 12,
+            "changes": 12,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fbudget.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fbudget.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fbudget.rs?ref=1e95589128a1166f1eb718c6324f42507837977d",
+            "patch": "@@ -1,12 +0,0 @@\n-use std::sync::Arc;\n-\n-use domain::Budget;\n-use event_listeners::listeners::*;\n-use infrastructure::database;\n-\n-use super::{Refreshable, Refresher};\n-\n-pub fn create(database: Arc<database::Client>) -> impl Refreshable {\n-\tlet budget_projector = budget::Projector::new(database.clone());\n-\tRefresher::<Budget>::new(database, vec![Arc::new(budget_projector)])\n-}"
+        },
+        {
+            "sha": "13a8d326b5501e60bcbebfe7719cb27fd284d7c7",
+            "filename": "backend/event-listeners/src/bin/refresh/refresher/mod.rs",
+            "status": "modified",
+            "additions": 30,
+            "deletions": 12,
+            "changes": 42,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fmod.rs?ref=0c3d6d7497a2ae51f389c2b901c13221ad2dfd22",
+            "patch": "@@ -4,22 +4,18 @@ use anyhow::{anyhow, Result};\n use async_trait::async_trait;\n use derive_more::Constructor;\n use domain::{Event, EventSourcable, EventStore, Identified};\n-\n-mod registry;\n-use event_listeners::listeners::EventListener;\n+use event_listeners::listeners::{EventListener, *};\n+use infrastructure::{database, event_store::Named};\n use itertools::Itertools;\n use olog::info;\n pub use registry::{Registrable, Registry};\n \n-pub mod application;\n-pub mod budget;\n-pub mod payment;\n-pub mod project;\n+mod registry;\n \n #[derive(Constructor)]\n pub struct Refresher<A: EventSourcable> {\n \tevent_store: Arc<dyn EventStore<A>>,\n-\tprojectors: Vec<Arc<dyn EventListener<Event>>>,\n+\tprojector: Arc<dyn EventListener<Event>>,\n }\n \n #[async_trait]\n@@ -60,11 +56,33 @@ where\n \t\t}\n \n \t\tfor event in events {\n-\t\t\tlet event: Event = event.into();\n-\t\t\tfor projector in &self.projectors {\n-\t\t\t\tprojector.on_event(event.clone()).await?;\n-\t\t\t}\n+\t\t\tself.projector.on_event(event.into()).await?;\n \t\t}\n \t\tOk(())\n \t}\n }\n+\n+pub fn create<A: EventSourcable + Named>(database: Arc<database::Client>) -> impl Refreshable\n+where\n+\tEvent: From<A::Event>,\n+\tA::Id: FromStr,\n+{\n+\tlet projector = projections::Projector::new(\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t\tdatabase.clone(),\n+\t);\n+\n+\tRefresher::<A>::new(database, Arc::new(projector))\n+}"
+        },
+        {
+            "sha": "d46176d97a364ebcad95a7cbf6240b59851480bc",
+            "filename": "backend/event-listeners/src/bin/refresh/refresher/payment.rs",
+            "status": "removed",
+            "additions": 0,
+            "deletions": 20,
+            "changes": 20,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fpayment.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fpayment.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fpayment.rs?ref=1e95589128a1166f1eb718c6324f42507837977d",
+            "patch": "@@ -1,20 +0,0 @@\n-use std::sync::Arc;\n-\n-use domain::Payment;\n-use event_listeners::listeners::*;\n-use infrastructure::database;\n-\n-use super::{Refreshable, Refresher};\n-\n-pub fn create(database: Arc<database::Client>) -> impl Refreshable {\n-\tlet payment_projector = payment::Projector::new(\n-\t\tdatabase.clone(),\n-\t\tdatabase.clone(),\n-\t\tdatabase.clone(),\n-\t\tdatabase.clone(),\n-\t\tdatabase.clone(),\n-\t\tdatabase.clone(),\n-\t);\n-\n-\tRefresher::<Payment>::new(database, vec![Arc::new(payment_projector)])\n-}"
+        },
+        {
+            "sha": "a83b5d144d26886514061e954cc47376fecb2e6a",
+            "filename": "backend/event-listeners/src/bin/refresh/refresher/project.rs",
+            "status": "removed",
+            "additions": 0,
+            "deletions": 21,
+            "changes": 21,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fproject.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fproject.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Fbin%2Frefresh%2Frefresher%2Fproject.rs?ref=1e95589128a1166f1eb718c6324f42507837977d",
+            "patch": "@@ -1,21 +0,0 @@\n-use std::sync::Arc;\n-\n-use domain::Project;\n-use event_listeners::listeners::*;\n-use infrastructure::database;\n-\n-use super::{Refreshable, Refresher};\n-\n-pub fn create(database: Arc<database::Client>) -> impl Refreshable {\n-\tlet project_projector = project::Projector::new(\n-\t\tdatabase.clone(),\n-\t\tdatabase.clone(),\n-\t\tdatabase.clone(),\n-\t\tdatabase.clone(),\n-\t\tdatabase.clone(),\n-\t\tdatabase.clone(),\n-\t\tdatabase.clone(),\n-\t);\n-\n-\tRefresher::<Project>::new(database, vec![Arc::new(project_projector)])\n-}"
+        },
+        {
+            "sha": "d7c23260f976a243a8a57da10e8bfa184364ae12",
+            "filename": "backend/event-listeners/src/listeners/application.rs",
+            "status": "removed",
+            "additions": 0,
+            "deletions": 42,
+            "changes": 42,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fapplication.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fapplication.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fapplication.rs?ref=1e95589128a1166f1eb718c6324f42507837977d",
+            "patch": "@@ -1,42 +0,0 @@\n-use std::sync::Arc;\n-\n-use anyhow::Result;\n-use async_trait::async_trait;\n-use derive_new::new;\n-use domain::{ApplicationEvent, Event, SubscriberCallbackError};\n-use infrastructure::database::Repository;\n-use tracing::instrument;\n-\n-use super::EventListener;\n-use crate::models::*;\n-\n-#[derive(new)]\n-pub struct Projector {\n-\tapplications_repository: Arc<dyn Repository<Application>>,\n-}\n-\n-#[async_trait]\n-impl EventListener<Event> for Projector {\n-\t#[instrument(name = \"project_projection\", skip(self))]\n-\tasync fn on_event(&self, event: Event) -> Result<(), SubscriberCallbackError> {\n-\t\tif let Event::Application(event) = event {\n-\t\t\tmatch event {\n-\t\t\t\tApplicationEvent::Received {\n-\t\t\t\t\tid,\n-\t\t\t\t\tproject_id,\n-\t\t\t\t\tapplicant_id,\n-\t\t\t\t\treceived_at,\n-\t\t\t\t} => {\n-\t\t\t\t\tself.applications_repository.try_insert(Application {\n-\t\t\t\t\t\tid,\n-\t\t\t\t\t\treceived_at,\n-\t\t\t\t\t\tproject_id,\n-\t\t\t\t\t\tapplicant_id,\n-\t\t\t\t\t})?;\n-\t\t\t\t},\n-\t\t\t}\n-\t\t}\n-\n-\t\tOk(())\n-\t}\n-}"
+        },
+        {
+            "sha": "ac15cb5df8252d82803cea9df99699fe626f624f",
+            "filename": "backend/event-listeners/src/listeners/budget.rs",
+            "status": "removed",
+            "additions": 0,
+            "deletions": 48,
+            "changes": 48,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fbudget.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fbudget.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fbudget.rs?ref=1e95589128a1166f1eb718c6324f42507837977d",
+            "patch": "@@ -1,48 +0,0 @@\n-use std::sync::Arc;\n-\n-use anyhow::Result;\n-use async_trait::async_trait;\n-use derive_more::Constructor;\n-use domain::{BudgetEvent, Event, SubscriberCallbackError};\n-use infrastructure::database::Repository;\n-use rust_decimal::Decimal;\n-use tracing::instrument;\n-\n-use super::EventListener;\n-use crate::models::*;\n-\n-#[derive(Constructor)]\n-pub struct Projector {\n-\tbudget_repository: Arc<dyn Repository<Budget>>,\n-}\n-\n-#[async_trait]\n-impl EventListener<Event> for Projector {\n-\t#[instrument(name = \"budget_projection\", skip(self))]\n-\tasync fn on_event(&self, event: Event) -> Result<(), SubscriberCallbackError> {\n-\t\tif let Event::Budget(event) = event {\n-\t\t\tmatch event {\n-\t\t\t\tBudgetEvent::Created { id, currency } => {\n-\t\t\t\t\tself.budget_repository.upsert(Budget {\n-\t\t\t\t\t\tid,\n-\t\t\t\t\t\tinitial_amount: Decimal::ZERO,\n-\t\t\t\t\t\tremaining_amount: Decimal::ZERO,\n-\t\t\t\t\t\tcurrency: currency.try_into()?,\n-\t\t\t\t\t})?;\n-\t\t\t\t},\n-\t\t\t\tBudgetEvent::Allocated { id, amount, .. } => {\n-\t\t\t\t\tlet mut budget = self.budget_repository.find_by_id(id)?;\n-\t\t\t\t\tbudget.remaining_amount += amount;\n-\t\t\t\t\tbudget.initial_amount += amount;\n-\t\t\t\t\tself.budget_repository.update(budget)?;\n-\t\t\t\t},\n-\t\t\t\tBudgetEvent::Spent { id, amount } => {\n-\t\t\t\t\tlet mut budget = self.budget_repository.find_by_id(id)?;\n-\t\t\t\t\tbudget.remaining_amount -= amount;\n-\t\t\t\t\tself.budget_repository.update(budget)?;\n-\t\t\t\t},\n-\t\t\t}\n-\t\t}\n-\t\tOk(())\n-\t}\n-}"
+        },
+        {
+            "sha": "7cd2ff68f1702957fc1b100194d64b57b7f136a9",
+            "filename": "backend/event-listeners/src/listeners/mod.rs",
+            "status": "modified",
+            "additions": 4,
+            "deletions": 23,
+            "changes": 27,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fmod.rs?ref=0c3d6d7497a2ae51f389c2b901c13221ad2dfd22",
+            "patch": "@@ -1,8 +1,5 @@\n-pub mod application;\n-pub mod budget;\n pub mod logger;\n-pub mod payment;\n-pub mod project;\n+pub mod projections;\n pub mod quote_syncer;\n pub mod webhook;\n \n@@ -51,31 +48,15 @@ pub async fn spawn_all(\n ) -> Result<Vec<JoinHandle<()>>> {\n \tlet mut handles = vec![\n \t\tLogger.spawn(event_bus::event_consumer(config.amqp.clone(), \"logger\").await?),\n-\t\tproject::Projector::new(\n+\t\tprojections::Projector::new(\n+\t\t\tdatabase.clone(),\n \t\t\tdatabase.clone(),\n \t\t\tdatabase.clone(),\n \t\t\tdatabase.clone(),\n \t\t\tdatabase.clone(),\n \t\t\tdatabase.clone(),\n \t\t\tdatabase.clone(),\n \t\t\tdatabase.clone(),\n-\t\t)\n-\t\t.spawn(\n-\t\t\tevent_bus::event_consumer(config.amqp.clone(), \"projects\")\n-\t\t\t\t.await?\n-\t\t\t\t.into_command_subscriber(database.clone()),\n-\t\t),\n-\t\tbudget::Projector::new(database.clone()).spawn(\n-\t\t\tevent_bus::event_consumer(config.amqp.clone(), \"budgets\")\n-\t\t\t\t.await?\n-\t\t\t\t.into_command_subscriber(database.clone()),\n-\t\t),\n-\t\tapplication::Projector::new(database.clone()).spawn(\n-\t\t\tevent_bus::event_consumer(config.amqp.clone(), \"applications\")\n-\t\t\t\t.await?\n-\t\t\t\t.into_command_subscriber(database.clone()),\n-\t\t),\n-\t\tpayment::Projector::new(\n \t\t\tdatabase.clone(),\n \t\t\tdatabase.clone(),\n \t\t\tdatabase.clone(),\n@@ -84,7 +65,7 @@ pub async fn spawn_all(\n \t\t\tdatabase.clone(),\n \t\t)\n \t\t.spawn(\n-\t\t\tevent_bus::event_consumer(config.amqp.clone(), \"payments\")\n+\t\t\tevent_bus::event_consumer(config.amqp.clone(), \"projections\")\n \t\t\t\t.await?\n \t\t\t\t.into_command_subscriber(database.clone()),\n \t\t),"
+        },
+        {
+            "sha": "719eb82cf6db435bd4e92c7bd5f4b435c3bf33bf",
+            "filename": "backend/event-listeners/src/listeners/payment.rs",
+            "status": "removed",
+            "additions": 0,
+            "deletions": 123,
+            "changes": 123,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fpayment.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fpayment.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fpayment.rs?ref=1e95589128a1166f1eb718c6324f42507837977d",
+            "patch": "@@ -1,123 +0,0 @@\n-use std::{convert::TryFrom, sync::Arc};\n-\n-use anyhow::Result;\n-use async_trait::async_trait;\n-use derive_more::Constructor;\n-use domain::{Event, PaymentEvent, PaymentWorkItem, SubscriberCallbackError};\n-use infrastructure::database::Repository;\n-use tracing::instrument;\n-\n-use super::EventListener;\n-use crate::models::*;\n-\n-#[derive(Constructor)]\n-pub struct Projector {\n-\tpayment_request_repository: Arc<dyn Repository<PaymentRequest>>,\n-\tpayment_repository: Arc<dyn Repository<Payment>>,\n-\twork_item_repository: Arc<dyn WorkItemRepository>,\n-\tgithub_repo_index_repository: Arc<dyn GithubRepoIndexRepository>,\n-\tgithub_user_index_repository: Arc<dyn GithubUserIndexRepository>,\n-\tprojects_rewarded_users_repository: Arc<dyn ProjectsRewardedUserRepository>,\n-}\n-\n-#[async_trait]\n-impl EventListener<Event> for Projector {\n-\t#[instrument(name = \"budget_projection\", skip(self))]\n-\tasync fn on_event(&self, event: Event) -> Result<(), SubscriberCallbackError> {\n-\t\tif let Event::Payment(event) = event {\n-\t\t\tmatch event {\n-\t\t\t\tPaymentEvent::Requested {\n-\t\t\t\t\tid: payment_id,\n-\t\t\t\t\tproject_id,\n-\t\t\t\t\trequestor_id,\n-\t\t\t\t\trecipient_id,\n-\t\t\t\t\tamount,\n-\t\t\t\t\treason,\n-\t\t\t\t\tduration_worked,\n-\t\t\t\t\trequested_at,\n-\t\t\t\t} => {\n-\t\t\t\t\tself.payment_request_repository.upsert(PaymentRequest {\n-\t\t\t\t\t\tid: payment_id,\n-\t\t\t\t\t\tproject_id,\n-\t\t\t\t\t\trequestor_id,\n-\t\t\t\t\t\trecipient_id,\n-\t\t\t\t\t\tamount: *amount.amount(),\n-\t\t\t\t\t\tcurrency: amount.currency().try_into()?,\n-\t\t\t\t\t\trequested_at,\n-\t\t\t\t\t\tinvoice_received_at: None,\n-\t\t\t\t\t\thours_worked: i32::try_from(duration_worked.num_hours()).unwrap_or(0),\n-\t\t\t\t\t})?;\n-\n-\t\t\t\t\treason.work_items.into_iter().try_for_each(\n-\t\t\t\t\t\t|work_item| -> Result<(), SubscriberCallbackError> {\n-\t\t\t\t\t\t\tlet repo_id = match work_item {\n-\t\t\t\t\t\t\t\tPaymentWorkItem::Issue { repo_id, .. }\n-\t\t\t\t\t\t\t\t| PaymentWorkItem::CodeReview { repo_id, .. }\n-\t\t\t\t\t\t\t\t| PaymentWorkItem::PullRequest { repo_id, .. } => repo_id,\n-\t\t\t\t\t\t\t};\n-\n-\t\t\t\t\t\t\tself.work_item_repository.try_insert(\n-\t\t\t\t\t\t\t\t(project_id, payment_id, recipient_id, work_item).into(),\n-\t\t\t\t\t\t\t)?;\n-\n-\t\t\t\t\t\t\tself.github_repo_index_repository.start_indexing(repo_id)?;\n-\t\t\t\t\t\t\tOk(())\n-\t\t\t\t\t\t},\n-\t\t\t\t\t)?;\n-\n-\t\t\t\t\tself.github_user_index_repository.try_insert(GithubUserIndex {\n-\t\t\t\t\t\tuser_id: recipient_id,\n-\t\t\t\t\t\t..Default::default()\n-\t\t\t\t\t})?;\n-\n-\t\t\t\t\tself.projects_rewarded_users_repository\n-\t\t\t\t\t\t.increase_user_reward_count_for_project(&project_id, &recipient_id)?;\n-\t\t\t\t},\n-\t\t\t\tPaymentEvent::Cancelled { id: payment_id } => {\n-\t\t\t\t\tlet payment_request = self.payment_request_repository.find_by_id(payment_id)?;\n-\t\t\t\t\tself.payment_request_repository.delete(payment_id)?;\n-\t\t\t\t\tself.work_item_repository.delete_by_payment_id(payment_id)?;\n-\n-\t\t\t\t\tself.projects_rewarded_users_repository\n-\t\t\t\t\t\t.decrease_user_reward_count_for_project(\n-\t\t\t\t\t\t\t&payment_request.project_id,\n-\t\t\t\t\t\t\t&payment_request.recipient_id,\n-\t\t\t\t\t\t)?;\n-\t\t\t\t},\n-\t\t\t\tPaymentEvent::Processed {\n-\t\t\t\t\tid: payment_id,\n-\t\t\t\t\treceipt_id,\n-\t\t\t\t\tamount,\n-\t\t\t\t\treceipt,\n-\t\t\t\t\tprocessed_at,\n-\t\t\t\t} => {\n-\t\t\t\t\tself.payment_repository.upsert(Payment {\n-\t\t\t\t\t\tid: receipt_id,\n-\t\t\t\t\t\tamount: *amount.amount(),\n-\t\t\t\t\t\tcurrency_code: amount.currency().to_string(),\n-\t\t\t\t\t\treceipt: serde_json::to_value(receipt)\n-\t\t\t\t\t\t\t.map_err(|e| SubscriberCallbackError::Discard(e.into()))?,\n-\t\t\t\t\t\trequest_id: payment_id,\n-\t\t\t\t\t\tprocessed_at,\n-\t\t\t\t\t})?;\n-\t\t\t\t},\n-\t\t\t\tPaymentEvent::InvoiceReceived {\n-\t\t\t\t\tid: payment_id,\n-\t\t\t\t\treceived_at,\n-\t\t\t\t} => {\n-\t\t\t\t\tlet mut payment_request =\n-\t\t\t\t\t\tself.payment_request_repository.find_by_id(payment_id)?;\n-\t\t\t\t\tpayment_request.invoice_received_at = Some(received_at);\n-\t\t\t\t\tself.payment_request_repository.update(payment_request)?;\n-\t\t\t\t},\n-\t\t\t\tPaymentEvent::InvoiceRejected { id: payment_id } => {\n-\t\t\t\t\tlet mut payment_request =\n-\t\t\t\t\t\tself.payment_request_repository.find_by_id(payment_id)?;\n-\t\t\t\t\tpayment_request.invoice_received_at = None;\n-\t\t\t\t\tself.payment_request_repository.update(payment_request)?;\n-\t\t\t\t},\n-\t\t\t}\n-\t\t}\n-\t\tOk(())\n-\t}\n-}"
+        },
+        {
+            "sha": "378e79262111752a979ed2df9e940a221f2dac07",
+            "filename": "backend/event-listeners/src/listeners/project.rs",
+            "status": "removed",
+            "additions": 0,
+            "deletions": 83,
+            "changes": 83,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fproject.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/1e95589128a1166f1eb718c6324f42507837977d/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fproject.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fproject.rs?ref=1e95589128a1166f1eb718c6324f42507837977d",
+            "patch": "@@ -1,83 +0,0 @@\n-use std::sync::Arc;\n-\n-use anyhow::Result;\n-use async_trait::async_trait;\n-use derive_new::new;\n-use domain::{Event, ProjectEvent, SubscriberCallbackError};\n-use infrastructure::database::ImmutableRepository;\n-use tracing::instrument;\n-\n-use super::EventListener;\n-use crate::models::*;\n-\n-#[derive(new)]\n-pub struct Projector {\n-\tproject_repository: Arc<dyn ImmutableRepository<Project>>,\n-\tproject_lead_repository: Arc<dyn ImmutableRepository<ProjectLead>>,\n-\tproject_github_repos_repository: Arc<dyn ImmutableRepository<ProjectGithubRepo>>,\n-\tgithub_repo_index_repository: Arc<dyn GithubRepoIndexRepository>,\n-\tprojects_contributors_repository: Arc<dyn ProjectsContributorRepository>,\n-\tprojects_pending_contributors_repository: Arc<dyn ProjectsPendingContributorRepository>,\n-\tproject_budgets_repository: Arc<dyn ImmutableRepository<ProjectsBudget>>,\n-}\n-\n-#[async_trait]\n-impl EventListener<Event> for Projector {\n-\t#[instrument(name = \"project_projection\", skip(self))]\n-\tasync fn on_event(&self, event: Event) -> Result<(), SubscriberCallbackError> {\n-\t\tif let Event::Project(event) = event {\n-\t\t\tmatch event {\n-\t\t\t\tProjectEvent::Created { id } => {\n-\t\t\t\t\tself.project_repository.try_insert(Project { id })?;\n-\t\t\t\t},\n-\t\t\t\tProjectEvent::LeaderAssigned {\n-\t\t\t\t\tid: project_id,\n-\t\t\t\t\tleader_id,\n-\t\t\t\t\tassigned_at,\n-\t\t\t\t} => {\n-\t\t\t\t\tself.project_lead_repository.try_insert(ProjectLead {\n-\t\t\t\t\t\tproject_id,\n-\t\t\t\t\t\tuser_id: leader_id,\n-\t\t\t\t\t\tassigned_at,\n-\t\t\t\t\t})?;\n-\t\t\t\t},\n-\t\t\t\tProjectEvent::LeaderUnassigned { id, leader_id } => {\n-\t\t\t\t\tself.project_lead_repository.delete((id, leader_id))?;\n-\t\t\t\t},\n-\t\t\t\tProjectEvent::BudgetLinked { id, budget_id, .. } => {\n-\t\t\t\t\tself.project_budgets_repository.try_insert(ProjectsBudget {\n-\t\t\t\t\t\tproject_id: id,\n-\t\t\t\t\t\tbudget_id,\n-\t\t\t\t\t})?;\n-\t\t\t\t},\n-\t\t\t\tProjectEvent::GithubRepoLinked {\n-\t\t\t\t\tid: project_id,\n-\t\t\t\t\tgithub_repo_id,\n-\t\t\t\t} => {\n-\t\t\t\t\tself.project_github_repos_repository.try_insert(ProjectGithubRepo {\n-\t\t\t\t\t\tproject_id,\n-\t\t\t\t\t\tgithub_repo_id,\n-\t\t\t\t\t})?;\n-\t\t\t\t\tself.github_repo_index_repository.start_indexing(github_repo_id)?;\n-\t\t\t\t\tself.projects_contributors_repository\n-\t\t\t\t\t\t.refresh_project_contributor_list(&project_id)?;\n-\t\t\t\t\tself.projects_pending_contributors_repository\n-\t\t\t\t\t\t.refresh_project_pending_contributor_list(&project_id)?;\n-\t\t\t\t},\n-\t\t\t\tProjectEvent::GithubRepoUnlinked {\n-\t\t\t\t\tid: project_id,\n-\t\t\t\t\tgithub_repo_id,\n-\t\t\t\t} => {\n-\t\t\t\t\tself.project_github_repos_repository.delete((project_id, github_repo_id))?;\n-\t\t\t\t\tself.projects_contributors_repository\n-\t\t\t\t\t\t.refresh_project_contributor_list(&project_id)?;\n-\t\t\t\t\tself.projects_pending_contributors_repository\n-\t\t\t\t\t\t.refresh_project_pending_contributor_list(&project_id)?;\n-\t\t\t\t},\n-\t\t\t\tProjectEvent::Applied { .. } => (),\n-\t\t\t}\n-\t\t}\n-\n-\t\tOk(())\n-\t}\n-}"
+        },
+        {
+            "sha": "c1d6daef9ba9b7bdbf88f3dc82dfb225e5405bbc",
+            "filename": "backend/event-listeners/src/listeners/projections.rs",
+            "status": "added",
+            "additions": 224,
+            "deletions": 0,
+            "changes": 224,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fprojections.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fprojections.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fprojections.rs?ref=0c3d6d7497a2ae51f389c2b901c13221ad2dfd22",
+            "patch": "@@ -0,0 +1,224 @@\n+use std::{convert::TryFrom, sync::Arc};\n+\n+use anyhow::Result;\n+use async_trait::async_trait;\n+use derive_new::new;\n+use domain::{\n+\tApplicationEvent, BudgetEvent, Event, PaymentEvent, PaymentWorkItem, ProjectEvent,\n+\tSubscriberCallbackError,\n+};\n+use infrastructure::database::{ImmutableRepository, Repository};\n+use rust_decimal::Decimal;\n+use tracing::instrument;\n+\n+use super::EventListener;\n+use crate::models::*;\n+\n+#[allow(clippy::too_many_arguments)]\n+#[derive(new)]\n+pub struct Projector {\n+\tproject_repository: Arc<dyn ImmutableRepository<Project>>,\n+\tproject_lead_repository: Arc<dyn ImmutableRepository<ProjectLead>>,\n+\tproject_github_repos_repository: Arc<dyn ImmutableRepository<ProjectGithubRepo>>,\n+\tprojects_contributors_repository: Arc<dyn ProjectsContributorRepository>,\n+\tprojects_pending_contributors_repository: Arc<dyn ProjectsPendingContributorRepository>,\n+\tproject_budgets_repository: Arc<dyn ImmutableRepository<ProjectsBudget>>,\n+\tapplications_repository: Arc<dyn Repository<Application>>,\n+\tbudget_repository: Arc<dyn Repository<Budget>>,\n+\tpayment_request_repository: Arc<dyn Repository<PaymentRequest>>,\n+\tpayment_repository: Arc<dyn Repository<Payment>>,\n+\twork_item_repository: Arc<dyn WorkItemRepository>,\n+\tprojects_rewarded_users_repository: Arc<dyn ProjectsRewardedUserRepository>,\n+\t// TODO: replace the repositories below by API call to indexer in another projector\n+\tgithub_repo_index_repository: Arc<dyn GithubRepoIndexRepository>,\n+\tgithub_user_index_repository: Arc<dyn GithubUserIndexRepository>,\n+}\n+\n+#[async_trait]\n+impl EventListener<Event> for Projector {\n+\t#[instrument(name = \"project_projection\", skip(self))]\n+\tasync fn on_event(&self, event: Event) -> Result<(), SubscriberCallbackError> {\n+\t\tmatch event {\n+\t\t\tEvent::Application(event) => match event {\n+\t\t\t\tApplicationEvent::Received {\n+\t\t\t\t\tid,\n+\t\t\t\t\tproject_id,\n+\t\t\t\t\tapplicant_id,\n+\t\t\t\t\treceived_at,\n+\t\t\t\t} => {\n+\t\t\t\t\tself.applications_repository.try_insert(Application {\n+\t\t\t\t\t\tid,\n+\t\t\t\t\t\treceived_at,\n+\t\t\t\t\t\tproject_id,\n+\t\t\t\t\t\tapplicant_id,\n+\t\t\t\t\t})?;\n+\t\t\t\t},\n+\t\t\t},\n+\t\t\tEvent::Budget(event) => match event {\n+\t\t\t\tBudgetEvent::Created { id, currency } => {\n+\t\t\t\t\tself.budget_repository.upsert(Budget {\n+\t\t\t\t\t\tid,\n+\t\t\t\t\t\tinitial_amount: Decimal::ZERO,\n+\t\t\t\t\t\tremaining_amount: Decimal::ZERO,\n+\t\t\t\t\t\tcurrency: currency.try_into()?,\n+\t\t\t\t\t})?;\n+\t\t\t\t},\n+\t\t\t\tBudgetEvent::Allocated { id, amount, .. } => {\n+\t\t\t\t\tlet mut budget = self.budget_repository.find_by_id(id)?;\n+\t\t\t\t\tbudget.remaining_amount += amount;\n+\t\t\t\t\tbudget.initial_amount += amount;\n+\t\t\t\t\tself.budget_repository.update(budget)?;\n+\t\t\t\t},\n+\t\t\t\tBudgetEvent::Spent { id, amount } => {\n+\t\t\t\t\tlet mut budget = self.budget_repository.find_by_id(id)?;\n+\t\t\t\t\tbudget.remaining_amount -= amount;\n+\t\t\t\t\tself.budget_repository.update(budget)?;\n+\t\t\t\t},\n+\t\t\t},\n+\t\t\tEvent::Payment(event) => match event {\n+\t\t\t\tPaymentEvent::Requested {\n+\t\t\t\t\tid: payment_id,\n+\t\t\t\t\tproject_id,\n+\t\t\t\t\trequestor_id,\n+\t\t\t\t\trecipient_id,\n+\t\t\t\t\tamount,\n+\t\t\t\t\treason,\n+\t\t\t\t\tduration_worked,\n+\t\t\t\t\trequested_at,\n+\t\t\t\t} => {\n+\t\t\t\t\tself.payment_request_repository.upsert(PaymentRequest {\n+\t\t\t\t\t\tid: payment_id,\n+\t\t\t\t\t\tproject_id,\n+\t\t\t\t\t\trequestor_id,\n+\t\t\t\t\t\trecipient_id,\n+\t\t\t\t\t\tamount: *amount.amount(),\n+\t\t\t\t\t\tcurrency: amount.currency().try_into()?,\n+\t\t\t\t\t\trequested_at,\n+\t\t\t\t\t\tinvoice_received_at: None,\n+\t\t\t\t\t\thours_worked: i32::try_from(duration_worked.num_hours()).unwrap_or(0),\n+\t\t\t\t\t})?;\n+\n+\t\t\t\t\treason.work_items.into_iter().try_for_each(\n+\t\t\t\t\t\t|work_item| -> Result<(), SubscriberCallbackError> {\n+\t\t\t\t\t\t\tlet repo_id = match work_item {\n+\t\t\t\t\t\t\t\tPaymentWorkItem::Issue { repo_id, .. }\n+\t\t\t\t\t\t\t\t| PaymentWorkItem::CodeReview { repo_id, .. }\n+\t\t\t\t\t\t\t\t| PaymentWorkItem::PullRequest { repo_id, .. } => repo_id,\n+\t\t\t\t\t\t\t};\n+\n+\t\t\t\t\t\t\tself.work_item_repository.try_insert(\n+\t\t\t\t\t\t\t\t(project_id, payment_id, recipient_id, work_item).into(),\n+\t\t\t\t\t\t\t)?;\n+\n+\t\t\t\t\t\t\tself.github_repo_index_repository.start_indexing(repo_id)?;\n+\t\t\t\t\t\t\tOk(())\n+\t\t\t\t\t\t},\n+\t\t\t\t\t)?;\n+\n+\t\t\t\t\tself.github_user_index_repository.try_insert(GithubUserIndex {\n+\t\t\t\t\t\tuser_id: recipient_id,\n+\t\t\t\t\t\t..Default::default()\n+\t\t\t\t\t})?;\n+\n+\t\t\t\t\tself.projects_rewarded_users_repository\n+\t\t\t\t\t\t.increase_user_reward_count_for_project(&project_id, &recipient_id)?;\n+\t\t\t\t},\n+\t\t\t\tPaymentEvent::Cancelled { id: payment_id } => {\n+\t\t\t\t\tlet payment_request = self.payment_request_repository.find_by_id(payment_id)?;\n+\t\t\t\t\tself.payment_request_repository.delete(payment_id)?;\n+\t\t\t\t\tself.work_item_repository.delete_by_payment_id(payment_id)?;\n+\n+\t\t\t\t\tself.projects_rewarded_users_repository\n+\t\t\t\t\t\t.decrease_user_reward_count_for_project(\n+\t\t\t\t\t\t\t&payment_request.project_id,\n+\t\t\t\t\t\t\t&payment_request.recipient_id,\n+\t\t\t\t\t\t)?;\n+\t\t\t\t},\n+\t\t\t\tPaymentEvent::Processed {\n+\t\t\t\t\tid: payment_id,\n+\t\t\t\t\treceipt_id,\n+\t\t\t\t\tamount,\n+\t\t\t\t\treceipt,\n+\t\t\t\t\tprocessed_at,\n+\t\t\t\t} => {\n+\t\t\t\t\tself.payment_repository.upsert(Payment {\n+\t\t\t\t\t\tid: receipt_id,\n+\t\t\t\t\t\tamount: *amount.amount(),\n+\t\t\t\t\t\tcurrency_code: amount.currency().to_string(),\n+\t\t\t\t\t\treceipt: serde_json::to_value(receipt)\n+\t\t\t\t\t\t\t.map_err(|e| SubscriberCallbackError::Discard(e.into()))?,\n+\t\t\t\t\t\trequest_id: payment_id,\n+\t\t\t\t\t\tprocessed_at,\n+\t\t\t\t\t})?;\n+\t\t\t\t},\n+\t\t\t\tPaymentEvent::InvoiceReceived {\n+\t\t\t\t\tid: payment_id,\n+\t\t\t\t\treceived_at,\n+\t\t\t\t} => {\n+\t\t\t\t\tlet mut payment_request =\n+\t\t\t\t\t\tself.payment_request_repository.find_by_id(payment_id)?;\n+\t\t\t\t\tpayment_request.invoice_received_at = Some(received_at);\n+\t\t\t\t\tself.payment_request_repository.update(payment_request)?;\n+\t\t\t\t},\n+\t\t\t\tPaymentEvent::InvoiceRejected { id: payment_id } => {\n+\t\t\t\t\tlet mut payment_request =\n+\t\t\t\t\t\tself.payment_request_repository.find_by_id(payment_id)?;\n+\t\t\t\t\tpayment_request.invoice_received_at = None;\n+\t\t\t\t\tself.payment_request_repository.update(payment_request)?;\n+\t\t\t\t},\n+\t\t\t},\n+\t\t\tEvent::Project(event) => match event {\n+\t\t\t\tProjectEvent::Created { id } => {\n+\t\t\t\t\tself.project_repository.try_insert(Project { id })?;\n+\t\t\t\t},\n+\t\t\t\tProjectEvent::LeaderAssigned {\n+\t\t\t\t\tid: project_id,\n+\t\t\t\t\tleader_id,\n+\t\t\t\t\tassigned_at,\n+\t\t\t\t} => {\n+\t\t\t\t\tself.project_lead_repository.try_insert(ProjectLead {\n+\t\t\t\t\t\tproject_id,\n+\t\t\t\t\t\tuser_id: leader_id,\n+\t\t\t\t\t\tassigned_at,\n+\t\t\t\t\t})?;\n+\t\t\t\t},\n+\t\t\t\tProjectEvent::LeaderUnassigned { id, leader_id } => {\n+\t\t\t\t\tself.project_lead_repository.delete((id, leader_id))?;\n+\t\t\t\t},\n+\t\t\t\tProjectEvent::BudgetLinked { id, budget_id, .. } => {\n+\t\t\t\t\tself.project_budgets_repository.try_insert(ProjectsBudget {\n+\t\t\t\t\t\tproject_id: id,\n+\t\t\t\t\t\tbudget_id,\n+\t\t\t\t\t})?;\n+\t\t\t\t},\n+\t\t\t\tProjectEvent::GithubRepoLinked {\n+\t\t\t\t\tid: project_id,\n+\t\t\t\t\tgithub_repo_id,\n+\t\t\t\t} => {\n+\t\t\t\t\tself.project_github_repos_repository.try_insert(ProjectGithubRepo {\n+\t\t\t\t\t\tproject_id,\n+\t\t\t\t\t\tgithub_repo_id,\n+\t\t\t\t\t})?;\n+\t\t\t\t\tself.github_repo_index_repository.start_indexing(github_repo_id)?;\n+\t\t\t\t\tself.projects_contributors_repository\n+\t\t\t\t\t\t.refresh_project_contributor_list(&project_id)?;\n+\t\t\t\t\tself.projects_pending_contributors_repository\n+\t\t\t\t\t\t.refresh_project_pending_contributor_list(&project_id)?;\n+\t\t\t\t},\n+\t\t\t\tProjectEvent::GithubRepoUnlinked {\n+\t\t\t\t\tid: project_id,\n+\t\t\t\t\tgithub_repo_id,\n+\t\t\t\t} => {\n+\t\t\t\t\tself.project_github_repos_repository.delete((project_id, github_repo_id))?;\n+\t\t\t\t\tself.projects_contributors_repository\n+\t\t\t\t\t\t.refresh_project_contributor_list(&project_id)?;\n+\t\t\t\t\tself.projects_pending_contributors_repository\n+\t\t\t\t\t\t.refresh_project_pending_contributor_list(&project_id)?;\n+\t\t\t\t},\n+\t\t\t\tProjectEvent::Applied { .. } => (),\n+\t\t\t},\n+\t\t}\n+\n+\t\tOk(())\n+\t}\n+}"
+        }
+    ]
+}

@@ -14,10 +14,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubR
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.PullRequestRepository;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -61,6 +58,11 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
                 }
                 """.formatted(Arrays.toString(linkedRepoIds.toArray()), Arrays.toString(unlinkedRepoIds.toArray()))
         );
+    }
+
+    @AfterEach
+    void reset() {
+        githubWireMockServer.resetAll();
     }
 
     @Test

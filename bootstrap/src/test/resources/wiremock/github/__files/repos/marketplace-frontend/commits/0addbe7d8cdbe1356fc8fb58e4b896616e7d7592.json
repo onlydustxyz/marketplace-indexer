@@ -1,0 +1,98 @@
+{
+    "sha": "0addbe7d8cdbe1356fc8fb58e4b896616e7d7592",
+    "node_id": "C_kwDOHbl-LNoAKDBhZGRiZTdkOGNkYmUxMzU2ZmM4ZmI1OGU0Yjg5NjYxNmU3ZDc1OTI",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-21T12:42:31Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-21T12:42:31Z"
+        },
+        "message": "fix migration",
+        "tree": {
+            "sha": "098fc17fb337033dd3e32ced627869ae1131fbe6",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/trees/098fc17fb337033dd3e32ced627869ae1131fbe6"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/commits/0addbe7d8cdbe1356fc8fb58e4b896616e7d7592",
+        "comment_count": 0,
+        "verification": {
+            "verified": false,
+            "reason": "unsigned",
+            "signature": null,
+            "payload": null
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/0addbe7d8cdbe1356fc8fb58e4b896616e7d7592",
+    "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/0addbe7d8cdbe1356fc8fb58e4b896616e7d7592",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/0addbe7d8cdbe1356fc8fb58e4b896616e7d7592/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "80b7c84441b4c2206b4a93f8be7c688204892ece",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/80b7c84441b4c2206b4a93f8be7c688204892ece",
+            "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/80b7c84441b4c2206b4a93f8be7c688204892ece"
+        }
+    ],
+    "stats": {
+        "total": 6,
+        "additions": 5,
+        "deletions": 1
+    },
+    "files": [
+        {
+            "sha": "aa5914981fc7fb4cd46a16fbb78d6900a0b1beff",
+            "filename": "backend/migrations/2023-09-07-141528_migrate-payout-settings/up.sql",
+            "status": "modified",
+            "additions": 5,
+            "deletions": 1,
+            "changes": 6,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/0addbe7d8cdbe1356fc8fb58e4b896616e7d7592/backend%2Fmigrations%2F2023-09-07-141528_migrate-payout-settings%2Fup.sql",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/0addbe7d8cdbe1356fc8fb58e4b896616e7d7592/backend%2Fmigrations%2F2023-09-07-141528_migrate-payout-settings%2Fup.sql",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fmigrations%2F2023-09-07-141528_migrate-payout-settings%2Fup.sql?ref=0addbe7d8cdbe1356fc8fb58e4b896616e7d7592",
+            "patch": "@@ -78,6 +78,10 @@ WHERE\n     payout_settings IS NOT NULL;\n \n \n--- finally, drop payout_settings column\n+-- finally, drop payout_settings columns\n+ALTER TABLE user_payout_info\n+DROP COLUMN are_payout_settings_valid;\n+\n+\n ALTER TABLE user_payout_info\n DROP COLUMN payout_settings;\n\\ No newline at end of file"
+        }
+    ]
+}

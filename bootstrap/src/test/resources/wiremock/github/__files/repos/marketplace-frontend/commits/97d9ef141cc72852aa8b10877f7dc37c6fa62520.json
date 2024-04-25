@@ -1,0 +1,123 @@
+{
+    "sha": "97d9ef141cc72852aa8b10877f7dc37c6fa62520",
+    "node_id": "C_kwDOHbl-LNoAKDk3ZDllZjE0MWNjNzI4NTJhYThiMTA4NzdmN2RjMzdjNmZhNjI1MjA",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-21T16:05:02Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-21T17:00:34Z"
+        },
+        "message": "create publisher composite",
+        "tree": {
+            "sha": "a02f8e6b1e5ebd4928148de45a7b74d0993fdc19",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/trees/a02f8e6b1e5ebd4928148de45a7b74d0993fdc19"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/commits/97d9ef141cc72852aa8b10877f7dc37c6fa62520",
+        "comment_count": 0,
+        "verification": {
+            "verified": false,
+            "reason": "unsigned",
+            "signature": null,
+            "payload": null
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/97d9ef141cc72852aa8b10877f7dc37c6fa62520",
+    "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/97d9ef141cc72852aa8b10877f7dc37c6fa62520",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/97d9ef141cc72852aa8b10877f7dc37c6fa62520/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "8a2dc8867b80897d8accd5d33546b0e1faa2b4e1",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/8a2dc8867b80897d8accd5d33546b0e1faa2b4e1",
+            "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/8a2dc8867b80897d8accd5d33546b0e1faa2b4e1"
+        }
+    ],
+    "stats": {
+        "total": 35,
+        "additions": 34,
+        "deletions": 1
+    },
+    "files": [
+        {
+            "sha": "98d16cca126164324956bb3146fd981d743204e6",
+            "filename": "backend/common/domain/src/messaging/mod.rs",
+            "status": "modified",
+            "additions": 3,
+            "deletions": 1,
+            "changes": 4,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/97d9ef141cc72852aa8b10877f7dc37c6fa62520/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/97d9ef141cc72852aa8b10877f7dc37c6fa62520/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fmod.rs?ref=97d9ef141cc72852aa8b10877f7dc37c6fa62520",
+            "patch": "@@ -2,7 +2,9 @@ mod message;\n pub use message::{Message, Payload};\n \n mod publisher;\n-pub use publisher::{Error as PublisherError, Publisher};\n+pub use publisher::{\n+\tcomposite::Publisher as CompositePublisher, Error as PublisherError, Publisher,\n+};\n \n mod subscriber;\n pub use subscriber::{"
+        },
+        {
+            "sha": "5a4668a0ae2f7276d5f9cb0510c45a146a6087b5",
+            "filename": "backend/common/domain/src/messaging/publisher/composite.rs",
+            "status": "added",
+            "additions": 29,
+            "deletions": 0,
+            "changes": 29,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/97d9ef141cc72852aa8b10877f7dc37c6fa62520/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fpublisher%2Fcomposite.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/97d9ef141cc72852aa8b10877f7dc37c6fa62520/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fpublisher%2Fcomposite.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fpublisher%2Fcomposite.rs?ref=97d9ef141cc72852aa8b10877f7dc37c6fa62520",
+            "patch": "@@ -0,0 +1,29 @@\n+use std::sync::Arc;\n+\n+use async_trait::async_trait;\n+use derive_new::new;\n+\n+use super::Error;\n+use crate::{Destination, Message};\n+\n+#[derive(new)]\n+pub struct Publisher<M: Message + Send + Sync> {\n+\tpublishers: Vec<Arc<dyn super::Publisher<M>>>,\n+}\n+\n+#[async_trait]\n+impl<M: Message + Send + Sync> super::Publisher<M> for Publisher<M> {\n+\tasync fn publish(&self, destination: Destination, message: &M) -> Result<(), Error> {\n+\t\tfor p in &self.publishers {\n+\t\t\tp.publish(destination.clone(), message).await?;\n+\t\t}\n+\t\tOk(())\n+\t}\n+\n+\tasync fn publish_many(&self, destination: Destination, messages: &[M]) -> Result<(), Error> {\n+\t\tfor p in &self.publishers {\n+\t\t\tp.publish_many(destination.clone(), messages).await?;\n+\t\t}\n+\t\tOk(())\n+\t}\n+}"
+        },
+        {
+            "sha": "27fa0730be9b6dce98d299fe18b97021aba787da",
+            "filename": "backend/common/domain/src/messaging/publisher/mod.rs",
+            "status": "renamed",
+            "additions": 2,
+            "deletions": 0,
+            "changes": 2,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/97d9ef141cc72852aa8b10877f7dc37c6fa62520/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fpublisher%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/97d9ef141cc72852aa8b10877f7dc37c6fa62520/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fpublisher%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fcommon%2Fdomain%2Fsrc%2Fmessaging%2Fpublisher%2Fmod.rs?ref=97d9ef141cc72852aa8b10877f7dc37c6fa62520",
+            "patch": "@@ -5,6 +5,8 @@ use thiserror::Error;\n \n use super::{Destination, Message};\n \n+pub mod composite;\n+\n #[derive(Debug, Error)]\n pub enum Error {\n \t#[error(\"Failed while publishing message\")]",
+            "previous_filename": "backend/common/domain/src/messaging/publisher.rs"
+        }
+    ]
+}

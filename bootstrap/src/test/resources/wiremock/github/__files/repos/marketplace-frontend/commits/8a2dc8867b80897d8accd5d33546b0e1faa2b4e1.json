@@ -1,0 +1,98 @@
+{
+    "sha": "8a2dc8867b80897d8accd5d33546b0e1faa2b4e1",
+    "node_id": "C_kwDOHbl-LNoAKDhhMmRjODg2N2I4MDg5N2Q4YWNjZDVkMzM1NDZiMGUxZmFhMmI0ZTE",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-21T15:58:27Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2023-09-21T15:58:27Z"
+        },
+        "message": "remove legacy projector",
+        "tree": {
+            "sha": "c07d9b9aac420c13f44d1a56478a7a174a91bd74",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/trees/c07d9b9aac420c13f44d1a56478a7a174a91bd74"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/git/commits/8a2dc8867b80897d8accd5d33546b0e1faa2b4e1",
+        "comment_count": 0,
+        "verification": {
+            "verified": false,
+            "reason": "unsigned",
+            "signature": null,
+            "payload": null
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/8a2dc8867b80897d8accd5d33546b0e1faa2b4e1",
+    "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/8a2dc8867b80897d8accd5d33546b0e1faa2b4e1",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/8a2dc8867b80897d8accd5d33546b0e1faa2b4e1/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "0c3d6d7497a2ae51f389c2b901c13221ad2dfd22",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22",
+            "html_url": "https://github.com/onlydustxyz/marketplace-frontend/commit/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22"
+        }
+    ],
+    "stats": {
+        "total": 10,
+        "additions": 0,
+        "deletions": 10
+    },
+    "files": [
+        {
+            "sha": "d51c05a7d19be7f491eee4c59f9d98b7a81ea69c",
+            "filename": "backend/event-listeners/src/listeners/mod.rs",
+            "status": "modified",
+            "additions": 0,
+            "deletions": 10,
+            "changes": 10,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-frontend/blob/8a2dc8867b80897d8accd5d33546b0e1faa2b4e1/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fmod.rs",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-frontend/raw/8a2dc8867b80897d8accd5d33546b0e1faa2b4e1/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fmod.rs",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/contents/backend%2Fevent-listeners%2Fsrc%2Flisteners%2Fmod.rs?ref=8a2dc8867b80897d8accd5d33546b0e1faa2b4e1",
+            "patch": "@@ -20,8 +20,6 @@ use webhook::EventWebHook;\n use self::logger::Logger;\n use crate::Config;\n \n-pub const GITHUB_EVENTS_EXCHANGE: &str = \"github-events\";\n-\n pub async fn bootstrap(config: Config) -> Result<Vec<JoinHandle<()>>> {\n \tlet reqwest = reqwest::Client::new();\n \tlet database = Arc::new(database::Client::new(database::init_pool(\n@@ -74,14 +72,6 @@ pub async fn spawn_all(\n \t\t\t\t.await?\n \t\t\t\t.into_command_subscriber(database.clone()),\n \t\t),\n-\t\tLogger.spawn(\n-\t\t\tevent_bus::consumer_with_exchange(\n-\t\t\t\tconfig.amqp.clone(),\n-\t\t\t\tGITHUB_EVENTS_EXCHANGE,\n-\t\t\t\t\"logger\",\n-\t\t\t)\n-\t\t\t.await?,\n-\t\t),\n \t];\n \n \tfor (index, target) in webhook_targets().into_iter().enumerate() {"
+        }
+    ]
+}

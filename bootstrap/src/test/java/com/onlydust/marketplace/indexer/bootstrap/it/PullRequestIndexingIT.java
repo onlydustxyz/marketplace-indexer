@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubPullRequestRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -82,7 +83,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
         assertThat(pullRequestsRepository.findAll()).containsExactly(RawPullRequestEntity.of(marketplaceFrontend.getId(), pr1257));
         assertThat(repoRepository.findAll()).containsExactly(RawRepoEntity.of(marketplaceFrontend));
         assertThat(pullRequestReviewsRepository.findAll()).containsExactly(RawPullRequestReviewEntity.of(pr1257.getId(), pr1257Reviews));
-        assertThat(pullRequestsCommitsRepository.findAll()).containsExactly(RawPullRequestCommitsEntity.of(pr1257.getId(), pr1257Commits));
+        assertThat(pullRequestsCommitsRepository.findAll()).containsExactly(RawPullRequestCommitsEntity.of(pr1257.getId(), details(pr1257Commits)));
         assertThat(userRepository.findAll()).containsExactlyInAnyOrder(RawUserEntity.of(pierre), RawUserEntity.of(olivier), RawUserEntity.of(anthony),
                 RawUserEntity.of(onlyDust));
         assertThat(userSocialAccountsRepository.findAll()).containsExactlyInAnyOrder(
@@ -110,11 +111,38 @@ public class PullRequestIndexingIT extends IntegrationTest {
         final var githubPullRequest = githubPullRequestRepository.findAll().stream().findFirst().orElseThrow();
         assertThat(githubPullRequest.getCreatedAt().toString()).isEqualTo("2023-09-21 12:42:45.0");
         assertThat(githubPullRequest.getCommitCount()).isEqualTo(1);
-        assertThat(githubPullRequest.getMainFileExtensions()).containsExactly("rs");
+        assertThat(githubPullRequest.getMainFileExtensions()).containsExactly("sql");
         final var commitCounts = githubPullRequest.getCommitCounts().stream().findFirst().orElseThrow();
         assertThat(commitCounts.getPullRequestId()).isEqualTo(pr1257.getId());
         assertThat(commitCounts.getAuthor().getId()).isEqualTo(anthony.getId());
         assertThat(commitCounts.getCommitCount()).isEqualTo(1);
+    }
+
+    private List<RawCommit> details(List<RawCommit> commits) {
+        return commits.stream().map(this::details).toList();
+    }
+
+    @SneakyThrows
+    private RawCommit details(RawCommit commit) {
+        return sanitized(mapper.readValue(getClass()
+                        .getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/commits/%s.json".formatted(commit.getSha())),
+                RawCommit.class));
+    }
+
+    private RawCommit sanitized(RawCommit commit) {
+        return new RawCommit(commit.getSha(), commit.getAuthor(), commit.getCommitter(), commit.getFiles().stream().map(this::sanitized).toList());
+    }
+
+    private RawCommitFile sanitized(RawCommitFile file) {
+        return new RawCommitFile(
+                file.getSha(),
+                file.getFilename(),
+                file.getStatus(),
+                file.getAdditions(),
+                file.getDeletions(),
+                file.getChanges(),
+                ""
+        );
     }
 
     @Test
@@ -143,7 +171,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
 
         assertThat(pullRequestsRepository.findAll()).contains(RawPullRequestEntity.of(marketplaceFrontend.getId(), pr1258));
         assertThat(pullRequestReviewsRepository.findAll()).contains(RawPullRequestReviewEntity.of(pr1258.getId(), pr1258Reviews));
-        assertThat(pullRequestsCommitsRepository.findAll()).contains(RawPullRequestCommitsEntity.of(pr1258.getId(), pr1258Commits));
+        assertThat(pullRequestsCommitsRepository.findAll()).contains(RawPullRequestCommitsEntity.of(pr1258.getId(), details(pr1258Commits)));
         assertThat(userRepository.findAll()).contains(RawUserEntity.of(pierre), RawUserEntity.of(olivier), RawUserEntity.of(anthony),
                 RawUserEntity.of(onlyDust));
 
