@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.util.StopWatch;
 
 import static com.onlydust.marketplace.indexer.domain.models.exposition.GithubPullRequest.extractMainFileExtensions;
 
@@ -31,7 +32,14 @@ public class CommitIndexerCliAdapter implements CommandLineRunner {
     public void run(String... args) {
         if (args.length == 0 || !args[0].equals("index_commits")) return;
 
-        pullRequestCommitsRepository.findAll().stream().map(this::index).forEach(this::expose);
+        final var stopWatch = new StopWatch();
+        stopWatch.start();
+        try {
+            pullRequestCommitsRepository.findAll().stream().map(this::index).forEach(this::expose);
+        } finally {
+            stopWatch.stop();
+            LOGGER.info("Indexing commits took {} ms", stopWatch.prettyPrint());
+        }
     }
 
     private RawPullRequestCommitsEntity index(RawPullRequestCommitsEntity pullRequestCommits) {
