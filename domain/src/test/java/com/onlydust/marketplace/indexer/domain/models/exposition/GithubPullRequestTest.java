@@ -50,7 +50,7 @@ class GithubPullRequestTest {
         final var codeReviews = states.stream().map(this::codeReview).toList();
         final List<CleanCommit> commits = List.of();
         final List<CleanIssue> closingIssues = List.of();
-        return GithubPullRequest.of(CleanPullRequest.of(pr1257, marketplaceFrontend, anthony, codeReviews, requestedReviewers, commits, closingIssues, null));
+        return GithubPullRequest.of(CleanPullRequest.of(pr1257, marketplaceFrontend, anthony, codeReviews, requestedReviewers, commits, closingIssues));
     }
 
     @Test
@@ -73,15 +73,14 @@ class GithubPullRequestTest {
 
     @Test
     void should_extract_main_file_extensions() {
-        final var modifiedFiles = Map.of(
-                "File1.rs", 10L,
-                "File2.rs", 5L,
-                "File3.js", 5L,
-                "File4.js", 5L,
-                "File5.sh", 1L
+
+        final var commits = List.of(
+                CleanCommit.builder().modifiedFiles(Map.of("File1.rs", 10, "File2.rs", 5)).build(),
+                CleanCommit.builder().modifiedFiles(Map.of("File3.js", 5, "File4.js", 5)).build(),
+                CleanCommit.builder().modifiedFiles(Map.of("File5.sh", 1)).build()
         );
 
-        assertThat(GithubPullRequest.extractMainFileExtensions(new CleanPullRequestDiff(modifiedFiles)))
+        assertThat(GithubPullRequest.extractMainFileExtensions(commits))
                 .containsExactly("rs", "js");
     }
 }

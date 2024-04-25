@@ -78,12 +78,6 @@ public class CacheReadRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public Optional<RawPullRequestDiff> pullRequestDiff(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return cache.pullRequestDiff(repoId, pullRequestId, pullRequestNumber)
-                .or(() -> fetcher.pullRequestDiff(repoId, pullRequestId, pullRequestNumber));
-    }
-
-    @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         return cache.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber)
                 .or(() -> fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber));

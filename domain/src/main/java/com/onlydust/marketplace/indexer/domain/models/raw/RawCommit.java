@@ -1,17 +1,28 @@
 package com.onlydust.marketplace.indexer.domain.models.raw;
 
 
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.Value;
+import lombok.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
 @ToString(callSuper = true)
+@AllArgsConstructor
 public class RawCommit extends JsonDocument {
-    String sha;
+    @NonNull String sha;
     RawShortAccount author;
     RawShortAccount committer;
+    List<RawCommitFile> files;
+
+    public RawCommit sanitized() {
+        return new RawCommit(
+                sha,
+                author,
+                committer,
+                Optional.ofNullable(files).map(files -> files.stream().map(RawCommitFile::sanitized).toList()).orElse(null)
+        );
+    }
 }

@@ -37,8 +37,7 @@ public class PostgresConfiguration {
                                                            final PullRequestCommitsRepository pullRequestCommitsRepository,
                                                            final PullRequestClosingIssueRepository pullRequestClosingIssueRepository,
                                                            final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository,
-                                                           final PullRequestReviewsRepository pullRequestReviewsRepository,
-                                                           final PullRequestDiffRepository pullRequestDiffRepository) {
+                                                           final PullRequestReviewsRepository pullRequestReviewsRepository) {
         return new PostgresRawStorage(issueRepository,
                 userRepository,
                 repoRepository,
@@ -46,7 +45,6 @@ public class PostgresConfiguration {
                 repoLanguagesRepository,
                 userSocialAccountsRepository,
                 pullRequestCommitsRepository,
-                pullRequestDiffRepository,
                 pullRequestClosingIssueRepository,
                 pullRequestClosingIssueViewRepository,
                 pullRequestReviewsRepository

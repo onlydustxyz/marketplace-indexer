@@ -34,7 +34,6 @@ public class CleanPullRequest {
     List<CleanCommit> commits = new ArrayList<>();
     @Builder.Default
     List<CleanIssue> closingIssues = new ArrayList<>();
-    CleanPullRequestDiff diff;
 
     public static CleanPullRequest of(RawPullRequest pullRequest, CleanRepo repo, CleanAccount author) {
         return CleanPullRequest.builder()
@@ -56,14 +55,12 @@ public class CleanPullRequest {
     }
 
     public static CleanPullRequest of(RawPullRequest pullRequest, CleanRepo repo, CleanAccount author, List<CleanCodeReview> reviews,
-                                      List<CleanAccount> requestedReviewers, List<CleanCommit> commits, List<CleanIssue> closingIssues,
-                                      CleanPullRequestDiff diff) {
+                                      List<CleanAccount> requestedReviewers, List<CleanCommit> commits, List<CleanIssue> closingIssues) {
         return CleanPullRequest.of(pullRequest, repo, author).toBuilder()
                 .reviews(reviews)
                 .requestedReviewers(requestedReviewers)
                 .commits(commits)
                 .closingIssues(closingIssues)
-                .diff(diff)
                 .build();
     }
 }

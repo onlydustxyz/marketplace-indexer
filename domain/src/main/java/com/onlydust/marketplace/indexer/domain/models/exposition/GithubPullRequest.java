@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.models.exposition;
 
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanCommit;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequestDiff;
 import lombok.Builder;
 import lombok.Value;
 
@@ -56,15 +56,16 @@ public class GithubPullRequest {
                 .commitCounts(pullRequest.getCommits().stream()
                         .collect(groupingBy(c -> GithubAccount.of(c.getAuthor()), Collectors.counting()))
                 )
-                .mainFileExtensions(extractMainFileExtensions(pullRequest.getDiff()))
+                .mainFileExtensions(extractMainFileExtensions(pullRequest.getCommits()))
                 .build();
     }
 
-    static List<String> extractMainFileExtensions(CleanPullRequestDiff diff) {
-        final var extensions = diff.modifiedFiles().entrySet()
-                .stream().collect(groupingBy(e -> fileExtension(e.getKey()), reducing(0L, Map.Entry::getValue, Long::sum)));
+    static List<String> extractMainFileExtensions(List<CleanCommit> commits) {
+        final var extensions = commits.stream()
+                .flatMap(c -> c.getModifiedFiles().entrySet().stream())
+                .collect(groupingBy(e -> fileExtension(e.getKey()), reducing(0, Map.Entry::getValue, Integer::sum)));
 
-        final var total = extensions.values().stream().mapToLong(Long::longValue).sum();
+        final var total = extensions.values().stream().mapToInt(Integer::intValue).sum();
         return extensions.entrySet().stream()
                 .filter(e -> e.getValue() / (double) total > FILE_EXTENSION_RELEVANCE_THRESHOLD)
                 .map(Map.Entry::getKey)

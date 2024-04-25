@@ -73,13 +73,11 @@ public class GithubRawStorageReader implements RawStorageReader {
     @Override
     public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long prNumber) {
         final var page = new GithubPage<>(client, "/repositories/" + repoId + "/pulls/" + prNumber + "/commits?per_page=100", RawCommit[].class);
-        return Optional.of(StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false).toList());
-    }
-
-    @Override
-    public Optional<RawPullRequestDiff> pullRequestDiff(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        final var diff = client.get("/repositories/" + repoId + "/pulls/" + pullRequestNumber + ".diff");
-        return diff.map(RawPullRequestDiff::of);
+        return Optional.of(StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false)
+                .map(c -> client.get("/repositories/" + repoId + "/commits/" + c.getSha(), RawCommit.class).orElse(null))
+                .filter(Objects::nonNull)
+                .map(RawCommit::sanitized)
+                .toList());
     }
 
     @Override
