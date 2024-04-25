@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubPullRequest;
+import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @Table(name = "github_pull_requests", schema = "indexer_exp")
 @TypeDef(name = "github_pull_request_status", typeClass = PostgreSQLEnumType.class)
 @TypeDef(name = "github_pull_request_review_state", typeClass = PostgreSQLEnumType.class)
+@TypeDef(name = "text[]", typeClass = StringArrayType.class)
 public class GithubPullRequestEntity {
     @Id
     Long id;
@@ -50,6 +52,8 @@ public class GithubPullRequestEntity {
     @Type(type = "github_pull_request_review_state")
     ReviewState reviewState;
     Integer commitCount;
+    @Type(type = "text[]")
+    String[] mainFileExtensions;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(
@@ -89,6 +93,7 @@ public class GithubPullRequestEntity {
                 .commitCounts(pullRequest.getCommitCounts().entrySet().stream()
                         .map(e -> GithubPullRequestCommitCountEntity.of(pullRequest.getId(), GithubAccountEntity.of(e.getKey()), e.getValue()))
                         .collect(Collectors.toUnmodifiableSet()))
+                .mainFileExtensions(pullRequest.getMainFileExtensions().toArray(String[]::new))
                 .build();
     }
 

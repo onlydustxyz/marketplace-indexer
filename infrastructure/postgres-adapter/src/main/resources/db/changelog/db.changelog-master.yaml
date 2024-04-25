@@ -90,4 +90,4 @@ databaseChangeLog:
   - include:
       file: db/changelog/changelogs/00000043_create_github_labels_table.sql
   - include:
-      file: db/changelog/changelogs/00000044_create_raw_pull_request_diff.sql
+      file: db/changelog/changelogs/00000044_add_pull_request_diff.sql
