@@ -35,6 +35,8 @@ public class CommitIndexerCliAdapter implements CommandLineRunner {
     }
 
     private RawPullRequestCommitsEntity index(RawPullRequestCommitsEntity pullRequestCommits) {
+        if (pullRequestCommits.getData().stream().findFirst().map(d -> d.getFiles() != null).orElse(true)) return pullRequestCommits;
+
         LOGGER.info("Indexing commits for pull request {}", pullRequestCommits.getPullRequestId());
 
         final var pullRequest = pullRequestRepository.findById(pullRequestCommits.getPullRequestId())
@@ -56,7 +58,6 @@ public class CommitIndexerCliAdapter implements CommandLineRunner {
 
     private void expose(RawPullRequestCommitsEntity pullRequestCommits) {
         LOGGER.info("Exposing modified files for pull request {}", pullRequestCommits.getPullRequestId());
-
         final var mainFileExtensions = extractMainFileExtensions(pullRequestCommits.getData().stream().map(c -> CleanCommit.of(c, null)).toList());
 
         if (mainFileExtensions.isEmpty()) {
