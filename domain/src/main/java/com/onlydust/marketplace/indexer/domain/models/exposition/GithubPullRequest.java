@@ -5,9 +5,11 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import lombok.Builder;
 import lombok.Value;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -63,7 +65,9 @@ public class GithubPullRequest {
     public static List<String> extractMainFileExtensions(List<CleanCommit> commits) {
         final var extensions = commits.stream()
                 .flatMap(c -> c.getModifiedFiles().entrySet().stream())
-                .collect(groupingBy(e -> fileExtension(e.getKey()), reducing(0, Map.Entry::getValue, Integer::sum)));
+                .map(e -> Map.entry(fileExtension(e.getKey()), e.getValue()))
+                .filter(e -> e.getKey().isPresent())
+                .collect(groupingBy(e -> e.getKey().get(), reducing(0, Map.Entry::getValue, Integer::sum)));
 
         final var total = extensions.values().stream().mapToInt(Integer::intValue).sum();
         return extensions.entrySet().stream()
@@ -72,8 +76,11 @@ public class GithubPullRequest {
                 .toList();
     }
 
-    private static String fileExtension(String filePath) {
-        return filePath.substring(filePath.lastIndexOf('.') + 1);
+    private static Optional<String> fileExtension(String filePath) {
+        final var fileName = new File(filePath).getName();
+        return Optional.of(fileName)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(f.lastIndexOf('.') + 1));
     }
 
     private static ReviewState aggregateReviewState(CleanPullRequest pullRequest) {
