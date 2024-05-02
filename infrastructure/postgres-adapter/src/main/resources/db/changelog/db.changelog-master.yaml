@@ -93,3 +93,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000044_add_file_extensions.sql
   - include:
       file: db/changelog/changelogs/00000045_clean_file_extensions.sql
+  - include:
+      file: db/changelog/changelogs/00000046_lowercase_file_extensions.sql

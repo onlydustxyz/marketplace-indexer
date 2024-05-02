@@ -80,7 +80,8 @@ public class GithubPullRequest {
         final var fileName = new File(filePath).getName();
         return Optional.of(fileName)
                 .filter(f -> f.contains("."))
-                .map(f -> f.substring(f.lastIndexOf('.') + 1));
+                .map(f -> f.substring(f.lastIndexOf('.') + 1))
+                .map(String::toLowerCase);
     }
 
     private static ReviewState aggregateReviewState(CleanPullRequest pullRequest) {
