@@ -75,9 +75,9 @@ class GithubPullRequestTest {
     void should_extract_main_file_extensions() {
 
         final var commits = List.of(
-                CleanCommit.builder().modifiedFiles(Map.of("path/to/File1.rs", 10, "File2.rs", 5)).build(),
+                CleanCommit.builder().modifiedFiles(Map.of("path/to/File1.RS", 10, "File2.rs", 5)).build(),
                 CleanCommit.builder().modifiedFiles(Map.of(".git/changes", 100, "etc/Makefile", 100)).build(),
-                CleanCommit.builder().modifiedFiles(Map.of("path.bak/to/File3.js", 5, "File4.js", 5)).build(),
+                CleanCommit.builder().modifiedFiles(Map.of("path.bak/to/File3.Js", 5, "File4.js", 5)).build(),
                 CleanCommit.builder().modifiedFiles(Map.of("File5.sh", 1)).build()
         );
 
