@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.*;
+import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import lombok.*;
 import org.hibernate.annotations.TypeDef;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @TypeDef(name = "contribution_type", typeClass = PostgreSQLEnumType.class)
 @TypeDef(name = "contribution_status", typeClass = PostgreSQLEnumType.class)
 @TypeDef(name = "github_pull_request_review_state", typeClass = PostgreSQLEnumType.class)
+@TypeDef(name = "text[]", typeClass = StringArrayType.class)
 public class ContributionEntity {
     @Id
     String id;
@@ -59,6 +61,8 @@ public class ContributionEntity {
     @Enumerated(EnumType.STRING)
     @org.hibernate.annotations.Type(type = "github_pull_request_review_state")
     GithubPullRequestEntity.ReviewState prReviewState;
+    @org.hibernate.annotations.Type(type = "text[]")
+    String[] mainFileExtensions;
 
     public static ContributionEntity of(Contribution contribution) {
         final var repo = Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getRepo)
@@ -115,6 +119,7 @@ public class ContributionEntity {
                 .contributorHtmlUrl(contribution.getContributor().getHtmlUrl())
                 .contributorAvatarUrl(contribution.getContributor().getAvatarUrl())
                 .prReviewState(Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getReviewState).map(GithubPullRequestEntity.ReviewState::of).orElse(null))
+                .mainFileExtensions(Optional.ofNullable(contribution.getPullRequest()).map(pr -> pr.getMainFileExtensions().toArray(String[]::new)).orElse(null))
                 .build();
     }
 
