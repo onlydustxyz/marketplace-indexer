@@ -97,3 +97,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000046_lowercase_file_extensions.sql
   - include:
       file: db/changelog/changelogs/00000047_add_file_extensions_to_contributions.sql
+  - include:
+      file: db/changelog/changelogs/00000048_fix_file_extensions.sql
