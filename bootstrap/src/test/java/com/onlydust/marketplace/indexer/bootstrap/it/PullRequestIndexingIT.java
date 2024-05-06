@@ -116,6 +116,9 @@ public class PullRequestIndexingIT extends IntegrationTest {
         assertThat(commitCounts.getPullRequestId()).isEqualTo(pr1257.getId());
         assertThat(commitCounts.getAuthor().getId()).isEqualTo(anthony.getId());
         assertThat(commitCounts.getCommitCount()).isEqualTo(1);
+        final var contribution = contributionRepository.findAll().stream()
+                .filter(c -> c.getPullRequest() != null && c.getPullRequest().getId().equals(githubPullRequest.getId())).findFirst().orElseThrow();
+        assertThat(contribution.getMainFileExtensions()).containsExactly("sql");
     }
 
     private List<RawCommit> details(List<RawCommit> commits) {
