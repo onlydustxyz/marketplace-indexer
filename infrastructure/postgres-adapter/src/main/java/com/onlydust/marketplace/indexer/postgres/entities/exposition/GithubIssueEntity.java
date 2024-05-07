@@ -1,12 +1,11 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubIssue;
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "github_issues", schema = "indexer_exp")
-@TypeDef(name = "github_issue_status", typeClass = PostgreSQLEnumType.class)
 public class GithubIssueEntity {
     @Id
     @EqualsAndHashCode.Include
@@ -28,7 +26,8 @@ public class GithubIssueEntity {
     Long number;
     String title;
     @Enumerated(EnumType.STRING)
-    @Type(type = "github_issue_status")
+    @Column(columnDefinition = "github_issue_status")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     Status status;
     Date createdAt;
     Date closedAt;

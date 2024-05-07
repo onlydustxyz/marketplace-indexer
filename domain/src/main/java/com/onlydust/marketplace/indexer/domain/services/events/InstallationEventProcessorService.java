@@ -9,10 +9,9 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.transaction.Transactional;
 
 @AllArgsConstructor
 @Slf4j

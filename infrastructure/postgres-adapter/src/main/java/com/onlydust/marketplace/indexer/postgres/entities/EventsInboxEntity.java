@@ -1,14 +1,13 @@
 package com.onlydust.marketplace.indexer.postgres.entities;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import javax.persistence.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Data
@@ -17,8 +16,6 @@ import javax.persistence.*;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "events_inbox", schema = "indexer_raw")
-@TypeDef(name = "inbox_status", typeClass = PostgreSQLEnumType.class)
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @DynamicUpdate
 public class EventsInboxEntity {
     @Id
@@ -27,10 +24,11 @@ public class EventsInboxEntity {
 
     String type;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     JsonNode payload;
     @Enumerated(EnumType.STRING)
-    @Type(type = "inbox_status")
+    @Column(columnDefinition = "inbox_status")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     Status status;
     String reason;
 

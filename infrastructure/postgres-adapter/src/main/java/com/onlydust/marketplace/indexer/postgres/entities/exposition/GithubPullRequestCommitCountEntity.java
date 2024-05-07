@@ -1,8 +1,8 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity

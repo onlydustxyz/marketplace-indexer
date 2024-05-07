@@ -1,9 +1,9 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstallation;
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 

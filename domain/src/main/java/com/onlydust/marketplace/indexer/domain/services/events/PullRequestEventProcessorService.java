@@ -6,10 +6,9 @@ import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.transaction.Transactional;
 
 @AllArgsConstructor
 @Slf4j

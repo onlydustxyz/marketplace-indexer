@@ -14,12 +14,12 @@ import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubR
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.PullRequestRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 

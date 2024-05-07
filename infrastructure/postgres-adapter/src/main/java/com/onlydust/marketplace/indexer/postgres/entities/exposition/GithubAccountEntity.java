@@ -1,11 +1,11 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
-import javax.persistence.*;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -15,13 +15,13 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Table(name = "github_accounts", schema = "indexer_exp")
-@TypeDef(name = "github_account_type", typeClass = PostgreSQLEnumType.class)
 public class GithubAccountEntity {
     @Id
     Long id;
     String login;
     @Enumerated(EnumType.STRING)
-    @org.hibernate.annotations.Type(type = "github_account_type")
+    @Column(columnDefinition = "github_account_type")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     GithubAccountEntity.Type type;
     String htmlUrl;
     String avatarUrl;

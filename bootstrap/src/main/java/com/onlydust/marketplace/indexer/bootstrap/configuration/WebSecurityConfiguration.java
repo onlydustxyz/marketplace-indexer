@@ -8,10 +8,23 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
 @Configuration
+@EnableWebSecurity
 @Profile("api")
 public class WebSecurityConfiguration {
     @Bean
@@ -45,4 +58,30 @@ public class WebSecurityConfiguration {
     public static class WebCorsProperties {
         private String[] hosts;
     }
+
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter,
+                                           final AuthenticationEntryPoint authEntryPoint) throws Exception {
+        http
+                .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests((authorize) ->
+                        authorize
+                                .requestMatchers(antMatcher(HttpMethod.POST, "/github-app/**")).permitAll()
+                                .requestMatchers(antMatcher(HttpMethod.GET, "/swagger-ui.html")).permitAll()
+                                .requestMatchers(antMatcher(HttpMethod.GET, "/v3/api-docs/**")).permitAll()
+                                .requestMatchers(antMatcher(HttpMethod.GET, "/swagger-ui/**")).permitAll()
+                                .requestMatchers(antMatcher(HttpMethod.GET, "/actuator/health")).permitAll()
+                                .requestMatchers(antMatcher(HttpMethod.GET, "/")).permitAll()
+                                .anyRequest().authenticated())
+                .addFilterBefore(apiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(
+                        (exceptionHandling) -> exceptionHandling.authenticationEntryPoint(authEntryPoint)
+                );
+        return http.build();
+    }
+
 }

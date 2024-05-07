@@ -1,15 +1,14 @@
 package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestClosingIssues;
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLInsert;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.type.SqlTypes;
 
-import javax.persistence.Entity;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
 import java.io.Serializable;
 
 
@@ -21,23 +20,22 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @IdClass(RawPullRequestClosingIssuesEntity.Id.class)
 @Table(name = "pull_request_closing_issues", schema = "indexer_raw")
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @SQLInsert(sql = """
                 INSERT INTO indexer_raw.pull_request_closing_issues (data, pull_request_number, repo_name, repo_owner)
                 VALUES (?, ?, ?, ?)
                 ON CONFLICT DO NOTHING
         """)
 public class RawPullRequestClosingIssuesEntity {
-    @javax.persistence.Id
+    @jakarta.persistence.Id
     String repoOwner;
 
-    @javax.persistence.Id
+    @jakarta.persistence.Id
     String repoName;
 
-    @javax.persistence.Id
+    @jakarta.persistence.Id
     Long pullRequestNumber;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     RawPullRequestClosingIssues data;
 
     public static RawPullRequestClosingIssuesEntity of(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues) {

@@ -57,7 +57,7 @@ spring:
       initial-size: 1
       minimumIdle: 1
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
         query:

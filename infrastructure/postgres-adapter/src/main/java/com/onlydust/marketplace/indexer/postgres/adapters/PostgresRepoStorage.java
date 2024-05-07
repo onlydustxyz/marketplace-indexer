@@ -6,9 +6,9 @@ import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoE
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoStatsEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoStatsEntityRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
-import javax.transaction.Transactional;
 import java.time.Instant;
 
 @AllArgsConstructor

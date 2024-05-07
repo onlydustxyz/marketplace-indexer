@@ -1,13 +1,13 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubPullRequest;
-import io.hypersistence.utils.hibernate.type.array.StringArrayType;
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.type.SqlTypes;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,9 +19,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Table(name = "github_pull_requests", schema = "indexer_exp")
-@TypeDef(name = "github_pull_request_status", typeClass = PostgreSQLEnumType.class)
-@TypeDef(name = "github_pull_request_review_state", typeClass = PostgreSQLEnumType.class)
-@TypeDef(name = "text[]", typeClass = StringArrayType.class)
 public class GithubPullRequestEntity {
     @Id
     Long id;
@@ -31,7 +28,8 @@ public class GithubPullRequestEntity {
     Long number;
     String title;
     @Enumerated(EnumType.STRING)
-    @Type(type = "github_pull_request_status")
+    @Column(columnDefinition = "github_pull_request_status")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     Status status;
     Date createdAt;
     Date closedAt;
@@ -49,10 +47,11 @@ public class GithubPullRequestEntity {
     String authorHtmlUrl;
     String authorAvatarUrl;
     @Enumerated(EnumType.STRING)
-    @Type(type = "github_pull_request_review_state")
+    @Column(columnDefinition = "github_pull_request_review_state")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     ReviewState reviewState;
     Integer commitCount;
-    @Type(type = "text[]")
+    @JdbcTypeCode(SqlTypes.ARRAY)
     String[] mainFileExtensions;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)

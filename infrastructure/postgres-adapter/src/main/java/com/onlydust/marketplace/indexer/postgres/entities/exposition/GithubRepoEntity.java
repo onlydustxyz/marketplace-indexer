@@ -1,14 +1,11 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
@@ -19,10 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Table(name = "github_repos", schema = "indexer_exp")
-@TypeDefs({
-        @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class),
-        @TypeDef(name = "github_repo_visibility", typeClass = PostgreSQLEnumType.class)
-})
 public class GithubRepoEntity {
     @Id
     Long id;
@@ -46,7 +39,8 @@ public class GithubRepoEntity {
     GithubRepoEntity parent;
 
     @Enumerated(EnumType.STRING)
-    @Type(type = "github_repo_visibility")
+    @Column(columnDefinition = "github_repo_visibility")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     Visibility visibility;
 
     public static GithubRepoEntity of(GithubRepo repo) {
