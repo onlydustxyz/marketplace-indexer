@@ -23,4 +23,6 @@ public class RawAccount extends JsonDocument {
     String bio;
     String location;
     String blog;
+    @JsonProperty("created_at")
+    String createdAt;
 }

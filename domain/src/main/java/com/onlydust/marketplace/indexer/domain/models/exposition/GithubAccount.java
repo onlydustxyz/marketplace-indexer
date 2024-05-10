@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
+import java.time.ZonedDateTime;
+
 @Value
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 public class GithubAccount {
@@ -20,6 +22,7 @@ public class GithubAccount {
     String twitter;
     String linkedin;
     String telegram;
+    ZonedDateTime createdAt;
 
     public static GithubAccount of(CleanAccount account) {
         return GithubAccount.builder()
@@ -35,6 +38,7 @@ public class GithubAccount {
                 .twitter(account.getTwitter())
                 .linkedin(account.getLinkedin())
                 .telegram(account.getTelegram())
+                .createdAt(account.getCreatedAt())
                 .build();
     }
 

@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class CleanAccount {
     String bio;
     String location;
     String website;
+    ZonedDateTime createdAt;
     @Builder.Default
     List<RawSocialAccount> socialAccounts = new ArrayList<>();
 
@@ -36,6 +38,7 @@ public class CleanAccount {
                 .bio(account.getBio())
                 .location(account.getLocation())
                 .website(account.getBlog())
+                .createdAt(account.getCreatedAt() == null ? null : ZonedDateTime.parse(account.getCreatedAt()))
                 .build();
     }
 
