@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.time.ZonedDateTime;
 
 @Entity
 @Data
@@ -31,6 +32,7 @@ public class GithubAccountEntity {
     String twitter;
     String linkedin;
     String telegram;
+    ZonedDateTime createdAt;
 
     public static GithubAccountEntity of(GithubAccount account) {
         return GithubAccountEntity.builder()
@@ -46,6 +48,7 @@ public class GithubAccountEntity {
                 .twitter(account.getTwitter())
                 .linkedin(account.getLinkedin())
                 .telegram(account.getTelegram())
+                .createdAt(account.getCreatedAt())
                 .build();
     }
 

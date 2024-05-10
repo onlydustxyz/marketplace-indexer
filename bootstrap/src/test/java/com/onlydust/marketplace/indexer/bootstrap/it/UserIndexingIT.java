@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.RawUserEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.RawUserSocialAccountsEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -57,7 +59,13 @@ public class UserIndexingIT extends IntegrationTest {
                 , RawSocialAccount[].class);
         assertThat(userSocialAccountsRepository.findAll()).containsExactly(RawUserSocialAccountsEntity.of(ANTHONY, Arrays.asList(expectedUserSocialAccounts)));
 
-        assertThat(githubAccountEntityRepository.findById(ANTHONY)).isPresent();
+        final var user = githubAccountEntityRepository.findById(ANTHONY);
+        assertThat(user).isPresent();
+        assertThat(user.get().getId()).isEqualTo(ANTHONY);
+        assertThat(user.get().getLogin()).isEqualTo("AnthonyBuisset");
+        assertThat(user.get().getType()).isEqualTo(GithubAccountEntity.Type.USER);
+        assertThat(user.get().getCreatedAt()).isEqualToIgnoringNanos(ZonedDateTime.parse("2018-09-21T08:45:50Z"));
+
         assertThat(userIndexingJobEntityRepository.findById(ANTHONY)).isPresent();
     }
 

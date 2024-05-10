@@ -70,8 +70,13 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(repoIndexingJobEntityRepository.findAll()).containsExactlyInAnyOrder(new RepoIndexingJobEntity(CAIRO_STREAMS_ID, OLD_INSTALLATION_ID,
                 false, true), new RepoIndexingJobEntity(MARKETPLACE_FRONTEND_ID, OLD_INSTALLATION_ID, false, true));
 
-        final var account = GithubAccountEntity.builder().id(98735558L).login("onlydustxyz").type(GithubAccountEntity.Type.ORGANIZATION).avatarUrl("https" +
-                                                                                                                                                   "://avatars.githubusercontent.com/u/98735558?v=4").htmlUrl("https://github.com/onlydustxyz").build();
+        final var account = GithubAccountEntity.builder()
+                .id(98735558L)
+                .login("onlydustxyz")
+                .type(GithubAccountEntity.Type.ORGANIZATION)
+                .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
+                .htmlUrl("https://github.com/onlydustxyz")
+                .build();
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
@@ -98,8 +103,13 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(jobs.get(1).getRepoId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
         assertThat(jobs.get(1).getInstallationId()).isEqualTo(INSTALLATION_ID);
 
-        final var account = GithubAccountEntity.builder().id(98735558L).login("onlydustxyz").type(GithubAccountEntity.Type.ORGANIZATION).avatarUrl("https" +
-                                                                                                                                                   "://avatars.githubusercontent.com/u/98735558?v=4").htmlUrl("https://github.com/onlydustxyz").build();
+        final var account = GithubAccountEntity.builder()
+                .id(98735558L)
+                .login("onlydustxyz")
+                .type(GithubAccountEntity.Type.ORGANIZATION)
+                .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
+                .htmlUrl("https://github.com/onlydustxyz")
+                .build();
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
@@ -251,8 +261,9 @@ public class GithubInstallationEventsIT extends IntegrationTest {
     @Order(11)
     void should_handle_duplicate_repo_added() {
         // Given
-        processEventsFromPaths("installation", "/github/webhook/events/installation/installation_created_new.json", "/github/webhook/events/installation" +
-                                                                                                                    "/installation_added.json");
+        processEventsFromPaths("installation",
+                "/github/webhook/events/installation/installation_created_new.json",
+                "/github/webhook/events/installation/installation_added.json");
 
         diffRepoRefreshJobManager.createJob().run();
 
@@ -269,7 +280,8 @@ public class GithubInstallationEventsIT extends IntegrationTest {
     @Order(12)
     void should_handle_recreating_same_repo_with_different_id() {
         // When
-        processEventsFromPaths("installation_repositories", "/github/webhook/events/installation/installation_added_with_another_repo_id.json");
+        processEventsFromPaths("installation_repositories",
+                "/github/webhook/events/installation/installation_added_with_another_repo_id.json");
 
         diffRepoRefreshJobManager.createJob().run();
 
