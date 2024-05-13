@@ -8,10 +8,9 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.transaction.Transactional;
 
 @AllArgsConstructor
 @Slf4j

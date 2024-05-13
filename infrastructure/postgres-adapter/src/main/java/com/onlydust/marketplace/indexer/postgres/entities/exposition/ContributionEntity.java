@@ -1,12 +1,13 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.*;
-import io.hypersistence.utils.hibernate.type.array.StringArrayType;
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.type.SqlTypes;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.Optional;
 
@@ -17,10 +18,6 @@ import java.util.Optional;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Table(name = "contributions", schema = "indexer_exp")
-@TypeDef(name = "contribution_type", typeClass = PostgreSQLEnumType.class)
-@TypeDef(name = "contribution_status", typeClass = PostgreSQLEnumType.class)
-@TypeDef(name = "github_pull_request_review_state", typeClass = PostgreSQLEnumType.class)
-@TypeDef(name = "text[]", typeClass = StringArrayType.class)
 public class ContributionEntity {
     @Id
     String id;
@@ -29,10 +26,12 @@ public class ContributionEntity {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubAccountEntity contributor;
     @Enumerated(EnumType.STRING)
-    @org.hibernate.annotations.Type(type = "contribution_type")
+    @Column(columnDefinition = "contribution_type")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     Type type;
     @Enumerated(EnumType.STRING)
-    @org.hibernate.annotations.Type(type = "contribution_status")
+    @Column(columnDefinition = "contribution_status")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     Status status;
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubPullRequestEntity pullRequest;
@@ -59,9 +58,10 @@ public class ContributionEntity {
     String contributorHtmlUrl;
     String contributorAvatarUrl;
     @Enumerated(EnumType.STRING)
-    @org.hibernate.annotations.Type(type = "github_pull_request_review_state")
+    @Column(columnDefinition = "github_pull_request_review_state")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     GithubPullRequestEntity.ReviewState prReviewState;
-    @org.hibernate.annotations.Type(type = "text[]")
+    @JdbcTypeCode(SqlTypes.ARRAY)
     String[] mainFileExtensions;
 
     public static ContributionEntity of(Contribution contribution) {

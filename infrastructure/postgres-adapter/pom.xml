@@ -28,10 +28,6 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-52</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
@@ -40,8 +36,12 @@
             <artifactId>liquibase-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.hypersistence</groupId>
+            <artifactId>hypersistence-utils-hibernate-63</artifactId>
         </dependency>
 
 
@@ -70,23 +70,23 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <configuration>
-                    <propertyFile>liquibase.properties</propertyFile>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>42.2.27</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
+    <!--    <build>-->
+    <!--        <plugins>-->
+    <!--            <plugin>-->
+    <!--                <groupId>org.liquibase</groupId>-->
+    <!--                <artifactId>liquibase-maven-plugin</artifactId>-->
+    <!--                <configuration>-->
+    <!--                    <propertyFile>liquibase.properties</propertyFile>-->
+    <!--                </configuration>-->
+    <!--                <dependencies>-->
+    <!--                    <dependency>-->
+    <!--                        <groupId>org.postgresql</groupId>-->
+    <!--                        <artifactId>postgresql</artifactId>-->
+    <!--                        <version>42.2.27</version>-->
+    <!--                    </dependency>-->
+    <!--                </dependencies>-->
+    <!--            </plugin>-->
+    <!--        </plugins>-->
+    <!--    </build>-->
 
 </project>

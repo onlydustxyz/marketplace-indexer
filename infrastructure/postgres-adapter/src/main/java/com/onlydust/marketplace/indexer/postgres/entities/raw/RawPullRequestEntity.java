@@ -1,16 +1,14 @@
 package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLInsert;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import org.hibernate.type.SqlTypes;
 
 
 @Data
@@ -20,7 +18,6 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Table(name = "pull_requests", schema = "indexer_raw")
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @SQLInsert(sql = "INSERT INTO indexer_raw.pull_requests (data, number, repo_id, id) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING")
 public class RawPullRequestEntity {
     @Id
@@ -32,7 +29,7 @@ public class RawPullRequestEntity {
 
     Long number;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     RawPullRequest data;
 
     public static RawPullRequestEntity of(Long repoId, RawPullRequest pullRequest) {

@@ -1,11 +1,10 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubLabel;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Entity
 @Data
@@ -17,9 +16,11 @@ import javax.persistence.Table;
 public class GithubLabelEntity {
     @Id
     @EqualsAndHashCode.Include
-    @NonNull Long id;
+    @NonNull
+    Long id;
 
-    @NonNull String name;
+    @NonNull
+    String name;
     String description;
 
     public static GithubLabelEntity of(GithubLabel label) {

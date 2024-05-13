@@ -9,10 +9,9 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.IssueStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.transaction.Transactional;
 
 @AllArgsConstructor
 @Slf4j

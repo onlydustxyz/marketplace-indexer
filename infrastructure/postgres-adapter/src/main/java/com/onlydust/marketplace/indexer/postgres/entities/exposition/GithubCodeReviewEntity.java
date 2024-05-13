@@ -1,12 +1,11 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCodeReview;
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
-import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -16,7 +15,6 @@ import java.util.Date;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Table(name = "github_code_reviews", schema = "indexer_exp")
-@TypeDef(name = "github_code_review_state", typeClass = PostgreSQLEnumType.class)
 public class GithubCodeReviewEntity {
     @Id
     String id;
@@ -28,7 +26,8 @@ public class GithubCodeReviewEntity {
     GithubAccountEntity author;
 
     @Enumerated(EnumType.STRING)
-    @Type(type = "github_code_review_state")
+    @Column(columnDefinition = "github_code_review_state")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     State state;
     Date requestedAt;
     Date submittedAt;

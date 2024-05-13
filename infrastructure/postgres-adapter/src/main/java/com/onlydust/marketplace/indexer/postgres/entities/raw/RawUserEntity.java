@@ -1,15 +1,13 @@
 package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLInsert;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.type.SqlTypes;
 
 
 @Entity
@@ -19,7 +17,6 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Table(name = "users", schema = "indexer_raw")
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @SQLInsert(sql = "INSERT INTO indexer_raw.users (data, login, id) VALUES (?, ?, ?) ON CONFLICT DO NOTHING")
 public class RawUserEntity {
     @Id
@@ -27,7 +24,7 @@ public class RawUserEntity {
 
     String login;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     RawAccount data;
 
     public static RawUserEntity of(RawAccount user) {

@@ -2,9 +2,8 @@ package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoContributorsStorage;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-
-import javax.transaction.Transactional;
 
 @AllArgsConstructor
 public class PostgresRepoContributorsStorage implements RepoContributorsStorage {

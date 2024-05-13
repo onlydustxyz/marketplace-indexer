@@ -1,11 +1,11 @@
 package com.onlydust.marketplace.indexer.rest.api.authentication.api_key;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @AllArgsConstructor

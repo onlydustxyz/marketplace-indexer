@@ -3,9 +3,9 @@ package com.onlydust.marketplace.indexer.domain.services.indexers;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 @AllArgsConstructor

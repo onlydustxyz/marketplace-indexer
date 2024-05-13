@@ -7,10 +7,9 @@ import com.onlydust.marketplace.indexer.postgres.entities.exposition.RepoContrib
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.transaction.Transactional;
 
 import static java.util.Comparator.comparing;
 import static org.assertj.core.api.Assertions.assertThat;
