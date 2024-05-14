@@ -85,9 +85,9 @@ spring:
 server:
   port: ${PORT}
 management:
-  metrics:
-    export:
-      datadog:
+  datadog:
+    metrics:
+      export:
         api-key: ${DD_API_KEY}
         uri: https://api.datadoghq.eu
     tags:
