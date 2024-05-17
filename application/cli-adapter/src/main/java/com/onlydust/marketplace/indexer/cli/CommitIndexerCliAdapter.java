@@ -43,7 +43,7 @@ public class CommitIndexerCliAdapter implements CommandLineRunner {
     }
 
     private RawPullRequestCommitsEntity index(RawPullRequestCommitsEntity pullRequestCommits) {
-        if (pullRequestCommits.getData().stream().findFirst().map(d -> d.getFiles() != null).orElse(true)) return pullRequestCommits;
+        if (pullRequestCommits.getData().stream().findFirst().map(d -> d.getFiles() != null).isPresent()) return pullRequestCommits;
 
         LOGGER.info("Indexing commits for pull request {}", pullRequestCommits.getPullRequestId());
 
