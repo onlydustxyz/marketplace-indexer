@@ -25,12 +25,12 @@ public class CliConfiguration {
     }
 
     @Bean
-    public CommitIndexerCliAdapter repoRefreshCliAdapter(final @NonNull PullRequestCommitsRepository pullRequestCommitsRepository,
-                                                         final @NonNull PullRequestRepository pullRequestRepository,
-                                                         final @NonNull RawStorageReader githubRawStorageReader,
-                                                         final @NonNull RepoIndexingJobEntityRepository repoIndexingJobEntityRepository,
-                                                         final @NonNull GithubAppContext githubAppContext,
-                                                         final @NonNull GithubPullRequestRepository githubPullRequestRepository
+    public CommitIndexerCliAdapter commitIndexerCliAdapter(final @NonNull PullRequestCommitsRepository pullRequestCommitsRepository,
+                                                           final @NonNull PullRequestRepository pullRequestRepository,
+                                                           final @NonNull RawStorageReader githubRawStorageReader,
+                                                           final @NonNull RepoIndexingJobEntityRepository repoIndexingJobEntityRepository,
+                                                           final @NonNull GithubAppContext githubAppContext,
+                                                           final @NonNull GithubPullRequestRepository githubPullRequestRepository
     ) {
         return new CommitIndexerCliAdapter(pullRequestCommitsRepository, pullRequestRepository, githubRawStorageReader, repoIndexingJobEntityRepository,
                 githubAppContext, githubPullRequestRepository);
