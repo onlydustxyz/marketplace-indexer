@@ -31,7 +31,6 @@
     "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-frontend/commits/0c3d6d7497a2ae51f389c2b901c13221ad2dfd22/comments",
     "author": {
         "login": "AnthonyBuisset",
-        "id": 43467246,
         "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
         "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
         "gravatar_id": "",
@@ -51,7 +50,6 @@
     },
     "committer": {
         "login": "AnthonyBuisset",
-        "id": 43467246,
         "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
         "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
         "gravatar_id": "",
@@ -84,7 +82,7 @@
     "files": [
         {
             "sha": "307fcaf3fe4e373d4bcc014fadef2be9b9f5c490",
-            "filename": "backend/event-listeners/src/bin/refresh/main.rs",
+            "filename": "backend/event-listeners/src/bin/refresh/main.sql",
             "status": "modified",
             "additions": 5,
             "deletions": 4,
@@ -96,7 +94,7 @@
         },
         {
             "sha": "3515e85eb94567f9ce189192309ac36eebac6e2d",
-            "filename": "backend/event-listeners/src/bin/refresh/refresher/application.rs",
+            "filename": "backend/event-listeners/src/bin/refresh/refresher/application.sql",
             "status": "removed",
             "additions": 0,
             "deletions": 13,
@@ -108,7 +106,7 @@
         },
         {
             "sha": "9b650e859afbcc4754e7534749422f8b51794fb6",
-            "filename": "backend/event-listeners/src/bin/refresh/refresher/budget.rs",
+            "filename": "backend/event-listeners/src/bin/refresh/refresher/budget.sql",
             "status": "removed",
             "additions": 0,
             "deletions": 12,
@@ -120,7 +118,7 @@
         },
         {
             "sha": "13a8d326b5501e60bcbebfe7719cb27fd284d7c7",
-            "filename": "backend/event-listeners/src/bin/refresh/refresher/mod.rs",
+            "filename": "backend/event-listeners/src/bin/refresh/refresher/mod.sql",
             "status": "modified",
             "additions": 30,
             "deletions": 12,
@@ -132,7 +130,7 @@
         },
         {
             "sha": "d46176d97a364ebcad95a7cbf6240b59851480bc",
-            "filename": "backend/event-listeners/src/bin/refresh/refresher/payment.rs",
+            "filename": "backend/event-listeners/src/bin/refresh/refresher/payment.sql",
             "status": "removed",
             "additions": 0,
             "deletions": 20,
@@ -144,7 +142,7 @@
         },
         {
             "sha": "a83b5d144d26886514061e954cc47376fecb2e6a",
-            "filename": "backend/event-listeners/src/bin/refresh/refresher/project.rs",
+            "filename": "backend/event-listeners/src/bin/refresh/refresher/project.sql",
             "status": "removed",
             "additions": 0,
             "deletions": 21,
@@ -156,7 +154,7 @@
         },
         {
             "sha": "d7c23260f976a243a8a57da10e8bfa184364ae12",
-            "filename": "backend/event-listeners/src/listeners/application.rs",
+            "filename": "backend/event-listeners/src/listeners/application.sql",
             "status": "removed",
             "additions": 0,
             "deletions": 42,
@@ -168,7 +166,7 @@
         },
         {
             "sha": "ac15cb5df8252d82803cea9df99699fe626f624f",
-            "filename": "backend/event-listeners/src/listeners/budget.rs",
+            "filename": "backend/event-listeners/src/listeners/budget.sql",
             "status": "removed",
             "additions": 0,
             "deletions": 48,
@@ -180,7 +178,7 @@
         },
         {
             "sha": "7cd2ff68f1702957fc1b100194d64b57b7f136a9",
-            "filename": "backend/event-listeners/src/listeners/mod.rs",
+            "filename": "backend/event-listeners/src/listeners/mod.sql",
             "status": "modified",
             "additions": 4,
             "deletions": 23,
@@ -192,7 +190,7 @@
         },
         {
             "sha": "719eb82cf6db435bd4e92c7bd5f4b435c3bf33bf",
-            "filename": "backend/event-listeners/src/listeners/payment.rs",
+            "filename": "backend/event-listeners/src/listeners/payment.sql",
             "status": "removed",
             "additions": 0,
             "deletions": 123,
@@ -204,7 +202,7 @@
         },
         {
             "sha": "378e79262111752a979ed2df9e940a221f2dac07",
-            "filename": "backend/event-listeners/src/listeners/project.rs",
+            "filename": "backend/event-listeners/src/listeners/project.sql",
             "status": "removed",
             "additions": 0,
             "deletions": 83,
@@ -216,7 +214,7 @@
         },
         {
             "sha": "c1d6daef9ba9b7bdbf88f3dc82dfb225e5405bbc",
-            "filename": "backend/event-listeners/src/listeners/projections.rs",
+            "filename": "backend/event-listeners/src/listeners/projections.sql",
             "status": "added",
             "additions": 224,
             "deletions": 0,

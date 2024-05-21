@@ -56,6 +56,7 @@ public class GithubPullRequest {
                 .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssue::of).toList())
                 .reviewState(aggregateReviewState(pullRequest))
                 .commitCounts(pullRequest.getCommits().stream()
+                        .filter(c -> c.getAuthor() != null)
                         .collect(groupingBy(c -> GithubAccount.of(c.getAuthor()), Collectors.counting()))
                 )
                 .mainFileExtensions(extractMainFileExtensions(pullRequest.getCommits()))
