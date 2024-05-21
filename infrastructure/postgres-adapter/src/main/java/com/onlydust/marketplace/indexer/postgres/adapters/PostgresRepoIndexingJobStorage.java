@@ -97,6 +97,9 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     public void setInstallationForRepos(Long installationId, RepoIndexingJobTrigger... triggers) {
         final var jobs = Arrays.stream(triggers).
                 map(trigger -> repository.findById(trigger.getRepoId())
+                        .map(job -> job.toBuilder()
+                                .isPublic(trigger.getIsPublic())
+                                .build())
                         .orElse(RepoIndexingJobEntity.builder()
                                 .repoId(trigger.getRepoId())
                                 .status(JobStatus.PENDING)

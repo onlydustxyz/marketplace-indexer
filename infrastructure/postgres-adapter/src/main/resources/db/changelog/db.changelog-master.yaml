@@ -101,3 +101,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000048_fix_file_extensions.sql
   - include:
       file: db/changelog/changelogs/00000049_add_github_account_created_at.sql
+  - include:
+      file: db/changelog/changelogs/00000050_fix_job_repo_visibility.sql
