@@ -10,6 +10,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobSche
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.indexers.UserExposerIndexer;
+import com.onlydust.marketplace.indexer.github.adapters.GithubAppContextAdapter;
 import com.onlydust.marketplace.indexer.rest.api.*;
 import com.onlydust.marketplace.indexer.rest.api.exception.OnlyDustExceptionRestHandler;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,8 @@ import org.springframework.context.annotation.Profile;
 @Profile("api")
 public class RestApiConfiguration {
     @Bean
-    public UsersRestApi usersRestApi(final UserIndexer cachedUserIndexer, final AuthorizationContext authorizationContext, final Exposer<CleanAccount> userExposer, final UserIndexingJobStorage userIndexingJobStorage) {
+    public UsersRestApi usersRestApi(final UserIndexer cachedUserIndexer, final AuthorizationContext authorizationContext,
+                                     final Exposer<CleanAccount> userExposer, final UserIndexingJobStorage userIndexingJobStorage) {
         return new UsersRestApi(new UserExposerIndexer(cachedUserIndexer, userExposer), authorizationContext, userIndexingJobStorage);
     }
 
@@ -42,6 +44,11 @@ public class RestApiConfiguration {
     @Bean
     public EventsRestApi eventsRestApi(final RepoIndexingJobScheduler repoIndexingJobScheduler, final UserIndexer diffUserIndexer) {
         return new EventsRestApi(repoIndexingJobScheduler, diffUserIndexer);
+    }
+
+    @Bean
+    public DebugRestApi debugRestApi(final GithubAppContextAdapter githubAppContextAdapter) {
+        return new DebugRestApi(githubAppContextAdapter);
     }
 
     @Bean
