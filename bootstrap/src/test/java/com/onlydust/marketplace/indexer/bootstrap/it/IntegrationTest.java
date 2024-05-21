@@ -118,6 +118,17 @@ public class IntegrationTest {
                 .toUri();
     }
 
+    protected URI getApiURI(final String path, String paramName, String paramValue) {
+        return UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host("localhost")
+                .port(port)
+                .path(path)
+                .queryParam(paramName, paramValue)
+                .build()
+                .toUri();
+    }
+
     protected WebTestClient.ResponseSpec put(final String path) {
         return client.put().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY").exchange();
     }

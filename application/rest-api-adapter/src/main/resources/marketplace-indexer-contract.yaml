@@ -209,6 +209,36 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
+  /api/v1/debug/github-token:
+    get:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Debug
+      summary: Returns an access token for the Github API
+      operationId: getGithubAccessToken
+      parameters:
+        - in: query
+          name: installationId
+          description: The installation ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/AppInstallationId'
+      responses:
+        "200":
+          description: 'The token'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
 components:
   securitySchemes:
     apiKey:
