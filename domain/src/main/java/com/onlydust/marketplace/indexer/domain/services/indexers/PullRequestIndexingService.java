@@ -53,9 +53,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
                 });
         return commits.stream().map(commit -> Optional.ofNullable(commit.getAuthor())
                 .or(() -> Optional.ofNullable(commit.getCommitter()))
-                .filter(user -> user.getId() != null)
-                .flatMap(user -> userIndexer.indexUser(user.getId()))
-                .map(user -> CleanCommit.of(commit, user))
+                .map(user -> CleanCommit.of(commit, Optional.ofNullable(user.getId()).flatMap(userIndexer::indexUser).orElse(null)))
                 .orElseGet(() -> {
                     LOGGER.warn("Unable to index commit {} for pull request {}/{}", commit.getSha(), repoId, pullRequestNumber);
                     return null;
