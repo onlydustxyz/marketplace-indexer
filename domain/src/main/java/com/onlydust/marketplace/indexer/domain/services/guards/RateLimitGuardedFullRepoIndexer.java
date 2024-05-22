@@ -51,7 +51,7 @@ public class RateLimitGuardedFullRepoIndexer implements RepoIndexer {
                 .tag("installationId", githubAppContext.installationId().map(String::valueOf).orElse("null"))
                 .register(meterRegistry);
 
-        if (rateLimit.remaining() < config.getFullRepoThreshold()) {
+        if (rateLimit.remaining() < config.getFullRepoThreshold() && rateLimit.resetAt().isAfter(Instant.now())) {
             LOGGER.info("Rate limit reached, waiting for reset until {}", rateLimit.resetAt());
             sleepUntil(rateLimit.resetAt());
         }
