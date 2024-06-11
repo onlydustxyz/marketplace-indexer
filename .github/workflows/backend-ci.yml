@@ -20,6 +20,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - uses: actions/checkout@v3
@@ -28,6 +30,8 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
           cache: 'maven'
+      - name: Setup Maven
+        uses: s4u/maven-settings-action@v3.0.0
       - run: ./mvnw clean install -T 4 -DskipTests -DskipITs
 
   unit_tests:

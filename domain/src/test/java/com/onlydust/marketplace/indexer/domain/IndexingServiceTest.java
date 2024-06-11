@@ -4,6 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.IssueStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.PullRequestStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWriteRawStorageReaderDecorator;
@@ -50,22 +51,24 @@ public class IndexingServiceTest {
     final RawStorageWriterStub rawStorageReaderStub = new RawStorageWriterStub();
     final RawStorageWriterStub rawStorageRepository = new RawStorageWriterStub();
     final ContributionStorageStub contributionRepository = new ContributionStorageStub();
+    final IndexingObserver indexingObserver = mock(IndexingObserver.class);
     final RawStorageReader rawStorageReader = CacheWriteRawStorageReaderDecorator.builder().fetcher(rawStorageReaderStub).cache(rawStorageRepository).build();
     final UserIndexingService userIndexingService = new UserIndexingService(rawStorageReader);
     final RepoIndexingService repoIndexingService = new RepoIndexingService(rawStorageReader, userIndexingService);
     final IssueIndexer issueIndexer = new IssueExposerIndexer(
             new IssueIndexingService(rawStorageReader, userIndexingService, repoIndexingService),
-            new IssueExposer(contributionRepository, issueStorage)
+            new IssueExposer(contributionRepository, issueStorage, indexingObserver)
     );
     final PullRequestIndexer pullRequestIndexer = new PullRequestExposerIndexer(
             new PullRequestIndexingService(rawStorageReader, userIndexingService, repoIndexingService, issueIndexer),
-            new PullRequestExposer(contributionRepository, pullRequestStorage)
+            new PullRequestExposer(contributionRepository, pullRequestStorage, indexingObserver)
     );
     final FullRepoIndexingService fullRepoIndexingService = new FullRepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer,
             repoIndexingService);
 
     @BeforeEach
     void setup() {
+        reset(indexingObserver);
         rawStorageReaderStub.feedWith(marketplaceFrontend);
         rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), marketplaceFrontendLanguages);
         rawStorageReaderStub.feedWith(marketplaceBackend);
@@ -140,6 +143,7 @@ public class IndexingServiceTest {
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.CODE_REVIEW) && c.getStatus().equals(Contribution.Status.COMPLETED))).hasSize(1);
 
         verify(pullRequestStorage, times(1)).saveAll(any());
+        verify(indexingObserver, times(2)).onContributionsChanged(marketplaceFrontend.getId());
     }
 
     @Test

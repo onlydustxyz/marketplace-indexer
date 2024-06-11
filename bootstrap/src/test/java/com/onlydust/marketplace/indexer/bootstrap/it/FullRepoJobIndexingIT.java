@@ -1,12 +1,12 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.domain.jobs.NewContributionNotifierJob;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoLanguageEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.RepoContributorEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.ApiEventRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
@@ -48,7 +48,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     @Autowired
     public JobManager diffRepoRefreshJobManager;
     @Autowired
-    public NewContributionNotifierJob newContributionNotifierJob;
+    public ApiEventRepository apiEventRepository;
 
     private WebTestClient.ResponseSpec onRepoLinkChanged(List<Long> linkedRepoIds, List<Long> unlinkedRepoIds) {
         return post("/api/v1/events/on-repo-link-changed", """
@@ -58,6 +58,11 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
                 }
                 """.formatted(Arrays.toString(linkedRepoIds.toArray()), Arrays.toString(unlinkedRepoIds.toArray()))
         );
+    }
+
+    @BeforeEach
+    public void setup() {
+        apiEventRepository.deleteAll();
     }
 
     @AfterEach
@@ -90,6 +95,8 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
             final var stats = githubRepoStatsEntityRepository.findById(repoId).orElseThrow();
             assertThat(stats.getLastIndexedAt()).isNotNull();
         }
+
+        assertThat(apiEventRepository.findAll()).hasSize(5);
     }
 
     @Test
@@ -100,6 +107,8 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
         assertThat(issuesRepository.findAllByRepoId(BRETZEL_APP)).hasSize(0);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getRepo().getId().equals(BRETZEL_APP))).hasSize(0);
         assertThat(repoContributorRepository.findAll().stream().filter(r -> r.getId().getRepoId().equals(BRETZEL_APP))).hasSize(0);
+
+        assertThat(apiEventRepository.findAll()).isEmpty();
     }
 
     @Test
@@ -190,23 +199,5 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     public void should_change_to_full_mode_upon_request() {
         onRepoLinkChanged(List.of(BRETZEL_APP), List.of()).expectStatus().isNoContent();
         assertThat(repoIndexingJobEntityRepository.findById(BRETZEL_APP).orElseThrow().getFullIndexing()).isTrue();
-    }
-
-    @Test
-    @Order(100)
-    public void should_notify_api_upon_new_contributions() throws InterruptedException {
-        apiWireMockServer.stubFor(com.github.tomakehurst.wiremock.client.WireMock.post(urlEqualTo("/api/v1/events/on-contributions-change"))
-                .withHeader("Api-Key", equalTo("INTERNAL_API_KEY"))
-                .withRequestBody(equalToJson("{\"repoIds\": [%d]}".formatted(MARKETPLACE)))
-                .willReturn(noContent()));
-
-        newContributionNotifierJob.run();
-        Thread.sleep(10);
-        newContributionNotifierJob.run(); // This run will not send any event
-
-        assertThat(apiWireMockServer
-                .countRequestsMatching(postRequestedFor(urlEqualTo("/api/v1/events/on-contributions-change")).build())
-                .getCount()
-        ).isEqualTo(1);
     }
 }
