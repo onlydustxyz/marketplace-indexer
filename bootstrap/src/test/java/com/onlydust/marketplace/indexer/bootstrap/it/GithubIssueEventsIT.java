@@ -42,7 +42,7 @@ public class GithubIssueEventsIT extends IntegrationTest {
                 "when github returns 404/500/403/... ignore the error and enter best effort mode with not all of the data returned\n");
         assertThat(issue.getHtmlUrl()).isEqualTo("https://github.com/onlydustxyz/marketplace-frontend/issues/78");
         assertThat(issue.getStatus()).isEqualTo(GithubIssueEntity.Status.COMPLETED);
-        assertThat(issue.getCreatedAt().toString()).isEqualTo("Tue Jul 12 09:55:06 UTC 2022");
+        assertThat(issue.getCreatedAt()).isEqualTo("2022-07-12T09:55:06.000");
         assertThat(issue.getAuthor().getLogin()).isEqualTo("AnthonyBuisset");
         assertThat(issue.getRepo().getName()).isEqualTo("marketplace-frontend");
         assertThat(issue.getAssignees()).hasSize(1);
