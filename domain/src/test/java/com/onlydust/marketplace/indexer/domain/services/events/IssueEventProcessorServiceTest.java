@@ -5,6 +5,7 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawIssueEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.IssueStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
@@ -20,8 +21,9 @@ class IssueEventProcessorServiceTest {
     private final RawStorageWriter rawStorageWriter = mock(RawStorageWriter.class);
     private final IssueStorage issueStorage = mock(IssueStorage.class);
     private final ContributionStorage contributionStorage = mock(ContributionStorage.class);
+    private final GithubObserver githubObserver = mock(GithubObserver.class);
     final IssueEventProcessorService issueEventProcessorService = new IssueEventProcessorService(issueIndexer, repoExposer, githubAppContext, rawStorageWriter
-            , issueStorage, contributionStorage);
+            , issueStorage, contributionStorage, githubObserver);
 
     @Test
     void should_handle_issue_transfer_event() {
@@ -36,5 +38,6 @@ class IssueEventProcessorServiceTest {
         verify(issueStorage).delete(1301824165L);
         verify(contributionStorage).deleteAllByRepoIdAndGithubNumber(498695724L, 78L);
         verify(issueIndexer, never()).indexIssue(any(), any(), any());
+        verify(githubObserver).on(event);
     }
 }
