@@ -19,7 +19,6 @@ import lombok.SneakyThrows;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -144,8 +143,7 @@ public class IndexingServiceTest {
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.CODE_REVIEW) && c.getStatus().equals(Contribution.Status.COMPLETED))).hasSize(1);
 
         verify(pullRequestStorage, times(1)).saveAll(any());
-        final var contributionCaptor = ArgumentCaptor.forClass(Contribution[].class);
-        verify(indexingObserver, times(1)).onNewContributions(any(Contribution.class));
+        verify(indexingObserver, times(2)).onContributionsChanged(marketplaceFrontend.getId());
     }
 
     @Test

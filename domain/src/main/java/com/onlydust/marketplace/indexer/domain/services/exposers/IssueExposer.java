@@ -24,7 +24,7 @@ public class IssueExposer implements Exposer<CleanIssue> {
 
         contributionStorage.deleteAllByRepoIdAndGithubNumber(issue.getRepo().getId(), issue.getNumber());
         contributionStorage.saveAll(contributions);
-        indexingObserver.onNewContributions(contributions);
+        indexingObserver.onContributionsChanged(issue.getRepo().getId());
         issueStorage.save(GithubIssue.of(issue));
     }
 }

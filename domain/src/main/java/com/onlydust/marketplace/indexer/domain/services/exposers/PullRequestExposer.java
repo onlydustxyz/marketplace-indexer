@@ -39,7 +39,7 @@ public class PullRequestExposer implements Exposer<CleanPullRequest> {
 
         contributionStorage.deleteAllByRepoIdAndGithubNumber(pullRequest.getRepo().getId(), pullRequest.getNumber());
         contributionStorage.saveAll(contributions);
-        indexingObserver.onNewContributions(contributions);
+        indexingObserver.onContributionsChanged(pullRequest.getRepo().getId());
         pullRequestStorage.saveAll(GithubPullRequest.of(pullRequest));
     }
 }
