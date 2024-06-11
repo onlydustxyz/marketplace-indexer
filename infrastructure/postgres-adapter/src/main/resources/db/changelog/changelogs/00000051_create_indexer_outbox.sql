@@ -17,3 +17,6 @@ create trigger indexer_outbox_api_events_set_tech_updated_at
     on indexer_outbox.api_events
     for each row
 execute function set_tech_updated_at();
+
+
+drop table indexer.notifier_jobs;
