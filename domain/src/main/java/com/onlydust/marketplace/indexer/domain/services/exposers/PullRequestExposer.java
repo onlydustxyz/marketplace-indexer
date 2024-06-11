@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCodeRevie
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCommit;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubPullRequest;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
+import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.PullRequestStorage;
 import lombok.AllArgsConstructor;
@@ -14,8 +15,9 @@ import java.util.stream.Stream;
 
 @AllArgsConstructor
 public class PullRequestExposer implements Exposer<CleanPullRequest> {
-    ContributionStorage contributionStorage;
-    PullRequestStorage pullRequestStorage;
+    private final ContributionStorage contributionStorage;
+    private final PullRequestStorage pullRequestStorage;
+    private final IndexingObserver indexingObserver;
 
     @Override
     public void expose(CleanPullRequest pullRequest) {
@@ -37,6 +39,7 @@ public class PullRequestExposer implements Exposer<CleanPullRequest> {
 
         contributionStorage.deleteAllByRepoIdAndGithubNumber(pullRequest.getRepo().getId(), pullRequest.getNumber());
         contributionStorage.saveAll(contributions);
+        indexingObserver.onNewContributions(contributions);
         pullRequestStorage.saveAll(GithubPullRequest.of(pullRequest));
     }
 }

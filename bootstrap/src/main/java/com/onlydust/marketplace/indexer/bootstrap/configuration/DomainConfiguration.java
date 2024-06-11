@@ -17,6 +17,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
+import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.*;
@@ -31,6 +32,7 @@ import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobServi
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
+import com.onlydust.marketplace.indexer.domain.services.observers.IndexingOutboxObserver;
 import com.onlydust.marketplace.indexer.github.GithubConfig;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.adapters.GithubAppJwtProvider;
@@ -40,6 +42,7 @@ import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresUserIndexingJobStorage;
 import io.micrometer.core.instrument.MeterRegistry;
+import onlydust.com.marketplace.kernel.port.output.OutboxPort;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -414,14 +417,16 @@ public class DomainConfiguration {
 
     @Bean
     public Exposer<CleanIssue> issueExposer(final ContributionStorage contributionStorage,
-                                            final IssueStorage issueStorage) {
-        return new IssueExposer(contributionStorage, issueStorage);
+                                            final IssueStorage issueStorage,
+                                            final IndexingObserver indexingOutboxObserver) {
+        return new IssueExposer(contributionStorage, issueStorage, indexingOutboxObserver);
     }
 
     @Bean
     public Exposer<CleanPullRequest> pullRequestExposer(final ContributionStorage contributionStorage,
-                                                        final PullRequestStorage pullRequestStorage) {
-        return new PullRequestExposer(contributionStorage, pullRequestStorage);
+                                                        final PullRequestStorage pullRequestStorage,
+                                                        final IndexingObserver indexingOutboxObserver) {
+        return new PullRequestExposer(contributionStorage, pullRequestStorage, indexingOutboxObserver);
     }
 
     @Bean
@@ -432,5 +437,10 @@ public class DomainConfiguration {
     @Bean
     public Exposer<CleanRepo> repoContributorsExposer(final RepoContributorsStorage repoContributorsStorage) {
         return new RepoContributorsExposer(repoContributorsStorage);
+    }
+
+    @Bean
+    public IndexingOutboxObserver indexingOutboxObserver(final OutboxPort outboxPort) {
+        return new IndexingOutboxObserver(outboxPort);
     }
 }

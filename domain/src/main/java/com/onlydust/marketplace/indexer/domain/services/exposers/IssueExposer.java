@@ -5,14 +5,16 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.Contribution;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubIssue;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
+import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.IssueStorage;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class IssueExposer implements Exposer<CleanIssue> {
-    ContributionStorage contributionStorage;
-    IssueStorage issueStorage;
+    private final ContributionStorage contributionStorage;
+    private final IssueStorage issueStorage;
+    private final IndexingObserver indexingObserver;
 
     @Override
     public void expose(CleanIssue issue) {
@@ -22,6 +24,7 @@ public class IssueExposer implements Exposer<CleanIssue> {
 
         contributionStorage.deleteAllByRepoIdAndGithubNumber(issue.getRepo().getId(), issue.getNumber());
         contributionStorage.saveAll(contributions);
+        indexingObserver.onNewContributions(contributions);
         issueStorage.save(GithubIssue.of(issue));
     }
 }

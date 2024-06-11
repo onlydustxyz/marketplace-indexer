@@ -2,6 +2,8 @@ package com.onlydust.marketplace.indexer.postgres;
 
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.*;
+import com.onlydust.marketplace.indexer.postgres.entities.ApiEventEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.ApiEventRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.NotifierJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
@@ -105,5 +107,10 @@ public class PostgresConfiguration {
     @Bean
     public PostgresEventInboxStorage postgresEventInboxStorage(final EventsInboxEntityRepository eventsInboxEntityRepository) {
         return new PostgresEventInboxStorage(eventsInboxEntityRepository);
+    }
+
+    @Bean
+    public PostgresOutboxAdapter<ApiEventEntity> apiEventEntityPostgresOutboxAdapter(final ApiEventRepository apiEventRepository) {
+        return new PostgresOutboxAdapter<>(apiEventRepository);
     }
 }
