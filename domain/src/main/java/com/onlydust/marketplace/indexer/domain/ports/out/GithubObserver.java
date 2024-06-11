@@ -5,4 +5,6 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestEvent;
 
 public interface GithubObserver {
     void on(RawIssueEvent event);
+
+    void on(RawPullRequestEvent event);
 }

@@ -6,7 +6,10 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import lombok.AllArgsConstructor;
 import onlydust.com.marketplace.kernel.model.event.OnGithubIssueAssigned;
+import onlydust.com.marketplace.kernel.model.event.OnPullRequestCreated;
 import onlydust.com.marketplace.kernel.port.output.OutboxPort;
+
+import java.time.ZoneOffset;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -22,6 +25,16 @@ public class GithubOutboxObserver implements GithubObserver {
                     .assigneeId(event.getAssignee().getId())
                     .labels(event.getIssue().getLabels().stream().map(RawLabel::getName).collect(toSet()))
                     .assignedAt(event.getIssue().getUpdatedAt().toInstant().atZone(ZoneOffset.UTC))
+                    .build());
+    }
+
+    @Override
+    public void on(RawPullRequestEvent event) {
+        if (event.getAction().equals("opened"))
+            outboxPort.push(OnPullRequestCreated.builder()
+                    .id(event.getPullRequest().getId())
+                    .authorId(event.getPullRequest().getAuthor().getId())
+                    .createdAt(event.getPullRequest().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
                     .build());
     }
 }
