@@ -25,6 +25,20 @@
     <packaging>pom</packaging>
     <description>Marketplace backend API for the frontend</description>
 
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/onlydustxyz/*</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <properties>
         <java.version>17</java.version>
         <spring-boot.version>3.2.5</spring-boot.version>
@@ -58,6 +72,11 @@
                 <groupId>onlydust.com.marketplace.indexer</groupId>
                 <artifactId>rest-api-adapter</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>onlydust.com.marketplace.kernel</groupId>
+                <artifactId>marketplace-kernel</artifactId>
+                <version>0.7.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
