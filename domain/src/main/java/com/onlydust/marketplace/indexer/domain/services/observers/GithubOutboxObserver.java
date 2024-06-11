@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import lombok.AllArgsConstructor;
 import onlydust.com.marketplace.kernel.model.event.OnGithubIssueAssigned;
 import onlydust.com.marketplace.kernel.model.event.OnPullRequestCreated;
+import onlydust.com.marketplace.kernel.model.event.OnPullRequestMerged;
 import onlydust.com.marketplace.kernel.port.output.OutboxPort;
 
 import java.time.ZoneOffset;
@@ -35,6 +36,14 @@ public class GithubOutboxObserver implements GithubObserver {
                     .id(event.getPullRequest().getId())
                     .authorId(event.getPullRequest().getAuthor().getId())
                     .createdAt(event.getPullRequest().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
+                    .build());
+
+        else if (event.getAction().equals("closed") && event.getPullRequest().getMerged())
+            outboxPort.push(OnPullRequestMerged.builder()
+                    .id(event.getPullRequest().getId())
+                    .authorId(event.getPullRequest().getAuthor().getId())
+                    .createdAt(event.getPullRequest().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
+                    .mergedAt(event.getPullRequest().getMergedAt().toInstant().atZone(ZoneOffset.UTC))
                     .build());
     }
 }
