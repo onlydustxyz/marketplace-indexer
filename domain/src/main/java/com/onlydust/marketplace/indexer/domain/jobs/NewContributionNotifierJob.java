@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
-import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
+import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.NotifierJobStorage;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.Set;
 @Slf4j
 public class NewContributionNotifierJob extends Job {
     private final ContributionStorage contributionStorage;
-    private final ApiClient apiClient;
+    private final IndexingObserver indexingObserver;
     private final NotifierJobStorage notifierJobStorage;
 
     @Override
@@ -22,9 +22,10 @@ public class NewContributionNotifierJob extends Job {
         LOGGER.info("Notifying upon new contributions");
         final var job = notifierJobStorage.startJob();
         try {
-            final var notification = contributionStorage.newContributionsNotification(Optional.ofNullable(job.getLastNotificationSentAt()).orElse(Instant.EPOCH));
+            final var notification =
+                    contributionStorage.newContributionsNotification(Optional.ofNullable(job.getLastNotificationSentAt()).orElse(Instant.EPOCH));
             if (!Optional.ofNullable(notification.repoIds()).orElse(Set.of()).isEmpty()) {
-                apiClient.onNewContributions(notification.repoIds());
+                indexingObserver.onNewContributions(notification.repoIds());
                 job.setLastNotificationSentAt(notification.latestContributionUpdate());
             }
             notifierJobStorage.endJob(job);

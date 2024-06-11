@@ -2,7 +2,7 @@ package com.onlydust.marketplace.indexer.api.client.adapters;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.onlydust.marketplace.indexer.api.client.ApiHttpClient;
-import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
+import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import io.netty.handler.codec.http.HttpMethod;
 import lombok.AllArgsConstructor;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 @AllArgsConstructor
-public class ApiClientAdapter implements ApiClient {
+public class IndexingObserverAdapter implements IndexingObserver {
     private final ApiHttpClient httpClient;
 
     @Override

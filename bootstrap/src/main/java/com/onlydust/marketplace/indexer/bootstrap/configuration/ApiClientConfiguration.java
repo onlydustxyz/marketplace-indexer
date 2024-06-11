@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
 import com.onlydust.marketplace.indexer.api.client.ApiHttpClient;
-import com.onlydust.marketplace.indexer.api.client.adapters.ApiClientAdapter;
+import com.onlydust.marketplace.indexer.api.client.adapters.IndexingObserverAdapter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ public class ApiClientConfiguration {
     }
 
     @Bean
-    public ApiClientAdapter apiClientAdapter(final ApiHttpClient apiHttpClient) {
-        return new ApiClientAdapter(apiHttpClient);
+    public IndexingObserverAdapter apiClientAdapter(final ApiHttpClient apiHttpClient) {
+        return new IndexingObserverAdapter(apiHttpClient);
     }
 }

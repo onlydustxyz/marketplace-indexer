@@ -3,7 +3,7 @@ package com.onlydust.marketplace.indexer.domain.services;
 import com.onlydust.marketplace.indexer.domain.jobs.NewContributionNotifierJob;
 import com.onlydust.marketplace.indexer.domain.models.NewContributionsNotification;
 import com.onlydust.marketplace.indexer.domain.models.NotifierJob;
-import com.onlydust.marketplace.indexer.domain.ports.out.ApiClient;
+import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.NotifierJobStorage;
 import org.junit.jupiter.api.Test;
@@ -17,8 +17,8 @@ import static org.mockito.Mockito.*;
 class NotifierJobManagerJobServiceTest {
     private final ContributionStorage contributionStorage = mock(ContributionStorage.class);
     private final NotifierJobStorage notifierJobStorage = mock(NotifierJobStorage.class);
-    private final ApiClient apiClient = mock(ApiClient.class);
-    private final NewContributionNotifierJob notifierJob = new NewContributionNotifierJob(contributionStorage, apiClient, notifierJobStorage);
+    private final IndexingObserver indexingObserver = mock(IndexingObserver.class);
+    private final NewContributionNotifierJob notifierJob = new NewContributionNotifierJob(contributionStorage, indexingObserver, notifierJobStorage);
 
     @Test
     public void should_notify_upon_new_contributions() {
@@ -31,7 +31,7 @@ class NotifierJobManagerJobServiceTest {
 
         notifierJob.run();
 
-        verify(apiClient).onNewContributions(Set.of(1L, 2L, 3L));
+        verify(indexingObserver).onNewContributions(Set.of(1L, 2L, 3L));
         verify(notifierJobStorage).endJob(new NotifierJob(1L, newNotificationOn));
     }
 
@@ -45,7 +45,7 @@ class NotifierJobManagerJobServiceTest {
 
         notifierJob.run();
 
-        verify(apiClient).onNewContributions(Set.of(1L, 2L, 3L));
+        verify(indexingObserver).onNewContributions(Set.of(1L, 2L, 3L));
         verify(notifierJobStorage).endJob(new NotifierJob(1L, newNotificationOn));
     }
 
@@ -53,6 +53,6 @@ class NotifierJobManagerJobServiceTest {
     public void should_not_notify_when_no_new_contributions() {
         when(contributionStorage.newContributionsNotification(any())).thenReturn(new NewContributionsNotification(Set.of(), null));
         notifierJob.run();
-        verify(apiClient, never()).onNewContributions(any());
+        verify(indexingObserver, never()).onNewContributions(any());
     }
 }
