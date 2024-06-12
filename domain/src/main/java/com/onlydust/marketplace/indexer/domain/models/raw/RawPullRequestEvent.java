@@ -12,6 +12,7 @@ import lombok.Value;
 @NoArgsConstructor(force = true)
 @ToString(callSuper = true)
 public class RawPullRequestEvent extends JsonDocument {
+    String action;
     @JsonProperty("pull_request")
     RawPullRequest pullRequest;
     RawRepo repository;
