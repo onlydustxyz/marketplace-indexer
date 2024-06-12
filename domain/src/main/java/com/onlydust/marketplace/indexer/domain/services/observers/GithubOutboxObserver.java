@@ -25,6 +25,7 @@ public class GithubOutboxObserver implements GithubObserver {
                     .id(event.getIssue().getId())
                     .assigneeId(event.getAssignee().getId())
                     .labels(event.getIssue().getLabels().stream().map(RawLabel::getName).collect(toSet()))
+                    .createdAt(event.getIssue().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
                     .assignedAt(event.getIssue().getUpdatedAt().toInstant().atZone(ZoneOffset.UTC))
                     .build());
     }

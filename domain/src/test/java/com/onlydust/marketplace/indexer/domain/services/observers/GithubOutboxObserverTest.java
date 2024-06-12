@@ -33,6 +33,7 @@ class GithubOutboxObserverTest {
         assertThat(capturedEvent.id()).isEqualTo(2346568062L);
         assertThat(capturedEvent.assigneeId()).isEqualTo(43467246L);
         assertThat(capturedEvent.labels()).containsExactly("documentation", "good first issue");
+        assertThat(capturedEvent.createdAt()).isEqualTo("2024-06-11T14:20:41Z");
         assertThat(capturedEvent.assignedAt()).isEqualTo("2024-06-11T14:20:55Z");
     }
 
