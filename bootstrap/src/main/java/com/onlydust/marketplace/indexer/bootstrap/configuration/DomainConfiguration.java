@@ -17,6 +17,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
+import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
@@ -32,6 +33,7 @@ import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobServi
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
+import com.onlydust.marketplace.indexer.domain.services.observers.GithubOutboxObserver;
 import com.onlydust.marketplace.indexer.domain.services.observers.IndexingOutboxObserver;
 import com.onlydust.marketplace.indexer.github.GithubConfig;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
@@ -154,15 +156,28 @@ public class DomainConfiguration {
                                                          final GithubAppContext githubAppContext,
                                                          final RawStorageWriter rawStorageWriter,
                                                          final IssueStorage issueStorage,
-                                                         final ContributionStorage contributionStorage) {
-        return new IssueEventProcessorService(liveIssueIndexer, repoContributorsExposer, githubAppContext, rawStorageWriter, issueStorage, contributionStorage);
+                                                         final ContributionStorage contributionStorage,
+                                                         final GithubObserver githubObserver) {
+        return new IssueEventProcessorService(
+                liveIssueIndexer,
+                repoContributorsExposer,
+                githubAppContext,
+                rawStorageWriter,
+                issueStorage,
+                contributionStorage,
+                githubObserver);
     }
 
     @Bean
     public EventHandler<RawPullRequestEvent> pullRequestEventHandler(final Exposer<CleanRepo> repoContributorsExposer,
                                                                      final PullRequestIndexer livePullRequestIndexer,
-                                                                     final GithubAppContext githubAppContext) {
-        return new PullRequestEventProcessorService(repoContributorsExposer, livePullRequestIndexer, githubAppContext);
+                                                                     final GithubAppContext githubAppContext,
+                                                                     final GithubObserver githubObserver) {
+        return new PullRequestEventProcessorService(
+                repoContributorsExposer,
+                livePullRequestIndexer,
+                githubAppContext,
+                githubObserver);
     }
 
     @Bean
@@ -442,5 +457,10 @@ public class DomainConfiguration {
     @Bean
     public IndexingOutboxObserver indexingOutboxObserver(final OutboxPort outboxPort) {
         return new IndexingOutboxObserver(outboxPort);
+    }
+
+    @Bean
+    public GithubOutboxObserver githubOutboxObserver(final OutboxPort outboxPort) {
+        return new GithubOutboxObserver(outboxPort);
     }
 }
