@@ -23,6 +23,7 @@ public class GithubOutboxObserver implements GithubObserver {
         if (event.getAction().equals("assigned"))
             outboxPort.push(OnGithubIssueAssigned.builder()
                     .id(event.getIssue().getId())
+                    .repoId(event.getRepository().getId())
                     .assigneeId(event.getAssignee().getId())
                     .labels(event.getIssue().getLabels().stream().map(RawLabel::getName).collect(toSet()))
                     .createdAt(event.getIssue().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
@@ -35,6 +36,7 @@ public class GithubOutboxObserver implements GithubObserver {
         if (event.getAction().equals("opened"))
             outboxPort.push(OnPullRequestCreated.builder()
                     .id(event.getPullRequest().getId())
+                    .repoId(event.getRepository().getId())
                     .authorId(event.getPullRequest().getAuthor().getId())
                     .createdAt(event.getPullRequest().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
                     .build());
@@ -42,6 +44,7 @@ public class GithubOutboxObserver implements GithubObserver {
         else if (event.getAction().equals("closed") && event.getPullRequest().getMerged())
             outboxPort.push(OnPullRequestMerged.builder()
                     .id(event.getPullRequest().getId())
+                    .repoId(event.getRepository().getId())
                     .authorId(event.getPullRequest().getAuthor().getId())
                     .createdAt(event.getPullRequest().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
                     .mergedAt(event.getPullRequest().getMergedAt().toInstant().atZone(ZoneOffset.UTC))

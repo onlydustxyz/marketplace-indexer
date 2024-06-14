@@ -31,6 +31,7 @@ class GithubOutboxObserverTest {
         verify(outboxPort).push(eventCaptor.capture());
         final var capturedEvent = eventCaptor.getValue();
         assertThat(capturedEvent.id()).isEqualTo(2346568062L);
+        assertThat(capturedEvent.repoId()).isEqualTo(699283256);
         assertThat(capturedEvent.assigneeId()).isEqualTo(43467246L);
         assertThat(capturedEvent.labels()).containsExactly("documentation", "good first issue");
         assertThat(capturedEvent.createdAt()).isEqualTo("2024-06-11T14:20:41Z");
@@ -50,6 +51,7 @@ class GithubOutboxObserverTest {
         verify(outboxPort).push(eventCaptor.capture());
         final var capturedEvent = eventCaptor.getValue();
         assertThat(capturedEvent.id()).isEqualTo(1914598578L);
+        assertThat(capturedEvent.repoId()).isEqualTo(498695724);
         assertThat(capturedEvent.authorId()).isEqualTo(17259618L);
         assertThat(capturedEvent.createdAt()).isEqualTo("2024-06-11T14:12:24Z");
     }
@@ -68,6 +70,7 @@ class GithubOutboxObserverTest {
         verify(outboxPort).push(eventCaptor.capture());
         final var capturedEvent = eventCaptor.getValue();
         assertThat(capturedEvent.id()).isEqualTo(1914598578L);
+        assertThat(capturedEvent.repoId()).isEqualTo(498695724);
         assertThat(capturedEvent.authorId()).isEqualTo(17259618L);
         assertThat(capturedEvent.createdAt()).isEqualTo("2024-06-11T14:12:24Z");
         assertThat(capturedEvent.mergedAt()).isEqualTo("2024-06-11T14:13:05Z");
