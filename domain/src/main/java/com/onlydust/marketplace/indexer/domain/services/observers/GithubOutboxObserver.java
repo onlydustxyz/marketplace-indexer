@@ -1,13 +1,12 @@
 package com.onlydust.marketplace.indexer.domain.services.observers;
 
+import com.onlydust.marketplace.indexer.domain.models.raw.RawIssueCommentEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawIssueEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawLabel;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import lombok.AllArgsConstructor;
-import onlydust.com.marketplace.kernel.model.event.OnGithubIssueAssigned;
-import onlydust.com.marketplace.kernel.model.event.OnPullRequestCreated;
-import onlydust.com.marketplace.kernel.model.event.OnPullRequestMerged;
+import onlydust.com.marketplace.kernel.model.event.*;
 import onlydust.com.marketplace.kernel.port.output.OutboxPort;
 
 import java.time.ZoneOffset;
@@ -20,8 +19,8 @@ public class GithubOutboxObserver implements GithubObserver {
 
     @Override
     public void on(RawIssueEvent event) {
-        if (event.getAction().equals("assigned"))
-            outboxPort.push(OnGithubIssueAssigned.builder()
+        switch (event.getAction()) {
+            case "assigned" -> outboxPort.push(OnGithubIssueAssigned.builder()
                     .id(event.getIssue().getId())
                     .repoId(event.getRepository().getId())
                     .assigneeId(event.getAssignee().getId())
@@ -29,25 +28,64 @@ public class GithubOutboxObserver implements GithubObserver {
                     .createdAt(event.getIssue().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
                     .assignedAt(event.getIssue().getUpdatedAt().toInstant().atZone(ZoneOffset.UTC))
                     .build());
+
+            case "transferred" -> outboxPort.push(OnGithubIssueTransferred.builder()
+                    .id(event.getIssue().getId())
+                    .build());
+
+            case "deleted" -> outboxPort.push(OnGithubIssueDeleted.builder()
+                    .id(event.getIssue().getId())
+                    .build());
+        }
     }
 
     @Override
     public void on(RawPullRequestEvent event) {
-        if (event.getAction().equals("opened"))
-            outboxPort.push(OnPullRequestCreated.builder()
+        switch (event.getAction()) {
+            case "opened" -> outboxPort.push(OnPullRequestCreated.builder()
                     .id(event.getPullRequest().getId())
                     .repoId(event.getRepository().getId())
                     .authorId(event.getPullRequest().getAuthor().getId())
                     .createdAt(event.getPullRequest().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
+                    .build());
+            
+            case "closed" -> {
+                if (event.getPullRequest().getMerged())
+                    outboxPort.push(OnPullRequestMerged.builder()
+                            .id(event.getPullRequest().getId())
+                            .repoId(event.getRepository().getId())
+                            .authorId(event.getPullRequest().getAuthor().getId())
+                            .createdAt(event.getPullRequest().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
+                            .mergedAt(event.getPullRequest().getMergedAt().toInstant().atZone(ZoneOffset.UTC))
+                            .build());
+            }
+        }
+    }
+
+    @Override
+    public void on(RawIssueCommentEvent event) {
+        switch (event.getAction()) {
+            case "created" -> outboxPort.push(OnGithubCommentCreated.builder()
+                    .id(event.getComment().getId())
+                    .issueId(event.getIssue().getId())
+                    .repoId(event.getRepository().getId())
+                    .authorId(event.getComment().getAuthor().getId())
+                    .createdAt(event.getComment().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
+                    .body(event.getComment().getBody())
                     .build());
 
-        else if (event.getAction().equals("closed") && event.getPullRequest().getMerged())
-            outboxPort.push(OnPullRequestMerged.builder()
-                    .id(event.getPullRequest().getId())
+            case "edited" -> outboxPort.push(OnGithubCommentEdited.builder()
+                    .id(event.getComment().getId())
+                    .issueId(event.getIssue().getId())
                     .repoId(event.getRepository().getId())
-                    .authorId(event.getPullRequest().getAuthor().getId())
-                    .createdAt(event.getPullRequest().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
-                    .mergedAt(event.getPullRequest().getMergedAt().toInstant().atZone(ZoneOffset.UTC))
+                    .authorId(event.getComment().getAuthor().getId())
+                    .updatedAt(event.getComment().getUpdatedAt().toInstant().atZone(ZoneOffset.UTC))
+                    .body(event.getComment().getBody())
                     .build());
+
+            case "deleted" -> outboxPort.push(OnGithubCommentDeleted.builder()
+                    .id(event.getComment().getId())
+                    .build());
+        }
     }
 }
