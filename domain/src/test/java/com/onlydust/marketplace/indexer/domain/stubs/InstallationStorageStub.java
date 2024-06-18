@@ -4,10 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstal
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class InstallationStorageStub implements GithubAppInstallationStorage {
     private final List<GithubAppInstallation> installations = new ArrayList<>();
@@ -43,6 +40,12 @@ public class InstallationStorageStub implements GithubAppInstallationStorage {
     @Override
     public Optional<Long> findInstallationIdByAccount(Long accountId) {
         return installations.stream().filter(installation -> installation.getAccount().getId().equals(accountId)).findFirst().map(GithubAppInstallation::getId);
+    }
+
+    @Override
+    public void setPermissions(Long installationId, Set<String> permissions) {
+        final var installation = this.installations.stream().filter(installation1 -> installation1.getId().equals(installationId)).findFirst().orElseThrow();
+        installation.setPermissions(permissions);
     }
 
     public List<GithubAppInstallation> installations() {

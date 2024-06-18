@@ -4,17 +4,20 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstal
 import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.Type;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
-@Builder(toBuilder = true)
+@Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@Accessors(chain = true, fluent = true)
 @Table(name = "github_app_installations", schema = "indexer_exp")
 public class GithubAppInstallationEntity {
     @Id
@@ -45,5 +48,10 @@ public class GithubAppInstallationEntity {
                 .repos(installation.getRepos().stream().map(GithubRepoEntity::of).toList())
                 .permissions(installation.getPermissions().toArray(String[]::new))
                 .build();
+    }
+
+    public GithubAppInstallationEntity permissions(Set<String> permissions) {
+        this.permissions = permissions.toArray(String[]::new);
+        return this;
     }
 }

@@ -16,7 +16,7 @@ public abstract class InstallationEvent extends Event {
     Map<String, Permission> permissions;
 
     public enum Action {
-        CREATED, DELETED, ADDED, REMOVED, SUSPEND, UNSUSPEND;
+        CREATED, DELETED, ADDED, REMOVED, SUSPEND, UNSUSPEND, NEW_PERMISSIONS_ACCEPTED;
 
         public static Action of(String rawAction) {
             return switch (rawAction.toUpperCase()) {
@@ -26,6 +26,7 @@ public abstract class InstallationEvent extends Event {
                 case "REMOVED" -> REMOVED;
                 case "SUSPEND" -> SUSPEND;
                 case "UNSUSPEND" -> UNSUSPEND;
+                case "NEW_PERMISSIONS_ACCEPTED" -> NEW_PERMISSIONS_ACCEPTED;
                 default -> null;
             };
         }

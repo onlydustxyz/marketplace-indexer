@@ -84,11 +84,11 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
-        assertThat(installations.get(0).getId()).isEqualTo(OLD_INSTALLATION_ID);
-        assertThat(installations.get(0).getAccount()).isEqualTo(account);
-        assertThat(installations.get(0).getPermissions()).containsExactlyInAnyOrder("issues:read", "metadata:read", "pull_requests:read");
+        assertThat(installations.get(0).id()).isEqualTo(OLD_INSTALLATION_ID);
+        assertThat(installations.get(0).account()).isEqualTo(account);
+        assertThat(installations.get(0).permissions()).containsExactlyInAnyOrder("issues:read", "metadata:read", "pull_requests:read");
 
-        final var repos = installations.get(0).getRepos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
+        final var repos = installations.get(0).repos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
         assertThat(repos).hasSize(2);
         assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
         assertThat(repos.get(1).getId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
@@ -118,10 +118,10 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
-        assertThat(installations.get(0).getId()).isEqualTo(INSTALLATION_ID);
-        assertThat(installations.get(0).getAccount()).isEqualTo(account);
+        assertThat(installations.get(0).id()).isEqualTo(INSTALLATION_ID);
+        assertThat(installations.get(0).account()).isEqualTo(account);
 
-        final var repos = installations.get(0).getRepos();
+        final var repos = installations.get(0).repos();
         assertThat(repos).hasSize(1);
         assertThat(repos.get(0).getId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
     }
@@ -142,7 +142,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
-        final var repos = installations.get(0).getRepos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
+        final var repos = installations.get(0).repos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
         assertThat(repos).hasSize(2);
         assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
         assertThat(repos.get(1).getId()).isEqualTo(MARKETPLACE_FRONTEND_ID);
@@ -164,7 +164,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
-        final var repos = installations.get(0).getRepos();
+        final var repos = installations.get(0).repos();
         assertThat(repos).hasSize(1);
         assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
     }
@@ -186,10 +186,10 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
-        final var repos = installations.get(0).getRepos();
+        final var repos = installations.get(0).repos();
         assertThat(repos).hasSize(1);
         assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
-        assertThat(installations.get(0).getSuspendedAt().toInstant()).isEqualTo(ZonedDateTime.parse("2023-11-13T14:21:39Z").toInstant());
+        assertThat(installations.get(0).suspendedAt().toInstant()).isEqualTo(ZonedDateTime.parse("2023-11-13T14:21:39Z").toInstant());
     }
 
     @Test
@@ -209,9 +209,21 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
-        final var repos = installations.get(0).getRepos();
+        final var repos = installations.get(0).repos();
         assertThat(repos).hasSize(1);
         assertThat(repos.get(0).getId()).isEqualTo(CAIRO_STREAMS_ID);
+    }
+
+    @Test
+    @Order(8)
+    void should_handle_installation_new_permissions_accepted_event() {
+        // When
+        processEventsFromPaths("installation", "/github/webhook/events/installation/new_permissions_accepted.json");
+
+        // Then
+        final var installations = githubAppInstallationEntityRepository.findAll();
+        assertThat(installations).hasSize(1);
+        assertThat(installations.get(0).permissions()).containsExactlyInAnyOrder("issues:read", "issues:write", "metadata:read", "pull_requests:read");
     }
 
     @Test
@@ -245,7 +257,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         // Then
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
-        final var repos = installations.get(0).getRepos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
+        final var repos = installations.get(0).repos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
         assertThat(repos).hasSize(2);
         assertThat(repos.get(0).getId()).isEqualTo(715033198);
         assertThat(repos.get(1).getId()).isEqualTo(715033315);
@@ -256,7 +268,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         // Then
         final var installationsUpdated = githubAppInstallationEntityRepository.findAll();
         assertThat(installationsUpdated).hasSize(1);
-        final var reposUpdated = installationsUpdated.get(0).getRepos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
+        final var reposUpdated = installationsUpdated.get(0).repos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
         assertThat(reposUpdated).hasSize(1);
         assertThat(reposUpdated.get(0).getId()).isEqualTo(715033198);
     }
@@ -276,7 +288,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
         // Then
         final var installation = githubAppInstallationEntityRepository.findById(INSTALLATION_ID).orElseThrow();
-        assertThat(installation.getRepos()).hasSize(2);
+        assertThat(installation.repos()).hasSize(2);
     }
 
     @Test
@@ -290,7 +302,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
         // Then
         final var installation = githubAppInstallationEntityRepository.findById(INSTALLATION_ID).orElseThrow();
-        assertThat(installation.getRepos()).hasSize(3);
+        assertThat(installation.repos()).hasSize(3);
         assertThat(githubRepoEntityRepository.findById(493795809L)).isPresent();
         assertThat(githubRepoEntityRepository.findAll().stream().filter(r -> r.getOwnerLogin().equals("onlydustxyz") && r.getName().equals("cairo-streams"))).hasSize(2);
     }

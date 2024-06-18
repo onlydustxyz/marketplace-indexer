@@ -27,8 +27,12 @@ public class GithubAppInstallation {
                 .id(event.getInstallationId())
                 .account(owner)
                 .repos(repos)
-                .permissions(event.getPermissions().entrySet().stream().flatMap(GithubAppInstallation::toPermissions).collect(toSet()))
+                .permissions(getPermissions(event))
                 .build();
+    }
+
+    public static Set<String> getPermissions(InstallationEvent event) {
+        return event.getPermissions().entrySet().stream().flatMap(GithubAppInstallation::toPermissions).collect(toSet());
     }
 
     private static Stream<? extends String> toPermissions(Map.Entry<String, InstallationEvent.Permission> entry) {

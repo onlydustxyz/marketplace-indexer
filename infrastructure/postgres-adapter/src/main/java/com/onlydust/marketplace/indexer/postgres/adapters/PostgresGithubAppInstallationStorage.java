@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @AllArgsConstructor
 public class PostgresGithubAppInstallationStorage implements GithubAppInstallationStorage {
@@ -28,9 +29,9 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
         final var installation = githubAppInstallationEntityRepository.findById(installationId)
                 .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
 
-        installation.getRepos().addAll(
+        installation.repos().addAll(
                 repos.stream()
-                        .filter(repo -> installation.getRepos().stream().noneMatch(existing -> existing.getId().equals(repo.getId())))
+                        .filter(repo -> installation.repos().stream().noneMatch(existing -> existing.getId().equals(repo.getId())))
                         .map(GithubRepoEntity::of).toList()
         );
 
@@ -47,7 +48,7 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
     public void removeRepos(Long installationId, List<Long> repoIds) {
         final var installation = githubAppInstallationEntityRepository.findById(installationId)
                 .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
-        installation.getRepos().removeIf(repo -> repoIds.contains(repo.getId()));
+        installation.repos().removeIf(repo -> repoIds.contains(repo.getId()));
         githubAppInstallationEntityRepository.save(installation);
     }
 
@@ -55,14 +56,19 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
     public void setSuspendedAt(Long installationId, Date suspendedAt) {
         final var installation = githubAppInstallationEntityRepository.findById(installationId)
                 .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
-        githubAppInstallationEntityRepository.save(installation.toBuilder()
-                .suspendedAt(suspendedAt)
-                .build());
+        githubAppInstallationEntityRepository.save(installation.suspendedAt(suspendedAt));
     }
 
     @Override
     public Optional<Long> findInstallationIdByAccount(Long accountId) {
         return githubAppInstallationEntityRepository.findByAccountId(accountId)
-                .map(GithubAppInstallationEntity::getId);
+                .map(GithubAppInstallationEntity::id);
+    }
+
+    @Override
+    public void setPermissions(Long installationId, Set<String> permissions) {
+        final var installation = githubAppInstallationEntityRepository.findById(installationId)
+                .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
+        githubAppInstallationEntityRepository.save(installation.permissions(permissions));
     }
 }
