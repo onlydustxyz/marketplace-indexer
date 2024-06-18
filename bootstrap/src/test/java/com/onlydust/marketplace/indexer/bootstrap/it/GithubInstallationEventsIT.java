@@ -50,8 +50,12 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         final var event = "/github/webhook/events/installation/installation_created_new.json";
 
         // When
-        final var response = client.post().uri(getApiURI("/github-app/webhook")).header("X-GitHub-Event", "installation").header("X-Hub-Signature-256",
-                "sha256=invalid").bodyValue(event).exchange();
+        final var response = client.post()
+                .uri(getApiURI("/github-app/webhook"))
+                .header("X-GitHub-Event", "installation")
+                .header("X-Hub-Signature-256", "sha256=invalid")
+                .bodyValue(event)
+                .exchange();
 
         // Then
         response.expectStatus().isUnauthorized();
@@ -82,6 +86,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(installations).hasSize(1);
         assertThat(installations.get(0).getId()).isEqualTo(OLD_INSTALLATION_ID);
         assertThat(installations.get(0).getAccount()).isEqualTo(account);
+        assertThat(installations.get(0).getPermissions()).containsExactlyInAnyOrder("issues:read", "metadata:read", "pull_requests:read");
 
         final var repos = installations.get(0).getRepos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
         assertThat(repos).hasSize(2);
@@ -187,7 +192,6 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         assertThat(installations.get(0).getSuspendedAt().toInstant()).isEqualTo(ZonedDateTime.parse("2023-11-13T14:21:39Z").toInstant());
     }
 
-
     @Test
     @Order(8)
     void should_handle_installation_unsuspended_event() {
@@ -274,7 +278,6 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         final var installation = githubAppInstallationEntityRepository.findById(INSTALLATION_ID).orElseThrow();
         assertThat(installation.getRepos()).hasSize(2);
     }
-
 
     @Test
     @Order(12)

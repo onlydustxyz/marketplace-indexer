@@ -1,8 +1,10 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstallation;
+import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import java.util.Date;
 import java.util.List;
@@ -32,11 +34,16 @@ public class GithubAppInstallationEntity {
 
     Date suspendedAt;
 
+    @NonNull
+    @Type(StringArrayType.class)
+    String[] permissions;
+
     public static GithubAppInstallationEntity of(GithubAppInstallation installation) {
         return GithubAppInstallationEntity.builder()
                 .id(installation.getId())
                 .account(GithubAccountEntity.of(installation.getAccount()))
                 .repos(installation.getRepos().stream().map(GithubRepoEntity::of).toList())
+                .permissions(installation.getPermissions().toArray(String[]::new))
                 .build();
     }
 }

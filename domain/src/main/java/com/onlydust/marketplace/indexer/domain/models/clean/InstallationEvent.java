@@ -5,12 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Map;
+
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 public abstract class InstallationEvent extends Event {
     Long installationId;
     Action action;
+    Map<String, Permission> permissions;
 
     public enum Action {
         CREATED, DELETED, ADDED, REMOVED, SUSPEND, UNSUSPEND;
@@ -26,5 +29,9 @@ public abstract class InstallationEvent extends Event {
                 default -> null;
             };
         }
+    }
+
+    public enum Permission {
+        read, write
     }
 }
