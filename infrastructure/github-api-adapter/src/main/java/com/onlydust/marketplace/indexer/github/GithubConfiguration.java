@@ -3,7 +3,8 @@ package com.onlydust.marketplace.indexer.github;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.github.adapters.GithubAppContextAdapter;
-import com.onlydust.marketplace.indexer.github.adapters.GithubAppJwtProvider;
+import com.onlydust.marketplace.indexer.github.adapters.GithubAppJwtTokenProvider;
+import onlydust.com.marketplace.kernel.infrastructure.github.GithubAppJwtBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -44,8 +45,8 @@ public class GithubConfiguration {
     public GithubHttpClient githubAppHttpClient(final ObjectMapper objectMapper,
                                                 final HttpClient httpClient,
                                                 final GithubConfig githubConfigForApp,
-                                                final GithubAppJwtProvider githubAppJwtProvider) {
-        return new GithubHttpClient(objectMapper, httpClient, githubConfigForApp, githubAppJwtProvider);
+                                                final GithubAppJwtTokenProvider githubAppJwtTokenProvider) {
+        return new GithubHttpClient(objectMapper, httpClient, githubConfigForApp, githubAppJwtTokenProvider);
     }
 
     @Bean
@@ -54,10 +55,14 @@ public class GithubConfiguration {
     }
 
     @Bean
-    public GithubAppJwtProvider githubAppJwtProvider(final GithubAppJwtProvider.Config githubAppConfig) {
-        return new GithubAppJwtProvider(githubAppConfig);
+    public GithubAppJwtTokenProvider githubAppJwtTokenProvider(final GithubAppJwtBuilder githubAppJwtBuilder) {
+        return new GithubAppJwtTokenProvider(githubAppJwtBuilder);
     }
 
+    @Bean
+    public GithubAppJwtBuilder githubAppJwtBuilder(final GithubAppJwtBuilder.Config githubAppConfig) {
+        return new GithubAppJwtBuilder(githubAppConfig);
+    }
 
     @Bean
     public GithubTokenProvider tokenProvider(final GithubConfig githubConfig,

@@ -37,13 +37,13 @@ import com.onlydust.marketplace.indexer.domain.services.observers.GithubOutboxOb
 import com.onlydust.marketplace.indexer.domain.services.observers.IndexingOutboxObserver;
 import com.onlydust.marketplace.indexer.github.GithubConfig;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
-import com.onlydust.marketplace.indexer.github.adapters.GithubAppJwtProvider;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;
 import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresUserIndexingJobStorage;
 import io.micrometer.core.instrument.MeterRegistry;
+import onlydust.com.marketplace.kernel.infrastructure.github.GithubAppJwtBuilder;
 import onlydust.com.marketplace.kernel.port.output.OutboxPort;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -66,8 +66,8 @@ public class DomainConfiguration {
 
     @Bean
     @ConfigurationProperties("infrastructure.github-app")
-    GithubAppJwtProvider.Config githubAppConfig() {
-        return new GithubAppJwtProvider.Config();
+    GithubAppJwtBuilder.Config githubAppConfig() {
+        return new GithubAppJwtBuilder.Config();
     }
 
     @Bean
