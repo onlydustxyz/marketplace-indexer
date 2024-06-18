@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface GithubAppInstallationStorage {
     void save(GithubAppInstallation installation);
@@ -19,4 +20,6 @@ public interface GithubAppInstallationStorage {
     void setSuspendedAt(Long installationId, Date suspendedAt);
 
     Optional<Long> findInstallationIdByAccount(Long accountId);
+
+    void setPermissions(Long installationId, Set<String> permissions);
 }

@@ -105,3 +105,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000050_fix_job_repo_visibility.sql
   - include:
       file: db/changelog/changelogs/00000051_create_indexer_outbox.sql
+  - include:
+      file: db/changelog/changelogs/00000052_add_installation_permissions.sql

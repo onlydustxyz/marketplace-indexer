@@ -32,7 +32,12 @@ public class InstallationEventProcessorService implements EventHandler<RawInstal
             case REMOVED -> onRemoved((InstallationRemovedEvent) event);
             case SUSPEND -> onSuspended((InstallationSuspendedEvent) event);
             case UNSUSPEND -> onUnsuspended((InstallationUnsuspendedEvent) event);
+            case NEW_PERMISSIONS_ACCEPTED -> onNewPermissionsAccepted((InstallationNewPermissionsAcceptedEvent) event);
         }
+    }
+
+    private void onNewPermissionsAccepted(InstallationNewPermissionsAcceptedEvent event) {
+        githubAppInstallationStorage.setPermissions(event.getInstallationId(), GithubAppInstallation.getPermissions(event));
     }
 
     private void onUnsuspended(InstallationUnsuspendedEvent event) {
@@ -112,6 +117,8 @@ public class InstallationEventProcessorService implements EventHandler<RawInstal
             case SUSPEND -> InstallationSuspendedEvent.of(rawEvent);
 
             case UNSUSPEND -> InstallationUnsuspendedEvent.of(rawEvent);
+
+            case NEW_PERMISSIONS_ACCEPTED -> InstallationNewPermissionsAcceptedEvent.of(rawEvent);
         };
     }
 }
