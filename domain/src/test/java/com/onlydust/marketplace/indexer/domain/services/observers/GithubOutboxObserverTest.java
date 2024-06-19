@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class GithubOutboxObserverTest {
     private final OutboxPort outboxPort = mock(OutboxPort.class);
@@ -157,5 +156,18 @@ class GithubOutboxObserverTest {
         verify(outboxPort).push(eventCaptor.capture());
         final var capturedEvent = eventCaptor.getValue();
         assertThat(capturedEvent.id()).isEqualTo(2172727402L);
+    }
+
+    @Test
+    void on_pull_request_comment_created() {
+        // Given
+        final var event = RawStorageWriterStub.load("/github/events/pr_comment/marketplace-frontend-pr-2335-comment-created.json",
+                RawIssueCommentEvent.class);
+
+        // When
+        githubOutboxObserver.on(event);
+
+        // Then
+        verifyNoInteractions(outboxPort);
     }
 }
