@@ -48,7 +48,7 @@ public class GithubOutboxObserver implements GithubObserver {
                     .authorId(event.getPullRequest().getAuthor().getId())
                     .createdAt(event.getPullRequest().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
                     .build());
-            
+
             case "closed" -> {
                 if (event.getPullRequest().getMerged())
                     outboxPort.push(OnPullRequestMerged.builder()
@@ -64,6 +64,9 @@ public class GithubOutboxObserver implements GithubObserver {
 
     @Override
     public void on(RawIssueCommentEvent event) {
+        if (event.getIssue().getPullRequest() != null)
+            return;
+        
         switch (event.getAction()) {
             case "created" -> outboxPort.push(OnGithubCommentCreated.builder()
                     .id(event.getComment().getId())
