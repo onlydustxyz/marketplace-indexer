@@ -169,6 +169,11 @@ public class DomainConfiguration {
     }
 
     @Bean
+    public EventHandler<RawIssueCommentEvent> issueCommentEventHandler(final GithubObserver githubObserver) {
+        return new IssueCommentEventProcessorService(githubObserver);
+    }
+
+    @Bean
     public EventHandler<RawPullRequestEvent> pullRequestEventHandler(final Exposer<CleanRepo> repoContributorsExposer,
                                                                      final PullRequestIndexer livePullRequestIndexer,
                                                                      final GithubAppContext githubAppContext,

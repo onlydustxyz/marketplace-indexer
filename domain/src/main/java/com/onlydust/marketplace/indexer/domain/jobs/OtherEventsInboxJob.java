@@ -17,6 +17,7 @@ public class OtherEventsInboxJob extends Job {
     private final EventHandler<RawRepositoryEvent> repositoryEventHandler;
     private final EventHandler<RawStarEvent> starEventHandler;
     private final EventHandler<RawIssueEvent> issueEventHandler;
+    private final EventHandler<RawIssueCommentEvent> issueCommentEventHandler;
     private final EventHandler<RawPullRequestEvent> pullRequestEventHandler;
 
     @Override
@@ -40,6 +41,10 @@ public class OtherEventsInboxJob extends Job {
                     break;
                 case "issues":
                     issueEventHandler.process(event.payload(RawIssueEvent.class));
+                    eventInboxStorage.ack(event.getId());
+                    break;
+                case "issue_comment":
+                    issueCommentEventHandler.process(event.payload(RawIssueCommentEvent.class));
                     eventInboxStorage.ack(event.getId());
                     break;
                 case "pull_request", "pull_request_review":
