@@ -15,8 +15,10 @@ public class JobsConfiguration {
                                                    final EventHandler<RawRepositoryEvent> repositoryEventHandler,
                                                    final EventHandler<RawStarEvent> starEventHandler,
                                                    final EventHandler<RawIssueEvent> issueEventHandler,
+                                                   final EventHandler<RawIssueCommentEvent> issueCommentEventHandler,
                                                    final EventHandler<RawPullRequestEvent> pullRequestEventHandler) {
-        return new OtherEventsInboxJob(eventInboxStorage, repositoryEventHandler, starEventHandler, issueEventHandler, pullRequestEventHandler);
+        return new OtherEventsInboxJob(eventInboxStorage, repositoryEventHandler, starEventHandler, issueEventHandler, issueCommentEventHandler,
+                pullRequestEventHandler);
     }
 
     @Bean
