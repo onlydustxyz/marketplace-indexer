@@ -23,7 +23,7 @@ public class OtherEventsInboxJob extends Job {
     @Override
     protected void execute() {
         Optional<RawEvent> event;
-        while ((event = eventInboxStorage.peek("repository", "star", "issues", "pull_request", "pull_request_review")).isPresent())
+        while ((event = eventInboxStorage.peek("repository", "star", "issues", "issue_comment", "pull_request", "pull_request_review")).isPresent())
             process(event.get());
     }
 
