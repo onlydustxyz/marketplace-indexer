@@ -40,4 +40,21 @@ class IssueEventProcessorServiceTest {
         verify(issueIndexer, never()).indexIssue(any(), any(), any());
         verify(githubObserver).on(event);
     }
+
+
+    @Test
+    void should_handle_issue_deleted_event() {
+        // Given
+        final var event = RawStorageWriterStub.load("/github/events/issue/marketplace-indexer-issue-160-deleted.json", RawIssueEvent.class);
+
+        // When
+        issueEventProcessorService.process(event);
+
+        // Then
+        verify(rawStorageWriter).deleteIssue(2346568062L);
+        verify(issueStorage).delete(2346568062L);
+        verify(contributionStorage).deleteAllByRepoIdAndGithubNumber(699283256L, 160L);
+        verify(issueIndexer, never()).indexIssue(any(), any(), any());
+        verify(githubObserver).on(event);
+    }
 }

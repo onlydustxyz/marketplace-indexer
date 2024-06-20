@@ -32,7 +32,7 @@ public class IssueEventProcessorService implements EventHandler<RawIssueEvent> {
 
         githubObserver.on(event);
 
-        if (action.equals("transferred")) {
+        if (action.equals("transferred") || action.equals("deleted")) {
             rawStorageWriter.deleteIssue(event.getIssue().getId());
             contributionStorage.deleteAllByRepoIdAndGithubNumber(event.getRepository().getId(), event.getIssue().getNumber());
             issueStorage.delete(event.getIssue().getId());
