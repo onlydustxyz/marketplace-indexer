@@ -66,7 +66,10 @@ public class GithubOutboxObserver implements GithubObserver {
     public void on(RawIssueCommentEvent event) {
         if (event.getIssue().getPullRequest() != null)
             return;
-        
+
+        if (!event.getComment().getAuthor().getType().equals("User"))
+            return;
+
         switch (event.getAction()) {
             case "created" -> outboxPort.push(OnGithubCommentCreated.builder()
                     .id(event.getComment().getId())

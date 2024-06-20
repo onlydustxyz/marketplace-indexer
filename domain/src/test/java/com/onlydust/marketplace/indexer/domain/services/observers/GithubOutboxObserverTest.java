@@ -123,6 +123,20 @@ class GithubOutboxObserverTest {
         assertThat(capturedEvent.body()).isEqualTo("Hey I want to do this issue!");
     }
 
+
+    @Test
+    void on_issue_comment_created_by_bot() {
+        // Given
+        final var event = RawStorageWriterStub.load("/github/events/issue_comment/marketplace-api-issue-812-comment-created-by-bot.json",
+                RawIssueCommentEvent.class);
+
+        // When
+        githubOutboxObserver.on(event);
+
+        // Then
+        verifyNoInteractions(outboxPort);
+    }
+
     @Test
     void on_issue_comment_edited() {
         // Given
