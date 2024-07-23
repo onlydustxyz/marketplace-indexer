@@ -15,6 +15,8 @@ import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserRepository
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserSocialAccountsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -43,6 +45,9 @@ public class UserIndexingIT extends IntegrationTest {
 
     @BeforeEach
     void setup() {
+        userSocialAccountsRepository.deleteAll();
+        userRepository.deleteAll();
+        githubWireMockServer.resetAll();
         mapper.configure(DeserializationFeature.USE_LONG_FOR_INTS, true);
     }
 
@@ -74,8 +79,9 @@ public class UserIndexingIT extends IntegrationTest {
         assertThat(userIndexingJobEntityRepository.findById(ANTHONY)).isPresent();
     }
 
-    @Test
-    public void should_retry_upon_some_failures() {
+    @ParameterizedTest
+    @EnumSource(value = HttpStatus.class, names = {"BAD_GATEWAY", "SERVICE_UNAVAILABLE", "GATEWAY_TIMEOUT"})
+    public void should_retry_upon_some_failures(HttpStatus errorStatus) {
         // Given
         final var ANTHONY = 43467246L;
 
@@ -83,7 +89,7 @@ public class UserIndexingIT extends IntegrationTest {
                 .inScenario("Retry")
                 .whenScenarioStateIs(fromState)
                 .willSetStateTo(toState)
-                .willReturn(aResponse().withStatus(HttpStatus.BAD_GATEWAY.value()).withBody("Internal server error")));
+                .willReturn(aResponse().withStatus(errorStatus.value()).withBody("Internal server error")));
 
         failureStub.apply(STARTED, "First failure");
         failureStub.apply("First failure", "Second failure");

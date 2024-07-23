@@ -18,7 +18,7 @@ public class RetriedOnErrorHttpFetcher implements Fetcher {
         var response = fetcher.fetch(request);
 
         return switch (response.statusCode()) {
-            case 502 -> throw new RetryException("Received %s status from GitHub API".formatted(response.statusCode()));
+            case 502, 503, 504 -> throw new RetryException("Received %s status from GitHub API".formatted(response.statusCode()));
             default -> response;
         };
     }
