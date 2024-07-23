@@ -17,9 +17,13 @@ public class RetriedOnErrorHttpFetcher implements Fetcher {
     public HttpResponse<byte[]> fetch(HttpRequest request) {
         var response = fetcher.fetch(request);
 
-        return switch (response.statusCode()) {
-            case 502, 503, 504 -> throw new RetryException("Received %s status from GitHub API".formatted(response.statusCode()));
-            default -> response;
-        };
+        if (isServerError(response))
+            throw new RetryException("Received %s status from GitHub API".formatted(response.statusCode()));
+
+        return response;
+    }
+
+    private boolean isServerError(HttpResponse<?> httpResponse) {
+        return httpResponse.statusCode() >= 500;
     }
 }

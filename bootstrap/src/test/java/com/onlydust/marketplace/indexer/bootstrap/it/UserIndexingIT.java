@@ -80,7 +80,7 @@ public class UserIndexingIT extends IntegrationTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = HttpStatus.class, names = {"BAD_GATEWAY", "SERVICE_UNAVAILABLE", "GATEWAY_TIMEOUT"})
+    @EnumSource(value = HttpStatus.class, names = {"INTERNAL_SERVER_ERROR", "BAD_GATEWAY", "SERVICE_UNAVAILABLE", "GATEWAY_TIMEOUT"})
     public void should_retry_upon_some_failures(HttpStatus errorStatus) {
         // Given
         final var ANTHONY = 43467246L;
