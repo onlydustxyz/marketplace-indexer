@@ -1,13 +1,14 @@
 package com.onlydust.marketplace.indexer.github;
 
-import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Nullable;
 import java.net.http.HttpResponse;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 
+import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.internalServerError;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 
@@ -33,7 +34,7 @@ public class GithubPage<T> implements Iterator<T> {
             case 403, 404, 422:
                 break;
             default:
-                throw OnlyDustException.internalServerError("Received incorrect status (" + httpResponse.statusCode() + ") when fetching github API");
+                throw internalServerError("Received incorrect status (" + httpResponse.statusCode() + ") when fetching github API");
         }
     }
 
@@ -43,10 +44,10 @@ public class GithubPage<T> implements Iterator<T> {
     }
 
     @Override
+    @Nullable
     public T next() {
-        if (content.isEmpty()) {
+        if (content.isEmpty())
             decodeResponse(client.fetch(links.getNext()));
-        }
 
         return content.poll();
     }

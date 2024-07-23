@@ -2,15 +2,14 @@ package com.onlydust.marketplace.indexer.github;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.HttpStatus;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.Optional;
@@ -24,7 +23,7 @@ import static java.util.function.Function.identity;
 @AllArgsConstructor
 public class GithubHttpClient {
     private final ObjectMapper objectMapper;
-    private final HttpClient httpClient;
+    private final Fetcher httpFetcher;
     private final GithubConfig config;
     private final GithubTokenProvider tokenProvider;
 
@@ -49,11 +48,11 @@ public class GithubHttpClient {
     }
 
     public HttpResponse<byte[]> fetch(String method, String path) {
-        return fetch(method, URI.create(config.getBaseUri() + path), HttpRequest.BodyPublishers.noBody());
+        return fetch(method, URI.create(config.getBaseUri() + path), BodyPublishers.noBody());
     }
 
     public HttpResponse<byte[]> fetch(URI uri) {
-        return fetch("GET", uri, HttpRequest.BodyPublishers.noBody());
+        return fetch("GET", uri, BodyPublishers.noBody());
     }
 
     private HttpResponse<byte[]> fetch(String method, URI uri, HttpRequest.BodyPublisher bodyPublisher) {
@@ -61,39 +60,7 @@ public class GithubHttpClient {
 
         tokenProvider.accessToken().ifPresent(token -> requestBuilder.header("Authorization", "Bearer " + token));
 
-        return fetch(requestBuilder.build());
-    }
-
-    private HttpResponse<byte[]> fetch(HttpRequest request) {
-        for (var retryCount = 0; retryCount < config.getMaxRetries(); ++retryCount) {
-            try {
-                try {
-                    LOGGER.debug("Fetching {} {}", request.method(), request.uri());
-                    final var response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
-                    if (response.statusCode() == HttpStatus.SC_BAD_GATEWAY) {
-                        throw new IOException("502 BAD GATEWAY received");
-                    }
-                    return isRedirect(response) ? redirect(request, response) : response;
-                } catch (IOException e) {
-                    LOGGER.warn("Error while fetching github ({}), will retry in {}ms", request.uri(), config.getRetryInterval(), e);
-                    Thread.sleep(config.getRetryInterval());
-                    LOGGER.debug("Retry {}/{}", retryCount + 1, config.getMaxRetries());
-                }
-            } catch (InterruptedException e) {
-                throw internalServerError("Github fetch (" + request.uri() + ") interrupted", e);
-            }
-        }
-        throw internalServerError("Unable to fetch Github (" + request.uri() + "). Max retry reached");
-    }
-
-    private HttpResponse<byte[]> redirect(HttpRequest request, HttpResponse<byte[]> response) {
-        final var location = response.headers().firstValue("Location").orElseThrow(() -> internalServerError("Redirect without location header"));
-        final var redirectRequest = HttpRequest.newBuilder(request, (n, v) -> true).uri(overrideHost(URI.create(location))).build();
-        return fetch(redirectRequest);
-    }
-
-    private boolean isRedirect(HttpResponse<?> httpResponse) {
-        return httpResponse.statusCode() == HttpStatus.SC_MOVED_PERMANENTLY || httpResponse.statusCode() == HttpStatus.SC_MOVED_TEMPORARILY;
+        return httpFetcher.fetch(requestBuilder.build());
     }
 
     private URI overrideHost(URI uri) {
@@ -118,8 +85,9 @@ public class GithubHttpClient {
     public <ResponseBody> Optional<ResponseBody> graphql(String query, Object variables, Class<ResponseBody> responseClass) {
         try {
             final var body = Map.of("query", query, "variables", variables);
-            final var httpResponse = fetch("POST", URI.create(config.getBaseUri() + "/graphql"),
-                    HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body)));
+            final var httpResponse = fetch("POST",
+                    URI.create(config.getBaseUri() + "/graphql"),
+                    BodyPublishers.ofString(objectMapper.writeValueAsString(body)));
             return decode(httpResponse, b -> decodeBody(b, responseClass));
         } catch (JsonProcessingException e) {
             throw internalServerError("Unable to serialize graphql request body", e);

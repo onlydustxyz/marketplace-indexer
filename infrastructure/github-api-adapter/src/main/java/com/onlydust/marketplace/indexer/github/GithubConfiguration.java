@@ -34,19 +34,18 @@ public class GithubConfiguration {
 
     @Bean
     public GithubHttpClient githubHttpClient(final ObjectMapper objectMapper,
-                                             final HttpClient httpClient,
+                                             final Fetcher githubHttpFetcher,
                                              final GithubConfig githubConfig,
                                              final GithubTokenProvider tokenProvider) {
-        return new GithubHttpClient(objectMapper, httpClient, githubConfig, tokenProvider);
+        return new GithubHttpClient(objectMapper, githubHttpFetcher, githubConfig, tokenProvider);
     }
-
 
     @Bean
     public GithubHttpClient githubAppHttpClient(final ObjectMapper objectMapper,
-                                                final HttpClient httpClient,
+                                                final Fetcher githubAppHttpFetcher,
                                                 final GithubConfig githubConfigForApp,
                                                 final GithubAppJwtTokenProvider githubAppJwtTokenProvider) {
-        return new GithubHttpClient(objectMapper, httpClient, githubConfigForApp, githubAppJwtTokenProvider);
+        return new GithubHttpClient(objectMapper, githubAppHttpFetcher, githubConfigForApp, githubAppJwtTokenProvider);
     }
 
     @Bean
@@ -72,5 +71,27 @@ public class GithubConfiguration {
                 githubAppContextAdapter,
                 githubAuthorizationContext,
                 new DefaultGithubAccessTokenProvider(githubConfig));
+    }
+
+    @Bean
+    public Fetcher githubHttpFetcher(final HttpClient httpClient,
+                                     final GithubConfig githubConfig) {
+        return new RetriedOnErrorHttpFetcher(
+                new RedirectionHandledHttpFetcher(
+                        new RetriedOnErrorHttpFetcher(
+                                new HttpFetcher(httpClient)),
+                        githubConfig
+                ));
+    }
+
+    @Bean
+    public Fetcher githubAppHttpFetcher(final HttpClient httpClient,
+                                        final GithubConfig githubConfigForApp) {
+        return new RetriedOnErrorHttpFetcher(
+                new RedirectionHandledHttpFetcher(
+                        new RetriedOnErrorHttpFetcher(
+                                new HttpFetcher(httpClient)),
+                        githubConfigForApp
+                ));
     }
 }

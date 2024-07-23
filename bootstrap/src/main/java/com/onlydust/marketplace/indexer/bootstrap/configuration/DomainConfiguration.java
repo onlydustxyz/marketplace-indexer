@@ -88,7 +88,6 @@ public class DomainConfiguration {
         return new UserRefreshJobService.Config();
     }
 
-
     @Bean
     GithubRateLimitServiceAdapter githubRateLimitServiceAdapter(final GithubHttpClient githubHttpClient) {
         return new GithubRateLimitServiceAdapter(githubHttpClient);
@@ -281,7 +280,6 @@ public class DomainConfiguration {
         );
     }
 
-
     @Bean
     public PullRequestIndexer livePullRequestIndexer(
             final RawStorageReader liveRawStorageReader,
@@ -322,7 +320,6 @@ public class DomainConfiguration {
             final Exposer<CleanRepo> repoExposer) {
         return new RepoExposerIndexer(new RepoIndexingService(liveRawStorageReader, cachedUserIndexer), repoExposer);
     }
-
 
     @Bean
     public RepoIndexer cachedFullRepoIndexer(

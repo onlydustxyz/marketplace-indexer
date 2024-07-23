@@ -8,6 +8,4 @@ import lombok.ToString;
 public class GithubConfig {
     private String baseUri;
     private String personalAccessToken;
-    private Integer maxRetries;
-    private Integer retryInterval;
 }
