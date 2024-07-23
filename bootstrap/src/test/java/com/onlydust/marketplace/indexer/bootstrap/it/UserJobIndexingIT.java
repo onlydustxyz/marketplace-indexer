@@ -4,16 +4,12 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.UserIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserJobIndexingIT extends IntegrationTest {
     private final static Long ANTHONY = 43467246L;
 
@@ -27,9 +23,8 @@ public class UserJobIndexingIT extends IntegrationTest {
     }
 
     @Test
-    @Order(1)
     public void indexAllUsers() {
-        // Add repos to index
+        // Add users to index
         indexUser(ANTHONY).expectStatus().isNoContent();
 
         // Jobs are pending
@@ -48,11 +43,5 @@ public class UserJobIndexingIT extends IntegrationTest {
             assertThat(job.getFinishedAt()).isNotNull();
             assertThat(job.getStatus()).isEqualTo(JobStatus.SUCCESS);
         }
-    }
-
-    @Test
-    @Order(2)
-    public void should_index_user_on_demand() throws InterruptedException {
-        // TODO fill this test
     }
 }

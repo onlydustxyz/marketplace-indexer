@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
@@ -15,13 +16,17 @@ import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserSocialAcco
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.function.BiFunction;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserIndexingIT extends IntegrationTest {
@@ -67,6 +72,30 @@ public class UserIndexingIT extends IntegrationTest {
         assertThat(user.get().getCreatedAt()).isEqualToIgnoringNanos(ZonedDateTime.parse("2018-09-21T08:45:50Z"));
 
         assertThat(userIndexingJobEntityRepository.findById(ANTHONY)).isPresent();
+    }
+
+    @Test
+    public void should_retry_upon_some_failures() {
+        // Given
+        final var ANTHONY = 43467246L;
+
+        final BiFunction<String, String, StubMapping> failureStub = (fromState, toState) -> githubWireMockServer.stubFor(get(urlEqualTo("/user/" + ANTHONY))
+                .inScenario("Retry")
+                .whenScenarioStateIs(fromState)
+                .willSetStateTo(toState)
+                .willReturn(aResponse().withStatus(HttpStatus.BAD_GATEWAY.value()).withBody("Internal server error")));
+
+        failureStub.apply(STARTED, "First failure");
+        failureStub.apply("First failure", "Second failure");
+        failureStub.apply("Second failure", "Third failure");
+
+        // When
+        indexUser(ANTHONY)
+                // Then
+                .expectStatus()
+                .isNoContent();
+
+        githubWireMockServer.verify(4, getRequestedFor(urlEqualTo("/user/" + ANTHONY)));
     }
 
     private WebTestClient.ResponseSpec indexUser(Long userId) {
