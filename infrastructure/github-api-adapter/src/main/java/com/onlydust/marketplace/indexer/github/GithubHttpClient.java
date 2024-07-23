@@ -68,7 +68,7 @@ public class GithubHttpClient {
         for (var retryCount = 0; retryCount < config.getMaxRetries(); ++retryCount) {
             try {
                 try {
-                    LOGGER.info("Fetching {} {}", request.method(), request.uri());
+                    LOGGER.debug("Fetching {} {}", request.method(), request.uri());
                     final var response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
                     if (response.statusCode() == HttpStatus.SC_BAD_GATEWAY) {
                         throw new IOException("502 BAD GATEWAY received");
@@ -77,7 +77,7 @@ public class GithubHttpClient {
                 } catch (IOException e) {
                     LOGGER.warn("Error while fetching github ({}), will retry in {}ms", request.uri(), config.getRetryInterval(), e);
                     Thread.sleep(config.getRetryInterval());
-                    LOGGER.info("Retry {}/{}", retryCount + 1, config.getMaxRetries());
+                    LOGGER.debug("Retry {}/{}", retryCount + 1, config.getMaxRetries());
                 }
             } catch (InterruptedException e) {
                 throw internalServerError("Github fetch (" + request.uri() + ") interrupted", e);
