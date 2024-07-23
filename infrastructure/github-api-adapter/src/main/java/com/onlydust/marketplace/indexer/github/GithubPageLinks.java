@@ -25,9 +25,8 @@ public class GithubPageLinks {
 
         for (String link : header.split(",")) {
             final var match = PATTERN.matcher(link);
-            if (match.find()) {
+            if (match.find())
                 links.put(match.group(2), match.group(1));
-            }
         }
 
         return new GithubPageLinks(
