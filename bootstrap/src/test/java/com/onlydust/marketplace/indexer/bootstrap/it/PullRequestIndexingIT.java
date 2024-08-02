@@ -127,25 +127,9 @@ public class PullRequestIndexingIT extends IntegrationTest {
 
     @SneakyThrows
     private RawCommit details(RawCommit commit) {
-        return sanitized(mapper.readValue(getClass()
+        return mapper.readValue(getClass()
                         .getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/commits/%s.json".formatted(commit.getSha())),
-                RawCommit.class));
-    }
-
-    private RawCommit sanitized(RawCommit commit) {
-        return new RawCommit(commit.getSha(), commit.getAuthor(), commit.getCommitter(), commit.getFiles().stream().map(this::sanitized).toList());
-    }
-
-    private RawCommitFile sanitized(RawCommitFile file) {
-        return new RawCommitFile(
-                file.getSha(),
-                file.getFilename(),
-                file.getStatus(),
-                file.getAdditions(),
-                file.getDeletions(),
-                file.getChanges(),
-                ""
-        );
+                RawCommit.class).sanitized();
     }
 
     @Test

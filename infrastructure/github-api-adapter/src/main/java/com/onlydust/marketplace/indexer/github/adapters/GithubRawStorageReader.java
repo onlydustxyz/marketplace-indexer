@@ -79,6 +79,7 @@ public class GithubRawStorageReader implements RawStorageReader {
                     return null;
                 }))
                 .filter(Objects::nonNull)
+                .filter(RawCommit::nonMerge)
                 .map(RawCommit::sanitized)
                 .toList());
     }
