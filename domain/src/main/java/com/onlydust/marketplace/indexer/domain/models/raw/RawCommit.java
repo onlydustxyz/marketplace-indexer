@@ -12,17 +12,24 @@ import java.util.Optional;
 @ToString(callSuper = true)
 @AllArgsConstructor
 public class RawCommit extends JsonDocument {
-    @NonNull String sha;
+    @NonNull
+    String sha;
     RawShortAccount author;
     RawShortAccount committer;
     List<RawCommitFile> files;
+    List<RawCommit> parents;
 
     public RawCommit sanitized() {
         return new RawCommit(
                 sha,
                 author,
                 committer,
-                Optional.ofNullable(files).map(files -> files.stream().map(RawCommitFile::sanitized).toList()).orElse(null)
+                Optional.ofNullable(files).map(files -> files.stream().map(RawCommitFile::sanitized).toList()).orElse(null),
+                parents
         );
+    }
+
+    public boolean nonMerge() {
+        return parents == null || parents.size() == 1;
     }
 }

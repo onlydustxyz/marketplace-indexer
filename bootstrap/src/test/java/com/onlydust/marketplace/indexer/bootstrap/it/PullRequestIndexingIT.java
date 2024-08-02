@@ -122,30 +122,14 @@ public class PullRequestIndexingIT extends IntegrationTest {
     }
 
     private List<RawCommit> details(List<RawCommit> commits) {
-        return commits.stream().map(this::details).toList();
+        return commits.stream().map(this::details).filter(c -> c.getParents().size() < 2).toList();
     }
 
     @SneakyThrows
     private RawCommit details(RawCommit commit) {
-        return sanitized(mapper.readValue(getClass()
+        return mapper.readValue(getClass()
                         .getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/commits/%s.json".formatted(commit.getSha())),
-                RawCommit.class));
-    }
-
-    private RawCommit sanitized(RawCommit commit) {
-        return new RawCommit(commit.getSha(), commit.getAuthor(), commit.getCommitter(), commit.getFiles().stream().map(this::sanitized).toList());
-    }
-
-    private RawCommitFile sanitized(RawCommitFile file) {
-        return new RawCommitFile(
-                file.getSha(),
-                file.getFilename(),
-                file.getStatus(),
-                file.getAdditions(),
-                file.getDeletions(),
-                file.getChanges(),
-                ""
-        );
+                RawCommit.class).sanitized();
     }
 
     @Test
@@ -186,11 +170,11 @@ public class PullRequestIndexingIT extends IntegrationTest {
         assertThat(githubPullRequestRepository.findAll()).hasSize(2);
         final var githubPullRequest = githubPullRequestRepository.findAll().stream().filter(pr -> pr.getNumber() == 1258L).findFirst().orElseThrow();
         assertThat(githubPullRequest.getMainFileExtensions()).containsExactly("rs", "sql");
-        assertThat(githubPullRequest.getCommitCount()).isEqualTo(11);
+        assertThat(githubPullRequest.getCommitCount()).isEqualTo(10);
         final var commitCounts = githubPullRequest.getCommitCounts().stream().findFirst().orElseThrow();
         assertThat(commitCounts.getPullRequestId()).isEqualTo(pr1258.getId());
         assertThat(commitCounts.getAuthor().getId()).isEqualTo(anthony.getId());
-        assertThat(commitCounts.getCommitCount()).isEqualTo(11);
+        assertThat(commitCounts.getCommitCount()).isEqualTo(10);
     }
 
     private WebTestClient.ResponseSpec indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber, String token) {
