@@ -169,12 +169,12 @@ public class PullRequestIndexingIT extends IntegrationTest {
 
         assertThat(githubPullRequestRepository.findAll()).hasSize(2);
         final var githubPullRequest = githubPullRequestRepository.findAll().stream().filter(pr -> pr.getNumber() == 1258L).findFirst().orElseThrow();
-        assertThat(githubPullRequest.getMainFileExtensions()).containsExactly("rs", "sql");
-        assertThat(githubPullRequest.getCommitCount()).isEqualTo(10);
+        assertThat(githubPullRequest.getMainFileExtensions()).containsExactly("rs", "java", "sql");
+        assertThat(githubPullRequest.getCommitCount()).isEqualTo(9);
         final var commitCounts = githubPullRequest.getCommitCounts().stream().findFirst().orElseThrow();
         assertThat(commitCounts.getPullRequestId()).isEqualTo(pr1258.getId());
         assertThat(commitCounts.getAuthor().getId()).isEqualTo(anthony.getId());
-        assertThat(commitCounts.getCommitCount()).isEqualTo(10);
+        assertThat(commitCounts.getCommitCount()).isEqualTo(9);
     }
 
     private WebTestClient.ResponseSpec indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber, String token) {

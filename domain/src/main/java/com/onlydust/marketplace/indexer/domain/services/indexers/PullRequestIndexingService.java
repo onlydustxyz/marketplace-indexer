@@ -51,13 +51,12 @@ public class PullRequestIndexingService implements PullRequestIndexer {
                     LOGGER.warn("Unable to fetch pull request commits");
                     return List.of();
                 });
-        return commits.stream().map(commit -> Optional.ofNullable(commit.getAuthor())
-                .or(() -> Optional.ofNullable(commit.getCommitter()))
-                .map(user -> CleanCommit.of(commit, Optional.ofNullable(user.getId()).flatMap(userIndexer::indexUser).orElse(null)))
-                .orElseGet(() -> {
-                    LOGGER.warn("Unable to index commit {} for pull request {}/{}", commit.getSha(), repoId, pullRequestNumber);
-                    return null;
-                })).filter(Objects::nonNull).toList();
+        return commits.stream()
+                .map(commit -> Optional.ofNullable(commit.getAuthor())
+                        .or(() -> Optional.ofNullable(commit.getCommitter()))
+                        .map(user -> CleanCommit.of(commit, Optional.ofNullable(user.getId()).flatMap(userIndexer::indexUser).orElse(null)))
+                        .orElse(CleanCommit.of(commit, null)))
+                .toList();
     }
 
     private List<CleanIssue> indexClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {

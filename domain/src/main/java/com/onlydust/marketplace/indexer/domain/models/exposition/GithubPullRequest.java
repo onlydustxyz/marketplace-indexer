@@ -86,15 +86,14 @@ public class GithubPullRequest {
     }
 
     private static ReviewState aggregateReviewState(CleanPullRequest pullRequest) {
-        if (pullRequest.getReviews().stream().anyMatch(review -> review.getState().equals("CHANGES_REQUESTED"))) {
+        if (pullRequest.getReviews().stream().anyMatch(review -> review.getState().equals("CHANGES_REQUESTED")))
             return ReviewState.CHANGES_REQUESTED;
-        }
-        if (pullRequest.getReviews().stream().anyMatch(review -> review.getState().equals("APPROVED"))) {
+
+        if (pullRequest.getReviews().stream().anyMatch(review -> review.getState().equals("APPROVED")))
             return ReviewState.APPROVED;
-        }
+
         return pullRequest.getReviews().isEmpty() && pullRequest.getRequestedReviewers().isEmpty() ? ReviewState.PENDING_REVIEWER : ReviewState.UNDER_REVIEW;
     }
-
 
     public enum Status {
         OPEN,
@@ -103,13 +102,11 @@ public class GithubPullRequest {
         DRAFT;
 
         public static Status of(CleanPullRequest pullRequest) {
-            switch (pullRequest.getState()) {
-                case "open":
-                    return pullRequest.getDraft() ? Status.DRAFT : Status.OPEN;
-                case "closed":
-                    return pullRequest.getMerged() ? Status.MERGED : Status.CLOSED;
-            }
-            throw new RuntimeException("Unknown pull request state: " + pullRequest.getState());
+            return switch (pullRequest.getState()) {
+                case "open" -> pullRequest.getDraft() ? Status.DRAFT : Status.OPEN;
+                case "closed" -> pullRequest.getMerged() ? Status.MERGED : Status.CLOSED;
+                default -> throw new RuntimeException("Unknown pull request state: " + pullRequest.getState());
+            };
         }
     }
 
