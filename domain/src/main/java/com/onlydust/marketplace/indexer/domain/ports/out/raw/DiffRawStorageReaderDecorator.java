@@ -1,10 +1,8 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
-import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import lombok.Builder;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -80,10 +78,5 @@ public class DiffRawStorageReaderDecorator implements RawStorageReader {
     @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         return fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
-    }
-
-    @Override
-    public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
-        return fetcher.userPublicEvents(userId, since);
     }
 }

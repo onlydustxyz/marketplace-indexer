@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.github.adapters;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.GithubPage;
@@ -15,7 +16,7 @@ import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Slf4j
-public class GithubRawStorageReader implements RawStorageReader {
+public class GithubRawStorageReader implements RawStorageReader, PublicEventRawStorageReader {
     private final GithubHttpClient client;
 
     @Override

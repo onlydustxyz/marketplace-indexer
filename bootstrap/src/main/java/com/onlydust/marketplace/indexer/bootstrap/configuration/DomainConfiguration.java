@@ -124,6 +124,21 @@ public class DomainConfiguration {
                 .build();
     }
 
+
+    @Bean
+    PublicEventRawStorageReader cachedPublicEventRawStorageReader(
+            final PublicEventRawStorageReader githubPublicEventRawStorageReader,
+            final PostgresRawStorage postgresRawStorage
+    ) {
+        return CacheReadPublicEventRawStorageReaderDecorator.builder()
+                .fetcher(CacheWritePublicEventRawStorageReaderDecorator.builder()
+                        .fetcher(githubPublicEventRawStorageReader)
+                        .cache(postgresRawStorage)
+                        .build())
+                .cache(postgresRawStorage)
+                .build();
+    }
+
     @Bean
     public EventHandler<RawInstallationEvent> installationEventHandler(final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
                                                                        final GithubAppInstallationStorage githubAppInstallationStorage) {
@@ -188,6 +203,11 @@ public class DomainConfiguration {
     }
 
     @Bean
+    PublicEventRawStorageReader githubPublicEventRawStorageReader(final GithubHttpClient githubHttpClient) {
+        return new GithubRawStorageReader(githubHttpClient);
+    }
+
+    @Bean
     public UserIndexer cachedUserIndexer(final RawStorageReader cachedRawStorageReader, final MeterRegistry registry) {
         return new MonitoredUserIndexer(new UserIndexingService(cachedRawStorageReader), registry);
     }
@@ -207,10 +227,10 @@ public class DomainConfiguration {
                         new UserIndexingService(diffRawStorageReader), userExposer),
                 registry);
     }
-    
+
     @Bean
-    public UserStatsIndexer cachedUserStatsIndexer(final RawStorageReader cachedRawStorageReader) {
-        return new UserStatsIndexingService(cachedRawStorageReader);
+    public UserStatsIndexer cachedUserStatsIndexer(final PublicEventRawStorageReader cachedPublicEventRawStorageReader) {
+        return new UserStatsIndexingService(cachedPublicEventRawStorageReader);
     }
 
     @Bean

@@ -1,10 +1,8 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
-import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import lombok.Builder;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -92,11 +90,5 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
         final var closingIssues = fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
         closingIssues.ifPresent(data -> cache.saveClosingIssues(repoOwner, repoName, pullRequestNumber, data));
         return closingIssues;
-    }
-
-    @Override
-    public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
-        return fetcher.userPublicEvents(userId, since)
-                .peek(cache::savePublicEvent);
     }
 }
