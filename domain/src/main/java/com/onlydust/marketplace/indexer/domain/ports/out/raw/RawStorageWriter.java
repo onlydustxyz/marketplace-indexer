@@ -26,4 +26,6 @@ public interface RawStorageWriter {
     void saveClosingIssues(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues);
 
     void deleteIssue(Long id);
+
+    void saveUserEvent(RawEvent rawEvent);
 }

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @AllArgsConstructor
 @Slf4j
@@ -32,7 +34,7 @@ public class GithubWebhookRestApi {
         GithubSignatureVerifier.validateWebhook(payload, config.secret, signature);
 
         inbox.push(RawEvent.of(type, objectMapper.readTree(payload)));
-        return ResponseEntity.ok().build();
+        return ok().build();
     }
 
     @Data
