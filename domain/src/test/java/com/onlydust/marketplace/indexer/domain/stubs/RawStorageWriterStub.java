@@ -2,11 +2,13 @@ package com.onlydust.marketplace.indexer.domain.stubs;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
 import org.assertj.core.groups.Tuple;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -20,6 +22,7 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     final Map<Long, List<RawPullRequest>> repoPullRequests = new HashMap<>();
     final Map<Long, List<RawIssue>> repoIssues = new HashMap<>();
     final Map<Long, RawLanguages> repoLanguages = new HashMap<>();
+    final List<RawPublicEvent> publicEvents = new ArrayList<>();
 
     public static <T> T load(String path, Class<T> type) {
         final var inputStream = type.getResourceAsStream(path);
@@ -92,6 +95,12 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         return Optional.ofNullable(closingIssues.get(Tuple.tuple(repoOwner, repoName, pullRequestNumber)));
+    }
+
+    @Override
+    public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
+        return publicEvents.stream()
+                .filter(event -> event.actor().id().equals(userId) && event.createdAt().isAfter(since));
     }
 
     public void feedWith(RawRepo... repos) {
@@ -186,6 +195,11 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     @Override
     public void deleteIssue(Long id) {
         repoIssues.values().forEach(issues -> issues.removeIf(issue -> issue.getId().equals(id)));
+    }
+
+    @Override
+    public void savePublicEvent(RawPublicEvent rawEvent) {
+        publicEvents.add(rawEvent);
     }
 
     public List<RawRepo> repos() {
