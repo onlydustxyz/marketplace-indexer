@@ -7,9 +7,11 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+@Slf4j
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
@@ -42,11 +44,13 @@ public abstract class InstallationEvent extends GithubAppEvent {
             case UNSUSPEND -> InstallationUnsuspendedEvent.of(rawEvent);
 
             case NEW_PERMISSIONS_ACCEPTED -> InstallationNewPermissionsAcceptedEvent.of(rawEvent);
+
+            default -> null;
         };
     }
 
     public enum Action {
-        CREATED, DELETED, ADDED, REMOVED, SUSPEND, UNSUSPEND, NEW_PERMISSIONS_ACCEPTED
+        CREATED, DELETED, ADDED, REMOVED, SUSPEND, UNSUSPEND, NEW_PERMISSIONS_ACCEPTED, REMOVE
     }
 
     public enum Permission {

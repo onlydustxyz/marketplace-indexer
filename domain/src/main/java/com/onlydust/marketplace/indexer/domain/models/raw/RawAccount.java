@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.Value;
 
-import java.time.ZonedDateTime;
-
 @Value
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
@@ -26,5 +24,5 @@ public class RawAccount extends JsonDocument {
     String location;
     String blog;
     @JsonProperty("created_at")
-    ZonedDateTime createdAt;
+    String createdAt;
 }
