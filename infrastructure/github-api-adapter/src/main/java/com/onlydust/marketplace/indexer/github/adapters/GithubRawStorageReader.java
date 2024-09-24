@@ -1,12 +1,14 @@
 package com.onlydust.marketplace.indexer.github.adapters;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.GithubPage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -96,5 +98,11 @@ public class GithubRawStorageReader implements RawStorageReader {
         );
 
         return client.graphql(query, variables, RawPullRequestClosingIssues.class);
+    }
+
+    @Override
+    public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
+        final var page = new GithubPage<>(client, "/user/" + userId + "/events", RawPublicEvent[].class);
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false);
     }
 }
