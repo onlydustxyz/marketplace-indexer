@@ -27,5 +27,5 @@ public interface RawStorageWriter {
 
     void deleteIssue(Long id);
 
-    void saveUserEvent(RawEvent rawEvent);
+    void saveUserEvent(RawGithubAppEvent rawEvent);
 }

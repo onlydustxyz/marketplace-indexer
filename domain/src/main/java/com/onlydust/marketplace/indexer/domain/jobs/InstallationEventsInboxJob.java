@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawGithubAppEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
@@ -19,19 +19,19 @@ public class InstallationEventsInboxJob extends Job {
 
     @Override
     protected void execute() {
-        Optional<RawEvent> event;
+        Optional<RawGithubAppEvent> event;
         while ((event = eventInboxStorage.peek("installation", "installation_repositories")).isPresent())
             process(event.get());
     }
 
     @Retryable(maxAttempts = 6, backoff = @Backoff(delay = 500, multiplier = 2))
-    private void process(RawEvent event) {
+    private void process(RawGithubAppEvent event) {
         try {
             installationEventHandler.process(event.payload(RawInstallationEvent.class));
-            eventInboxStorage.ack(event.getId());
+            eventInboxStorage.ack(event.id());
         } catch (Exception e) {
             LOGGER.error("Error processing event: {}", event.toString(), e);
-            eventInboxStorage.nack(event.getId(), e.getMessage() == null ? e.toString() : e.getMessage());
+            eventInboxStorage.nack(event.id(), e.getMessage() == null ? e.toString() : e.getMessage());
         }
     }
 

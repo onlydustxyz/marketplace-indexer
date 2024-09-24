@@ -85,7 +85,7 @@ public class CacheReadRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public Stream<RawEvent> userEvents(Long userId, ZonedDateTime since) {
+    public Stream<RawGithubAppEvent> userEvents(Long userId, ZonedDateTime since) {
         if (cache.userEvents(userId, since).anyMatch(e -> true)) {
             return cache.userEvents(userId, since);
         } else {

@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
-public class StarEvent extends Event {
+public class StarEvent extends GithubAppEvent {
     CleanRepo repository;
 
     public static StarEvent of(RawStarEvent event) {

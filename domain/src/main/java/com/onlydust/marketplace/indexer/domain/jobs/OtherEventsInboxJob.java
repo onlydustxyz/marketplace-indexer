@@ -22,13 +22,13 @@ public class OtherEventsInboxJob extends Job {
 
     @Override
     protected void execute() {
-        Optional<RawEvent> event;
+        Optional<RawGithubAppEvent> event;
         while ((event = eventInboxStorage.peek("repository", "star", "issues", "issue_comment", "pull_request", "pull_request_review")).isPresent())
             process(event.get());
     }
 
     @Retryable(maxAttempts = 6, backoff = @Backoff(delay = 500, multiplier = 2))
-    private void process(RawEvent event) {
+    private void process(RawGithubAppEvent event) {
         try {
             switch (event.type()) {
                 case "repository":

@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
-public class RepositoryEvent extends Event {
+public class RepositoryEvent extends GithubAppEvent {
     Action action;
     CleanRepo repository;
 

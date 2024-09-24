@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services.indexers;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.events.Event;
+import com.onlydust.marketplace.indexer.domain.models.clean.events.GithubAppEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserPublicEventsIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import lombok.AllArgsConstructor;
@@ -15,8 +15,8 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
     private final RawStorageReader rawStorageReader;
 
     @Override
-    public Stream<Event> indexUser(Long userId, ZonedDateTime since) {
+    public Stream<GithubAppEvent> indexUser(Long userId, ZonedDateTime since) {
         LOGGER.debug("Indexing stats for user {} since {}", userId, since);
-        return rawStorageReader.userEvents(userId, since).flatMap(event -> Event.of(event).stream());
+        return rawStorageReader.userEvents(userId, since).flatMap(event -> GithubAppEvent.of(event).stream());
     }
 }

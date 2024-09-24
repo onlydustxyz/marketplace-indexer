@@ -1,13 +1,13 @@
 package com.onlydust.marketplace.indexer.domain.ports.out;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawGithubAppEvent;
 
 import java.util.Optional;
 
 public interface EventInboxStorage {
-    void save(RawEvent event);
+    void save(RawGithubAppEvent event);
 
-    Optional<RawEvent> peek(String... types);
+    Optional<RawGithubAppEvent> peek(String... types);
 
     void ack(Long id);
 

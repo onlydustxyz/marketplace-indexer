@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import lombok.AllArgsConstructor;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -23,6 +24,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     final PullRequestClosingIssueRepository pullRequestClosingIssueRepository;
     final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository;
     final PullRequestReviewsRepository pullRequestReviewsRepository;
+    final UserEventRepository userEventRepository;
 
     @Override
     public Optional<RawRepo> repo(Long repoId) {
@@ -86,6 +88,11 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     }
 
     @Override
+    public Stream<RawGithubAppEvent> userEvents(Long userId, ZonedDateTime since) {
+        return Stream.empty();
+    }
+
+    @Override
     public void saveUser(RawAccount user) {
         userRepository.save(RawUserEntity.of(user));
     }
@@ -138,5 +145,10 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     @Override
     public void deleteIssue(Long id) {
         issueRepository.deleteById(id);
+    }
+
+    @Override
+    public void saveUserEvent(RawGithubAppEvent rawEvent) {
+
     }
 }

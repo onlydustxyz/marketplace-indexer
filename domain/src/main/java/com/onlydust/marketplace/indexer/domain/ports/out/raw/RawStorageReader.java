@@ -32,5 +32,5 @@ public interface RawStorageReader {
 
     Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber);
 
-    Stream<RawEvent> userEvents(Long userId, ZonedDateTime since);
+    Stream<RawGithubAppEvent> userEvents(Long userId, ZonedDateTime since);
 }

@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawGithubAppEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
@@ -20,10 +20,10 @@ class EventsInboxJobTest {
 
     @Test
     public void should_ack_correct_events() {
-        final var events = new RawEvent[]{
-                new RawEvent(1L, "installation", mapper.createObjectNode()),
-                new RawEvent(2L, "installation", mapper.createObjectNode()),
-                new RawEvent(3L, "installation", mapper.createObjectNode()),
+        final var events = new RawGithubAppEvent[]{
+                new RawGithubAppEvent(1L, "installation", mapper.createObjectNode()),
+                new RawGithubAppEvent(2L, "installation", mapper.createObjectNode()),
+                new RawGithubAppEvent(3L, "installation", mapper.createObjectNode()),
         };
 
         when(eventInboxStorage.peek("installation", "installation_repositories"))
@@ -46,7 +46,7 @@ class EventsInboxJobTest {
                 .when(installationEventHandler).process(any());
 
         when(eventInboxStorage.peek("installation", "installation_repositories"))
-                .thenReturn(Optional.of(new RawEvent(1L, "installation", mapper.createObjectNode())))
+                .thenReturn(Optional.of(new RawGithubAppEvent(1L, "installation", mapper.createObjectNode())))
                 .thenReturn(Optional.empty());
 
         eventsInboxJob.run();

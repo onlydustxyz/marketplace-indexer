@@ -13,7 +13,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
-public abstract class InstallationEvent extends Event {
+public abstract class InstallationEvent extends GithubAppEvent {
     Long installationId;
     Action action;
     Map<String, Permission> permissions;
