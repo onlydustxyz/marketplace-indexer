@@ -28,5 +28,5 @@ public interface RawStorageWriter {
 
     void deleteIssue(Long id);
 
-    void saveUserEvent(RawPublicEvent rawEvent);
+    void savePublicEvent(RawPublicEvent rawEvent);
 }

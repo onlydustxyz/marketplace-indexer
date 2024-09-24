@@ -25,7 +25,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     final PullRequestClosingIssueRepository pullRequestClosingIssueRepository;
     final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository;
     final PullRequestReviewsRepository pullRequestReviewsRepository;
-    final UserEventRepository userEventRepository;
+    final PublicEventRepository publicEventRepository;
 
     @Override
     public Optional<RawRepo> repo(Long repoId) {
@@ -90,7 +90,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
 
     @Override
     public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
-        return Stream.empty();
+        return publicEventRepository.findAllByActorIdAndCreatedAtGreaterThan(userId, since).stream().map(RawPublicEventEntity::event);
     }
 
     @Override
@@ -149,7 +149,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     }
 
     @Override
-    public void saveUserEvent(RawPublicEvent rawEvent) {
-
+    public void savePublicEvent(RawPublicEvent rawEvent) {
+        publicEventRepository.save(RawPublicEventEntity.of(rawEvent));
     }
 }

@@ -97,6 +97,6 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     @Override
     public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
         return fetcher.userPublicEvents(userId, since)
-                .peek(cache::saveUserEvent);
+                .peek(cache::savePublicEvent);
     }
 }
