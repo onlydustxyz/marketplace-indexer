@@ -18,5 +18,22 @@ create trigger indexer_raw_public_events_set_tech_updated_at
     for each row
 execute function set_tech_updated_at();
 
-create index indexer_raw_public_events_actor_id_idx
-    on indexer_raw.public_events (actor_id);
+create index indexer_raw_public_events_actor_id_created_at_idx
+    on indexer_raw.public_events (actor_id, created_at);
+
+create table user_stats_indexing_jobs
+(
+    user_id              bigint primary key,
+    status               indexer.job_status       default 'PENDING'::indexer.job_status not null,
+    started_at           timestamp with time zone,
+    finished_at          timestamp with time zone,
+    last_event_timestamp timestamp with time zone,
+    tech_created_at      timestamp with time zone default now()                         not null,
+    tech_updated_at      timestamp with time zone default now()                         not null
+);
+
+create trigger user_stats_indexing_jobs_set_tech_updated_at
+    before update
+    on user_stats_indexing_jobs
+    for each row
+execute function set_tech_updated_at();

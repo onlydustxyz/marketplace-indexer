@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static java.util.Comparator.comparing;
+
 @AllArgsConstructor
 @Slf4j
 public class GithubRawStorageReader implements RawStorageReader, PublicEventRawStorageReader {
@@ -104,6 +106,8 @@ public class GithubRawStorageReader implements RawStorageReader, PublicEventRawS
     @Override
     public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
         final var page = new GithubPage<>(client, "/user/" + userId + "/events", RawPublicEvent[].class);
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false);
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false)
+                .takeWhile(event -> event.createdAt().isAfter(since))
+                .sorted(comparing(RawPublicEvent::createdAt));
     }
 }

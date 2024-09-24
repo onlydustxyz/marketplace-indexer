@@ -6,9 +6,9 @@ import com.onlydust.marketplace.indexer.domain.ports.in.contexts.AuthorizationCo
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserStatsIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserStatsIndexingJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.indexers.UserExposerIndexer;
 import com.onlydust.marketplace.indexer.github.adapters.GithubAppContextAdapter;
@@ -17,6 +17,7 @@ import com.onlydust.marketplace.indexer.rest.api.exception.OnlyDustExceptionRest
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.task.TaskExecutor;
 
 @Configuration
 @Profile("api")
@@ -25,9 +26,15 @@ public class RestApiConfiguration {
     public UsersRestApi usersRestApi(final UserIndexer cachedUserIndexer,
                                      final AuthorizationContext authorizationContext,
                                      final Exposer<CleanAccount> userExposer,
-                                     final UserStatsIndexer cachedUserStatsIndexer,
-                                     final UserIndexingJobStorage userIndexingJobStorage) {
-        return new UsersRestApi(new UserExposerIndexer(cachedUserIndexer, userExposer), cachedUserStatsIndexer, authorizationContext, userIndexingJobStorage);
+                                     final UserIndexingJobStorage userIndexingJobStorage,
+                                     final UserStatsIndexingJobManager userStatsIndexingJobManager,
+                                     final TaskExecutor applicationTaskExecutor) {
+        return new UsersRestApi(
+                new UserExposerIndexer(cachedUserIndexer, userExposer),
+                authorizationContext,
+                userIndexingJobStorage,
+                userStatsIndexingJobManager,
+                applicationTaskExecutor);
     }
 
     @Bean

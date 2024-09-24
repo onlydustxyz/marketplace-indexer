@@ -14,20 +14,19 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserStatsIndexingJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserStatsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.*;
 import com.onlydust.marketplace.indexer.domain.services.events.*;
 import com.onlydust.marketplace.indexer.domain.services.exposers.*;
 import com.onlydust.marketplace.indexer.domain.services.guards.RateLimitGuardedFullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
-import com.onlydust.marketplace.indexer.domain.services.jobs.RepoIndexingJobSchedulerService;
-import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
-import com.onlydust.marketplace.indexer.domain.services.jobs.UserIndexingJobSchedulerService;
-import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobService;
+import com.onlydust.marketplace.indexer.domain.services.jobs.*;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
@@ -87,6 +86,12 @@ public class DomainConfiguration {
     }
 
     @Bean
+    @ConfigurationProperties("application.user-stats-job")
+    UserStatsIndexingJobService.Config userStatsJobConfig() {
+        return new UserStatsIndexingJobService.Config();
+    }
+
+    @Bean
     GithubRateLimitServiceAdapter githubRateLimitServiceAdapter(final GithubHttpClient githubHttpClient) {
         return new GithubRateLimitServiceAdapter(githubHttpClient);
     }
@@ -126,15 +131,12 @@ public class DomainConfiguration {
 
 
     @Bean
-    PublicEventRawStorageReader cachedPublicEventRawStorageReader(
+    PublicEventRawStorageReader livePublicEventRawStorageReader(
             final PublicEventRawStorageReader githubPublicEventRawStorageReader,
             final PostgresRawStorage postgresRawStorage
     ) {
-        return CacheReadPublicEventRawStorageReaderDecorator.builder()
-                .fetcher(CacheWritePublicEventRawStorageReaderDecorator.builder()
-                        .fetcher(githubPublicEventRawStorageReader)
-                        .cache(postgresRawStorage)
-                        .build())
+        return CacheWritePublicEventRawStorageReaderDecorator.builder()
+                .fetcher(githubPublicEventRawStorageReader)
                 .cache(postgresRawStorage)
                 .build();
     }
@@ -229,8 +231,8 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public UserStatsIndexer cachedUserStatsIndexer(final PublicEventRawStorageReader cachedPublicEventRawStorageReader) {
-        return new UserStatsIndexingService(cachedPublicEventRawStorageReader);
+    public UserStatsIndexer cachedUserStatsIndexer(final PublicEventRawStorageReader livePublicEventRawStorageReader) {
+        return new UserStatsIndexingService(livePublicEventRawStorageReader);
     }
 
     @Bean
@@ -443,6 +445,16 @@ public class DomainConfiguration {
     @Bean
     public UserIndexingJobScheduler userIndexingJobScheduler(final PostgresUserIndexingJobStorage userIndexingJobStorage) {
         return new UserIndexingJobSchedulerService(userIndexingJobStorage);
+    }
+
+    @Bean
+    public UserStatsIndexingJobManager userStatsIndexingJobManager(
+            final UserStatsIndexingJobStorage userStatsIndexingJobStorage,
+            final UserStatsIndexer userStatsIndexer,
+            final RawStorageReader cachedRawStorageReader,
+            final UserStatsIndexingJobService.Config userStatsJobConfig
+    ) {
+        return new UserStatsIndexingJobService(userStatsIndexingJobStorage, userStatsIndexer, cachedRawStorageReader, userStatsJobConfig);
     }
 
     @Bean

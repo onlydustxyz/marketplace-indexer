@@ -92,7 +92,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
 
     @Override
     public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
-        return publicEventRepository.findAllByActorIdAndCreatedAtGreaterThan(userId, since).stream().map(RawPublicEventEntity::event);
+        return publicEventRepository.findAllByActorIdAndCreatedAtGreaterThanEqual(userId, since).stream().map(RawPublicEventEntity::event);
     }
 
     @Override

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface PublicEventRepository extends JpaRepository<RawPublicEventEntity, Long> {
 
-    List<RawPublicEventEntity> findAllByActorIdAndCreatedAtGreaterThan(Long actorId, ZonedDateTime since);
+    List<RawPublicEventEntity> findAllByActorIdAndCreatedAtGreaterThanEqual(Long actorId, ZonedDateTime since);
 }

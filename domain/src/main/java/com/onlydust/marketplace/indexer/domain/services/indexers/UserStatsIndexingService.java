@@ -13,16 +13,10 @@ import java.time.ZonedDateTime;
 @Slf4j
 public class UserStatsIndexingService implements UserStatsIndexer {
     private final PublicEventRawStorageReader rawStorageReader;
-
-
+    
     @Override
-    public void indexUser(final @NonNull Long userId) {
-    }
-
-    private void indexUser(final @NonNull Long userId, final @NonNull ZonedDateTime since) {
+    public void indexUser(final @NonNull Long userId, final @NonNull ZonedDateTime since) {
         LOGGER.debug("Indexing stats for user {} since {}", userId, since);
-        rawStorageReader.userPublicEvents(userId, since)
-                .flatMap(event -> PublicEvent.of(event).stream())
-                .forEach(event -> LOGGER.debug("Event: {}", event));
+        rawStorageReader.userPublicEvents(userId, since).flatMap(event -> PublicEvent.of(event).stream()).forEach(event -> LOGGER.debug("Event: {}", event));
     }
 }
