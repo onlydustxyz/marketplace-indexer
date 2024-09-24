@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services.events;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.RepositoryEvent;
+import com.onlydust.marketplace.indexer.domain.models.clean.events.RepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;

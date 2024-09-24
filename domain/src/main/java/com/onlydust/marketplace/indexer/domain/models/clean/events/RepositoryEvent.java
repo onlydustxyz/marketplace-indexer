@@ -1,5 +1,6 @@
-package com.onlydust.marketplace.indexer.domain.models.clean;
+package com.onlydust.marketplace.indexer.domain.models.clean.events;
 
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

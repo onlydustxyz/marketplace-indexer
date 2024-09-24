@@ -1,5 +1,7 @@
-package com.onlydust.marketplace.indexer.domain.models.clean;
+package com.onlydust.marketplace.indexer.domain.models.clean.events;
 
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Value;

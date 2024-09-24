@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.domain.models.clean;
+package com.onlydust.marketplace.indexer.domain.models.clean.events;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import lombok.EqualsAndHashCode;

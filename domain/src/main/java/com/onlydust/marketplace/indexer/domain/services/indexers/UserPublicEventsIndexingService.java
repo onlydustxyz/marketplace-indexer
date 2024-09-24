@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services.indexers;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.Event;
+import com.onlydust.marketplace.indexer.domain.models.clean.events.Event;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserPublicEventsIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import lombok.AllArgsConstructor;

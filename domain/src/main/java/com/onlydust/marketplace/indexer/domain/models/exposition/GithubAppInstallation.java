@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.models.exposition;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.InstallationEvent;
+import com.onlydust.marketplace.indexer.domain.models.clean.events.InstallationEvent;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
