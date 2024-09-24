@@ -2,7 +2,7 @@ package com.onlydust.marketplace.indexer.rest.api;
 
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.AuthorizationContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserPublicEventsIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserStatsIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobStorage;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
@@ -17,7 +17,7 @@ import static org.springframework.http.ResponseEntity.noContent;
 @AllArgsConstructor
 public class UsersRestApi implements UsersApi {
     private final UserIndexer cachedUserIndexer;
-    private final UserPublicEventsIndexer cachedUserPublicEventsIndexer;
+    private final UserStatsIndexer cachedUserStatsIndexer;
     private final AuthorizationContext authorizationContext;
     private final UserIndexingJobStorage userIndexingJobStorage;
 
@@ -25,8 +25,10 @@ public class UsersRestApi implements UsersApi {
     public ResponseEntity<Void> indexUser(Long userId, String authorization) {
         userIndexingJobStorage.add(userId);
         authorizationContext.withAuthorization(authorization,
-                () -> cachedUserIndexer.indexUser(userId)
-                        .ifPresent(user -> cachedUserPublicEventsIndexer.indexUser(user.getId(), user.getCreatedAt())));
+                () -> {
+                    cachedUserIndexer.indexUser(userId);
+                    cachedUserStatsIndexer.indexUser(userId);
+                });
         return noContent().build();
     }
 }

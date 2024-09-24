@@ -4,16 +4,13 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
-import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventsInbox;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
@@ -209,6 +206,11 @@ public class DomainConfiguration {
                 new UserExposerIndexer(
                         new UserIndexingService(diffRawStorageReader), userExposer),
                 registry);
+    }
+    
+    @Bean
+    public UserStatsIndexer cachedUserStatsIndexer(final RawStorageReader cachedRawStorageReader) {
+        return new UserStatsIndexingService(cachedRawStorageReader);
     }
 
     @Bean

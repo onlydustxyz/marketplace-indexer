@@ -38,7 +38,7 @@ public class CleanAccount {
                 .bio(account.getBio())
                 .location(account.getLocation())
                 .website(account.getBlog())
-                .createdAt(account.getCreatedAt() == null ? null : ZonedDateTime.parse(account.getCreatedAt()))
+                .createdAt(account.getCreatedAt())
                 .build();
     }
 

@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.contexts.AuthorizationCo
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserStatsIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobStorage;
@@ -21,9 +22,12 @@ import org.springframework.context.annotation.Profile;
 @Profile("api")
 public class RestApiConfiguration {
     @Bean
-    public UsersRestApi usersRestApi(final UserIndexer cachedUserIndexer, final AuthorizationContext authorizationContext,
-                                     final Exposer<CleanAccount> userExposer, final UserIndexingJobStorage userIndexingJobStorage) {
-        return new UsersRestApi(new UserExposerIndexer(cachedUserIndexer, userExposer), authorizationContext, userIndexingJobStorage);
+    public UsersRestApi usersRestApi(final UserIndexer cachedUserIndexer,
+                                     final AuthorizationContext authorizationContext,
+                                     final Exposer<CleanAccount> userExposer,
+                                     final UserStatsIndexer cachedUserStatsIndexer,
+                                     final UserIndexingJobStorage userIndexingJobStorage) {
+        return new UsersRestApi(new UserExposerIndexer(cachedUserIndexer, userExposer), cachedUserStatsIndexer, authorizationContext, userIndexingJobStorage);
     }
 
     @Bean

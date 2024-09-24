@@ -16,7 +16,7 @@ public class PostgresEventInboxStorage implements EventInboxStorage {
 
     @Override
     public void save(RawGithubAppEvent event) {
-        eventsInboxEntityRepository.save(new EventsInboxEntity(event.getType(), event.getPayload()));
+        eventsInboxEntityRepository.save(new EventsInboxEntity(event.type(), event.payload()));
     }
 
     @Override
