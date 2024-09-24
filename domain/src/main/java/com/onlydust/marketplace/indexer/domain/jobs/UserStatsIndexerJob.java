@@ -32,7 +32,9 @@ public class UserStatsIndexerJob extends Job {
         try {
             LOGGER.info("Indexing stats for user {}", user.getId());
             userStatsIndexingJobStorage.startJob(user.getId());
-            userStatsIndexer.indexUser(user.getId(), ZonedDateTime.parse(user.getCreatedAt()));
+            final var since = userStatsIndexingJobStorage.lastEventTimestamp(user.getId())
+                    .orElse(ZonedDateTime.parse(user.getCreatedAt()));
+            userStatsIndexer.indexUser(user.getId(), since);
             userStatsIndexingJobStorage.endJob(user.getId());
         } catch (Throwable e) {
             LOGGER.error("Failed to index stats for user {}", user.getId(), e);

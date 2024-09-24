@@ -1,5 +1,8 @@
 package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -37,24 +40,24 @@ public class RawPublicEventEntity {
 
     @NonNull
     @JdbcTypeCode(SqlTypes.JSON)
-    RawPublicEvent.User actor;
+    RawAccount actor;
 
     @NonNull
     @JdbcTypeCode(SqlTypes.JSON)
-    RawPublicEvent.Repo repo;
+    RawRepo repo;
 
     @NonNull
     @JdbcTypeCode(SqlTypes.JSON)
-    RawPublicEvent.User org;
+    RawAccount org;
 
     @NonNull
     @JdbcTypeCode(SqlTypes.JSON)
-    RawPublicEvent.Payload payload;
+    JsonNode payload;
 
     public static RawPublicEventEntity of(RawPublicEvent event) {
         return RawPublicEventEntity.builder()
                 .id(event.id())
-                .actorId(event.actor().id())
+                .actorId(event.actor().getId())
                 .type(event.type())
                 .createdAt(event.createdAt())
                 .actor(event.actor())
@@ -65,14 +68,6 @@ public class RawPublicEventEntity {
     }
 
     public RawPublicEvent event() {
-        return new RawPublicEvent(
-                id,
-                type,
-                actor,
-                repo,
-                org,
-                createdAt,
-                payload
-        );
+        return new RawPublicEvent(id, type, actor, repo, org, createdAt, payload);
     }
 }
