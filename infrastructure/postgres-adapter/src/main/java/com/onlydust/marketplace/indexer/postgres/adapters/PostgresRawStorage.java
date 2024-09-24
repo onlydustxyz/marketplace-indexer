@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
-import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawGithubAppEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
@@ -89,7 +89,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     }
 
     @Override
-    public Stream<RawGithubAppEvent> userEvents(Long userId, ZonedDateTime since) {
+    public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
         return Stream.empty();
     }
 
@@ -149,7 +149,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     }
 
     @Override
-    public void saveUserEvent(RawGithubAppEvent rawEvent) {
+    public void saveUserEvent(RawPublicEvent rawEvent) {
 
     }
 }

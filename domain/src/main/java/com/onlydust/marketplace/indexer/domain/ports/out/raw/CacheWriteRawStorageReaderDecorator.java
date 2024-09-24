@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
-import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawGithubAppEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import lombok.Builder;
 
 import java.time.ZonedDateTime;
@@ -95,8 +95,8 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
-    public Stream<RawGithubAppEvent> userEvents(Long userId, ZonedDateTime since) {
-        return fetcher.userEvents(userId, since)
+    public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
+        return fetcher.userPublicEvents(userId, since)
                 .peek(cache::saveUserEvent);
     }
 }

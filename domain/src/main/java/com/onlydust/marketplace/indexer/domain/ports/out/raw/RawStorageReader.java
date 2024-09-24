@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
-import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawGithubAppEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -33,5 +33,5 @@ public interface RawStorageReader {
 
     Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber);
 
-    Stream<RawGithubAppEvent> userEvents(Long userId, ZonedDateTime since);
+    Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since);
 }

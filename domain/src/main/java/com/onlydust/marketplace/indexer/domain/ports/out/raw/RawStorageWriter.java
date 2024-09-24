@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
-import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawGithubAppEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 
 import java.util.List;
 
@@ -28,5 +28,5 @@ public interface RawStorageWriter {
 
     void deleteIssue(Long id);
 
-    void saveUserEvent(RawGithubAppEvent rawEvent);
+    void saveUserEvent(RawPublicEvent rawEvent);
 }
