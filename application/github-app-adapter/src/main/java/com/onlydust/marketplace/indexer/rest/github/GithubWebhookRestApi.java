@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.rest.github;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawGithubAppEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawGithubAppEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventsInbox;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import lombok.AllArgsConstructor;

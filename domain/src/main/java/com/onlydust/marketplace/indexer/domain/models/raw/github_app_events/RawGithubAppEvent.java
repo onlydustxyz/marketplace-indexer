@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.domain.models.raw;
+package com.onlydust.marketplace.indexer.domain.models.raw.github_app_events;
 
 
 import com.fasterxml.jackson.databind.JsonNode;

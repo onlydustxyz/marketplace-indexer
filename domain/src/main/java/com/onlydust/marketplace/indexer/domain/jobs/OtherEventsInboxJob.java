@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services.indexers;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.events.GithubAppEvent;
+import com.onlydust.marketplace.indexer.domain.models.clean.github_app_events.GithubAppEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserPublicEventsIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import lombok.AllArgsConstructor;

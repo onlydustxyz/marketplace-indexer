@@ -1,7 +1,7 @@
-package com.onlydust.marketplace.indexer.domain.models.clean.events;
+package com.onlydust.marketplace.indexer.domain.models.clean.github_app_events;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawInstallationEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 

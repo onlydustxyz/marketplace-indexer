@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services.events;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawIssueCommentEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawIssueCommentEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import jakarta.transaction.Transactional;

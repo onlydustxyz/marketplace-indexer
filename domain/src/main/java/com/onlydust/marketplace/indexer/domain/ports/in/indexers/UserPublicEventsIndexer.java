@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.ports.in.indexers;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.events.GithubAppEvent;
+import com.onlydust.marketplace.indexer.domain.models.clean.github_app_events.GithubAppEvent;
 
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;

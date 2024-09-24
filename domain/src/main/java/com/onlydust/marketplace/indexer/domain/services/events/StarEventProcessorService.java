@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services.events;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.events.StarEvent;
+import com.onlydust.marketplace.indexer.domain.models.clean.github_app_events.StarEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;

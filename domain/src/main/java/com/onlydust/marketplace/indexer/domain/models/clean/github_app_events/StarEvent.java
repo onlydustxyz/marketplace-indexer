@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.domain.models.clean.events;
+package com.onlydust.marketplace.indexer.domain.models.clean.github_app_events;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
