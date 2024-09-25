@@ -32,15 +32,11 @@ import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPull
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
 import com.onlydust.marketplace.indexer.domain.services.observers.GithubOutboxObserver;
 import com.onlydust.marketplace.indexer.domain.services.observers.IndexingOutboxObserver;
-import com.onlydust.marketplace.indexer.github.GithubConfig;
-import com.onlydust.marketplace.indexer.github.GithubHttpClient;
-import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;
-import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
+import com.onlydust.marketplace.indexer.domain.services.readers.PublicEventRawStorageReaderAggregator;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresUserIndexingJobStorage;
 import io.micrometer.core.instrument.MeterRegistry;
-import onlydust.com.marketplace.kernel.infrastructure.github.GithubAppJwtBuilder;
 import onlydust.com.marketplace.kernel.port.output.OutboxPort;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -49,30 +45,6 @@ import org.springframework.core.task.TaskExecutor;
 
 @Configuration
 public class DomainConfiguration {
-    @Bean
-    @ConfigurationProperties("infrastructure.github")
-    GithubConfig githubConfig() {
-        return new GithubConfig();
-    }
-
-    @Bean
-    @ConfigurationProperties("infrastructure.github-for-app")
-    GithubConfig githubConfigForApp() {
-        return new GithubConfig();
-    }
-
-    @Bean
-    @ConfigurationProperties("infrastructure.github-app")
-    GithubAppJwtBuilder.Config githubAppConfig() {
-        return new GithubAppJwtBuilder.Config();
-    }
-
-    @Bean
-    @ConfigurationProperties("infrastructure.github.rate-limit")
-    GithubRateLimitServiceAdapter.Config githubrateLimitConfig() {
-        return new GithubRateLimitServiceAdapter.Config();
-    }
-
     @Bean
     @ConfigurationProperties("application.repo-refresh-job")
     RepoRefreshJobService.Config repoRefreshJobConfig() {
@@ -89,11 +61,6 @@ public class DomainConfiguration {
     @ConfigurationProperties("application.user-stats-job")
     UserStatsIndexingJobService.Config userStatsJobConfig() {
         return new UserStatsIndexingJobService.Config();
-    }
-
-    @Bean
-    GithubRateLimitServiceAdapter githubRateLimitServiceAdapter(final GithubHttpClient githubHttpClient) {
-        return new GithubRateLimitServiceAdapter(githubHttpClient);
     }
 
     @Bean
@@ -129,16 +96,23 @@ public class DomainConfiguration {
                 .build();
     }
 
-
     @Bean
     PublicEventRawStorageReader livePublicEventRawStorageReader(
-            final PublicEventRawStorageReader githubPublicEventRawStorageReader,
+            final PublicEventRawStorageReader aggregatedPublicEventRawStorageReader,
             final PostgresRawStorage postgresRawStorage
     ) {
         return CacheWritePublicEventRawStorageReaderDecorator.builder()
-                .fetcher(githubPublicEventRawStorageReader)
+                .fetcher(aggregatedPublicEventRawStorageReader)
                 .cache(postgresRawStorage)
                 .build();
+    }
+
+    @Bean
+    PublicEventRawStorageReader aggregatedPublicEventRawStorageReader(
+            final PublicEventRawStorageReader bigQueryPublicEventRawStorageReader,
+            final PublicEventRawStorageReader livePublicEventRawStorageReader
+    ) {
+        return new PublicEventRawStorageReaderAggregator(bigQueryPublicEventRawStorageReader, livePublicEventRawStorageReader);
     }
 
     @Bean
@@ -197,16 +171,6 @@ public class DomainConfiguration {
                 livePullRequestIndexer,
                 githubAppContext,
                 githubObserver);
-    }
-
-    @Bean
-    RawStorageReader githubRawStorageReader(final GithubHttpClient githubHttpClient) {
-        return new GithubRawStorageReader(githubHttpClient);
-    }
-
-    @Bean
-    PublicEventRawStorageReader githubPublicEventRawStorageReader(final GithubHttpClient githubHttpClient) {
-        return new GithubRawStorageReader(githubHttpClient);
     }
 
     @Bean

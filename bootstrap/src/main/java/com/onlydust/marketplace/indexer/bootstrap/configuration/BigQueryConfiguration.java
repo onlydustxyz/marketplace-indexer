@@ -20,7 +20,7 @@ public class BigQueryConfiguration {
     }
 
     @Bean
-    public BigQueryPublicEventRawStorageReaderAdapter bigQueryPublicEventRawStorageReaderAdapter(final BigQueryClient bigQueryClient) {
+    public BigQueryPublicEventRawStorageReaderAdapter bigQueryPublicEventRawStorageReader(final BigQueryClient bigQueryClient) {
         return new BigQueryPublicEventRawStorageReaderAdapter(bigQueryClient);
     }
 }
