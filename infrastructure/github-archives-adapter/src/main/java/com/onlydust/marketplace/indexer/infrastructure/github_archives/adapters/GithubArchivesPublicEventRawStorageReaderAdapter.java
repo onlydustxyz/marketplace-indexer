@@ -54,6 +54,7 @@ public class GithubArchivesPublicEventRawStorageReaderAdapter implements PublicE
                     SELECT *
                     FROM `githubarchive.day.%s`
                     WHERE actor.id = @actor_id
+                    ORDER BY created_at ASC
                 """;
 
         final var params = Map.of("actor_id", QueryParameterValue.int64(userId));
