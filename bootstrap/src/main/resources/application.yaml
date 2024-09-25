@@ -13,9 +13,9 @@ infrastructure:
   api-client:
     api-key: ${INTERNAL_API_KEY}
     base-uri: ${API_BACKEND_BASE_URL}
-  bigquery:
-    project-id: ${BIGQUERY_PROJECT_ID}
-    credentials: ${BIGQUERY_CREDENTIALS}
+  github-archives:
+    project-id: ${GCP_PROJECT_ID}
+    credentials: ${GCP_CREDENTIALS}
 
 application:
   web:

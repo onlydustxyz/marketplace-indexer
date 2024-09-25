@@ -109,10 +109,10 @@ public class DomainConfiguration {
 
     @Bean
     PublicEventRawStorageReader aggregatedPublicEventRawStorageReader(
-            final PublicEventRawStorageReader bigQueryPublicEventRawStorageReader,
-            final PublicEventRawStorageReader livePublicEventRawStorageReader
+            final PublicEventRawStorageReader githubArchivesPublicEventRawStorageReader,
+            final PublicEventRawStorageReader githubPublicEventRawStorageReader
     ) {
-        return new PublicEventRawStorageReaderAggregator(bigQueryPublicEventRawStorageReader, livePublicEventRawStorageReader);
+        return new PublicEventRawStorageReaderAggregator(githubArchivesPublicEventRawStorageReader, githubPublicEventRawStorageReader);
     }
 
     @Bean

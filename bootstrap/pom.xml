@@ -61,7 +61,7 @@
         </dependency>
         <dependency>
             <groupId>com.onlydust.marketplace.indexer</groupId>
-            <artifactId>big-query-adapter</artifactId>
+            <artifactId>github-archives-adapter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

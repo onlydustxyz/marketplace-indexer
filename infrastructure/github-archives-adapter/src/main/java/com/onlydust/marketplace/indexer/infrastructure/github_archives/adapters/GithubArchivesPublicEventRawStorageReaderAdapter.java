@@ -1,13 +1,13 @@
-package com.onlydust.marketplace.indexer.bigquery.adapters;
+package com.onlydust.marketplace.indexer.infrastructure.github_archives.adapters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.bigquery.FieldValueList;
 import com.google.cloud.bigquery.QueryParameterValue;
-import com.onlydust.marketplace.indexer.bigquery.BigQueryClient;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
+import com.onlydust.marketplace.indexer.infrastructure.github_archives.GithubArchivesClient;
 import lombok.AllArgsConstructor;
 
 import java.io.IOException;
@@ -21,10 +21,10 @@ import java.util.stream.Stream;
 import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.internalServerError;
 
 @AllArgsConstructor
-public class BigQueryPublicEventRawStorageReaderAdapter implements PublicEventRawStorageReader {
+public class GithubArchivesPublicEventRawStorageReaderAdapter implements PublicEventRawStorageReader {
     private final static ObjectMapper objectMapper = new ObjectMapper();
     private final static DateTimeFormatter YYYYMMDD = DateTimeFormatter.ofPattern("yyyyMMdd");
-    private final BigQueryClient client;
+    private final GithubArchivesClient client;
 
     private static RawPublicEvent from(FieldValueList row) {
         try {
@@ -61,6 +61,6 @@ public class BigQueryPublicEventRawStorageReaderAdapter implements PublicEventRa
         return Stream.iterate(since, date -> date.isBefore(to), date -> date.plusDays(1))
                 .map(date -> date.format(YYYYMMDD))
                 .flatMap(day -> client.query(query.formatted(day), params).streamAll())
-                .map(BigQueryPublicEventRawStorageReaderAdapter::from);
+                .map(GithubArchivesPublicEventRawStorageReaderAdapter::from);
     }
 }

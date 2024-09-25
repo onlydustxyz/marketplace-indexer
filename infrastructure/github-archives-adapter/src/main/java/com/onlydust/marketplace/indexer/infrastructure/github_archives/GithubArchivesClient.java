@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.bigquery;
+package com.onlydust.marketplace.indexer.infrastructure.github_archives;
 
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.bigquery.*;
@@ -12,10 +12,10 @@ import java.util.Map;
 
 import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.internalServerError;
 
-public class BigQueryClient {
+public class GithubArchivesClient {
     BigQuery bigquery;
 
-    public BigQueryClient(Properties properties) {
+    public GithubArchivesClient(Properties properties) {
         try {
             this.bigquery = BigQueryOptions.newBuilder()
                     .setProjectId(properties.projectId)

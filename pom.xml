@@ -9,7 +9,7 @@
         <module>infrastructure</module>
         <module>domain</module>
         <module>coverage</module>
-        <module>infrastructure/big-query-adapter</module>
+        <module>infrastructure/github-archives-adapter</module>
     </modules>
 
     <parent>
