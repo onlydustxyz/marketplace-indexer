@@ -38,6 +38,7 @@ public class IndexingServiceTest {
     final RawSocialAccount[] olivierSocialAccounts = RawStorageWriterStub.load("/github/users/olivier_social_accounts.json", RawSocialAccount[].class);
     final RawPullRequest pr1257 = RawStorageWriterStub.load("/github/repos/marketplace-frontend/pulls/1257.json", RawPullRequest.class);
     final RawIssue issue78 = RawStorageWriterStub.load("/github/repos/marketplace-frontend/issues/78.json", RawIssue.class);
+    final RawIssue issue2335 = RawStorageWriterStub.load("/github/repos/marketplace-frontend/issues/2335.json", RawIssue.class);
     final RawCodeReview[] pr1257Reviews = RawStorageWriterStub.load("/github/repos/marketplace-frontend/pulls/1257_reviews.json", RawCodeReview[].class);
     final RawCommit[] pr1257Commits = RawStorageWriterStub.load("/github/repos/marketplace-frontend/pulls/1257_commits.json", RawCommit[].class);
     final RawPullRequestClosingIssues pr1257ClosingIssues = RawStorageWriterStub.load("/github/repos/marketplace-frontend/pulls/1257_closing_issues.json",
@@ -163,6 +164,15 @@ public class IndexingServiceTest {
         assertThat(contributionRepository.contributions()).hasSize(1);
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.ISSUE))).hasSize(1);
         verify(issueStorage, times(1)).save(any());
+    }
+
+    @Test
+    void should_not_index_issue_when_it_is_a_pull_request() {
+        rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), issue2335);
+        
+        final var issue = issueIndexer.indexIssue("onlydustxyz", "marketplace-frontend", 2335L);
+        assertThat(issue).isEmpty();
+        verify(issueStorage, never()).save(any());
     }
 
     @Test

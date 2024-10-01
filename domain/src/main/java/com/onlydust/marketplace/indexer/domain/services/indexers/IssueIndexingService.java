@@ -25,6 +25,9 @@ public class IssueIndexingService implements IssueIndexer {
         LOGGER.debug("Indexing issue {} for repo {}/{}", issueNumber, repoOwner, repoName);
         return repoIndexer.indexRepo(repoOwner, repoName).flatMap(repo -> {
             final var issue = rawStorageReader.issue(repo.getId(), issueNumber).orElseThrow(() -> notFound("Issue not found"));
+            if (issue.getPullRequest() != null)
+                return Optional.empty();
+            
             return userIndexer.indexUser(issue.getAuthor().getId()).map(author -> {
                 final var assignees = issue.getAssignees().stream().map(assignee -> userIndexer.indexUser(assignee.getId()).orElseGet(() -> {
                     LOGGER.warn("User {} not found, skipping assignee {}", assignee.getId(), assignee.getLogin());

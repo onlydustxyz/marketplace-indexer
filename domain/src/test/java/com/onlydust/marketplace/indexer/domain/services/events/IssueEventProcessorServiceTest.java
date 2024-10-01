@@ -26,6 +26,22 @@ class IssueEventProcessorServiceTest {
             , issueStorage, contributionStorage, githubObserver);
 
     @Test
+    void should_ignore_issue_that_is_pull_requests_event() {
+        // Given
+        final var event = RawStorageWriterStub.load("/github/events/issue/marketplace-frontend-issue-2484-edited.json", RawIssueEvent.class);
+
+        // When
+        issueEventProcessorService.process(event);
+
+        // Then
+        verify(rawStorageWriter, never()).deleteIssue(any());
+        verify(issueStorage, never()).delete(any());
+        verify(contributionStorage, never()).deleteAllByRepoIdAndGithubNumber(any(), any());
+        verify(issueIndexer, never()).indexIssue(any(), any(), any());
+        verify(githubObserver, never()).on(any(RawIssueEvent.class));
+    }
+
+    @Test
     void should_handle_issue_transfer_event() {
         // Given
         final var event = RawStorageWriterStub.load("/github/events/issue/marketplace-frontend-issue-78-transferred.json", RawIssueEvent.class);

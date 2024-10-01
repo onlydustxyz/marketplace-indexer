@@ -28,6 +28,9 @@ public class IssueEventProcessorService implements EventHandler<RawIssueEvent> {
 
     @Override
     public void process(RawIssueEvent event) {
+        if (event.getIssue().getPullRequest() != null)
+            return;
+
         final var action = event.getAction();
 
         githubObserver.on(event);
