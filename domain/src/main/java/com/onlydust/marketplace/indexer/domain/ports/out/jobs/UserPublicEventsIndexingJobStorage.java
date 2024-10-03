@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Set;
 
-public interface UserStatsIndexingJobStorage {
+public interface UserPublicEventsIndexingJobStorage {
     void add(Long userId);
 
     void startJob(Long userId);

@@ -8,7 +8,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestInde
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserStatsIndexingJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserPublicEventsIndexingJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.indexers.UserExposerIndexer;
 import com.onlydust.marketplace.indexer.github.adapters.GithubAppContextAdapter;
@@ -27,13 +27,13 @@ public class RestApiConfiguration {
                                      final AuthorizationContext authorizationContext,
                                      final Exposer<CleanAccount> userExposer,
                                      final UserIndexingJobStorage userIndexingJobStorage,
-                                     final UserStatsIndexingJobManager userStatsIndexingJobManager,
+                                     final UserPublicEventsIndexingJobManager userPublicEventsIndexingJobManager,
                                      final TaskExecutor applicationTaskExecutor) {
         return new UsersRestApi(
                 new UserExposerIndexer(cachedUserIndexer, userExposer),
                 authorizationContext,
                 userIndexingJobStorage,
-                userStatsIndexingJobManager,
+                userPublicEventsIndexingJobManager,
                 applicationTaskExecutor);
     }
 

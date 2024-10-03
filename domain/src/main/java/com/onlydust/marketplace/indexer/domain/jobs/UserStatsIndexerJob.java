@@ -1,8 +1,8 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserStatsIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserStatsIndexingJobStorage;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserPublicEventsIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +13,9 @@ import java.util.Set;
 @AllArgsConstructor
 @Slf4j
 public class UserStatsIndexerJob extends Job {
-    private final UserStatsIndexer userStatsIndexer;
+    private final UserPublicEventsIndexer userPublicEventsIndexer;
     private final Set<Long> userIds;
-    private final UserStatsIndexingJobStorage userStatsIndexingJobStorage;
+    private final UserPublicEventsIndexingJobStorage userPublicEventsIndexingJobStorage;
     private final RawStorageReader rawStorageReader;
 
     @Override
@@ -31,14 +31,14 @@ public class UserStatsIndexerJob extends Job {
     private void index(RawAccount user) {
         try {
             LOGGER.info("Indexing stats for user {}", user.getId());
-            userStatsIndexingJobStorage.startJob(user.getId());
-            final var since = userStatsIndexingJobStorage.lastEventTimestamp(user.getId())
+            userPublicEventsIndexingJobStorage.startJob(user.getId());
+            final var since = userPublicEventsIndexingJobStorage.lastEventTimestamp(user.getId())
                     .orElse(ZonedDateTime.parse(user.getCreatedAt()));
-            userStatsIndexer.indexUser(user.getId(), since);
-            userStatsIndexingJobStorage.endJob(user.getId());
+            userPublicEventsIndexer.indexUser(user.getId(), since);
+            userPublicEventsIndexingJobStorage.endJob(user.getId());
         } catch (Throwable e) {
             LOGGER.error("Failed to index stats for user {}", user.getId(), e);
-            userStatsIndexingJobStorage.failJob(user.getId());
+            userPublicEventsIndexingJobStorage.failJob(user.getId());
         }
     }
 }

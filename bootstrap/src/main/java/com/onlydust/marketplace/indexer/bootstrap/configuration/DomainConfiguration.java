@@ -14,13 +14,13 @@ import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserStatsIndexingJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserPublicEventsIndexingJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
-import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserStatsIndexingJobStorage;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.*;
 import com.onlydust.marketplace.indexer.domain.services.events.*;
 import com.onlydust.marketplace.indexer.domain.services.exposers.*;
@@ -59,8 +59,8 @@ public class DomainConfiguration {
 
     @Bean
     @ConfigurationProperties("application.user-stats-job")
-    UserStatsIndexingJobService.Config userStatsJobConfig() {
-        return new UserStatsIndexingJobService.Config();
+    UserPublicEventsIndexingJobService.Config userStatsJobConfig() {
+        return new UserPublicEventsIndexingJobService.Config();
     }
 
     @Bean
@@ -195,8 +195,19 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public UserStatsIndexer cachedUserStatsIndexer(final PublicEventRawStorageReader livePublicEventRawStorageReader) {
-        return new UserStatsIndexingService(livePublicEventRawStorageReader);
+    public UserPublicEventsIndexer cachedUserStatsIndexer(final PublicEventRawStorageReader livePublicEventRawStorageReader,
+                                                          final RawStorageWriter rawStorageWriter,
+                                                          final RepoIndexer cacheOnlyRepoIndexer,
+                                                          final UserIndexer cacheOnlyUserIndexer,
+                                                          final PullRequestIndexer cacheOnlyPullRequestIndexer,
+                                                          final IssueIndexer cacheOnlyIssueIndexer
+    ) {
+        return new UserPublicEventsIndexingService(livePublicEventRawStorageReader,
+                rawStorageWriter,
+                cacheOnlyRepoIndexer,
+                cacheOnlyUserIndexer,
+                cacheOnlyPullRequestIndexer,
+                cacheOnlyIssueIndexer);
     }
 
     @Bean
@@ -412,13 +423,13 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public UserStatsIndexingJobManager userStatsIndexingJobManager(
-            final UserStatsIndexingJobStorage userStatsIndexingJobStorage,
-            final UserStatsIndexer userStatsIndexer,
+    public UserPublicEventsIndexingJobManager userStatsIndexingJobManager(
+            final UserPublicEventsIndexingJobStorage userPublicEventsIndexingJobStorage,
+            final UserPublicEventsIndexer userPublicEventsIndexer,
             final RawStorageReader cachedRawStorageReader,
-            final UserStatsIndexingJobService.Config userStatsJobConfig
+            final UserPublicEventsIndexingJobService.Config userStatsJobConfig
     ) {
-        return new UserStatsIndexingJobService(userStatsIndexingJobStorage, userStatsIndexer, cachedRawStorageReader, userStatsJobConfig);
+        return new UserPublicEventsIndexingJobService(userPublicEventsIndexingJobStorage, userPublicEventsIndexer, cachedRawStorageReader, userStatsJobConfig);
     }
 
     @Bean

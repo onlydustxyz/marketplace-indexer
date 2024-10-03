@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
-import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserStatsIndexingJobStorage;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.UserStatsIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserStatsIndexingJobRepository;
@@ -14,7 +14,7 @@ import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 
 @AllArgsConstructor
-public class PostgresUserStatsIndexingJobStorage implements UserStatsIndexingJobStorage {
+public class PostgresUserPublicEventsIndexingJobStorage implements UserPublicEventsIndexingJobStorage {
     private final UserStatsIndexingJobRepository repository;
 
     @Override

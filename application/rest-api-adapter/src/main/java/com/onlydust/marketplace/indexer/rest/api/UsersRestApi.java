@@ -2,7 +2,7 @@ package com.onlydust.marketplace.indexer.rest.api;
 
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.AuthorizationContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserStatsIndexingJobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserPublicEventsIndexingJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobStorage;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
@@ -20,7 +20,7 @@ public class UsersRestApi implements UsersApi {
     private final UserIndexer cachedUserIndexer;
     private final AuthorizationContext authorizationContext;
     private final UserIndexingJobStorage userIndexingJobStorage;
-    private final UserStatsIndexingJobManager userStatsJobManager;
+    private final UserPublicEventsIndexingJobManager userStatsJobManager;
     private final TaskExecutor taskExecutor;
 
     @Override

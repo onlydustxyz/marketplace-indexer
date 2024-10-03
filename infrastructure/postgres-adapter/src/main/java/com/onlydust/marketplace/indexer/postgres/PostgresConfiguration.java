@@ -64,8 +64,8 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public PostgresUserStatsIndexingJobStorage userStatsIndexingJobStorage(final UserStatsIndexingJobRepository userStatsIndexingJobRepository) {
-        return new PostgresUserStatsIndexingJobStorage(userStatsIndexingJobRepository);
+    public PostgresUserPublicEventsIndexingJobStorage userStatsIndexingJobStorage(final UserStatsIndexingJobRepository userStatsIndexingJobRepository) {
+        return new PostgresUserPublicEventsIndexingJobStorage(userStatsIndexingJobRepository);
     }
 
     @Bean
