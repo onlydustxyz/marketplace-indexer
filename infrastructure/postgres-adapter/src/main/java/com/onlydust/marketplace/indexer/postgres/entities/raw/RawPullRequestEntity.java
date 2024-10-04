@@ -1,7 +1,9 @@
 package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,10 +25,6 @@ public class RawPullRequestEntity {
     Long id;
 
     Long repoId;
-
-    @ManyToOne
-    @JoinColumn(name = "repoId", insertable = false, updatable = false)
-    RawRepoEntity repo;
 
     Long number;
 
