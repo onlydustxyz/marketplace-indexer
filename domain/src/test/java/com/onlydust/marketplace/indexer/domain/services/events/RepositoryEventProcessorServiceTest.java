@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services.events;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawRepositoryEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawRepositoryEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
@@ -16,7 +16,8 @@ class RepositoryEventProcessorServiceTest {
     final RepoStorage githubRepoStorage = mock(RepoStorage.class);
     final RawStorageWriter rawStorageWriter = mock(RawStorageWriter.class);
     final RepoIndexer repoIndexer = mock(RepoIndexer.class);
-    final RepositoryEventProcessorService repositoryEventProcessorService = new RepositoryEventProcessorService(repoIndexingJobStorage, githubRepoStorage, rawStorageWriter, repoIndexer);
+    final RepositoryEventProcessorService repositoryEventProcessorService = new RepositoryEventProcessorService(repoIndexingJobStorage, githubRepoStorage,
+            rawStorageWriter, repoIndexer);
 
     @Test
     void should_handle_repo_edited_event() {

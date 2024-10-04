@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.rest.github;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawGithubAppEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventsInbox;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
 import lombok.AllArgsConstructor;
@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @AllArgsConstructor
@@ -31,8 +33,8 @@ public class GithubWebhookRestApi {
                                                final @RequestHeader(X_HUB_SIGNATURE_256) String signature) throws IOException {
         GithubSignatureVerifier.validateWebhook(payload, config.secret, signature);
 
-        inbox.push(RawEvent.of(type, objectMapper.readTree(payload)));
-        return ResponseEntity.ok().build();
+        inbox.push(RawGithubAppEvent.of(type, objectMapper.readTree(payload)));
+        return ok().build();
     }
 
     @Data

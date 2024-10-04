@@ -35,6 +35,25 @@ public class CleanPullRequest {
     @Builder.Default
     List<CleanIssue> closingIssues = new ArrayList<>();
 
+    public static CleanPullRequest of(RawPullRequest pullRequest) {
+        return CleanPullRequest.builder()
+                .id(pullRequest.getId())
+                .repo(CleanRepo.of(pullRequest.getBase().getRepo()))
+                .number(pullRequest.getNumber())
+                .title(pullRequest.getTitle())
+                .state(pullRequest.getState())
+                .createdAt(pullRequest.getCreatedAt())
+                .closedAt(pullRequest.getClosedAt())
+                .mergedAt(pullRequest.getMergedAt())
+                .merged(pullRequest.getMerged())
+                .htmlUrl(pullRequest.getHtmlUrl())
+                .body(pullRequest.getBody())
+                .comments(pullRequest.getComments())
+                .author(CleanAccount.of(pullRequest.getAuthor()))
+                .draft(pullRequest.getDraft())
+                .build();
+    }
+
     public static CleanPullRequest of(RawPullRequest pullRequest, CleanRepo repo, CleanAccount author) {
         return CleanPullRequest.builder()
                 .id(pullRequest.getId())

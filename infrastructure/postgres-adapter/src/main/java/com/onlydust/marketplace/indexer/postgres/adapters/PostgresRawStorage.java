@@ -1,18 +1,22 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageWriter;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import lombok.AllArgsConstructor;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
-public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
+public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, PublicEventRawStorageReader, PublicEventRawStorageWriter {
     final IssueRepository issueRepository;
     final UserRepository userRepository;
     final RepoRepository repoRepository;
@@ -23,6 +27,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     final PullRequestClosingIssueRepository pullRequestClosingIssueRepository;
     final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository;
     final PullRequestReviewsRepository pullRequestReviewsRepository;
+    final PublicEventRepository publicEventRepository;
 
     @Override
     public Optional<RawRepo> repo(Long repoId) {
@@ -86,6 +91,11 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     }
 
     @Override
+    public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
+        return publicEventRepository.findAllByActorIdAndCreatedAtGreaterThanEqual(userId, since).stream().map(RawPublicEventEntity::event);
+    }
+
+    @Override
     public void saveUser(RawAccount user) {
         userRepository.save(RawUserEntity.of(user));
     }
@@ -96,8 +106,8 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     }
 
     @Override
-    public void savePullRequest(Long repoId, RawPullRequest pullRequest) {
-        pullRequestRepository.save(RawPullRequestEntity.of(repoId, pullRequest));
+    public void savePullRequest(RawPullRequest pullRequest) {
+        pullRequestRepository.save(RawPullRequestEntity.of(pullRequest));
     }
 
     @Override
@@ -138,5 +148,10 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     @Override
     public void deleteIssue(Long id) {
         issueRepository.deleteById(id);
+    }
+
+    @Override
+    public void savePublicEvent(RawPublicEvent rawEvent) {
+        publicEventRepository.save(RawPublicEventEntity.of(rawEvent));
     }
 }

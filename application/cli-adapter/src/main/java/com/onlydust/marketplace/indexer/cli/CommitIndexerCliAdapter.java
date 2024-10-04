@@ -50,12 +50,12 @@ public class CommitIndexerCliAdapter implements CommandLineRunner {
         final var pullRequest = pullRequestRepository.findById(pullRequestCommits.getPullRequestId())
                 .orElseThrow(() -> new IllegalArgumentException("Raw pull request %d not found".formatted(pullRequestCommits.getPullRequestId())));
 
-        final var installationId = repoIndexingJobEntityRepository.findById(pullRequest.getRepo().getData().getId())
+        final var installationId = repoIndexingJobEntityRepository.findById(pullRequest.getRepoId())
                 .map(RepoIndexingJobEntity::getInstallationId)
                 .orElse(null);
 
         githubAppContext.withGithubApp(installationId,
-                () -> rawStorageReader.pullRequestCommits(pullRequest.getRepo().getId(), pullRequest.getId(), pullRequest.getNumber())
+                () -> rawStorageReader.pullRequestCommits(pullRequest.getRepoId(), pullRequest.getId(), pullRequest.getNumber())
                         .ifPresent(pullRequestCommits::setData)
         );
 

@@ -1,9 +1,9 @@
 package com.onlydust.marketplace.indexer.domain.services.observers;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawIssueCommentEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawIssueEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawIssueCommentEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawIssueEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawLabel;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawPullRequestEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import lombok.AllArgsConstructor;
 import onlydust.com.marketplace.kernel.model.event.*;

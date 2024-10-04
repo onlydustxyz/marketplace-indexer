@@ -80,7 +80,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        assertThat(pullRequestsRepository.findAll()).containsExactly(RawPullRequestEntity.of(marketplaceFrontend.getId(), pr1257));
+        assertThat(pullRequestsRepository.findAll()).containsExactly(RawPullRequestEntity.of(pr1257));
         assertThat(repoRepository.findAll()).containsExactly(RawRepoEntity.of(marketplaceFrontend));
         assertThat(pullRequestReviewsRepository.findAll()).containsExactly(RawPullRequestReviewEntity.of(pr1257.getId(), pr1257Reviews));
         assertThat(pullRequestsCommitsRepository.findAll()).containsExactly(RawPullRequestCommitsEntity.of(pr1257.getId(), details(pr1257Commits)));
@@ -156,7 +156,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        assertThat(pullRequestsRepository.findAll()).contains(RawPullRequestEntity.of(marketplaceFrontend.getId(), pr1258));
+        assertThat(pullRequestsRepository.findAll()).contains(RawPullRequestEntity.of(pr1258));
         assertThat(pullRequestReviewsRepository.findAll()).contains(RawPullRequestReviewEntity.of(pr1258.getId(), pr1258Reviews));
         assertThat(pullRequestsCommitsRepository.findAll()).contains(RawPullRequestCommitsEntity.of(pr1258.getId(), details(pr1258Commits)));
         assertThat(userRepository.findAll()).contains(RawUserEntity.of(pierre), RawUserEntity.of(olivier), RawUserEntity.of(anthony),

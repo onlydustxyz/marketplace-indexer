@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.ApiEventEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.ApiEventRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIndexingJobRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -37,7 +38,8 @@ public class PostgresConfiguration {
                                                            final PullRequestCommitsRepository pullRequestCommitsRepository,
                                                            final PullRequestClosingIssueRepository pullRequestClosingIssueRepository,
                                                            final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository,
-                                                           final PullRequestReviewsRepository pullRequestReviewsRepository) {
+                                                           final PullRequestReviewsRepository pullRequestReviewsRepository,
+                                                           final PublicEventRepository publicEventRepository) {
         return new PostgresRawStorage(issueRepository,
                 userRepository,
                 repoRepository,
@@ -47,8 +49,8 @@ public class PostgresConfiguration {
                 pullRequestCommitsRepository,
                 pullRequestClosingIssueRepository,
                 pullRequestClosingIssueViewRepository,
-                pullRequestReviewsRepository
-        );
+                pullRequestReviewsRepository,
+                publicEventRepository);
     }
 
     @Bean
@@ -59,6 +61,11 @@ public class PostgresConfiguration {
     @Bean
     public PostgresUserIndexingJobStorage userIndexingJobTriggerRepository(final UserIndexingJobEntityRepository userIndexingJobTriggerRepository) {
         return new PostgresUserIndexingJobStorage(userIndexingJobTriggerRepository);
+    }
+
+    @Bean
+    public PostgresUserPublicEventsIndexingJobStorage userStatsIndexingJobStorage(final UserPublicEventsIndexingJobRepository userPublicEventsIndexingJobRepository) {
+        return new PostgresUserPublicEventsIndexingJobStorage(userPublicEventsIndexingJobRepository);
     }
 
     @Bean

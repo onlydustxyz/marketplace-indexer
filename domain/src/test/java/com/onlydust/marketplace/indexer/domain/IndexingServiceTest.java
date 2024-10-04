@@ -78,7 +78,7 @@ public class IndexingServiceTest {
         rawStorageReaderStub.feedWith(anthony.getId(), anthonySocialAccounts);
         rawStorageReaderStub.feedWith(pierre.getId(), pierreSocialAccounts);
         rawStorageReaderStub.feedWith(olivier.getId(), olivierSocialAccounts);
-        rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), pr1257);
+        rawStorageReaderStub.feedWith(pr1257);
         rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), issue78);
         rawStorageReaderStub.feedWith("onlydustxyz", "marketplace-frontend", 1257L, pr1257ClosingIssues);
         rawStorageReaderStub.feedWith(pr1257.getId(), pr1257Reviews);

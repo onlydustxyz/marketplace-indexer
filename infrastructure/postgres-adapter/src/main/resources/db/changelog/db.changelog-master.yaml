@@ -109,3 +109,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000052_add_installation_permissions.sql
   - include:
       file: db/changelog/changelogs/00000053_add_missing_indexes.sql
+  - include:
+      file: db/changelog/changelogs/00000054_create_raw_user_events.sql

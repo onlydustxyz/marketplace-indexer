@@ -1,11 +1,11 @@
 package com.onlydust.marketplace.indexer.domain.services.events;
 
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
-import com.onlydust.marketplace.indexer.domain.models.clean.*;
+import com.onlydust.marketplace.indexer.domain.models.clean.github_app_events.*;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstallation;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawInstallationEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
@@ -22,18 +22,22 @@ public class InstallationEventProcessorService implements EventHandler<RawInstal
 
     @Override
     public void process(RawInstallationEvent rawEvent) {
-        final var event = mapRawEvent(rawEvent);
-        if (event == null || event.getAction() == null) return;
+        final var event = InstallationEvent.of(rawEvent);
 
-        switch (event.getAction()) {
-            case ADDED -> onAdded((InstallationAddedEvent) event);
-            case CREATED -> onCreated((InstallationCreatedEvent) event);
-            case DELETED -> onDeleted((InstallationDeletedEvent) event);
-            case REMOVED -> onRemoved((InstallationRemovedEvent) event);
-            case SUSPEND -> onSuspended((InstallationSuspendedEvent) event);
-            case UNSUSPEND -> onUnsuspended((InstallationUnsuspendedEvent) event);
-            case NEW_PERMISSIONS_ACCEPTED -> onNewPermissionsAccepted((InstallationNewPermissionsAcceptedEvent) event);
-        }
+        if (event instanceof InstallationAddedEvent addedEvent)
+            onAdded(addedEvent);
+        else if (event instanceof InstallationCreatedEvent createdEvent)
+            onCreated(createdEvent);
+        else if (event instanceof InstallationDeletedEvent deletedEvent)
+            onDeleted(deletedEvent);
+        else if (event instanceof InstallationRemovedEvent removedEvent)
+            onRemoved(removedEvent);
+        else if (event instanceof InstallationSuspendedEvent suspendedEvent)
+            onSuspended(suspendedEvent);
+        else if (event instanceof InstallationUnsuspendedEvent unsuspendedEvent)
+            onUnsuspended(unsuspendedEvent);
+        else if (event instanceof InstallationNewPermissionsAcceptedEvent newPermissionsAcceptedEvent)
+            onNewPermissionsAccepted(newPermissionsAcceptedEvent);
     }
 
     private void onNewPermissionsAccepted(InstallationNewPermissionsAcceptedEvent event) {
@@ -89,36 +93,5 @@ public class InstallationEventProcessorService implements EventHandler<RawInstal
     private void onRemoved(InstallationRemovedEvent event) {
         repoIndexingJobStorage.deleteInstallationForRepos(event.getInstallationId(), event.getRepoIds());
         githubAppInstallationStorage.removeRepos(event.getInstallationId(), event.getRepoIds());
-    }
-
-    private InstallationEvent mapRawEvent(RawInstallationEvent rawEvent) {
-        final var action = InstallationEvent.Action.of(rawEvent.getAction());
-
-        if (action == null) return null;
-
-        return switch (action) {
-            case ADDED -> InstallationAddedEvent.of(
-                    rawEvent,
-                    rawEvent.getRepositoriesAdded().stream()
-                            .map(repo -> CleanRepo.of(repo, CleanAccount.of(rawEvent.getInstallation().getAccount())))
-                            .toList());
-
-            case CREATED -> InstallationCreatedEvent.of(
-                    rawEvent,
-                    CleanAccount.of(rawEvent.getInstallation().getAccount()),
-                    rawEvent.getRepositories().stream()
-                            .map(repo -> CleanRepo.of(repo, CleanAccount.of(rawEvent.getInstallation().getAccount())))
-                            .toList());
-
-            case REMOVED -> InstallationRemovedEvent.of(rawEvent);
-
-            case DELETED -> InstallationDeletedEvent.of(rawEvent);
-
-            case SUSPEND -> InstallationSuspendedEvent.of(rawEvent);
-
-            case UNSUSPEND -> InstallationUnsuspendedEvent.of(rawEvent);
-
-            case NEW_PERMISSIONS_ACCEPTED -> InstallationNewPermissionsAcceptedEvent.of(rawEvent);
-        };
     }
 }

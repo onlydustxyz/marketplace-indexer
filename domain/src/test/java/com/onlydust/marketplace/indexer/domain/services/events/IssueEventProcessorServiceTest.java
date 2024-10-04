@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.services.events;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawIssueEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawIssueEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;

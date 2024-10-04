@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.services.events;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawGithubAppEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventsInbox;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ public class EventInboxService implements EventsInbox {
     private final EventInboxStorage eventInboxStorage;
 
     @Override
-    public void push(RawEvent event) {
+    public void push(RawGithubAppEvent event) {
         eventInboxStorage.save(event);
     }
 }

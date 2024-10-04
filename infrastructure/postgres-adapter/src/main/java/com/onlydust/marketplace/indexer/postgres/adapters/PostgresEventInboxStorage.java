@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawGithubAppEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
 import com.onlydust.marketplace.indexer.postgres.entities.EventsInboxEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.EventsInboxEntityRepository;
@@ -15,14 +15,14 @@ public class PostgresEventInboxStorage implements EventInboxStorage {
     private final EventsInboxEntityRepository eventsInboxEntityRepository;
 
     @Override
-    public void save(RawEvent event) {
-        eventsInboxEntityRepository.save(new EventsInboxEntity(event.getType(), event.getPayload()));
+    public void save(RawGithubAppEvent event) {
+        eventsInboxEntityRepository.save(new EventsInboxEntity(event.type(), event.payload()));
     }
 
     @Override
-    public Optional<RawEvent> peek(String... types) {
+    public Optional<RawGithubAppEvent> peek(String... types) {
         return eventsInboxEntityRepository.findFirstToProcess(Arrays.stream(types).toList())
-                .map(entity -> new RawEvent(entity.getId(), entity.getType(), entity.getPayload()));
+                .map(entity -> new RawGithubAppEvent(entity.getId(), entity.getType(), entity.getPayload()));
     }
 
     @Override

@@ -4,46 +4,39 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
-import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventsInbox;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.RepoIndexingJobScheduler;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserIndexingJobScheduler;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserPublicEventsIndexingJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.*;
 import com.onlydust.marketplace.indexer.domain.services.events.*;
 import com.onlydust.marketplace.indexer.domain.services.exposers.*;
 import com.onlydust.marketplace.indexer.domain.services.guards.RateLimitGuardedFullRepoIndexer;
 import com.onlydust.marketplace.indexer.domain.services.indexers.*;
-import com.onlydust.marketplace.indexer.domain.services.jobs.RepoIndexingJobSchedulerService;
-import com.onlydust.marketplace.indexer.domain.services.jobs.RepoRefreshJobService;
-import com.onlydust.marketplace.indexer.domain.services.jobs.UserIndexingJobSchedulerService;
-import com.onlydust.marketplace.indexer.domain.services.jobs.UserRefreshJobService;
+import com.onlydust.marketplace.indexer.domain.services.jobs.*;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredIssueIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
 import com.onlydust.marketplace.indexer.domain.services.observers.GithubOutboxObserver;
 import com.onlydust.marketplace.indexer.domain.services.observers.IndexingOutboxObserver;
-import com.onlydust.marketplace.indexer.github.GithubConfig;
-import com.onlydust.marketplace.indexer.github.GithubHttpClient;
-import com.onlydust.marketplace.indexer.github.adapters.GithubRateLimitServiceAdapter;
-import com.onlydust.marketplace.indexer.github.adapters.GithubRawStorageReader;
+import com.onlydust.marketplace.indexer.domain.services.readers.PublicEventRawStorageReaderAggregator;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresUserIndexingJobStorage;
 import io.micrometer.core.instrument.MeterRegistry;
-import onlydust.com.marketplace.kernel.infrastructure.github.GithubAppJwtBuilder;
 import onlydust.com.marketplace.kernel.port.output.OutboxPort;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -52,30 +45,6 @@ import org.springframework.core.task.TaskExecutor;
 
 @Configuration
 public class DomainConfiguration {
-    @Bean
-    @ConfigurationProperties("infrastructure.github")
-    GithubConfig githubConfig() {
-        return new GithubConfig();
-    }
-
-    @Bean
-    @ConfigurationProperties("infrastructure.github-for-app")
-    GithubConfig githubConfigForApp() {
-        return new GithubConfig();
-    }
-
-    @Bean
-    @ConfigurationProperties("infrastructure.github-app")
-    GithubAppJwtBuilder.Config githubAppConfig() {
-        return new GithubAppJwtBuilder.Config();
-    }
-
-    @Bean
-    @ConfigurationProperties("infrastructure.github.rate-limit")
-    GithubRateLimitServiceAdapter.Config githubrateLimitConfig() {
-        return new GithubRateLimitServiceAdapter.Config();
-    }
-
     @Bean
     @ConfigurationProperties("application.repo-refresh-job")
     RepoRefreshJobService.Config repoRefreshJobConfig() {
@@ -86,11 +55,6 @@ public class DomainConfiguration {
     @ConfigurationProperties("application.user-refresh-job")
     UserRefreshJobService.Config userRefreshJobConfig() {
         return new UserRefreshJobService.Config();
-    }
-
-    @Bean
-    GithubRateLimitServiceAdapter githubRateLimitServiceAdapter(final GithubHttpClient githubHttpClient) {
-        return new GithubRateLimitServiceAdapter(githubHttpClient);
     }
 
     @Bean
@@ -124,6 +88,25 @@ public class DomainConfiguration {
                 .fetcher(liveRawStorageReader)
                 .cache(postgresRawStorage)
                 .build();
+    }
+
+    @Bean
+    PublicEventRawStorageReader livePublicEventRawStorageReader(
+            final PublicEventRawStorageReader aggregatedPublicEventRawStorageReader,
+            final PostgresRawStorage postgresRawStorage
+    ) {
+        return CacheWritePublicEventRawStorageReaderDecorator.builder()
+                .fetcher(aggregatedPublicEventRawStorageReader)
+                .cache(postgresRawStorage)
+                .build();
+    }
+
+    @Bean
+    PublicEventRawStorageReader aggregatedPublicEventRawStorageReader(
+            final PublicEventRawStorageReader githubArchivesPublicEventRawStorageReaderAdapter,
+            final PublicEventRawStorageReader githubPublicEventRawStorageReader
+    ) {
+        return new PublicEventRawStorageReaderAggregator(githubArchivesPublicEventRawStorageReaderAdapter, githubPublicEventRawStorageReader);
     }
 
     @Bean
@@ -185,11 +168,6 @@ public class DomainConfiguration {
     }
 
     @Bean
-    RawStorageReader githubRawStorageReader(final GithubHttpClient githubHttpClient) {
-        return new GithubRawStorageReader(githubHttpClient);
-    }
-
-    @Bean
     public UserIndexer cachedUserIndexer(final RawStorageReader cachedRawStorageReader, final MeterRegistry registry) {
         return new MonitoredUserIndexer(new UserIndexingService(cachedRawStorageReader), registry);
     }
@@ -208,6 +186,24 @@ public class DomainConfiguration {
                 new UserExposerIndexer(
                         new UserIndexingService(diffRawStorageReader), userExposer),
                 registry);
+    }
+
+    @Bean
+    public UserPublicEventsIndexer cachedUserPublicEventsIndexer(final PublicEventRawStorageReader livePublicEventRawStorageReader,
+                                                                 final RawStorageWriter rawStorageWriter,
+                                                                 final RawStorageReader cachedRawStorageReader,
+                                                                 final RepoIndexer cacheOnlyRepoIndexer,
+                                                                 final UserIndexer cacheOnlyUserIndexer,
+                                                                 final PullRequestIndexer cacheOnlyPullRequestIndexer,
+                                                                 final IssueIndexer cacheOnlyIssueIndexer
+    ) {
+        return new UserPublicEventsIndexingService(livePublicEventRawStorageReader,
+                rawStorageWriter,
+                cachedRawStorageReader,
+                cacheOnlyRepoIndexer,
+                cacheOnlyUserIndexer,
+                cacheOnlyPullRequestIndexer,
+                cacheOnlyIssueIndexer);
     }
 
     @Bean
@@ -420,6 +416,15 @@ public class DomainConfiguration {
     @Bean
     public UserIndexingJobScheduler userIndexingJobScheduler(final PostgresUserIndexingJobStorage userIndexingJobStorage) {
         return new UserIndexingJobSchedulerService(userIndexingJobStorage);
+    }
+
+    @Bean
+    public UserPublicEventsIndexingJobManager userPublicEventsIndexingJobManager(
+            final UserPublicEventsIndexingJobStorage userPublicEventsIndexingJobStorage,
+            final UserPublicEventsIndexer cachedUserPublicEventsIndexer,
+            final RawStorageReader cachedRawStorageReader
+    ) {
+        return new UserPublicEventsIndexingJobService(userPublicEventsIndexingJobStorage, cachedUserPublicEventsIndexer, cachedRawStorageReader);
     }
 
     @Bean
