@@ -1,7 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.bootstrap.it.stubs.PublicEventRawStorageReaderStub;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIndexingJobRepository;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,8 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
     public UserPublicEventsIndexingJobRepository userPublicEventsIndexingJobRepository;
 
     @Autowired
-    PublicEventRawStorageReader publicEventRawStorageReaderStub;
+    PublicEventRawStorageReaderStub githubArchivesReaderStub;
+    PublicEventRawStorageReaderStub githubApiReaderStub;
 
     private WebTestClient.ResponseSpec indexUser(Long userId) {
         return put("/api/v1/users/" + userId);
@@ -27,7 +27,9 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
     @Test
     public void should_index_user_from_public_events() {
         // Given
-        ((PublicEventRawStorageReaderStub) publicEventRawStorageReaderStub).add("/github/public_events/antho_last_events.json");
+        githubArchivesReaderStub.add("/github/public_events/antho_20231002.json");
+        githubArchivesReaderStub.add("/github/public_events/antho_20231003.json");
+        githubApiReaderStub.add("/github/public_events/antho_last_events.json");
 
         // When
         indexUser(ANTHONY).expectStatus().isNoContent();

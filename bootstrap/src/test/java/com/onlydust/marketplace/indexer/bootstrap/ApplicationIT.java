@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.bootstrap;
 import com.onlydust.marketplace.indexer.bootstrap.it.stubs.PublicEventRawStorageReaderStub;
 import com.onlydust.marketplace.indexer.bootstrap.it.stubs.TaskExecutorStub;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
+import com.onlydust.marketplace.indexer.domain.services.readers.PublicEventRawStorageReaderAggregator;
 import com.onlydust.marketplace.indexer.infrastructure.github_archives.GithubArchivesClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,7 +29,18 @@ public class ApplicationIT {
 
     @Bean
     @Primary
-    PublicEventRawStorageReader publicEventRawStorageReaderStub() {
+    PublicEventRawStorageReader publicEventRawStorageReaderStub(PublicEventRawStorageReaderStub githubArchivesReaderStub,
+                                                                PublicEventRawStorageReaderStub githubApiReaderStub) {
+        return new PublicEventRawStorageReaderAggregator(githubArchivesReaderStub, githubApiReaderStub);
+    }
+
+    @Bean
+    PublicEventRawStorageReaderStub githubArchivesReaderStub() {
+        return new PublicEventRawStorageReaderStub();
+    }
+
+    @Bean
+    PublicEventRawStorageReaderStub githubApiReaderStub() {
         return new PublicEventRawStorageReaderStub();
     }
 
