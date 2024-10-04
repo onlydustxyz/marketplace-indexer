@@ -79,6 +79,9 @@ spring:
     scheduling:
       pool:
         size: 10
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
 
 server:
   port: ${PORT}

@@ -1,10 +1,9 @@
 package com.onlydust.marketplace.indexer.infrastructure.github_archives.adapters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.google.cloud.bigquery.FieldValueList;
 import com.google.cloud.bigquery.QueryParameterValue;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.infrastructure.github_archives.GithubArchivesClient;
@@ -22,7 +21,7 @@ import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustExceptio
 
 @AllArgsConstructor
 public class GithubArchivesPublicEventRawStorageReaderAdapter implements PublicEventRawStorageReader {
-    private final static ObjectMapper objectMapper = new ObjectMapper();
+    private final static ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
     private final static DateTimeFormatter YYYYMMDD = DateTimeFormatter.ofPattern("yyyyMMdd");
     private final GithubArchivesClient client;
 
@@ -31,11 +30,11 @@ public class GithubArchivesPublicEventRawStorageReaderAdapter implements PublicE
             return new RawPublicEvent(
                     row.get("id").getLongValue(),
                     row.get("type").getStringValue(),
-                    objectMapper.readValue(row.get("actor").getBytesValue(), RawAccount.class),
-                    objectMapper.readValue(row.get("repo").getBytesValue(), RawRepo.class),
-                    objectMapper.readValue(row.get("org").getBytesValue(), RawAccount.class),
-                    row.get("createdAt").getTimestampInstant().atZone(ZoneOffset.UTC),
-                    objectMapper.readTree(row.get("payload").getBytesValue())
+                    objectMapper.readValue(row.get("actor").getStringValue(), RawPublicEvent.Account.class),
+                    objectMapper.readValue(row.get("repo").getStringValue(), RawPublicEvent.Repo.class),
+                    objectMapper.readValue(row.get("org").getStringValue(), RawPublicEvent.Account.class),
+                    row.get("created_at").getTimestampInstant().atZone(ZoneOffset.UTC),
+                    objectMapper.readTree(row.get("payload").getStringValue())
             );
         } catch (IOException e) {
             throw internalServerError("Error while parsing BigQuery row", e);
@@ -45,13 +44,19 @@ public class GithubArchivesPublicEventRawStorageReaderAdapter implements PublicE
     @Override
     public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
         final var from = since.truncatedTo(ChronoUnit.DAYS);
-        final var to = ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS);
+        final var to = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS);
 
         if (from.isAfter(to))
             return Stream.empty();
 
         final var query = """
-                    SELECT *
+                    SELECT  id                    as id,
+                            type                  as type,
+                            to_json_string(actor) as actor,
+                            to_json_string(repo)  as repo,
+                            to_json_string(org)   as org,
+                            created_at            as created_at,
+                            payload               as payload
                     FROM `githubarchive.day.%s`
                     WHERE actor.id = @actor_id
                     ORDER BY created_at ASC

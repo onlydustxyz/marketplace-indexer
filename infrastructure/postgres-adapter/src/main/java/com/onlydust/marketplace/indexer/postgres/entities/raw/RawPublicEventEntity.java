@@ -1,8 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -33,6 +31,9 @@ public class RawPublicEventEntity {
     Long actorId;
 
     @NonNull
+    Long repoId;
+
+    @NonNull
     String type;
 
     @NonNull
@@ -40,15 +41,15 @@ public class RawPublicEventEntity {
 
     @NonNull
     @JdbcTypeCode(SqlTypes.JSON)
-    RawAccount actor;
+    RawPublicEvent.Account actor;
 
     @NonNull
     @JdbcTypeCode(SqlTypes.JSON)
-    RawRepo repo;
+    RawPublicEvent.Repo repo;
 
     @NonNull
     @JdbcTypeCode(SqlTypes.JSON)
-    RawAccount org;
+    RawPublicEvent.Account org;
 
     @NonNull
     @JdbcTypeCode(SqlTypes.JSON)
@@ -58,6 +59,7 @@ public class RawPublicEventEntity {
         return RawPublicEventEntity.builder()
                 .id(event.id())
                 .actorId(event.actor().getId())
+                .repoId(event.repo().getId())
                 .type(event.type())
                 .createdAt(event.createdAt())
                 .actor(event.actor())

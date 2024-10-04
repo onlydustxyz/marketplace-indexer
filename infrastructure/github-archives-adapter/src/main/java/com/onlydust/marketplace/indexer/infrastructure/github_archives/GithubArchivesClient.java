@@ -18,7 +18,7 @@ import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustExceptio
 public class GithubArchivesClient {
     final Properties properties;
     BigQuery bigQuery;
-    
+
     public TableResult query(String query) {
         return query(query, Map.of());
     }

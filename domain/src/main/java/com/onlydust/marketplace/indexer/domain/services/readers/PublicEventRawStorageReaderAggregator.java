@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.domain.services.readers;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
+import com.onlydust.marketplace.indexer.domain.utils.CurrentDateProvider;
 import lombok.AllArgsConstructor;
 
 import java.time.ZonedDateTime;
@@ -15,7 +16,7 @@ public class PublicEventRawStorageReaderAggregator implements PublicEventRawStor
 
     @Override
     public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
-        final var today = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        final var today = CurrentDateProvider.now().truncatedTo(ChronoUnit.DAYS);
         return since.isAfter(today) ?
                 liveReader.userPublicEvents(userId, since) :
                 Stream.concat(

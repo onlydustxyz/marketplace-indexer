@@ -2,11 +2,16 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.bootstrap.it.stubs.PublicEventRawStorageReaderStub;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIndexingJobRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import static com.onlydust.marketplace.indexer.bootstrap.it.helpers.DateHelper.at;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,10 +19,14 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
     private final static Long ANTHONY = 43467246L;
 
     @Autowired
-    public UserPublicEventsIndexingJobRepository userPublicEventsIndexingJobRepository;
-
+    UserPublicEventsIndexingJobRepository userPublicEventsIndexingJobRepository;
+    @Autowired
+    ContributionRepository contributionRepository;
+    @Autowired
+    GithubRepoEntityRepository repoRepository;
     @Autowired
     PublicEventRawStorageReaderStub githubArchivesReaderStub;
+    @Autowired
     PublicEventRawStorageReaderStub githubApiReaderStub;
 
     private WebTestClient.ResponseSpec indexUser(Long userId) {
@@ -25,19 +34,27 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
     }
 
     @Test
+    @Transactional
     public void should_index_user_from_public_events() {
         // Given
         githubArchivesReaderStub.add("/github/public_events/antho_20231002.json");
-        githubArchivesReaderStub.add("/github/public_events/antho_20231003.json");
         githubApiReaderStub.add("/github/public_events/antho_last_events.json");
 
         // When
-        indexUser(ANTHONY).expectStatus().isNoContent();
+        at("2024-10-03T17:00:00Z", () -> indexUser(ANTHONY).expectStatus().isNoContent());
 
         // Then
-        final var jobs = userPublicEventsIndexingJobRepository.findAll();
-        assertThat(jobs)
+        assertThat(userPublicEventsIndexingJobRepository.findAll())
                 .hasSize(1)
                 .allMatch(job -> nonNull(job.startedAt()) && nonNull(job.finishedAt()) && job.status() == JobStatus.SUCCESS);
+
+        assertThat(contributionRepository.findAll())
+                .hasSize(6)
+                .extracting(ContributionEntity::getContributorLogin)
+                .allMatch(l -> l.equals("AnthonyBuisset"));
+
+        assertThat(repoRepository.findAll())
+                .hasSize(1)
+                .allMatch(r -> r.getName().equals("marketplace-api") && !r.getLanguages().isEmpty());
     }
 }

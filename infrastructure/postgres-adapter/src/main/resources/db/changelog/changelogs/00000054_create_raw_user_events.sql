@@ -2,6 +2,7 @@ create table indexer_raw.public_events
 (
     id              bigint primary key,
     actor_id        bigint                   not null,
+    repo_id         bigint                   not null,
     type            text                     not null,
     created_at      timestamp with time zone not null,
     actor           jsonb                    not null,
