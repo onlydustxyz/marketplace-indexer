@@ -9,7 +9,7 @@ public interface RawStorageWriter {
 
     void saveUserSocialAccounts(Long userId, List<RawSocialAccount> socialAccounts);
 
-    void savePullRequest(Long repoId, RawPullRequest pullRequest);
+    void savePullRequest(RawPullRequest pullRequest);
 
     void savePullRequestReviews(Long pullRequestId, List<RawCodeReview> codeReview);
 

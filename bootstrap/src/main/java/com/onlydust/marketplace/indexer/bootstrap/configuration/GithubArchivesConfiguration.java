@@ -20,7 +20,7 @@ public class GithubArchivesConfiguration {
     }
 
     @Bean
-    public GithubArchivesPublicEventRawStorageReaderAdapter githubArchivesPublicEventRawStorageReader(final GithubArchivesClient githubArchivesClient) {
+    public GithubArchivesPublicEventRawStorageReaderAdapter githubArchivesPublicEventRawStorageReaderAdapter(final GithubArchivesClient githubArchivesClient) {
         return new GithubArchivesPublicEventRawStorageReaderAdapter(githubArchivesClient);
     }
 }

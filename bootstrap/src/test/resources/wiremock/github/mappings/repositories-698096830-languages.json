@@ -1,0 +1,15 @@
+{
+    "request": {
+        "url": "/repositories/698096830/languages",
+        "method": "GET",
+        "headers": {
+            "Authorization": {
+                "matches": "Bearer (GITHUB_PAT|GITHUB_INSTALLATION_TOKEN)"
+            }
+        }
+    },
+    "response": {
+        "status": 200,
+        "bodyFileName": "repos/marketplace-api/languages.json"
+    }
+}

@@ -25,19 +25,19 @@ public class UserStatsIndexerJob extends Job {
 
     @Override
     public String name() {
-        return "user-stats-indexer";
+        return "user-public-events-indexer";
     }
 
     private void index(RawAccount user) {
         try {
-            LOGGER.info("Indexing stats for user {}", user.getId());
+            LOGGER.info("Indexing public events for user {}", user.getId());
             userPublicEventsIndexingJobStorage.startJob(user.getId());
             final var since = userPublicEventsIndexingJobStorage.lastEventTimestamp(user.getId())
                     .orElse(ZonedDateTime.parse(user.getCreatedAt()));
             userPublicEventsIndexer.indexUser(user.getId(), since);
             userPublicEventsIndexingJobStorage.endJob(user.getId());
         } catch (Throwable e) {
-            LOGGER.error("Failed to index stats for user {}", user.getId(), e);
+            LOGGER.error("Failed to index public events for user {}", user.getId(), e);
             userPublicEventsIndexingJobStorage.failJob(user.getId());
         }
     }

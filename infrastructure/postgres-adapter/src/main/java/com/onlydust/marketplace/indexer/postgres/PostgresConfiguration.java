@@ -6,7 +6,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.ApiEventEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.ApiEventRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.UserStatsIndexingJobRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIndexingJobRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -64,8 +64,8 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public PostgresUserPublicEventsIndexingJobStorage userStatsIndexingJobStorage(final UserStatsIndexingJobRepository userStatsIndexingJobRepository) {
-        return new PostgresUserPublicEventsIndexingJobStorage(userStatsIndexingJobRepository);
+    public PostgresUserPublicEventsIndexingJobStorage userStatsIndexingJobStorage(final UserPublicEventsIndexingJobRepository userPublicEventsIndexingJobRepository) {
+        return new PostgresUserPublicEventsIndexingJobStorage(userPublicEventsIndexingJobRepository);
     }
 
     @Bean

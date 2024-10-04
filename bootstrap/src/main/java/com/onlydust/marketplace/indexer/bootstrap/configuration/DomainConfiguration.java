@@ -58,12 +58,6 @@ public class DomainConfiguration {
     }
 
     @Bean
-    @ConfigurationProperties("application.user-stats-job")
-    UserPublicEventsIndexingJobService.Config userStatsJobConfig() {
-        return new UserPublicEventsIndexingJobService.Config();
-    }
-
-    @Bean
     RawStorageReader liveRawStorageReader(
             final RawStorageReader githubRawStorageReader,
             final PostgresRawStorage postgresRawStorage
@@ -109,10 +103,10 @@ public class DomainConfiguration {
 
     @Bean
     PublicEventRawStorageReader aggregatedPublicEventRawStorageReader(
-            final PublicEventRawStorageReader githubArchivesPublicEventRawStorageReader,
+            final PublicEventRawStorageReader githubArchivesPublicEventRawStorageReaderAdapter,
             final PublicEventRawStorageReader githubPublicEventRawStorageReader
     ) {
-        return new PublicEventRawStorageReaderAggregator(githubArchivesPublicEventRawStorageReader, githubPublicEventRawStorageReader);
+        return new PublicEventRawStorageReaderAggregator(githubArchivesPublicEventRawStorageReaderAdapter, githubPublicEventRawStorageReader);
     }
 
     @Bean
@@ -195,15 +189,17 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public UserPublicEventsIndexer cachedUserStatsIndexer(final PublicEventRawStorageReader livePublicEventRawStorageReader,
-                                                          final RawStorageWriter rawStorageWriter,
-                                                          final RepoIndexer cacheOnlyRepoIndexer,
-                                                          final UserIndexer cacheOnlyUserIndexer,
-                                                          final PullRequestIndexer cacheOnlyPullRequestIndexer,
-                                                          final IssueIndexer cacheOnlyIssueIndexer
+    public UserPublicEventsIndexer cachedUserPublicEventsIndexer(final PublicEventRawStorageReader livePublicEventRawStorageReader,
+                                                                 final RawStorageWriter rawStorageWriter,
+                                                                 final RawStorageReader cachedRawStorageReader,
+                                                                 final RepoIndexer cacheOnlyRepoIndexer,
+                                                                 final UserIndexer cacheOnlyUserIndexer,
+                                                                 final PullRequestIndexer cacheOnlyPullRequestIndexer,
+                                                                 final IssueIndexer cacheOnlyIssueIndexer
     ) {
         return new UserPublicEventsIndexingService(livePublicEventRawStorageReader,
                 rawStorageWriter,
+                cachedRawStorageReader,
                 cacheOnlyRepoIndexer,
                 cacheOnlyUserIndexer,
                 cacheOnlyPullRequestIndexer,
@@ -423,13 +419,12 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public UserPublicEventsIndexingJobManager userStatsIndexingJobManager(
+    public UserPublicEventsIndexingJobManager userPublicEventsIndexingJobManager(
             final UserPublicEventsIndexingJobStorage userPublicEventsIndexingJobStorage,
-            final UserPublicEventsIndexer userPublicEventsIndexer,
-            final RawStorageReader cachedRawStorageReader,
-            final UserPublicEventsIndexingJobService.Config userStatsJobConfig
+            final UserPublicEventsIndexer cachedUserPublicEventsIndexer,
+            final RawStorageReader cachedRawStorageReader
     ) {
-        return new UserPublicEventsIndexingJobService(userPublicEventsIndexingJobStorage, userPublicEventsIndexer, cachedRawStorageReader, userStatsJobConfig);
+        return new UserPublicEventsIndexingJobService(userPublicEventsIndexingJobStorage, cachedUserPublicEventsIndexer, cachedRawStorageReader);
     }
 
     @Bean

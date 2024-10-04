@@ -118,8 +118,8 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
         savePullRequestCommits(pullRequestId, Arrays.stream(commits).toList());
     }
 
-    public void feedWith(Long repoId, RawPullRequest... pullRequests) {
-        Arrays.stream(pullRequests).forEach(pullRequest -> savePullRequest(repoId, pullRequest));
+    public void feedWith(RawPullRequest... pullRequests) {
+        Arrays.stream(pullRequests).forEach(this::savePullRequest);
     }
 
     public void feedWith(Long repoId, RawIssue... issues) {
@@ -141,7 +141,8 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     }
 
     @Override
-    public void savePullRequest(Long repoId, RawPullRequest pullRequest) {
+    public void savePullRequest(RawPullRequest pullRequest) {
+        final var repoId = pullRequest.getBase().getRepo().getId();
         final var prs = repoPullRequests.getOrDefault(repoId, new ArrayList<>());
         prs.add(pullRequest);
         repoPullRequests.put(repoId, prs);

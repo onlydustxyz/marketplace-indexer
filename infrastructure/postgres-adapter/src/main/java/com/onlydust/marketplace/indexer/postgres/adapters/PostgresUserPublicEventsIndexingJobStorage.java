@@ -2,8 +2,8 @@ package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
-import com.onlydust.marketplace.indexer.postgres.entities.UserStatsIndexingJobEntity;
-import com.onlydust.marketplace.indexer.postgres.repositories.UserStatsIndexingJobRepository;
+import com.onlydust.marketplace.indexer.postgres.entities.UserPublicEventsIndexingJobEntity;
+import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIndexingJobRepository;
 import lombok.AllArgsConstructor;
 
 import java.time.Instant;
@@ -15,11 +15,11 @@ import static java.util.stream.Collectors.toSet;
 
 @AllArgsConstructor
 public class PostgresUserPublicEventsIndexingJobStorage implements UserPublicEventsIndexingJobStorage {
-    private final UserStatsIndexingJobRepository repository;
+    private final UserPublicEventsIndexingJobRepository repository;
 
     @Override
     public void add(Long userId) {
-        repository.save(UserStatsIndexingJobEntity.builder()
+        repository.save(UserPublicEventsIndexingJobEntity.builder()
                 .userId(userId)
                 .build());
     }
@@ -27,13 +27,13 @@ public class PostgresUserPublicEventsIndexingJobStorage implements UserPublicEve
     @Override
     public Optional<ZonedDateTime> lastEventTimestamp(Long userId) {
         return repository.findById(userId)
-                .map(UserStatsIndexingJobEntity::lastEventTimestamp);
+                .map(UserPublicEventsIndexingJobEntity::lastEventTimestamp);
     }
 
     @Override
     public Set<Long> all() {
         return repository.findAll().stream()
-                .map(UserStatsIndexingJobEntity::userId)
+                .map(UserPublicEventsIndexingJobEntity::userId)
                 .collect(toSet());
     }
 

@@ -7,8 +7,6 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserPublicEventsInd
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
@@ -19,7 +17,6 @@ public class UserPublicEventsIndexingJobService implements UserPublicEventsIndex
     private final UserPublicEventsIndexingJobStorage userPublicEventsIndexingJobStorage;
     private final UserPublicEventsIndexer userPublicEventsIndexer;
     private final RawStorageReader rawStorageReader;
-    private final Config config;
 
     @Override
     public Job create(Long userId) {
@@ -31,12 +28,5 @@ public class UserPublicEventsIndexingJobService implements UserPublicEventsIndex
     public Job refresh() {
         final var users = userPublicEventsIndexingJobStorage.all();
         return new UserStatsIndexerJob(userPublicEventsIndexer, users, userPublicEventsIndexingJobStorage, rawStorageReader);
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Config {
-        Integer refreshInterval;
     }
 }

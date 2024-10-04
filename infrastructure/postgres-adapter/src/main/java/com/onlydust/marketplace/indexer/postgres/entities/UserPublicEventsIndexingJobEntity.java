@@ -12,7 +12,7 @@ import java.time.Instant;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "user_indexing_jobs", schema = "indexer")
+@Table(name = "user_public_events_indexing_jobs", schema = "indexer")
 @DynamicUpdate
 @NoArgsConstructor(force = true)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -20,7 +20,8 @@ import java.time.ZonedDateTime;
 @Builder(toBuilder = true)
 @Getter
 @Accessors(fluent = true)
-public class UserStatsIndexingJobEntity {
+@ToString
+public class UserPublicEventsIndexingJobEntity {
     @Id
     @NonNull
     Long userId;

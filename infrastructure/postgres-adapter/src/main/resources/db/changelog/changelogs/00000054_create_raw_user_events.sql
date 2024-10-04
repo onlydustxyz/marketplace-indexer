@@ -21,7 +21,7 @@ execute function set_tech_updated_at();
 create index indexer_raw_public_events_actor_id_created_at_idx
     on indexer_raw.public_events (actor_id, created_at);
 
-create table user_stats_indexing_jobs
+create table user_public_events_indexing_jobs
 (
     user_id              bigint primary key,
     status               indexer.job_status       default 'PENDING'::indexer.job_status not null,
@@ -34,6 +34,25 @@ create table user_stats_indexing_jobs
 
 create trigger user_stats_indexing_jobs_set_tech_updated_at
     before update
-    on user_stats_indexing_jobs
+    on user_public_events_indexing_jobs
     for each row
 execute function set_tech_updated_at();
+
+alter table indexer_raw.issues
+    drop constraint issues_repo_id_fkey;
+
+alter table indexer_raw.pull_request_commits
+    drop constraint pull_request_commits_pull_request_id_fkey;
+
+alter table indexer_raw.pull_request_reviews
+    drop constraint pull_request_reviews_pull_request_id_fkey;
+
+alter table indexer_raw.pull_requests
+    drop constraint pull_requests_repo_id_fkey;
+
+alter table indexer_raw.repo_languages
+    drop constraint repo_languages_repo_id_fkey;
+
+alter table indexer_raw.user_social_accounts
+    drop constraint user_social_accounts_user_id_fkey;
+

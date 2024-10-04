@@ -41,6 +41,7 @@ public record RawPublicEvent(Long id,
         }
     }
 
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class Payload extends JsonDocument {
     }
 }

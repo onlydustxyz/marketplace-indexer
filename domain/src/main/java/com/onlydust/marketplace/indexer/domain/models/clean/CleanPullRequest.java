@@ -38,7 +38,7 @@ public class CleanPullRequest {
     public static CleanPullRequest of(RawPullRequest pullRequest) {
         return CleanPullRequest.builder()
                 .id(pullRequest.getId())
-                .repo(CleanRepo.of(pullRequest.getHead().getRepo()))
+                .repo(CleanRepo.of(pullRequest.getBase().getRepo()))
                 .number(pullRequest.getNumber())
                 .title(pullRequest.getTitle())
                 .state(pullRequest.getState())

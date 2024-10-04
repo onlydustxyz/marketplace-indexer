@@ -60,7 +60,7 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     @Override
     public Optional<RawPullRequest> pullRequest(Long repoId, Long prNumber) {
         final var pullRequest = fetcher.pullRequest(repoId, prNumber);
-        pullRequest.ifPresent(pr -> cache.savePullRequest(repoId, pr));
+        pullRequest.ifPresent(cache::savePullRequest);
         return pullRequest;
     }
 

@@ -91,8 +91,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
                             return null;
                         })).filter(Objects::nonNull).toList();
                 final var commits = indexPullRequestCommits(repo.getId(), pullRequest.getId(), prNumber);
-                final var closingIssues = indexClosingIssues(pullRequest.getBase().getRepo().getOwner().getLogin(), pullRequest.getBase().getRepo().getName()
-                        , pullRequest.getNumber());
+                final var closingIssues = indexClosingIssues(repoOwner, repoName, prNumber);
                 return CleanPullRequest.of(
                         pullRequest,
                         repo,
