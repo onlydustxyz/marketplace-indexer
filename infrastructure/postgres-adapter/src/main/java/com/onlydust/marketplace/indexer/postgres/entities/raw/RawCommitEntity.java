@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawCommit;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawShortCommit;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -40,6 +41,14 @@ public class RawCommitEntity {
                 .authorId(commit.getAuthor() == null ? null : commit.getAuthor().getId())
                 .authorName(commit.getAuthor() == null ? null : commit.getAuthor().getLogin())
                 .data(commit)
+                .build();
+    }
+
+    public static RawCommitEntity of(Long repoId, RawShortCommit commit) {
+        return RawCommitEntity.builder()
+                .sha(commit.getSha())
+                .repoId(repoId)
+                .authorName(commit.getAuthor() == null ? null : commit.getAuthor().getName())
                 .build();
     }
 }

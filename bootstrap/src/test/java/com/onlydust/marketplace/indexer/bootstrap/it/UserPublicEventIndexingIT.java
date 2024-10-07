@@ -4,9 +4,11 @@ import com.onlydust.marketplace.indexer.bootstrap.it.stubs.PublicEventRawStorage
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubUserFileExtensionEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIndexingJobRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubUserFileExtensionsRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static com.onlydust.marketplace.indexer.bootstrap.it.helpers.DateHelper.at;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.groupingBy;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserPublicEventIndexingIT extends IntegrationTest {
@@ -31,6 +34,8 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
     PublicEventRawStorageReaderStub githubApiReaderStub;
     @Autowired
     JobManager commitIndexerJobManager;
+    @Autowired
+    GithubUserFileExtensionsRepository githubUserFileExtensionsRepository;
 
     private WebTestClient.ResponseSpec indexUser(Long userId) {
         return put("/api/v1/users/" + userId);
@@ -77,5 +82,17 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
                 .allMatch(job -> nonNull(job.startedAt()) && nonNull(job.finishedAt()) && job.status() == JobStatus.SUCCESS);
 
         commitIndexerJobManager.createJob().run();
+
+        final var fileExtensionsPerUser = githubUserFileExtensionsRepository.findAll()
+                .stream().collect(groupingBy(GithubUserFileExtensionEntity::getUserId));
+
+        assertThat(fileExtensionsPerUser.get(ANTHONY))
+                .hasSize(2);
+
+        assertThat(fileExtensionsPerUser.get(ANTHONY).stream()
+                .filter(e -> e.getFileExtension().equals("java"))
+                .findFirst().orElseThrow())
+                .extracting(GithubUserFileExtensionEntity::getCommitCount)
+                .isEqualTo(1);
     }
 }

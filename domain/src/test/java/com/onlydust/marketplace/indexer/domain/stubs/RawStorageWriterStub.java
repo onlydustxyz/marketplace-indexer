@@ -201,6 +201,11 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
         commits.add(commit);
     }
 
+    @Override
+    public void saveCommits(Long repoId, List<RawShortCommit> commits) {
+        
+    }
+
     public List<RawRepo> repos() {
         return repos;
     }

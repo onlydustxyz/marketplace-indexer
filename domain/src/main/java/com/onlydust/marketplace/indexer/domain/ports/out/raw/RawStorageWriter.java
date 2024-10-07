@@ -28,4 +28,6 @@ public interface RawStorageWriter {
     void deleteIssue(Long id);
 
     void saveCommit(Long repoId, RawCommit commit);
+
+    void saveCommits(Long repoId, List<RawShortCommit> commits);
 }

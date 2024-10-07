@@ -172,4 +172,9 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
     public void savePublicEvent(RawPublicEvent rawEvent) {
         publicEventRepository.save(RawPublicEventEntity.of(rawEvent));
     }
+
+    @Override
+    public void saveCommits(Long repoId, List<RawShortCommit> commits) {
+        commitRepository.saveAll(commits.stream().map(c -> RawCommitEntity.of(repoId, c)).toList());
+    }
 }
