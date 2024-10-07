@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.notFound;
+
 @AllArgsConstructor
 public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, PublicEventRawStorageReader, PublicEventRawStorageWriter {
     final IssueRepository issueRepository;
@@ -23,7 +25,6 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
     final PullRequestRepository pullRequestRepository;
     final RepoLanguagesRepository repoLanguagesRepository;
     final UserSocialAccountsRepository userSocialAccountsRepository;
-    final PullRequestCommitsRepository pullRequestCommitsRepository;
     final PullRequestClosingIssueRepository pullRequestClosingIssueRepository;
     final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository;
     final PullRequestReviewsRepository pullRequestReviewsRepository;
@@ -81,7 +82,9 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
 
     @Override
     public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return pullRequestCommitsRepository.findById(pullRequestId).map(RawPullRequestCommitsEntity::getData);
+        return pullRequestRepository.findById(pullRequestId)
+                .flatMap(pr -> Optional.ofNullable(pr.getCommits()))
+                .map(c -> c.stream().map(RawCommitEntity::getData).toList());
     }
 
     @Override
@@ -117,7 +120,11 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
 
     @Override
     public void savePullRequestCommits(Long pullRequestId, List<RawCommit> commits) {
-        pullRequestCommitsRepository.save(RawPullRequestCommitsEntity.of(pullRequestId, commits));
+        final var pullRequest = pullRequestRepository.findById(pullRequestId)
+                .orElseThrow(() -> notFound("Pull request not found: " + pullRequestId))
+                .withCommits(commits);
+
+        pullRequestRepository.save(pullRequest);
     }
 
     @Override
