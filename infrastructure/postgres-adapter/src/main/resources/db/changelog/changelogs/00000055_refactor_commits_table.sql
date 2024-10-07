@@ -73,3 +73,10 @@ from tmp.commits c;
 
 
 drop schema tmp cascade;
+
+
+alter table indexer_raw.public_events
+    alter column tech_created_at set default now();
+
+alter table indexer_raw.public_events
+    alter column tech_updated_at set default now();
