@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface CommitRepository extends JpaRepository<RawCommitEntity, String> {
     @Query(value = """
-            with partial_commits_per_user as (select author_name,
+            with missing_commits_per_user as (select author_name,
                                                      count(sha) as commit_count
                                               from indexer_raw.commits
-                                              where data ->> 'files' is null
+                                              where data is null
                                               group by author_name)
             select c.*
             from indexer_raw.commits c
-                     join partial_commits_per_user pcpu on c.author_name = pcpu.author_name
-            order by pcpu.commit_count desc
+                     join missing_commits_per_user mcpu on c.author_name = mcpu.author_name
+            order by mcpu.commit_count desc
             limit :limit
             """, nativeQuery = true)
     List<RawCommitEntity> findAllForLeastIndexedUsers(int limit);

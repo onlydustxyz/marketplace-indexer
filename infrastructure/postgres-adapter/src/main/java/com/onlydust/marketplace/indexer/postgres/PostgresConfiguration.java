@@ -119,4 +119,9 @@ public class PostgresConfiguration {
     public PostgresCommitIndexingJobStorage commitIndexingJobStorage(final CommitRepository commitRepository) {
         return new PostgresCommitIndexingJobStorage(commitRepository);
     }
+
+    @Bean
+    public PostgresUserFileExtensionsStorage postgresUserFileExtensionsStorage(final GithubUserFileExtensionsRepository githubUserFileExtensionsRepository) {
+        return new PostgresUserFileExtensionsStorage(githubUserFileExtensionsRepository);
+    }
 }

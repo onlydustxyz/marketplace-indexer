@@ -1,4 +1,4 @@
-create schema tmp;
+create schema if not exists tmp;
 
 alter table indexer_raw.pull_request_commits
     set schema tmp;
@@ -28,7 +28,7 @@ create table indexer_raw.commits
     repo_id         bigint                   not null,
     author_id       bigint,
     author_name     text,
-    data            jsonb                    not null,
+    data            jsonb,
     tech_created_at timestamp with time zone not null default now(),
     tech_updated_at timestamp with time zone not null default now()
 );
@@ -80,3 +80,19 @@ alter table indexer_raw.public_events
 
 alter table indexer_raw.public_events
     alter column tech_updated_at set default now();
+
+create table indexer_exp.github_user_file_extensions
+(
+    user_id         bigint                   not null,
+    file_extension  text                     not null,
+    commit_count    int                      not null,
+    tech_created_at timestamp with time zone not null default now(),
+    tech_updated_at timestamp with time zone not null default now(),
+    primary key (user_id, file_extension)
+);
+
+create trigger indexer_exp_github_user_file_extensions_set_tech_updated_at
+    before update
+    on indexer_exp.github_user_file_extensions
+    for each row
+execute function indexer.set_tech_updated_at();

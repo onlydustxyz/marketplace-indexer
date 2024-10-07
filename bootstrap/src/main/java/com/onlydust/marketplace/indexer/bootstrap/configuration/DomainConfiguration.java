@@ -1,9 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
+import com.onlydust.marketplace.indexer.domain.models.clean.*;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
@@ -466,6 +463,11 @@ public class DomainConfiguration {
     }
 
     @Bean
+    public Exposer<CleanCommit> commitExposer(final UserFileExtensionStorage userFileExtensionStorage) {
+        return new CommitExposer(userFileExtensionStorage);
+    }
+
+    @Bean
     public IndexingOutboxObserver indexingOutboxObserver(final OutboxPort outboxPort) {
         return new IndexingOutboxObserver(outboxPort);
     }
@@ -484,12 +486,16 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public CommitIndexer cachedCommitIndexer(final RawStorageReader cachedRawStorageReader) {
-        return new CommitIndexingService(cachedRawStorageReader);
+    public CommitIndexer cachedCommitIndexer(final RawStorageReader cachedRawStorageReader,
+                                             final Exposer<CleanCommit> commitExposer) {
+        return new CommitExposerIndexer(new CommitIndexingService(cachedRawStorageReader),
+                commitExposer);
     }
 
     @Bean
-    public CommitIndexer cacheOnlyCommitIndexer(final PostgresRawStorage postgresRawStorage) {
-        return new CommitIndexingService(postgresRawStorage);
+    public CommitIndexer cacheOnlyCommitIndexer(final PostgresRawStorage postgresRawStorage,
+                                                final Exposer<CleanCommit> commitExposer) {
+        return new CommitExposerIndexer(new CommitIndexingService(postgresRawStorage),
+                commitExposer);
     }
 }
