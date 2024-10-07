@@ -20,6 +20,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.CommitIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.*;
 import com.onlydust.marketplace.indexer.domain.services.events.*;
@@ -472,6 +473,14 @@ public class DomainConfiguration {
     @Bean
     public GithubOutboxObserver githubOutboxObserver(final OutboxPort outboxPort) {
         return new GithubOutboxObserver(outboxPort);
+    }
+
+    @Bean
+    public JobManager commitIndexerJobManager(final CommitIndexer cachedCommitIndexer,
+                                              final CommitIndexingJobStorage commitIndexingJobStorage,
+                                              final RateLimitService rateLimitService
+    ) {
+        return new CommitIndexerJobService(cachedCommitIndexer, commitIndexingJobStorage, rateLimitService);
     }
 
     @Bean

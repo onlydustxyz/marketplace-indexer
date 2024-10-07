@@ -114,4 +114,9 @@ public class PostgresConfiguration {
     public PostgresOutboxAdapter<ApiEventEntity> apiEventEntityPostgresOutboxAdapter(final ApiEventRepository apiEventRepository) {
         return new PostgresOutboxAdapter<>(apiEventRepository);
     }
+
+    @Bean
+    public PostgresCommitIndexingJobStorage commitIndexingJobStorage(final CommitRepository commitRepository) {
+        return new PostgresCommitIndexingJobStorage(commitRepository);
+    }
 }

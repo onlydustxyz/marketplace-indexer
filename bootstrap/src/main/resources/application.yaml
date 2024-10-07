@@ -30,6 +30,7 @@ application:
     repo-refresh-job-delay: 5000 # 5s
     user-refresh-job-delay: 5000 # 5s
     event-inbox-dequeuer-delay: 1000 # 1s
+    commit-indexer-delay: 3600000 # 1h
   repo-refresh-job:
     unauthorized-repos-refresh-interval: 60 # 1m
     authorized-repos-refresh-interval: 86400 # 24h
