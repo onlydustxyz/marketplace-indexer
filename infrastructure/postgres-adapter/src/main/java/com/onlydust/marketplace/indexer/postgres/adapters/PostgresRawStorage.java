@@ -29,6 +29,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
     final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository;
     final PullRequestReviewsRepository pullRequestReviewsRepository;
     final PublicEventRepository publicEventRepository;
+    final CommitRepository commitRepository;
 
     @Override
     public Optional<RawRepo> repo(Long repoId) {
@@ -85,6 +86,11 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
         return pullRequestRepository.findById(pullRequestId)
                 .flatMap(pr -> Optional.ofNullable(pr.getCommits()))
                 .map(c -> c.stream().map(RawCommitEntity::getData).toList());
+    }
+
+    @Override
+    public Optional<RawCommit> commit(Long repoId, String sha) {
+        return commitRepository.findById(sha).map(RawCommitEntity::getData);
     }
 
     @Override
@@ -155,6 +161,11 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
     @Override
     public void deleteIssue(Long id) {
         issueRepository.deleteById(id);
+    }
+
+    @Override
+    public void saveCommit(Long repoId, RawCommit commit) {
+        commitRepository.save(RawCommitEntity.of(repoId, commit));
     }
 
     @Override

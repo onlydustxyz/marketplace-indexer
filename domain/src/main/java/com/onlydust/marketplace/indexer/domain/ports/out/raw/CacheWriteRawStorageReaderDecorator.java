@@ -86,6 +86,14 @@ public class CacheWriteRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
+    public Optional<RawCommit> commit(Long repoId, String sha) {
+        final var commit = fetcher.commit(repoId, sha)
+                .map(RawCommit::sanitized);
+        commit.ifPresent(c -> cache.saveCommit(repoId, c));
+        return commit;
+    }
+
+    @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         final var closingIssues = fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
         closingIssues.ifPresent(data -> cache.saveClosingIssues(repoOwner, repoName, pullRequestNumber, data));

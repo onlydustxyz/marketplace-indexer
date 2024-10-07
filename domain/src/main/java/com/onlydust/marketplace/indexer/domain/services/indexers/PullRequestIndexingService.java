@@ -5,10 +5,7 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanCodeReview;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanCommit;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.RepoIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +21,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     private final UserIndexer userIndexer;
     private final RepoIndexer repoIndexer;
     private final IssueIndexer issueIndexer;
+    private final CommitIndexer commitIndexer;
 
     private List<CleanCodeReview> indexPullRequestReviews(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         LOGGER.debug("Indexing pull request reviews for repo {} and pull request {}", repoId, pullRequestId);
@@ -46,16 +44,19 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
     private List<CleanCommit> indexPullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         LOGGER.debug("Indexing pull request commits for repo {} and pull request {}", repoId, pullRequestNumber);
-        final var commits = rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber)
+        return rawStorageReader.pullRequestCommits(repoId, pullRequestId, pullRequestNumber)
                 .orElseGet(() -> {
                     LOGGER.warn("Unable to fetch pull request commits");
                     return List.of();
-                });
-        return commits.stream()
-                .map(commit -> Optional.ofNullable(commit.getAuthor())
-                        .or(() -> Optional.ofNullable(commit.getCommitter()))
-                        .map(user -> CleanCommit.of(commit, Optional.ofNullable(user.getId()).flatMap(userIndexer::indexUser).orElse(null)))
-                        .orElse(CleanCommit.of(commit, null)))
+                }).stream()
+                .flatMap(c -> commitIndexer.indexCommit(repoId, c.getSha()).stream())
+                .map(c -> {
+                    final var author = Optional.ofNullable(c.getAuthor())
+                            .flatMap(a -> Optional.ofNullable(a.getId()))
+                            .flatMap(userIndexer::indexUser)
+                            .orElse(null);
+                    return c.withAuthor(author);
+                })
                 .toList();
     }
 

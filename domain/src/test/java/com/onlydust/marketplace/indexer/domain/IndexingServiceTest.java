@@ -60,8 +60,9 @@ public class IndexingServiceTest {
             new IssueIndexingService(rawStorageReader, userIndexingService, repoIndexingService),
             new IssueExposer(contributionRepository, issueStorage, indexingObserver)
     );
+    final CommitIndexingService commitIndexingService = new CommitIndexingService(rawStorageReader);
     final PullRequestIndexer pullRequestIndexer = new PullRequestExposerIndexer(
-            new PullRequestIndexingService(rawStorageReader, userIndexingService, repoIndexingService, issueIndexer),
+            new PullRequestIndexingService(rawStorageReader, userIndexingService, repoIndexingService, issueIndexer, commitIndexingService),
             new PullRequestExposer(contributionRepository, pullRequestStorage, indexingObserver)
     );
     final FullRepoIndexingService fullRepoIndexingService = new FullRepoIndexingService(rawStorageReader, issueIndexer, pullRequestIndexer,
@@ -169,7 +170,7 @@ public class IndexingServiceTest {
     @Test
     void should_not_index_issue_when_it_is_a_pull_request() {
         rawStorageReaderStub.feedWith(marketplaceFrontend.getId(), issue2335);
-        
+
         final var issue = issueIndexer.indexIssue("onlydustxyz", "marketplace-frontend", 2335L);
         assertThat(issue).isEmpty();
         verify(issueStorage, never()).save(any());
@@ -207,7 +208,7 @@ public class IndexingServiceTest {
                 anthony, // as issue author, again...
                 onlyDust,// as issue repo owner
                 anthony, // as issue assignee
-                anthony // as issue assignee, again...
+                anthony  // as issue assignee, again...
         );
         assertCachedUserSocialAccountsAre(
                 Map.of(anthony.getId(), Arrays.stream(anthonySocialAccounts).toList(),

@@ -253,11 +253,12 @@ public class DomainConfiguration {
             final UserIndexer cachedUserIndexer,
             final RepoIndexer cachedRepoIndexer,
             final IssueIndexer cachedIssueIndexer,
+            final CommitIndexer cachedCommitIndexer,
             final Exposer<CleanPullRequest> pullRequestExposer,
             final MeterRegistry registry) {
         return new PullRequestExposerIndexer(
                 new MonitoredPullRequestIndexer(
-                        new PullRequestIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer),
+                        new PullRequestIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer, cachedCommitIndexer),
                         registry),
                 pullRequestExposer
         );
@@ -269,9 +270,10 @@ public class DomainConfiguration {
             final UserIndexer cacheOnlyUserIndexer,
             final RepoIndexer cacheOnlyRepoIndexer,
             final IssueIndexer cacheOnlyIssueIndexer,
+            final CommitIndexer cacheOnlyCommitIndexer,
             final Exposer<CleanPullRequest> pullRequestExposer) {
         return new PullRequestExposerIndexer(
-                new PullRequestIndexingService(postgresRawStorage, cacheOnlyUserIndexer, cacheOnlyRepoIndexer, cacheOnlyIssueIndexer),
+                new PullRequestIndexingService(postgresRawStorage, cacheOnlyUserIndexer, cacheOnlyRepoIndexer, cacheOnlyIssueIndexer, cacheOnlyCommitIndexer),
                 pullRequestExposer
         );
     }
@@ -282,11 +284,12 @@ public class DomainConfiguration {
             final UserIndexer cachedUserIndexer,
             final RepoIndexer cachedRepoIndexer,
             final IssueIndexer cachedIssueIndexer,
+            final CommitIndexer cachedCommitIndexer,
             final Exposer<CleanPullRequest> pullRequestExposer,
             final MeterRegistry registry) {
         return new PullRequestExposerIndexer(
                 new MonitoredPullRequestIndexer(
-                        new PullRequestIndexingService(liveRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer),
+                        new PullRequestIndexingService(liveRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer, cachedCommitIndexer),
                         registry),
                 pullRequestExposer
         );
@@ -469,5 +472,15 @@ public class DomainConfiguration {
     @Bean
     public GithubOutboxObserver githubOutboxObserver(final OutboxPort outboxPort) {
         return new GithubOutboxObserver(outboxPort);
+    }
+
+    @Bean
+    public CommitIndexer cachedCommitIndexer(final RawStorageReader cachedRawStorageReader) {
+        return new CommitIndexingService(cachedRawStorageReader);
+    }
+
+    @Bean
+    public CommitIndexer cacheOnlyCommitIndexer(final PostgresRawStorage postgresRawStorage) {
+        return new CommitIndexingService(postgresRawStorage);
     }
 }

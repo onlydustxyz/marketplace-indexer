@@ -80,6 +80,9 @@ public class PullRequestIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
+        final var expected = RawPullRequestEntity.of(pr1257).withCommits(details(pr1257Commits));
+        final var actual = pullRequestsRepository.findAll().stream().findFirst().orElseThrow();
+
         assertThat(pullRequestsRepository.findAll()).usingFieldByFieldElementComparator().containsExactly(RawPullRequestEntity.of(pr1257).withCommits(details(pr1257Commits)));
         assertThat(repoRepository.findAll()).containsExactly(RawRepoEntity.of(marketplaceFrontend));
         assertThat(pullRequestReviewsRepository.findAll()).containsExactly(RawPullRequestReviewEntity.of(pr1257.getId(), pr1257Reviews));
@@ -121,7 +124,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
     }
 
     private List<RawCommit> details(List<RawCommit> commits) {
-        return commits.stream().map(this::details).filter(c -> c.getParents().size() < 2).toList();
+        return commits.stream().map(this::details).toList();
     }
 
     @SneakyThrows
@@ -136,14 +139,12 @@ public class PullRequestIndexingIT extends IntegrationTest {
     @Transactional
     public void should_index_pull_request_with_multiple_commits_on_demand() throws IOException {
         // Given
-        final var marketplaceFrontend = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend.json"),
-                RawRepo.class);
         final var pr1258 = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1258.json"),
                 RawPullRequest.class);
-        final var pr1258Reviews = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls" +
-                                                                                                "/1258_reviews.json"), RawCodeReview[].class));
-        final var pr1258Commits = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls" +
-                                                                                                "/1258_commits.json"), RawCommit[].class));
+        final var pr1258Reviews = Arrays.asList(mapper.readValue(
+                getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1258_reviews.json"), RawCodeReview[].class));
+        final var pr1258Commits = Arrays.asList(mapper.readValue(
+                getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1258_commits.json"), RawCommit[].class));
 
         final var anthony = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
         final var pierre = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/pierre.json"), RawAccount.class);

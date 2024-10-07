@@ -79,14 +79,17 @@ public class GithubRawStorageReader implements RawStorageReader, PublicEventRawS
     public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long prNumber) {
         final var page = new GithubPage<>(client, "/repositories/" + repoId + "/pulls/" + prNumber + "/commits?per_page=100", RawCommit[].class);
         return Optional.of(StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false)
-                .map(c -> client.get("/repositories/" + repoId + "/commits/" + c.getSha(), RawCommit.class).orElseGet(() -> {
-                    LOGGER.warn("Unable to fetch commit https://api.github.com/repositories/{}/commits/{}", repoId, c.getSha());
-                    return null;
-                }))
-                .filter(Objects::nonNull)
-                .filter(RawCommit::nonMerge)
-                .map(RawCommit::sanitized)
                 .toList());
+    }
+
+    @Override
+    public Optional<RawCommit> commit(Long repoId, String sha) {
+        final var commit = client.get("/repositories/" + repoId + "/commits/" + sha, RawCommit.class);
+
+        if (commit.isEmpty())
+            LOGGER.warn("Unable to fetch commit https://api.github.com/repositories/{}/commits/{}", repoId, sha);
+
+        return commit;
     }
 
     @Override
