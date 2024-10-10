@@ -1,0 +1,158 @@
+{
+    "sha": "eda4388aa686d6d1706b2e61c3ad30980c240c4b",
+    "node_id": "C_kwDOKZwcvtoAKGVkYTQzODhhYTY4NmQ2ZDE3MDZiMmU2MWMzYWQzMDk4MGMyNDBjNGI",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2024-10-02T13:55:31Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2024-10-02T14:22:07Z"
+        },
+        "message": "Revert \"add user preferred languages in get endpoint (#1170)\"\n\nThis reverts commit f7afa4b8320de3daa64775f9ad3ba8b8bbc1d2f0.",
+        "tree": {
+            "sha": "357e6843e17c149c72817227fcb17f4fc423adc3",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/git/trees/357e6843e17c149c72817227fcb17f4fc423adc3"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/git/commits/eda4388aa686d6d1706b2e61c3ad30980c240c4b",
+        "comment_count": 0,
+        "verification": {
+            "verified": true,
+            "reason": "valid",
+            "signature": "-----BEGIN PGP SIGNATURE-----\n\niQGzBAABCAAdFiEEf2iRt5hVQQXKtppWNY4YwZLdMxsFAmb9Vw8ACgkQNY4YwZLd\nMxvXFgwAiKeKxB4QP2icsyrdG213J2yhzxJxKqDnS9/gI96bddU0wVlOMhuX1Lek\nbf2yXjX8ib2Iqyq7tQsEmAVoI9+xuBpxu0PmBHKTDXL2LTjsnKltNLDIJixe7RJc\nX7eQjHv2X1wCtrJIzwTKKAeVK3hIeeBhEv1ZEt1pt0ep0nyjQkL/GWsUrmQX5EYR\nm8SgkbhZsXto5XRU0fFVzlyaMc+eXJ/l/wMUXLQAnQCy0FlKU9HzrdUXNQ9Bh5E5\nXLLSO7XvfRQQxk6LO61SR5pIoIAdVOJwn+ar01fQikZD7rJb6GRJmVBNs+fdP0Qm\nJO2awaSi/ToY0PGTmxwtPyE27Kh0Xjmd3dJWznNDmgRnLPLFB3Szu0+1j9EvKPlK\nK9lfDgK0kGoGAgBPxGkYpstGlTJko6u7qUruiybrUEfy6HuKkIlUXxuCvCg53jXm\n7T3glM4UVgxOw7EkS5mBPuY3+SE8LLUG/w4a+iZ66VUhMi65ZX5Mlfz1ShZTQMaK\ny1nfupUB\n=gvNK\n-----END PGP SIGNATURE-----",
+            "payload": "tree 357e6843e17c149c72817227fcb17f4fc423adc3\nparent 0d29bb95c47cbd2b1542a67e3a32110d06f53a3b\nauthor Anthony Buisset <abuisset@gmail.com> 1727877331 +0200\ncommitter Anthony Buisset <abuisset@gmail.com> 1727878927 +0200\n\nRevert \"add user preferred languages in get endpoint (#1170)\"\n\nThis reverts commit f7afa4b8320de3daa64775f9ad3ba8b8bbc1d2f0.\n"
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/eda4388aa686d6d1706b2e61c3ad30980c240c4b",
+    "html_url": "https://github.com/onlydustxyz/marketplace-api/commit/eda4388aa686d6d1706b2e61c3ad30980c240c4b",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/eda4388aa686d6d1706b2e61c3ad30980c240c4b/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "0d29bb95c47cbd2b1542a67e3a32110d06f53a3b",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/0d29bb95c47cbd2b1542a67e3a32110d06f53a3b",
+            "html_url": "https://github.com/onlydustxyz/marketplace-api/commit/0d29bb95c47cbd2b1542a67e3a32110d06f53a3b"
+        }
+    ],
+    "stats": {
+        "total": 114,
+        "additions": 20,
+        "deletions": 94
+    },
+    "files": [
+        {
+            "sha": "5396daac0ae0373694bba4168186d8d1a5a9d23e",
+            "filename": "bootstrap/src/test/java/onlydust/com/marketplace/api/helper/UserHelper.java",
+            "status": "removed",
+            "additions": 0,
+            "deletions": 30,
+            "changes": 30,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/0d29bb95c47cbd2b1542a67e3a32110d06f53a3b/bootstrap%2Fsrc%2Ftest%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fhelper%2FUserHelper.java",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/0d29bb95c47cbd2b1542a67e3a32110d06f53a3b/bootstrap%2Fsrc%2Ftest%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fhelper%2FUserHelper.java",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/bootstrap%2Fsrc%2Ftest%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fhelper%2FUserHelper.java?ref=0d29bb95c47cbd2b1542a67e3a32110d06f53a3b",
+            "patch": "@@ -1,30 +0,0 @@\n-package onlydust.com.marketplace.api.helper;\n-\n-import org.springframework.beans.factory.annotation.Autowired;\n-import org.springframework.stereotype.Service;\n-\n-import java.util.Map;\n-\n-@Service\n-public class UserHelper {\n-    @Autowired\n-    private DatabaseHelper databaseHelper;\n-\n-    public void setPreferredLanguages(UserAuthHelper.AuthenticatedUser user, String... languageSlugs) {\n-        databaseHelper.executeQuery(\"\"\"\n-                with new_languages as (\n-                    select array_agg(id) ids\n-                    from languages\n-                    where slug = any(:languageSlugs)\n-                )\n-                insert into user_profile_info(id, preferred_language_ids)\n-                select :userId, l.ids\n-                from new_languages l\n-                on conflict(id) do update\n-                set preferred_language_ids = excluded.preferred_language_ids\n-                \"\"\", Map.of(\n-                \"userId\", user.userId().value(),\n-                \"languageSlugs\", languageSlugs\n-        ));\n-    }\n-}"
+        },
+        {
+            "sha": "c353bcf332a335a92cb25e3d209d03ba85e4a627",
+            "filename": "bootstrap/src/test/java/onlydust/com/marketplace/api/it/api/AbstractMarketplaceApiIT.java",
+            "status": "modified",
+            "additions": 0,
+            "deletions": 2,
+            "changes": 2,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/eda4388aa686d6d1706b2e61c3ad30980c240c4b/bootstrap%2Fsrc%2Ftest%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fit%2Fapi%2FAbstractMarketplaceApiIT.java",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/eda4388aa686d6d1706b2e61c3ad30980c240c4b/bootstrap%2Fsrc%2Ftest%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fit%2Fapi%2FAbstractMarketplaceApiIT.java",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/bootstrap%2Fsrc%2Ftest%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fit%2Fapi%2FAbstractMarketplaceApiIT.java?ref=eda4388aa686d6d1706b2e61c3ad30980c240c4b",
+            "patch": "@@ -265,8 +265,6 @@ public class AbstractMarketplaceApiIT {\n     @Autowired\n     protected ProgramHelper programHelper;\n     @Autowired\n-    protected UserHelper userHelper;\n-    @Autowired\n     protected EcosystemHelper ecosystemHelper;\n     @Autowired\n     protected SponsorHelper sponsorHelper;"
+        },
+        {
+            "sha": "72e13f01c971d414cd5610fe6276a2608629f763",
+            "filename": "bootstrap/src/test/java/onlydust/com/marketplace/api/it/api/UsersReadApiIT.java",
+            "status": "modified",
+            "additions": 0,
+            "deletions": 19,
+            "changes": 19,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/eda4388aa686d6d1706b2e61c3ad30980c240c4b/bootstrap%2Fsrc%2Ftest%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fit%2Fapi%2FUsersReadApiIT.java",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/eda4388aa686d6d1706b2e61c3ad30980c240c4b/bootstrap%2Fsrc%2Ftest%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fit%2Fapi%2FUsersReadApiIT.java",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/bootstrap%2Fsrc%2Ftest%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fit%2Fapi%2FUsersReadApiIT.java?ref=eda4388aa686d6d1706b2e61c3ad30980c240c4b",
+            "patch": "@@ -231,25 +231,6 @@ void should_return_users_languages_stats() {\n                         \"\"\", true);\n     }\n \n-    @Test\n-    void should_include_preferred_languages_in_stats() {\n-        // Given\n-        final var user = userAuthHelper.create();\n-        userHelper.setPreferredLanguages(user, \"typescript\", \"rust\");\n-\n-        // When\n-        client.get()\n-                .uri(getApiURI(USER_LANGUAGES.formatted(user.user().getGithubUserId())))\n-                // Then\n-                .exchange()\n-                .expectStatus()\n-                .is2xxSuccessful()\n-                .expectBody()\n-                .consumeWith(System.out::println)\n-                .jsonPath(\"$.languages[0].language.slug\").isEqualTo(\"rust\")\n-                .jsonPath(\"$.languages[1].language.slug\").isEqualTo(\"typescript\");\n-    }\n-\n     @Test\n     void should_return_users_ecosystems_stats() {\n         // When"
+        },
+        {
+            "sha": "ab94b33f0a5d543d31b2a694afd179639d029187",
+            "filename": "read-api/src/main/java/onlydust/com/marketplace/api/read/adapters/ReadUsersApiPostgresAdapter.java",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 3,
+            "changes": 4,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/eda4388aa686d6d1706b2e61c3ad30980c240c4b/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Fadapters%2FReadUsersApiPostgresAdapter.java",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/eda4388aa686d6d1706b2e61c3ad30980c240c4b/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Fadapters%2FReadUsersApiPostgresAdapter.java",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Fadapters%2FReadUsersApiPostgresAdapter.java?ref=eda4388aa686d6d1706b2e61c3ad30980c240c4b",
+            "patch": "@@ -19,8 +19,6 @@\n import static onlydust.com.marketplace.api.read.properties.Cache.M;\n import static onlydust.com.marketplace.api.rest.api.adapter.mapper.DateMapper.parseZonedNullable;\n import static onlydust.com.marketplace.kernel.exception.OnlyDustException.notFound;\n-import static org.springframework.data.domain.Sort.Order.asc;\n-import static org.springframework.data.domain.Sort.Order.desc;\n import static org.springframework.http.ResponseEntity.ok;\n \n @RestController\n@@ -101,7 +99,7 @@ public ResponseEntity<UserProfileEcosystemPage> getUserProfileStatsPerEcosystems\n     @Override\n     public ResponseEntity<UserProfileLanguagePage> getUserProfileStatsPerLanguages(Long githubId, Integer pageIndex, Integer pageSize) {\n         final var page = userProfileLanguagePageItemEntityRepository.findByContributorId(githubId, PageRequest.of(pageIndex, pageSize,\n-                Sort.by(desc(\"contribution_count\"), desc(\"total_earned_usd\"), asc(\"language_name\"))));\n+                Sort.by(Sort.Direction.DESC, \"contribution_count\", \"total_earned_usd\")));\n         return ok()\n                 .cacheControl(cache.forEverybody(M))\n                 .body(new UserProfileLanguagePage()"
+        },
+        {
+            "sha": "4b0611aea9bb507f935c8f33ce9b583466115018",
+            "filename": "read-api/src/main/java/onlydust/com/marketplace/api/read/entities/user/UserProfileLanguagePageItemEntity.java",
+            "status": "modified",
+            "additions": 2,
+            "deletions": 3,
+            "changes": 5,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/eda4388aa686d6d1706b2e61c3ad30980c240c4b/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Fentities%2Fuser%2FUserProfileLanguagePageItemEntity.java",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/eda4388aa686d6d1706b2e61c3ad30980c240c4b/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Fentities%2Fuser%2FUserProfileLanguagePageItemEntity.java",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Fentities%2Fuser%2FUserProfileLanguagePageItemEntity.java?ref=eda4388aa686d6d1706b2e61c3ad30980c240c4b",
+            "patch": "@@ -25,16 +25,15 @@\n @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)\n @ToString\n @Immutable\n+@EqualsAndHashCode(onlyExplicitlyIncluded = true)\n @NoArgsConstructor(force = true)\n @Accessors(fluent = true)\n public class UserProfileLanguagePageItemEntity {\n     @Id\n+    @EqualsAndHashCode.Include\n     @NonNull\n     UUID language_id;\n \n-    @NonNull\n-    String language_name;\n-\n     @NonNull\n     Integer rank;\n     @NonNull"
+        },
+        {
+            "sha": "eae909822e5f7c0834f8e7d898b4bea61972a401",
+            "filename": "read-api/src/main/java/onlydust/com/marketplace/api/read/repositories/UserProfileLanguagePageItemEntityRepository.java",
+            "status": "modified",
+            "additions": 17,
+            "deletions": 37,
+            "changes": 54,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/eda4388aa686d6d1706b2e61c3ad30980c240c4b/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Frepositories%2FUserProfileLanguagePageItemEntityRepository.java",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/eda4388aa686d6d1706b2e61c3ad30980c240c4b/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Frepositories%2FUserProfileLanguagePageItemEntityRepository.java",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Frepositories%2FUserProfileLanguagePageItemEntityRepository.java?ref=eda4388aa686d6d1706b2e61c3ad30980c240c4b",
+            "patch": "@@ -10,57 +10,37 @@\n \n public interface UserProfileLanguagePageItemEntityRepository extends Repository<UserProfileLanguagePageItemEntity, UUID> {\n     @Query(value = \"\"\"\n-            with user_languages as (select u.github_user_id                   as contributor_id,\n-                                           unnest(upi.preferred_language_ids) as language_id\n-                                    from user_profile_info upi\n-                                             join iam.users u on u.id = upi.id\n-                                    union\n-                                    select ulr.contributor_id as contributor_id,\n-                                           ulr.language_id    as language_id\n-                                    from users_languages_ranks ulr)\n-            select ul.language_id                                as language_id,\n-                   l.name                                        as language_name,\n-                   coalesce(ulr.rank, 0)                         as rank,\n+            select ulr.language_id                        as language_id,\n+                   ulr.rank                               as rank,\n                    case\n                        when ulr.rank_percentile < 0.33 THEN 'GREEN'\n                        when ulr.rank_percentile < 0.66 THEN 'ORANGE'\n                        ELSE 'RED'\n-                       END                                       as contributing_status,\n-                   coalesce(stats.contribution_count, 0)         as contribution_count,\n-                   coalesce(reward_stats.reward_count, 0)        as reward_count,\n-                   coalesce(reward_stats.usd_total, 0)           as total_earned_usd,\n-                   coalesce((select jsonb_agg(distinct jsonb_build_object(\n+                       END                                as contributing_status,\n+                   stats.contribution_count               as contribution_count,\n+                   coalesce(reward_stats.reward_count, 0) as reward_count,\n+                   coalesce(reward_stats.usd_total, 0)    as total_earned_usd,\n+                   (select jsonb_agg(distinct jsonb_build_object(\n                            'id', p.id,\n                            'slug', p.slug,\n                            'name', p.name,\n                            'logoUrl', p.logo_url))\n                     from projects p\n                     where p.id = any (stats.project_ids)\n-                       or p.id = any (reward_stats.project_ids)), '[]') as projects\n-            from user_languages ul\n-                     join languages l on l.id = ul.language_id\n-                     left join users_languages_ranks ulr\n-                               on ulr.contributor_id = ul.contributor_id and ulr.language_id = ul.language_id\n+                    or p.id = any (reward_stats.project_ids)) as projects\n+            from users_languages_ranks ulr\n                      left join contributions_stats_per_language_per_user stats\n-                               on stats.language_id = ul.language_id and\n-                                  stats.contributor_id = ul.contributor_id\n+                          on stats.language_id = ulr.language_id and \n+                             stats.contributor_id = ulr.contributor_id\n                      left join received_rewards_stats_per_language_per_user reward_stats\n-                               on reward_stats.language_id = ul.language_id and\n-                                  reward_stats.recipient_id = ul.contributor_id\n-            where ul.contributor_id = :githubUserId\n+                               on reward_stats.language_id = stats.language_id and \n+                                  reward_stats.recipient_id = stats.contributor_id\n+            where ulr.contributor_id = :githubUserId\n             \"\"\",\n             countQuery = \"\"\"\n-                    with user_languages as (select u.github_user_id                   as contributor_id,\n-                                                   unnest(upi.preferred_language_ids) as language_id\n-                                            from user_profile_info upi\n-                                                     join iam.users u on u.id = upi.id\n-                                            union\n-                                            select ulr.contributor_id as contributor_id,\n-                                                   ulr.language_id    as language_id\n-                                            from users_languages_ranks ulr)\n-                    select count(ul.language_id)\n-                    from user_languages ul\n-                    where ul.contributor_id = :githubUserId\n+                    select ulr.language_id                      as language_id\n+                    from users_languages_ranks ulr\n+                    where ulr.contributor_id = :githubUserId\n                     \"\"\",\n             nativeQuery = true)\n     Page<UserProfileLanguagePageItemEntity> findByContributorId(Long githubUserId, Pageable pageable);"
+        }
+    ]
+}

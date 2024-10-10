@@ -1,0 +1,122 @@
+{
+    "sha": "eeec862000a2c06e796aa96fc8df4180166afe68",
+    "node_id": "C_kwDOKZwcvtoAKGVlZWM4NjIwMDBhMmMwNmU3OTZhYTk2ZmM4ZGY0MTgwMTY2YWZlNjg",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2024-10-02T10:15:00Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2024-10-02T13:56:25Z"
+        },
+        "message": "refresh materialized view with pseudo projection",
+        "tree": {
+            "sha": "6e8f86c8305785cb5ecc7ce335d28f7636a2a32d",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/git/trees/6e8f86c8305785cb5ecc7ce335d28f7636a2a32d"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/git/commits/eeec862000a2c06e796aa96fc8df4180166afe68",
+        "comment_count": 0,
+        "verification": {
+            "verified": true,
+            "reason": "valid",
+            "signature": "-----BEGIN PGP SIGNATURE-----\n\niQGzBAABCAAdFiEEf2iRt5hVQQXKtppWNY4YwZLdMxsFAmb9UQkACgkQNY4YwZLd\nMxuWzAv/YAJU7kRCm1+57lbBdKxJeTLq69deQ4HfqZTGj4hrSkQ7zMtmrURrQh1a\noZU04SM/PROrAFoVBlBR01LdMLVw7GwVWf2j0qabOkA0yA/73cZxmgBO29UWkagQ\nWN0Egzl/2rA9Cfean4Avz6ETVcEESVi4JurgcGMkfsGwRyDxfkBp4iMDFbkAgHfx\nxMOvFOnxeBgBY4IDwFgvPT6BQqgZIFkYCjjDVLHRPjPJCQHDEo+R64525zarbRvS\nQCdN+cXTXuthtqKFXPWWe9FosAs8qHeQBSxWJ/m0vj9jd1ozBfJLfb2xRpMdZeD6\nhrMp8qTcUzxHxuy/ETxrvZzUN6gVMIDsd4CZgQTdvJIkzowdjqnUjJzJJFml0yse\nSK8a1tZJw6lj8jZOalJ5FyxWOhs1jlono0DhdZAR5K0pqfeuiwWvMeR3a1K267Dd\nynHU6NKekfxlea4pJ3Y+FlRcoKxE85qu9RIU0YJS2nvhZMt3ZwsV+F0J8YbNYyMk\nFovGgj/7\n=utLE\n-----END PGP SIGNATURE-----",
+            "payload": "tree 6e8f86c8305785cb5ecc7ce335d28f7636a2a32d\nparent 079ac2ce1fb73edb640c4b1d15823601849bb01a\nauthor Anthony Buisset <abuisset@gmail.com> 1727864100 +0200\ncommitter Anthony Buisset <abuisset@gmail.com> 1727877385 +0200\n\nrefresh materialized view with pseudo projection\n"
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/eeec862000a2c06e796aa96fc8df4180166afe68",
+    "html_url": "https://github.com/onlydustxyz/marketplace-api/commit/eeec862000a2c06e796aa96fc8df4180166afe68",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/eeec862000a2c06e796aa96fc8df4180166afe68/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "079ac2ce1fb73edb640c4b1d15823601849bb01a",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/079ac2ce1fb73edb640c4b1d15823601849bb01a",
+            "html_url": "https://github.com/onlydustxyz/marketplace-api/commit/079ac2ce1fb73edb640c4b1d15823601849bb01a"
+        }
+    ],
+    "stats": {
+        "total": 212,
+        "additions": 106,
+        "deletions": 106
+    },
+    "files": [
+        {
+            "sha": "30c5e12f4c0deda8b7df159ffc0d80192745f8fa",
+            "filename": "bootstrap/src/test/resources/database/scripts/refresh_materialized_views.sql",
+            "status": "modified",
+            "additions": 0,
+            "deletions": 1,
+            "changes": 1,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/eeec862000a2c06e796aa96fc8df4180166afe68/bootstrap%2Fsrc%2Ftest%2Fresources%2Fdatabase%2Fscripts%2Frefresh_materialized_views.sql",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/eeec862000a2c06e796aa96fc8df4180166afe68/bootstrap%2Fsrc%2Ftest%2Fresources%2Fdatabase%2Fscripts%2Frefresh_materialized_views.sql",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/bootstrap%2Fsrc%2Ftest%2Fresources%2Fdatabase%2Fscripts%2Frefresh_materialized_views.sql?ref=eeec862000a2c06e796aa96fc8df4180166afe68",
+            "patch": "@@ -16,7 +16,6 @@ REFRESH MATERIALIZED VIEW top_project_recommendations;\n REFRESH MATERIALIZED VIEW bi.project_contribution_stats;\n REFRESH MATERIALIZED VIEW bi.project_reward_stats;\n REFRESH MATERIALIZED VIEW bi.m_contribution_data;\n-REFRESH MATERIALIZED VIEW bi.m_reward_data;\n REFRESH MATERIALIZED VIEW bi.m_project_grants_data;\n REFRESH MATERIALIZED VIEW bi.m_project_global_data;\n REFRESH MATERIALIZED VIEW bi.m_contributor_global_data;"
+        },
+        {
+            "sha": "f40c066b0826633a66dd238bd60fe484e11b8c47",
+            "filename": "infrastructure/postgres-adapter/src/main/java/onlydust/com/marketplace/api/postgres/adapter/repository/ProjectRepository.java",
+            "status": "modified",
+            "additions": 0,
+            "deletions": 1,
+            "changes": 1,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/eeec862000a2c06e796aa96fc8df4180166afe68/infrastructure%2Fpostgres-adapter%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fpostgres%2Fadapter%2Frepository%2FProjectRepository.java",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/eeec862000a2c06e796aa96fc8df4180166afe68/infrastructure%2Fpostgres-adapter%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fpostgres%2Fadapter%2Frepository%2FProjectRepository.java",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/infrastructure%2Fpostgres-adapter%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fpostgres%2Fadapter%2Frepository%2FProjectRepository.java?ref=eeec862000a2c06e796aa96fc8df4180166afe68",
+            "patch": "@@ -46,7 +46,6 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, UUID>, J\n             REFRESH MATERIALIZED VIEW CONCURRENTLY bi.project_contribution_stats;\n             REFRESH MATERIALIZED VIEW CONCURRENTLY bi.project_reward_stats;\n             REFRESH MATERIALIZED VIEW CONCURRENTLY bi.m_contribution_data;\n-            REFRESH MATERIALIZED VIEW CONCURRENTLY bi.m_reward_data;\n             REFRESH MATERIALIZED VIEW CONCURRENTLY bi.m_project_grants_data;\n             REFRESH MATERIALIZED VIEW CONCURRENTLY bi.m_project_global_data;\n             REFRESH MATERIALIZED VIEW CONCURRENTLY bi.m_contributor_global_data;"
+        },
+        {
+            "sha": "d53e4326d44a99fcdb7dde37eba25521803815f4",
+            "filename": "infrastructure/postgres-adapter/src/main/resources/db/changelog/changelogs/00000353_move_materialized_views_to_projections.sql",
+            "status": "modified",
+            "additions": 106,
+            "deletions": 104,
+            "changes": 210,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/eeec862000a2c06e796aa96fc8df4180166afe68/infrastructure%2Fpostgres-adapter%2Fsrc%2Fmain%2Fresources%2Fdb%2Fchangelog%2Fchangelogs%2F00000353_move_materialized_views_to_projections.sql",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/eeec862000a2c06e796aa96fc8df4180166afe68/infrastructure%2Fpostgres-adapter%2Fsrc%2Fmain%2Fresources%2Fdb%2Fchangelog%2Fchangelogs%2F00000353_move_materialized_views_to_projections.sql",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/infrastructure%2Fpostgres-adapter%2Fsrc%2Fmain%2Fresources%2Fdb%2Fchangelog%2Fchangelogs%2F00000353_move_materialized_views_to_projections.sql?ref=eeec862000a2c06e796aa96fc8df4180166afe68",
+            "patch": "@@ -1,3 +1,104 @@\n+CREATE OR REPLACE PROCEDURE create_pseudo_projection(schema text, name text, query text, pk_name text)\n+    LANGUAGE plpgsql\n+AS\n+$$\n+DECLARE\n+    view_name              text;\n+    materialized_view_name text;\n+    projection_table_name  text;\n+BEGIN\n+    view_name := 'v_' || name;\n+    materialized_view_name := 'm_' || name;\n+    projection_table_name := 'p_' || name;\n+\n+    EXECUTE format('CREATE VIEW %I.%I AS SELECT v.*, md5(v::text) as hash from (%s) v', schema, view_name, query);\n+\n+    EXECUTE format('CREATE MATERIALIZED VIEW %I.%I AS SELECT * FROM %I.%I', schema, materialized_view_name, schema, view_name);\n+    EXECUTE format('CREATE UNIQUE INDEX %I_%I_pk ON %I.%I (%I)', schema, 'm_' || name, schema, materialized_view_name, pk_name);\n+    EXECUTE format('CREATE UNIQUE INDEX %I_%I_%I_hash_idx ON %I.%I (%I, hash)', schema, 'm_' || name, pk_name, schema, materialized_view_name, pk_name);\n+\n+    EXECUTE format('CREATE TABLE %I.%I AS TABLE %I.%I', schema, projection_table_name, schema, materialized_view_name);\n+    EXECUTE format('ALTER TABLE %I.%I ADD PRIMARY KEY (%I)', schema, projection_table_name, pk_name);\n+    EXECUTE format('CREATE UNIQUE INDEX %I_%I_%I_hash_idx ON %I.%I (%I, hash)', schema, 'p_' || name, pk_name, schema, projection_table_name, pk_name);\n+\n+    EXECUTE format('ALTER TABLE %I.%I ADD COLUMN tech_created_at timestamptz NOT NULL DEFAULT now()', schema, projection_table_name);\n+    EXECUTE format('ALTER TABLE %I.%I ADD COLUMN tech_updated_at timestamptz NOT NULL DEFAULT now()', schema, projection_table_name);\n+    EXECUTE format('CREATE TRIGGER %s_%s_set_tech_updated_at ' ||\n+                   'BEFORE UPDATE ON %I.%I ' ||\n+                   'FOR EACH ROW EXECUTE FUNCTION set_tech_updated_at()', schema, name, schema, projection_table_name);\n+END\n+$$;\n+\n+CREATE OR REPLACE PROCEDURE drop_pseudo_projection(schema text, name text)\n+    LANGUAGE plpgsql\n+AS\n+$$\n+DECLARE\n+    view_name              text;\n+    materialized_view_name text;\n+    projection_table_name  text;\n+BEGIN\n+    view_name := 'v_' || name;\n+    materialized_view_name := 'm_' || name;\n+    projection_table_name := 'p_' || name;\n+\n+    EXECUTE format('DROP TABLE %I.%I', schema, projection_table_name);\n+    EXECUTE format('DROP MATERIALIZED VIEW %I.%I', schema, materialized_view_name);\n+    EXECUTE format('DROP VIEW %I.%I', schema, view_name);\n+END\n+$$;\n+\n+CREATE OR REPLACE PROCEDURE refresh_pseudo_projection(schema text, name text, pk_name text)\n+    LANGUAGE plpgsql\n+AS\n+$$\n+DECLARE\n+    materialized_view_name text;\n+    projection_table_name  text;\n+BEGIN\n+    materialized_view_name := 'm_' || name;\n+    projection_table_name := 'p_' || name;\n+\n+    EXECUTE format('refresh materialized view %I.%I', schema, materialized_view_name);\n+\n+    EXECUTE format('delete from %I.%I where not exists(select 1 from %I.%I m where m.%I = %I.%I and m.hash = %I.hash)',\n+                   schema,\n+                   projection_table_name,\n+                   schema,\n+                   materialized_view_name,\n+                   pk_name,\n+                   projection_table_name,\n+                   pk_name,\n+                   projection_table_name);\n+\n+    EXECUTE format('insert into %I.%I select * from %I.%I on conflict (%I) do nothing',\n+                   schema,\n+                   projection_table_name,\n+                   schema,\n+                   materialized_view_name,\n+                   pk_name);\n+END\n+$$;\n+\n+CREATE OR REPLACE PROCEDURE refresh_pseudo_projection(schema text, name text, pk_name text, pk_value anyelement)\n+    LANGUAGE plpgsql\n+AS\n+$$\n+DECLARE\n+    view_name             text;\n+    projection_table_name text;\n+BEGIN\n+    view_name := 'v_' || name;\n+    projection_table_name := 'p_' || name;\n+\n+    EXECUTE format('delete from %I.%I where %I = $1', schema, projection_table_name, pk_name)\n+        using pk_value;\n+\n+    EXECUTE format('insert into %I.%I select * from %I.%I where %I = $1', schema, projection_table_name, schema, view_name, pk_name)\n+        using pk_value;\n+END\n+$$;\n+\n DROP FUNCTION bi.select_projects(fromDate timestamptz,\n                                  toDate timestamptz,\n                                  programOrEcosystemIds uuid[],\n@@ -23,14 +124,14 @@ DROP FUNCTION bi.select_contributors(fromDate timestamptz,\n                                      contributionStatuses indexer_exp.contribution_status[],\n                                      searchQuery text,\n                                      filteredKpis boolean);\n-\n DROP MATERIALIZED VIEW IF EXISTS bi.m_project_global_data;\n DROP MATERIALIZED VIEW IF EXISTS bi.m_contributor_global_data;\n DROP MATERIALIZED VIEW IF EXISTS bi.m_contribution_data;\n DROP MATERIALIZED VIEW IF EXISTS bi.m_reward_data;\n-DROP MATERIALIZED VIEW IF EXISTS bi.m_project_grants_data;\n \n+DROP MATERIALIZED VIEW IF EXISTS bi.m_project_grants_data;\n DROP VIEW active_programs_projects;\n+\n DROP MATERIALIZED VIEW m_programs_projects;\n \n CREATE VIEW v_programs_projects AS\n@@ -49,12 +150,12 @@ SELECT program_id, project_id, bool_or(remaining_amount > 0) as has_remaining_gr\n FROM allocations\n GROUP BY program_id, project_id;\n \n+\n CREATE MATERIALIZED VIEW m_active_programs_projects AS\n SELECT program_id, project_id\n FROM v_programs_projects\n WHERE has_remaining_grants IS TRUE;\n \n-\n CREATE UNIQUE INDEX m_active_programs_projects_pk\n     ON m_active_programs_projects (program_id, project_id);\n \n@@ -130,7 +231,6 @@ FROM (with registered_users as (select u.id             as id,\n ;\n \n create unique index bi_contribution_data_pk on bi.m_contribution_data (contribution_id);\n-\n create index bi_contribution_data_project_id_timestamp_idx on bi.m_contribution_data (project_id, timestamp);\n create index bi_contribution_data_project_id_day_timestamp_idx on bi.m_contribution_data (project_id, day_timestamp);\n create index bi_contribution_data_project_id_week_timestamp_idx on bi.m_contribution_data (project_id, week_timestamp);\n@@ -142,8 +242,8 @@ create index bi_contribution_data_project_id_day_timestamp_idx_inv on bi.m_contr\n create index bi_contribution_data_project_id_week_timestamp_idx_inv on bi.m_contribution_data (week_timestamp, project_id);\n create index bi_contribution_data_project_id_month_timestamp_idx_inv on bi.m_contribution_data (month_timestamp, project_id);\n create index bi_contribution_data_project_id_quarter_timestamp_idx_inv on bi.m_contribution_data (quarter_timestamp, project_id);\n-create index bi_contribution_data_project_id_year_timestamp_idx_inv on bi.m_contribution_data (year_timestamp, project_id);\n \n+create index bi_contribution_data_project_id_year_timestamp_idx_inv on bi.m_contribution_data (year_timestamp, project_id);\n create index bi_contribution_data_contributor_id_timestamp_idx on bi.m_contribution_data (contributor_id, timestamp);\n create index bi_contribution_data_contributor_id_day_timestamp_idx on bi.m_contribution_data (contributor_id, day_timestamp);\n create index bi_contribution_data_contributor_id_week_timestamp_idx on bi.m_contribution_data (contributor_id, week_timestamp);\n@@ -155,106 +255,8 @@ create index bi_contribution_data_contributor_id_day_timestamp_idx_inv on bi.m_c\n create index bi_contribution_data_contributor_id_week_timestamp_idx_inv on bi.m_contribution_data (week_timestamp, contributor_id);\n create index bi_contribution_data_contributor_id_month_timestamp_idx_inv on bi.m_contribution_data (month_timestamp, contributor_id);\n create index bi_contribution_data_contributor_id_quarter_timestamp_idx_inv on bi.m_contribution_data (quarter_timestamp, contributor_id);\n-create index bi_contribution_data_contributor_id_year_timestamp_idx_inv on bi.m_contribution_data (year_timestamp, contributor_id);\n-\n-CREATE OR REPLACE PROCEDURE create_pseudo_projection(schema text, name text, query text, pk_name text)\n-    LANGUAGE plpgsql\n-AS\n-$$\n-DECLARE\n-    view_name              text;\n-    materialized_view_name text;\n-    projection_table_name  text;\n-BEGIN\n-    view_name := 'v_' || name;\n-    materialized_view_name := 'm_' || name;\n-    projection_table_name := 'p_' || name;\n-\n-    EXECUTE format('CREATE VIEW %I.%I AS SELECT v.*, md5(v::text) as hash from (%s) v', schema, view_name, query);\n-\n-    EXECUTE format('CREATE MATERIALIZED VIEW %I.%I AS SELECT * FROM %I.%I', schema, materialized_view_name, schema, view_name);\n-    EXECUTE format('CREATE UNIQUE INDEX %I_%I_pk ON %I.%I (%I)', schema, 'm_' || name, schema, materialized_view_name, pk_name);\n-    EXECUTE format('CREATE UNIQUE INDEX %I_%I_%I_hash_idx ON %I.%I (%I, hash)', schema, 'm_' || name, pk_name, schema, materialized_view_name, pk_name);\n-\n-    EXECUTE format('CREATE TABLE %I.%I AS TABLE %I.%I', schema, projection_table_name, schema, materialized_view_name);\n-    EXECUTE format('ALTER TABLE %I.%I ADD PRIMARY KEY (%I)', schema, projection_table_name, pk_name);\n-    EXECUTE format('CREATE UNIQUE INDEX %I_%I_%I_hash_idx ON %I.%I (%I, hash)', schema, 'p_' || name, pk_name, schema, projection_table_name, pk_name);\n-\n-    EXECUTE format('ALTER TABLE %I.%I ADD COLUMN tech_created_at timestamptz NOT NULL DEFAULT now()', schema, projection_table_name);\n-    EXECUTE format('ALTER TABLE %I.%I ADD COLUMN tech_updated_at timestamptz NOT NULL DEFAULT now()', schema, projection_table_name);\n-    EXECUTE format('CREATE TRIGGER %s_%s_set_tech_updated_at ' ||\n-                   'BEFORE UPDATE ON %I.%I ' ||\n-                   'FOR EACH ROW EXECUTE FUNCTION set_tech_updated_at()', schema, name, schema, projection_table_name);\n-END\n-$$;\n-\n-CREATE OR REPLACE PROCEDURE drop_pseudo_projection(schema text, name text)\n-    LANGUAGE plpgsql\n-AS\n-$$\n-DECLARE\n-    view_name              text;\n-    materialized_view_name text;\n-    projection_table_name  text;\n-BEGIN\n-    view_name := 'v_' || name;\n-    materialized_view_name := 'm_' || name;\n-    projection_table_name := 'p_' || name;\n-\n-    EXECUTE format('DROP TABLE %I.%I', schema, projection_table_name);\n-    EXECUTE format('DROP MATERIALIZED VIEW %I.%I', schema, materialized_view_name);\n-    EXECUTE format('DROP VIEW %I.%I', schema, view_name);\n-END\n-$$;\n-\n-CREATE OR REPLACE PROCEDURE refresh_pseudo_projection(schema text, name text, pk_name text)\n-    LANGUAGE plpgsql\n-AS\n-$$\n-DECLARE\n-    materialized_view_name text;\n-    projection_table_name  text;\n-BEGIN\n-    materialized_view_name := 'm_' || name;\n-    projection_table_name := 'p_' || name;\n-\n-    EXECUTE format('delete from %I.%I where not exists(select 1 from %I.%I m where m.%I = %I.%I and m.hash = %I.hash)',\n-                   schema,\n-                   projection_table_name,\n-                   schema,\n-                   materialized_view_name,\n-                   pk_name,\n-                   projection_table_name,\n-                   pk_name,\n-                   projection_table_name);\n-\n-    EXECUTE format('insert into %I.%I select * from %I.%I on conflict (%I) do nothing',\n-                   schema,\n-                   projection_table_name,\n-                   schema,\n-                   materialized_view_name,\n-                   pk_name);\n-END\n-$$;\n-\n-CREATE OR REPLACE PROCEDURE refresh_pseudo_projection(schema text, name text, pk_name text, pk_value anyelement)\n-    LANGUAGE plpgsql\n-AS\n-$$\n-DECLARE\n-    view_name             text;\n-    projection_table_name text;\n-BEGIN\n-    view_name := 'v_' || name;\n-    projection_table_name := 'p_' || name;\n \n-    EXECUTE format('delete from %I.%I where %I = $1', schema, projection_table_name, pk_name)\n-        using pk_value;\n-\n-    EXECUTE format('insert into %I.%I select * from %I.%I where %I = $1', schema, projection_table_name, schema, view_name, pk_name)\n-        using pk_value;\n-END\n-$$;\n+create index bi_contribution_data_contributor_id_year_timestamp_idx_inv on bi.m_contribution_data (year_timestamp, contributor_id);\n \n call create_pseudo_projection('bi', 'reward_data', $$\n select r.id                                                                                             as reward_id,"
+        }
+    ]
+}

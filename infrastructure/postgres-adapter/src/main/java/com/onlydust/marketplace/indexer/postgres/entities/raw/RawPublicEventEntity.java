@@ -21,7 +21,11 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "public_events", schema = "indexer_raw")
-@SQLInsert(sql = "INSERT INTO indexer_raw.public_events (data, user_id, id) VALUES (?, ?, ?) ON CONFLICT DO NOTHING")
+@SQLInsert(sql = """
+        INSERT INTO indexer_raw.public_events (actor, actor_id, created_at, org, payload, repo, repo_id, type, id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
+        ON CONFLICT DO NOTHING
+        """)
 public class RawPublicEventEntity {
     @Id
     @NonNull

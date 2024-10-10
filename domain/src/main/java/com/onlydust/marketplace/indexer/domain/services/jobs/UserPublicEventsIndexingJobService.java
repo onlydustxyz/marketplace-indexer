@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.services.jobs;
 
 import com.onlydust.marketplace.indexer.domain.jobs.Job;
-import com.onlydust.marketplace.indexer.domain.jobs.UserStatsIndexerJob;
+import com.onlydust.marketplace.indexer.domain.jobs.UserPublicEventIndexerJob;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserPublicEventsIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserPublicEventsIndexingJobManager;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
@@ -21,12 +21,12 @@ public class UserPublicEventsIndexingJobService implements UserPublicEventsIndex
     @Override
     public Job create(Long userId) {
         userPublicEventsIndexingJobStorage.add(userId);
-        return new UserStatsIndexerJob(userPublicEventsIndexer, Set.of(userId), userPublicEventsIndexingJobStorage, rawStorageReader);
+        return new UserPublicEventIndexerJob(userPublicEventsIndexer, Set.of(userId), userPublicEventsIndexingJobStorage, rawStorageReader);
     }
 
     @Override
     public Job refresh() {
         final var users = userPublicEventsIndexingJobStorage.all();
-        return new UserStatsIndexerJob(userPublicEventsIndexer, users, userPublicEventsIndexingJobStorage, rawStorageReader);
+        return new UserPublicEventIndexerJob(userPublicEventsIndexer, users, userPublicEventsIndexingJobStorage, rawStorageReader);
     }
 }

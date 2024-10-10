@@ -18,6 +18,7 @@ public class JobScheduler {
     private final JobManager diffUserRefreshJobManager;
     private final InstallationEventsInboxJob installationEventsInboxJob;
     private final OtherEventsInboxJob otherEventsInboxJob;
+    private final JobManager commitIndexerJobManager;
 
     @Scheduled(fixedDelayString = "${application.cron.repo-refresh-job-delay}")
     public void scheduleRepoRefresherJobs() {
@@ -39,5 +40,11 @@ public class JobScheduler {
     @Scheduled(fixedDelayString = "${application.cron.event-inbox-dequeuer-delay}")
     public void dequeueOtherEvents() {
         otherEventsInboxJob.run();
+    }
+
+    @Scheduled(fixedDelayString = "${application.cron.commit-indexer-delay}")
+    public void scheduleCommitIndexerJobs() {
+        LOGGER.info("Indexing commits");
+        commitIndexerJobManager.createJob().run();
     }
 }

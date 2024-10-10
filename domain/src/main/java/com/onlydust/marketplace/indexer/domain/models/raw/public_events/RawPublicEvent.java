@@ -31,6 +31,7 @@ public record RawPublicEvent(Long id,
     public Optional<Payload> decode() {
         return Optional.ofNullable(switch (type) {
             case "PullRequestEvent" -> payloadAs(RawPullRequestEventPayload.class);
+            case "PushEvent" -> payloadAs(RawPushEventPayload.class);
             default -> null;
         });
     }

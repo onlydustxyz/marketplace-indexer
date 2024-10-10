@@ -5,13 +5,12 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import lombok.Builder;
 import lombok.Value;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.onlydust.marketplace.indexer.domain.utils.FileUtils.fileExtension;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.reducing;
 
@@ -75,14 +74,6 @@ public class GithubPullRequest {
                 .filter(e -> e.getValue() / (double) total > FILE_EXTENSION_RELEVANCE_THRESHOLD)
                 .map(Map.Entry::getKey)
                 .toList();
-    }
-
-    private static Optional<String> fileExtension(String filePath) {
-        final var fileName = new File(filePath).getName();
-        return Optional.of(fileName)
-                .filter(f -> f.contains("."))
-                .map(f -> f.substring(f.lastIndexOf('.') + 1))
-                .map(String::toLowerCase);
     }
 
     private static ReviewState aggregateReviewState(CleanPullRequest pullRequest) {

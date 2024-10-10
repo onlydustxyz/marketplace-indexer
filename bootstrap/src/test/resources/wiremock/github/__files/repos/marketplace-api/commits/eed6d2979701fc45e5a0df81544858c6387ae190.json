@@ -1,0 +1,98 @@
+{
+    "sha": "eed6d2979701fc45e5a0df81544858c6387ae190",
+    "node_id": "C_kwDOKZwcvtoAKGVlZDZkMjk3OTcwMWZjNDVlNWEwZGY4MTU0NDg1OGM2Mzg3YWUxOTA",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2024-10-02T15:13:25Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2024-10-02T15:41:55Z"
+        },
+        "message": "clean bi schema",
+        "tree": {
+            "sha": "23073ced9b46352a8c175d5b25b0bb6581d33550",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/git/trees/23073ced9b46352a8c175d5b25b0bb6581d33550"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/git/commits/eed6d2979701fc45e5a0df81544858c6387ae190",
+        "comment_count": 0,
+        "verification": {
+            "verified": true,
+            "reason": "valid",
+            "signature": "-----BEGIN PGP SIGNATURE-----\n\niQGzBAABCAAdFiEEf2iRt5hVQQXKtppWNY4YwZLdMxsFAmb9acMACgkQNY4YwZLd\nMxtHZAv/Tu4URoYnsaQctKmhCbKHpN2pq//BBQItv4gtu5yr83N00qKuDndcLitl\n5Xxml472vvinVTkJ5o/8QgDRtot4+Vx+iAKV5qu+rCdKkxei2w6jKXPb/kRb1xVK\n/q+5bUaVq7wFYILXxhvCx0iS1QtDHn74nqtUCqSvfDo1zG4s2GYOvvmfGXnGtcrh\nIIsmBqR3sCZY8df75GAlQoKg4fD3p6TD9k6VF1BD/7vcP3i8Lvk3MCXEVVGaYQLO\nVH/qlYG66hMzCZ72Qo/wBIgynzvYbM/SjVStk68bbSD0w1NyYt+60p3qrxxaEKn+\nxdnrG8rvSLfdzEYiIXI8wIpXgccUsCTP9ks+m/JTj/wEtxbmoQa3he2ujJus5wBO\nQlspvgCUf1bhBU7F8XpUGesmNv7h/1bSYyBeEjMU4XLtXjdqnlJnYyFiTWQxhsz+\nwIBg3ENwt1se9yOrhlc/Lgw3OJH5ml85BptNNApToRYT82uZ7XdiR6cVCtOlpCp8\n/V6/mxNG\n=lPvD\n-----END PGP SIGNATURE-----",
+            "payload": "tree 23073ced9b46352a8c175d5b25b0bb6581d33550\nparent eda4388aa686d6d1706b2e61c3ad30980c240c4b\nauthor Anthony Buisset <abuisset@gmail.com> 1727882005 +0200\ncommitter Anthony Buisset <abuisset@gmail.com> 1727883715 +0200\n\nclean bi schema\n"
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/eed6d2979701fc45e5a0df81544858c6387ae190",
+    "html_url": "https://github.com/onlydustxyz/marketplace-api/commit/eed6d2979701fc45e5a0df81544858c6387ae190",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/eed6d2979701fc45e5a0df81544858c6387ae190/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "eda4388aa686d6d1706b2e61c3ad30980c240c4b",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/eda4388aa686d6d1706b2e61c3ad30980c240c4b",
+            "html_url": "https://github.com/onlydustxyz/marketplace-api/commit/eda4388aa686d6d1706b2e61c3ad30980c240c4b"
+        }
+    ],
+    "stats": {
+        "total": 1,
+        "additions": 1,
+        "deletions": 0
+    },
+    "files": [
+        {
+            "sha": "078df0054e66d3de8a1c37fd42d53e7d108fb41e",
+            "filename": "bootstrap/src/test/resources/database/scripts/clean.sql",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 0,
+            "changes": 1,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/eed6d2979701fc45e5a0df81544858c6387ae190/bootstrap%2Fsrc%2Ftest%2Fresources%2Fdatabase%2Fscripts%2Fclean.sql",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/eed6d2979701fc45e5a0df81544858c6387ae190/bootstrap%2Fsrc%2Ftest%2Fresources%2Fdatabase%2Fscripts%2Fclean.sql",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/bootstrap%2Fsrc%2Ftest%2Fresources%2Fdatabase%2Fscripts%2Fclean.sql?ref=eed6d2979701fc45e5a0df81544858c6387ae190",
+            "patch": "@@ -18,3 +18,4 @@ SELECT truncate_tables('iam');\n SELECT truncate_tables('rfd');\n SELECT truncate_tables('accounting');\n SELECT truncate_tables('indexer_outbox');\n+SELECT truncate_tables('bi');"
+        }
+    ]
+}

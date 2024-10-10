@@ -1,0 +1,110 @@
+{
+    "sha": "e734d91b15f7a569cc00f5028b49ee8893448e11",
+    "node_id": "C_kwDOKZwcvtoAKGU3MzRkOTFiMTVmN2E1NjljYzAwZjUwMjhiNDllZTg4OTM0NDhlMTE",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2024-10-02T12:41:53Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2024-10-02T13:56:27Z"
+        },
+        "message": "refresh stats upon project update",
+        "tree": {
+            "sha": "06b901228711e3f3501b005dc936cea5b2c87a6b",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/git/trees/06b901228711e3f3501b005dc936cea5b2c87a6b"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/git/commits/e734d91b15f7a569cc00f5028b49ee8893448e11",
+        "comment_count": 0,
+        "verification": {
+            "verified": true,
+            "reason": "valid",
+            "signature": "-----BEGIN PGP SIGNATURE-----\n\niQGzBAABCAAdFiEEf2iRt5hVQQXKtppWNY4YwZLdMxsFAmb9UQsACgkQNY4YwZLd\nMxs9Ywv+IeyJGn6uUY6dcilDbqHPQfYruN4ZBt8zsblKVKz6CJK0ax/SU4XX6lys\n1GGgFWJ+oQKYFLyQV3BA5q7XTmuvcoDTgVYvuxDYi6ovrcUf//mmDnsAoM8iPJaC\njKAj53zdNMoGK03UkvF04jdiLzfeyXlYfR9otddUXDHiCCkPQ6aizDh0sp97xYhg\n/0EU09sgLb34QYQc/jVYxnKpAHBHGSfZihxKInYrpbKMhH80pS4Obz8p+aFaY/Fh\nRBHSZZMjnekh0dNXQlHw27e6XjAcozQmlF5sBnIpUoxxEczily5dx9U7QZjNPDc6\nWlptpt7aqcN050OQ5MBWW8XOcLmis3NfKTdoUiui1xQwgorfnIn7MW4a3vASzhyF\nzvVHmb4HIaurRV4c2SINbhFStGL3lNrz68bU1jNAmCLvfSk/Hu+1Y8j/ctqSjTsr\ntYOP2zCPVAPoBMJU85WAza0BZp2rdpB9Y7DfF3Py2qDCpVQzou+E1qEjNR4XSeJ7\nZ2E1FeCw\n=adRx\n-----END PGP SIGNATURE-----",
+            "payload": "tree 06b901228711e3f3501b005dc936cea5b2c87a6b\nparent b23c6d57851302a05195135b6fd96d801b38d873\nauthor Anthony Buisset <abuisset@gmail.com> 1727872913 +0200\ncommitter Anthony Buisset <abuisset@gmail.com> 1727877387 +0200\n\nrefresh stats upon project update\n"
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/e734d91b15f7a569cc00f5028b49ee8893448e11",
+    "html_url": "https://github.com/onlydustxyz/marketplace-api/commit/e734d91b15f7a569cc00f5028b49ee8893448e11",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/e734d91b15f7a569cc00f5028b49ee8893448e11/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "b23c6d57851302a05195135b6fd96d801b38d873",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/b23c6d57851302a05195135b6fd96d801b38d873",
+            "html_url": "https://github.com/onlydustxyz/marketplace-api/commit/b23c6d57851302a05195135b6fd96d801b38d873"
+        }
+    ],
+    "stats": {
+        "total": 34,
+        "additions": 31,
+        "deletions": 3
+    },
+    "files": [
+        {
+            "sha": "577a9e91925f2bcfb82864e8be045cad0a95d7cd",
+            "filename": "bootstrap/src/main/java/onlydust/com/marketplace/api/configuration/ProjectConfiguration.java",
+            "status": "modified",
+            "additions": 3,
+            "deletions": 2,
+            "changes": 5,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/e734d91b15f7a569cc00f5028b49ee8893448e11/bootstrap%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fconfiguration%2FProjectConfiguration.java",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/e734d91b15f7a569cc00f5028b49ee8893448e11/bootstrap%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fconfiguration%2FProjectConfiguration.java",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/bootstrap%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fconfiguration%2FProjectConfiguration.java?ref=e734d91b15f7a569cc00f5028b49ee8893448e11",
+            "patch": "@@ -286,8 +286,9 @@ public OutboxProjectService outboxProjectService(final OutboxPort indexerOutbox,\n     @Bean\n     public ProjectObserverPort projectObservers(final OutboxProjectService outboxProjectService,\n                                                 final SlackApiAdapter slackApiAdapter,\n-                                                final ContributionService contributionService) {\n-        return new ProjectObserverComposite(outboxProjectService, contributionService, slackApiAdapter);\n+                                                final ContributionService contributionService,\n+                                                final PostgresBiProjectorAdapter postgresBiProjectorAdapter) {\n+        return new ProjectObserverComposite(outboxProjectService, contributionService, slackApiAdapter, postgresBiProjectorAdapter);\n     }\n \n     @Bean"
+        },
+        {
+            "sha": "53613e20ce97c21873d37db4d27230385f790c2f",
+            "filename": "infrastructure/postgres-adapter/src/main/java/onlydust/com/marketplace/api/postgres/adapter/PostgresBiProjectorAdapter.java",
+            "status": "modified",
+            "additions": 28,
+            "deletions": 1,
+            "changes": 29,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/e734d91b15f7a569cc00f5028b49ee8893448e11/infrastructure%2Fpostgres-adapter%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fpostgres%2Fadapter%2FPostgresBiProjectorAdapter.java",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/e734d91b15f7a569cc00f5028b49ee8893448e11/infrastructure%2Fpostgres-adapter%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fpostgres%2Fadapter%2FPostgresBiProjectorAdapter.java",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/infrastructure%2Fpostgres-adapter%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fpostgres%2Fadapter%2FPostgresBiProjectorAdapter.java?ref=e734d91b15f7a569cc00f5028b49ee8893448e11",
+            "patch": "@@ -14,9 +14,12 @@\n import onlydust.com.marketplace.api.postgres.adapter.repository.bi.BiRewardDataRepository;\n import onlydust.com.marketplace.kernel.model.*;\n import onlydust.com.marketplace.project.domain.port.input.ContributionObserverPort;\n+import onlydust.com.marketplace.project.domain.port.input.ProjectObserverPort;\n+\n+import java.util.Set;\n \n @AllArgsConstructor\n-public class PostgresBiProjectorAdapter implements AccountingObserverPort, ContributionObserverPort {\n+public class PostgresBiProjectorAdapter implements AccountingObserverPort, ContributionObserverPort, ProjectObserverPort {\n     private final BiRewardDataRepository biRewardDataRepository;\n     private final BiContributionDataRepository biContributionDataRepository;\n     private final BiProjectGrantsDataRepository biProjectGrantsDataRepository;\n@@ -91,4 +94,28 @@ public void onFundsRefundedByProject(ProjectId from, ProgramId to, PositiveAmoun\n     public void onContributionsChanged(Long repoId) {\n         biContributionDataRepository.refreshByRepo(repoId);\n     }\n+\n+    @Override\n+    @Transactional\n+    public void onLinkedReposChanged(ProjectId projectId, Set<Long> linkedRepoIds, Set<Long> unlinkedRepoIds) {\n+        linkedRepoIds.forEach(biContributionDataRepository::refreshByRepo);\n+        unlinkedRepoIds.forEach(biContributionDataRepository::refreshByRepo);\n+        biProjectGlobalDataRepository.refresh(projectId);\n+    }\n+\n+    @Override\n+    public void onRewardSettingsChanged(ProjectId projectId) {\n+\n+    }\n+\n+    @Override\n+    @Transactional\n+    public void onProjectCreated(ProjectId projectId, UserId projectLeadId) {\n+        biProjectGlobalDataRepository.refresh(projectId);\n+    }\n+\n+    @Override\n+    public void onProjectCategorySuggested(String categoryName, UserId userId) {\n+\n+    }\n }"
+        }
+    ]
+}

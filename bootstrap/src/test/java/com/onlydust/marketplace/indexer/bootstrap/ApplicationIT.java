@@ -2,9 +2,11 @@ package com.onlydust.marketplace.indexer.bootstrap;
 
 import com.onlydust.marketplace.indexer.bootstrap.it.stubs.PublicEventRawStorageReaderStub;
 import com.onlydust.marketplace.indexer.bootstrap.it.stubs.TaskExecutorStub;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.CacheWritePublicEventRawStorageReaderDecorator;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.domain.services.readers.PublicEventRawStorageReaderAggregator;
 import com.onlydust.marketplace.indexer.infrastructure.github_archives.GithubArchivesClient;
+import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,8 +32,12 @@ public class ApplicationIT {
     @Bean
     @Primary
     PublicEventRawStorageReader publicEventRawStorageReaderStub(PublicEventRawStorageReaderStub githubArchivesReaderStub,
-                                                                PublicEventRawStorageReaderStub githubApiReaderStub) {
-        return new PublicEventRawStorageReaderAggregator(githubArchivesReaderStub, githubApiReaderStub);
+                                                                PublicEventRawStorageReaderStub githubApiReaderStub,
+                                                                PostgresRawStorage postgresRawStorage) {
+        return CacheWritePublicEventRawStorageReaderDecorator.builder()
+                .fetcher(new PublicEventRawStorageReaderAggregator(githubArchivesReaderStub, githubApiReaderStub))
+                .cache(postgresRawStorage)
+                .build();
     }
 
     @Bean

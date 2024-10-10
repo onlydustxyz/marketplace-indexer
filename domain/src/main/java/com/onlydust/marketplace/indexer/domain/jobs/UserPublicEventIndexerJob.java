@@ -12,7 +12,7 @@ import java.util.Set;
 
 @AllArgsConstructor
 @Slf4j
-public class UserStatsIndexerJob extends Job {
+public class UserPublicEventIndexerJob extends Job {
     private final UserPublicEventsIndexer userPublicEventsIndexer;
     private final Set<Long> userIds;
     private final UserPublicEventsIndexingJobStorage userPublicEventsIndexingJobStorage;

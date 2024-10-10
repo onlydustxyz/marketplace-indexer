@@ -35,22 +35,22 @@ public class PostgresConfiguration {
                                                            final PullRequestRepository pullRequestRepository,
                                                            final RepoLanguagesRepository repoLanguagesRepository,
                                                            final UserSocialAccountsRepository userSocialAccountsRepository,
-                                                           final PullRequestCommitsRepository pullRequestCommitsRepository,
                                                            final PullRequestClosingIssueRepository pullRequestClosingIssueRepository,
                                                            final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository,
                                                            final PullRequestReviewsRepository pullRequestReviewsRepository,
-                                                           final PublicEventRepository publicEventRepository) {
+                                                           final PublicEventRepository publicEventRepository,
+                                                           final CommitRepository commitRepository) {
         return new PostgresRawStorage(issueRepository,
                 userRepository,
                 repoRepository,
                 pullRequestRepository,
                 repoLanguagesRepository,
                 userSocialAccountsRepository,
-                pullRequestCommitsRepository,
                 pullRequestClosingIssueRepository,
                 pullRequestClosingIssueViewRepository,
                 pullRequestReviewsRepository,
-                publicEventRepository);
+                publicEventRepository,
+                commitRepository);
     }
 
     @Bean
@@ -113,5 +113,15 @@ public class PostgresConfiguration {
     @Bean
     public PostgresOutboxAdapter<ApiEventEntity> apiEventEntityPostgresOutboxAdapter(final ApiEventRepository apiEventRepository) {
         return new PostgresOutboxAdapter<>(apiEventRepository);
+    }
+
+    @Bean
+    public PostgresCommitIndexingJobStorage commitIndexingJobStorage(final CommitRepository commitRepository) {
+        return new PostgresCommitIndexingJobStorage(commitRepository);
+    }
+
+    @Bean
+    public PostgresUserFileExtensionsStorage postgresUserFileExtensionsStorage(final GithubUserFileExtensionsRepository githubUserFileExtensionsRepository) {
+        return new PostgresUserFileExtensionsStorage(githubUserFileExtensionsRepository);
     }
 }

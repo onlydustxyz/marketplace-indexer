@@ -76,6 +76,12 @@ public class DiffRawStorageReaderDecorator implements RawStorageReader {
     }
 
     @Override
+    public Optional<RawCommit> commit(Long repoId, String sha) {
+        return cache.commit(repoId, sha)
+                .or(() -> fetcher.commit(repoId, sha));
+    }
+
+    @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         return fetcher.pullRequestClosingIssues(repoOwner, repoName, pullRequestNumber);
     }
