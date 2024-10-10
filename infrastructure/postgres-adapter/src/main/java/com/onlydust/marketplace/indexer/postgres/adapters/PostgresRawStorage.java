@@ -116,7 +116,9 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
 
     @Override
     public void savePullRequest(RawPullRequest pullRequest) {
-        pullRequestRepository.save(RawPullRequestEntity.of(pullRequest));
+        pullRequestRepository.save(pullRequestRepository.findById(pullRequest.getId())
+                .map(pr -> pr.withData(pullRequest))
+                .orElse(RawPullRequestEntity.of(pullRequest)));
     }
 
     @Override

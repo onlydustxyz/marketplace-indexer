@@ -57,4 +57,9 @@ public class RawPullRequestEntity {
         this.commits.addAll(commits.stream().map(commit -> RawCommitEntity.of(repoId, commit)).toList());
         return this;
     }
+
+    public RawPullRequestEntity withData(RawPullRequest pullRequest) {
+        this.data = pullRequest;
+        return this;
+    }
 }
