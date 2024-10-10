@@ -33,7 +33,7 @@ public class CommitIndexerJob extends Job {
         try {
             commitIndexer.indexCommit(item.repoId(), item.sha());
         } catch (Throwable e) {
-            LOGGER.warn("Failed to index commit {}/{} ", item.repoId(), item.sha(), e);
+            LOGGER.error("Failed to index commit {}/{} ", item.repoId(), item.sha(), e);
         }
     }
 

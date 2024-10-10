@@ -16,7 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @IdClass(GithubUserFileExtensionEntity.PrimaryKey.class)
-@Table(name = "github_user_file_extension", schema = "indexer_exp")
+@Table(name = "github_user_file_extensions", schema = "indexer_exp")
 public class GithubUserFileExtensionEntity {
     @Id
     Long userId;
@@ -25,13 +25,21 @@ public class GithubUserFileExtensionEntity {
     String fileExtension;
 
     int commitCount;
+    int fileCount;
+    int modificationCount;
 
-    public void addCommit() {
-        this.commitCount += 1;
+    public GithubUserFileExtensionEntity(Long userId, String fileExtension) {
+        this.userId = userId;
+        this.fileExtension = fileExtension;
+    }
+
+    public void add(int commitCount, int fileCount, int modificationCount) {
+        this.commitCount += commitCount;
+        this.fileCount += fileCount;
+        this.modificationCount += modificationCount;
     }
 
     @EqualsAndHashCode
-    @AllArgsConstructor
     public static class PrimaryKey implements Serializable {
         Long userId;
         String fileExtension;

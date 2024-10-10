@@ -4,7 +4,6 @@ import com.onlydust.marketplace.indexer.bootstrap.it.stubs.PublicEventRawStorage
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
-import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubUserFileExtensionEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIndexingJobRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
@@ -16,7 +15,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static com.onlydust.marketplace.indexer.bootstrap.it.helpers.DateHelper.at;
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.groupingBy;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserPublicEventIndexingIT extends IntegrationTest {
@@ -83,16 +81,20 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
 
         commitIndexerJobManager.createJob().run();
 
-        final var fileExtensionsPerUser = githubUserFileExtensionsRepository.findAll()
-                .stream().collect(groupingBy(GithubUserFileExtensionEntity::getUserId));
-
-        assertThat(fileExtensionsPerUser.get(ANTHONY))
+        assertThat(githubUserFileExtensionsRepository.findAll().stream()
+                .filter(e -> e.getUserId().equals(ANTHONY)))
                 .hasSize(2);
 
-        assertThat(fileExtensionsPerUser.get(ANTHONY).stream()
-                .filter(e -> e.getFileExtension().equals("java"))
-                .findFirst().orElseThrow())
-                .extracting(GithubUserFileExtensionEntity::getCommitCount)
-                .isEqualTo(1);
+        assertStats(ANTHONY, "java", 3, 9, 149);
+        assertStats(ANTHONY, "sql", 2, 3, 212);
+    }
+
+    private void assertStats(Long userId, String fileExtension, int commitCount, int fileCount, int modificationCount) {
+        final var stats = githubUserFileExtensionsRepository.findByUserIdAndFileExtension(userId, fileExtension)
+                .orElseThrow(() -> new AssertionError("No entity found for user " + userId + " and file extension " + fileExtension));
+
+        assertThat(stats.getCommitCount()).isEqualTo(commitCount);
+        assertThat(stats.getFileCount()).isEqualTo(fileCount);
+        assertThat(stats.getModificationCount()).isEqualTo(modificationCount);
     }
 }

@@ -83,11 +83,13 @@ alter table indexer_raw.public_events
 
 create table indexer_exp.github_user_file_extensions
 (
-    user_id         bigint                   not null,
-    file_extension  text                     not null,
-    commit_count    int                      not null,
-    tech_created_at timestamp with time zone not null default now(),
-    tech_updated_at timestamp with time zone not null default now(),
+    user_id            bigint                   not null,
+    file_extension     text                     not null,
+    commit_count       int                      not null,
+    file_count         int                      not null,
+    modification_count int                      not null,
+    tech_created_at    timestamp with time zone not null default now(),
+    tech_updated_at    timestamp with time zone not null default now(),
     primary key (user_id, file_extension)
 );
 
