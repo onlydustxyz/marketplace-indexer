@@ -12,11 +12,10 @@ import java.util.Date;
 import java.util.Optional;
 
 @Entity
-@Data
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@Getter
 @Table(name = "contributions", schema = "indexer_exp")
 public class ContributionEntity {
     @Id

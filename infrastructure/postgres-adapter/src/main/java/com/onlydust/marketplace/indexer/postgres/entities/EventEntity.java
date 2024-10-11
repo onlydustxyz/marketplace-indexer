@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import onlydust.com.marketplace.kernel.model.Event;
 import onlydust.com.marketplace.kernel.model.EventIdResolver;
 import onlydust.com.marketplace.kernel.port.output.OutboxPort;
@@ -17,8 +17,7 @@ import org.hibernate.type.SqlTypes;
 
 @MappedSuperclass
 @NoArgsConstructor
-@EqualsAndHashCode
-@Data
+@Setter
 public abstract class EventEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

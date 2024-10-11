@@ -28,7 +28,7 @@ public class UserJobIndexingIT extends IntegrationTest {
         indexUser(ANTHONY).expectStatus().isNoContent();
 
         // Jobs are pending
-        assertThat(userIndexingJobEntityRepository.findAll()).containsExactly(
+        assertThat(userIndexingJobEntityRepository.findAll()).usingFieldByFieldElementComparator().containsExactly(
                 new UserIndexingJobEntity(ANTHONY)
         );
 

@@ -13,11 +13,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Data
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@Getter
 @Table(name = "github_pull_requests", schema = "indexer_exp")
 public class GithubPullRequestEntity {
     @Id

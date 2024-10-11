@@ -9,11 +9,10 @@ import lombok.*;
 import java.io.Serializable;
 
 @Entity
-@Data
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@Getter
 @Table(name = "github_repo_languages", schema = "indexer_exp")
 @IdClass(GithubRepoLanguageEntity.PrimaryKey.class)
 public class GithubRepoLanguageEntity {

@@ -12,12 +12,11 @@ import org.hibernate.type.SqlTypes;
 import java.io.Serializable;
 
 
-@Data
+@Getter
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @IdClass(RawPullRequestClosingIssuesEntity.Id.class)
 @Table(name = "pull_request_closing_issues", schema = "indexer_raw")
 @SQLInsert(sql = """

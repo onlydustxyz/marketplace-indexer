@@ -90,7 +90,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
 
     @Override
     public Optional<RawCommit> commit(Long repoId, String sha) {
-        return commitRepository.findById(sha).map(RawCommitEntity::getData);
+        return commitRepository.findById(sha).flatMap(c -> Optional.ofNullable(c.getData()));
     }
 
     @Override
@@ -129,10 +129,12 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
     @Override
     public void savePullRequestCommits(Long pullRequestId, List<RawCommit> commits) {
         final var pullRequest = pullRequestRepository.findById(pullRequestId)
-                .orElseThrow(() -> notFound("Pull request not found: " + pullRequestId))
-                .withCommits(commits);
+                .orElseThrow(() -> notFound("Pull request not found: " + pullRequestId));
 
-        pullRequestRepository.save(pullRequest);
+        pullRequestRepository.save(pullRequest
+                .withCommits(commits.stream()
+                        .map(c -> commitRepository.findById(c.getSha()).orElse(RawCommitEntity.of(pullRequest.getRepoId(), c)))
+                        .toList()));
     }
 
     @Override
@@ -167,7 +169,9 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
 
     @Override
     public void saveCommit(Long repoId, RawCommit commit) {
-        commitRepository.save(RawCommitEntity.of(repoId, commit));
+        commitRepository.findById(commit.getSha())
+                .ifPresentOrElse(c -> c.update(commit),
+                        () -> commitRepository.save(RawCommitEntity.of(repoId, commit)));
     }
 
     @Override

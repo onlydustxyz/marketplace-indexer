@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -78,6 +79,7 @@ public class PullRequestIndexingService implements PullRequestIndexer {
     }
 
     @Override
+    @Transactional
     public Optional<CleanPullRequest> indexPullRequest(String repoOwner, String repoName, Long prNumber) {
         LOGGER.debug("Indexing pull request {} for repo {}/{}", prNumber, repoOwner, repoName);
         return repoIndexer.indexRepo(repoOwner, repoName).flatMap(repo -> {

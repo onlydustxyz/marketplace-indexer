@@ -4,18 +4,20 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLInsert;
 import org.hibernate.type.SqlTypes;
 
 
 @Entity
-@Data
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @Table(name = "users", schema = "indexer_raw")
 @SQLInsert(sql = "INSERT INTO indexer_raw.users (data, login, id) VALUES (?, ?, ?) ON CONFLICT DO NOTHING")
 public class RawUserEntity {

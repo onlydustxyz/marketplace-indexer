@@ -10,13 +10,12 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.hibernate.type.SqlTypes;
 
 @Entity
-@Data
 @Builder(toBuilder = true, access = AccessLevel.PRIVATE)
-@EqualsAndHashCode
 @NoArgsConstructor(force = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "events_inbox", schema = "indexer_raw")
 @DynamicUpdate
+@Getter
 public class EventsInboxEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,6 +4,7 @@ import com.onlydust.marketplace.indexer.bootstrap.it.stubs.PublicEventRawStorage
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubUserFileExtensionEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIndexingJobRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
@@ -90,7 +91,7 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
     }
 
     private void assertStats(Long userId, String fileExtension, int commitCount, int fileCount, int modificationCount) {
-        final var stats = githubUserFileExtensionsRepository.findByUserIdAndFileExtension(userId, fileExtension)
+        final var stats = githubUserFileExtensionsRepository.findById(new GithubUserFileExtensionEntity.PrimaryKey(userId, fileExtension))
                 .orElseThrow(() -> new AssertionError("No entity found for user " + userId + " and file extension " + fileExtension));
 
         assertThat(stats.getCommitCount()).isEqualTo(commitCount);

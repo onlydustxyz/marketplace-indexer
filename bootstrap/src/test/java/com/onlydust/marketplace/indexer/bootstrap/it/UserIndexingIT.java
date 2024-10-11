@@ -63,11 +63,13 @@ public class UserIndexingIT extends IntegrationTest {
         response.expectStatus().isNoContent();
 
         final var expectedUser = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
-        assertThat(userRepository.findAll()).containsExactly(RawUserEntity.of(expectedUser));
+        assertThat(userRepository.findAll()).usingFieldByFieldElementComparator().containsExactly(RawUserEntity.of(expectedUser));
 
         final var expectedUserSocialAccounts = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony_social_accounts.json")
                 , RawSocialAccount[].class);
-        assertThat(userSocialAccountsRepository.findAll()).containsExactly(RawUserSocialAccountsEntity.of(ANTHONY, Arrays.asList(expectedUserSocialAccounts)));
+        assertThat(userSocialAccountsRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .containsExactly(RawUserSocialAccountsEntity.of(ANTHONY, Arrays.asList(expectedUserSocialAccounts)));
 
         final var user = githubAccountEntityRepository.findById(ANTHONY);
         assertThat(user).isPresent();

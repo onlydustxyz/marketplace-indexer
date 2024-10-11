@@ -9,11 +9,10 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import java.util.Date;
 
 @Entity
-@Data
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@Getter
 @Table(name = "github_code_reviews", schema = "indexer_exp")
 public class GithubCodeReviewEntity {
     @Id

@@ -10,15 +10,13 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
 @Table(name = "github_issues", schema = "indexer_exp")
 public class GithubIssueEntity {
     @Id
-    @EqualsAndHashCode.Include
     Long id;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})

@@ -7,15 +7,13 @@ import jakarta.persistence.Table;
 import lombok.*;
 
 @Entity
-@Data
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
 @Table(name = "github_labels", schema = "indexer_exp")
 public class GithubLabelEntity {
     @Id
-    @EqualsAndHashCode.Include
     @NonNull
     Long id;
 

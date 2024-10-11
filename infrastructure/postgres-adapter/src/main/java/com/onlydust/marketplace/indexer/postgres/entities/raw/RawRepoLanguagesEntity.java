@@ -6,14 +6,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLInsert;
 import org.hibernate.type.SqlTypes;
 
 
-@Data
+@Getter
 @Entity
 @Builder
 @NoArgsConstructor

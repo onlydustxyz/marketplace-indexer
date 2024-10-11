@@ -71,8 +71,10 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         processEventsFromPaths("installation", "/github/webhook/events/installation/installation_created_old.json");
 
         // Then
-        assertThat(repoIndexingJobEntityRepository.findAll()).containsExactlyInAnyOrder(new RepoIndexingJobEntity(CAIRO_STREAMS_ID, OLD_INSTALLATION_ID,
-                false, true), new RepoIndexingJobEntity(MARKETPLACE_FRONTEND_ID, OLD_INSTALLATION_ID, false, true));
+        assertThat(repoIndexingJobEntityRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .containsExactlyInAnyOrder(new RepoIndexingJobEntity(CAIRO_STREAMS_ID, OLD_INSTALLATION_ID, false, true),
+                        new RepoIndexingJobEntity(MARKETPLACE_FRONTEND_ID, OLD_INSTALLATION_ID, false, true));
 
         final var account = GithubAccountEntity.builder()
                 .id(98735558L)
@@ -85,7 +87,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
         assertThat(installations.get(0).id()).isEqualTo(OLD_INSTALLATION_ID);
-        assertThat(installations.get(0).account()).isEqualTo(account);
+        assertThat(installations.get(0).account()).isEqualToComparingFieldByField(account);
         assertThat(installations.get(0).permissions()).containsExactlyInAnyOrder("issues:read", "metadata:read", "pull_requests:read");
 
         final var repos = installations.get(0).repos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
@@ -119,7 +121,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
         assertThat(installations.get(0).id()).isEqualTo(INSTALLATION_ID);
-        assertThat(installations.get(0).account()).isEqualTo(account);
+        assertThat(installations.get(0).account()).isEqualToComparingFieldByField(account);
 
         final var repos = installations.get(0).repos();
         assertThat(repos).hasSize(1);

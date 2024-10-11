@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawCommit;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
 import jakarta.persistence.*;
 import lombok.*;
@@ -51,10 +50,12 @@ public class RawPullRequestEntity {
                 .build();
     }
 
-    public RawPullRequestEntity withCommits(List<RawCommit> commits) {
+    public RawPullRequestEntity withCommits(List<RawCommitEntity> commits) {
         if (this.commits == null) this.commits = new HashSet<>();
+
         this.commits.clear();
-        this.commits.addAll(commits.stream().map(commit -> RawCommitEntity.of(repoId, commit)).toList());
+        this.commits.addAll(commits);
+
         return this;
     }
 

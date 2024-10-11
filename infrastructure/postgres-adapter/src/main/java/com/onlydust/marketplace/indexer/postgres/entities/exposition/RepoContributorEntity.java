@@ -12,7 +12,6 @@ import lombok.Value;
 import java.io.Serializable;
 
 @Entity
-@EqualsAndHashCode
 @Table(name = "repos_contributors", schema = "indexer_exp")
 @Value
 @NoArgsConstructor(force = true)

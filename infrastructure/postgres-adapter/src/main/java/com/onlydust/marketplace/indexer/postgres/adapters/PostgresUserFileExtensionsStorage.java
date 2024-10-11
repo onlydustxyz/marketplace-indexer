@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.postgres.adapters;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.UserFileExtensionStorage;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubUserFileExtensionEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubUserFileExtensionsRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
@@ -11,14 +12,15 @@ public class PostgresUserFileExtensionsStorage implements UserFileExtensionStora
     private final GithubUserFileExtensionsRepository githubUserFileExtensionsRepository;
 
     @Override
+    @Transactional
     public void addModificationsForUserAndExtension(final @NonNull Long userId,
                                                     final @NonNull String fileExtension,
                                                     int commitCount,
                                                     int fileCount,
                                                     int modificationCount) {
-        final var entity = githubUserFileExtensionsRepository.findByUserIdAndFileExtension(userId, fileExtension)
-                .orElse(new GithubUserFileExtensionEntity(userId, fileExtension));
-        entity.add(commitCount, fileCount, modificationCount);
-        githubUserFileExtensionsRepository.save(entity);
+        githubUserFileExtensionsRepository.findById(new GithubUserFileExtensionEntity.PrimaryKey(userId, fileExtension))
+                .ifPresentOrElse(entity -> entity.add(commitCount, fileCount, modificationCount),
+                        () -> githubUserFileExtensionsRepository.save(new GithubUserFileExtensionEntity(userId, fileExtension, commitCount, fileCount,
+                                modificationCount)));
     }
 }

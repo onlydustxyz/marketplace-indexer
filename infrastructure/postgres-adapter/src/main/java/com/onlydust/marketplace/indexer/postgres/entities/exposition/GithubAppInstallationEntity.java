@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Data
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@Getter
 @Accessors(chain = true, fluent = true)
+@Setter
 @Table(name = "github_app_installations", schema = "indexer_exp")
 public class GithubAppInstallationEntity {
     @Id

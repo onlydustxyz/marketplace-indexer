@@ -5,27 +5,25 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawShortCommit;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLInsert;
 import org.hibernate.type.SqlTypes;
 
-
-@Data
+@Getter
 @Entity
-@Builder
-@NoArgsConstructor
+@Builder(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "commits", schema = "indexer_raw")
 @SQLInsert(sql = "INSERT INTO indexer_raw.commits (author_id, author_name, data, repo_id, sha) VALUES (?, ?, ?, ?, ?) ON CONFLICT DO NOTHING")
 public class RawCommitEntity {
     @Id
-    String sha;
+    final String sha;
 
-    Long repoId;
+    final Long repoId;
 
     Long authorId;
 
@@ -50,5 +48,14 @@ public class RawCommitEntity {
                 .repoId(repoId)
                 .authorName(commit.getAuthor() == null ? null : commit.getAuthor().getName())
                 .build();
+    }
+
+    public RawCommitEntity update(RawCommit commit) {
+        if (commit.getAuthor() != null) {
+            this.authorId = commit.getAuthor().getId();
+            this.authorName = commit.getAuthor().getLogin();
+        }
+        this.data = commit;
+        return this;
     }
 }

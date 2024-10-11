@@ -1,7 +1,10 @@
 package com.onlydust.marketplace.indexer.postgres.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
@@ -9,11 +12,10 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import java.time.Instant;
 
 @Entity
-@EqualsAndHashCode
 @Builder(toBuilder = true)
-@Data
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
+@Getter
 @Table(name = "user_indexing_jobs", schema = "indexer")
 @DynamicUpdate
 public class UserIndexingJobEntity {

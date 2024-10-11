@@ -6,11 +6,10 @@ import lombok.*;
 import java.io.Serializable;
 
 @Entity
-@Data
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@Getter
 @IdClass(GithubPullRequestCommitCountEntity.PrimaryKey.class)
 @Table(name = "github_pull_request_commit_counts", schema = "indexer_exp")
 public class GithubPullRequestCommitCountEntity {

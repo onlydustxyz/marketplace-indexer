@@ -42,6 +42,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -160,7 +161,7 @@ public class IntegrationTest {
         Arrays.stream(paths)
                 .map(path -> {
                     try {
-                        return Files.readString(Paths.get(this.getClass().getResource(path).toURI()));
+                        return Files.readString(Paths.get(requireNonNull(this.getClass().getResource(path)).toURI()));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

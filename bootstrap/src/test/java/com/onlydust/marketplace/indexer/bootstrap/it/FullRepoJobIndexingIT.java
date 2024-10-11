@@ -77,10 +77,12 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
         onRepoLinkChanged(List.of(BRETZEL_APP, MARKETPLACE), List.of()).expectStatus().isNoContent();
 
         // Jobs are pending
-        assertThat(repoIndexingJobEntityRepository.findAll(Sort.by("repoId"))).contains(
-                new RepoIndexingJobEntity(BRETZEL_APP, null, true, true),
-                new RepoIndexingJobEntity(MARKETPLACE, null, true, true)
-        );
+        assertThat(repoIndexingJobEntityRepository.findAll(Sort.by("repoId")))
+                .usingFieldByFieldElementComparator()
+                .contains(
+                        new RepoIndexingJobEntity(BRETZEL_APP, null, true, true),
+                        new RepoIndexingJobEntity(MARKETPLACE, null, true, true)
+                );
 
         // Run all jobs
         diffRepoRefreshJobManager.createJob().run();
@@ -117,13 +119,15 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     public void should_index_repo_with_contributions() {
         final var exposedRepo = githubRepoEntityRepository.findById(MARKETPLACE);
         assertThat(exposedRepo).isPresent();
-        assertThat(exposedRepo.get().getLanguages()).containsExactlyInAnyOrder(
-                GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("TypeScript").lineCount(2761826L).build(),
-                GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("Shell").lineCount(11474L).build(),
-                GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("CSS").lineCount(5535L).build(),
-                GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("PLpgSQL").lineCount(1372L).build(),
-                GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("JavaScript").lineCount(23763L).build(),
-                GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("HTML").lineCount(1520L).build());
+        assertThat(exposedRepo.get().getLanguages())
+                .usingFieldByFieldElementComparator()
+                .containsExactlyInAnyOrder(
+                        GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("TypeScript").lineCount(2761826L).build(),
+                        GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("Shell").lineCount(11474L).build(),
+                        GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("CSS").lineCount(5535L).build(),
+                        GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("PLpgSQL").lineCount(1372L).build(),
+                        GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("JavaScript").lineCount(23763L).build(),
+                        GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("HTML").lineCount(1520L).build());
         assertThat(pullRequestsRepository.findAll()).hasSize(2);
         assertThat(issuesRepository.findAll()).hasSize(2);
         /*

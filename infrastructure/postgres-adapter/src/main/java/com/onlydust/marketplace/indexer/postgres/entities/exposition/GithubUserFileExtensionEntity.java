@@ -28,11 +28,6 @@ public class GithubUserFileExtensionEntity {
     int fileCount;
     int modificationCount;
 
-    public GithubUserFileExtensionEntity(Long userId, String fileExtension) {
-        this.userId = userId;
-        this.fileExtension = fileExtension;
-    }
-
     public void add(int commitCount, int fileCount, int modificationCount) {
         this.commitCount += commitCount;
         this.fileCount += fileCount;
@@ -40,6 +35,8 @@ public class GithubUserFileExtensionEntity {
     }
 
     @EqualsAndHashCode
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class PrimaryKey implements Serializable {
         Long userId;
         String fileExtension;
