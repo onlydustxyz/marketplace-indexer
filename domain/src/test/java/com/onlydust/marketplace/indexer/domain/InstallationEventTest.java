@@ -2,8 +2,8 @@ package com.onlydust.marketplace.indexer.domain;
 
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
-import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
+import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawInstallationEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.services.events.InstallationEventProcessorService;
@@ -11,6 +11,8 @@ import com.onlydust.marketplace.indexer.domain.stubs.InstallationStorageStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -44,6 +46,6 @@ public class InstallationEventTest {
         assertThat(events.get(0).getRepos()).hasSize(1);
         assertThat(events.get(0).getRepos().get(0).getId()).isEqualTo(marketplaceFrontend.getId());
         verify(repoIndexingJobRepository).setInstallationForRepos(newInstallationEvent.getInstallation().getId(),
-                new RepoIndexingJobTrigger(marketplaceFrontend.getId(), false, true));
+                Set.of(new RepoIndexingJobTrigger(marketplaceFrontend.getId(), false, true)));
     }
 }

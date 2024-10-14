@@ -25,7 +25,7 @@ class UserPublicEventsIndexerJobTest {
     private final UserPublicEventsIndexer userPublicEventsIndexer = mock(UserPublicEventsIndexer.class);
     private final UserPublicEventsIndexingJobStorage userPublicEventsIndexingJobStorage = mock(UserPublicEventsIndexingJobStorage.class);
     private final RawStorageReader rawStorageReader = mock(RawStorageReader.class);
-    final UserStatsIndexerJob userStatsIndexerJob = new UserStatsIndexerJob(userPublicEventsIndexer,
+    final UserPublicEventIndexerJob userPublicEventIndexerJob = new UserPublicEventIndexerJob(userPublicEventsIndexer,
             Set.of(user.getId()),
             userPublicEventsIndexingJobStorage,
             rawStorageReader);
@@ -41,7 +41,7 @@ class UserPublicEventsIndexerJobTest {
         when(rawStorageReader.user(user.getId())).thenReturn(Optional.empty());
 
         // When
-        userStatsIndexerJob.execute();
+        userPublicEventIndexerJob.execute();
 
         // Then
         verifyNoInteractions(userPublicEventsIndexingJobStorage);
@@ -55,7 +55,7 @@ class UserPublicEventsIndexerJobTest {
         when(userPublicEventsIndexingJobStorage.lastEventTimestamp(user.getId())).thenReturn(Optional.empty());
 
         // When
-        userStatsIndexerJob.execute();
+        userPublicEventIndexerJob.execute();
 
         // Then
         verify(userPublicEventsIndexingJobStorage).startJob(user.getId());
@@ -71,7 +71,7 @@ class UserPublicEventsIndexerJobTest {
         when(userPublicEventsIndexingJobStorage.lastEventTimestamp(user.getId())).thenReturn(Optional.of(lastEventTimestamp));
 
         // When
-        userStatsIndexerJob.execute();
+        userPublicEventIndexerJob.execute();
 
         // Then
         verify(userPublicEventsIndexingJobStorage).startJob(user.getId());
@@ -87,7 +87,7 @@ class UserPublicEventsIndexerJobTest {
         doThrow(new RuntimeException("Failed to index user")).when(userPublicEventsIndexer).indexUser(user.getId(), userCreationDate);
 
         // When
-        userStatsIndexerJob.execute();
+        userPublicEventIndexerJob.execute();
 
         // Then
         verify(userPublicEventsIndexingJobStorage).startJob(user.getId());

@@ -5,6 +5,7 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPullRequestEventPayload;
+import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPushEventPayload;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
@@ -42,6 +43,12 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
     private void index(final @NonNull RawPublicEvent.Payload rawPayload) {
         if (rawPayload instanceof RawPullRequestEventPayload payload)
             index(payload);
+        else if (rawPayload instanceof RawPushEventPayload payload)
+            index(payload);
+    }
+
+    private void index(RawPushEventPayload payload) {
+        rawStorageWriter.saveCommits(payload.repoId(), payload.commits());
     }
 
     private void index(final @NonNull RawAccount user) {

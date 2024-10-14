@@ -1,0 +1,15 @@
+{
+    "request": {
+        "urlPathTemplate": "/repositories/698096830/commits/e{sha}",
+        "method": "GET",
+        "headers": {
+            "Authorization": {
+                "matches": "Bearer (GITHUB_PAT|ghp_GITHUB_USER_PAT)"
+            }
+        }
+    },
+    "response": {
+        "status": 200,
+        "bodyFileName": "repos/marketplace-api/commits/e{{request.path.sha}}.json"
+    }
+}

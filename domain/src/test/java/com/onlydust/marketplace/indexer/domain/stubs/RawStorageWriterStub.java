@@ -20,6 +20,7 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     final Map<Long, List<RawPullRequest>> repoPullRequests = new HashMap<>();
     final Map<Long, List<RawIssue>> repoIssues = new HashMap<>();
     final Map<Long, RawLanguages> repoLanguages = new HashMap<>();
+    final List<RawCommit> commits = new ArrayList<>();
 
     public static <T> T load(String path, Class<T> type) {
         final var inputStream = type.getResourceAsStream(path);
@@ -90,6 +91,11 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     }
 
     @Override
+    public Optional<RawCommit> commit(Long repoId, String sha) {
+        return commits.stream().filter(commit -> commit.getSha().equals(sha)).findFirst();
+    }
+
+    @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
         return Optional.ofNullable(closingIssues.get(Tuple.tuple(repoOwner, repoName, pullRequestNumber)));
     }
@@ -116,6 +122,7 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
 
     public void feedWith(Long pullRequestId, RawCommit... commits) {
         savePullRequestCommits(pullRequestId, Arrays.stream(commits).toList());
+        Arrays.stream(commits).forEach(c -> saveCommit(0L, c));
     }
 
     public void feedWith(RawPullRequest... pullRequests) {
@@ -187,6 +194,16 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     @Override
     public void deleteIssue(Long id) {
         repoIssues.values().forEach(issues -> issues.removeIf(issue -> issue.getId().equals(id)));
+    }
+
+    @Override
+    public void saveCommit(Long repoId, RawCommit commit) {
+        commits.add(commit);
+    }
+
+    @Override
+    public void saveCommits(Long repoId, List<RawShortCommit> commits) {
+        
     }
 
     public List<RawRepo> repos() {

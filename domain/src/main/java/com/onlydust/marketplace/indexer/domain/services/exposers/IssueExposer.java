@@ -8,6 +8,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.IssueStorage;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -17,6 +18,7 @@ public class IssueExposer implements Exposer<CleanIssue> {
     private final IndexingObserver indexingObserver;
 
     @Override
+    @Transactional
     public void expose(CleanIssue issue) {
         final var fromAssignees = issue.getAssignees().stream().map(GithubAccount::of).map(assignee -> Contribution.of(GithubIssue.of(issue), assignee));
 

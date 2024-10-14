@@ -5,7 +5,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoStatsEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
@@ -35,7 +35,7 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
     @Autowired
     public IssueRepository issuesRepository;
     @Autowired
-    public GithubRepoEntityRepository githubRepoEntityRepository;
+    public GithubRepoRepository githubRepoRepository;
     @Autowired
     public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
@@ -63,9 +63,9 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
         // Jobs are finished
         for (final var repoId : new Long[]{MARKETPLACE}) {
             final var job = repoIndexingJobEntityRepository.findById(repoId).orElseThrow();
-            assertThat(job.getStartedAt()).isNotNull();
-            assertThat(job.getFinishedAt()).isNotNull();
-            assertThat(job.getStatus()).isEqualTo(JobStatus.SUCCESS);
+            assertThat(job.startedAt()).isNotNull();
+            assertThat(job.finishedAt()).isNotNull();
+            assertThat(job.status()).isEqualTo(JobStatus.SUCCESS);
 
             final var stats = githubRepoStatsEntityRepository.findById(repoId).orElseThrow();
             assertThat(stats.getLastIndexedAt()).isNotNull();
@@ -74,9 +74,9 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
         // Some jobs did not run
         for (final var repoId : new Long[]{CAIRO_STREAMS}) {
             final var job = repoIndexingJobEntityRepository.findById(repoId).orElseThrow();
-            assertThat(job.getStartedAt()).isNull();
-            assertThat(job.getFinishedAt()).isNull();
-            assertThat(job.getStatus()).isEqualTo(JobStatus.PENDING);
+            assertThat(job.startedAt()).isNull();
+            assertThat(job.finishedAt()).isNull();
+            assertThat(job.status()).isEqualTo(JobStatus.PENDING);
 
             assertThat(githubRepoStatsEntityRepository.findById(repoId)).isEmpty();
         }
@@ -85,7 +85,7 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
     @Test
     @Order(2)
     public void should_expose_indexed_repo_but_no_contribution() {
-        final var repo = githubRepoEntityRepository.findById(MARKETPLACE).orElseThrow();
+        final var repo = githubRepoRepository.findById(MARKETPLACE).orElseThrow();
         assertThat(repo.getDescription()).isEqualTo("Contributions marketplace backend services");
         assertThat(pullRequestsRepository.findAll()).isEmpty();
         assertThat(issuesRepository.findAll()).isEmpty();
@@ -96,7 +96,7 @@ public class LightRepoJobIndexingIT extends IntegrationTest {
     @Test
     @Order(3)
     public void should_not_index_private_repos() {
-        final var repo = githubRepoEntityRepository.findById(CAIRO_STREAMS).orElseThrow();
+        final var repo = githubRepoRepository.findById(CAIRO_STREAMS).orElseThrow();
         assertThat(repo.getDescription()).isNull();
         assertThat(pullRequestsRepository.findAll()).isEmpty();
         assertThat(issuesRepository.findAll()).isEmpty();

@@ -3,18 +3,19 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.ZonedDateTime;
 
 @Entity
-@Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
+@NoArgsConstructor(force = true)
+@Getter
 @Table(name = "github_accounts", schema = "indexer_exp")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GithubAccountEntity {
     @Id
     Long id;

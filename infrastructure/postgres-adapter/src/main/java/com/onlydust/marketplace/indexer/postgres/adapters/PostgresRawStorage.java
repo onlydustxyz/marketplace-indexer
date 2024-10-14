@@ -8,12 +8,15 @@ import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.notFound;
 
 @AllArgsConstructor
 public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, PublicEventRawStorageReader, PublicEventRawStorageWriter {
@@ -23,20 +26,20 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
     final PullRequestRepository pullRequestRepository;
     final RepoLanguagesRepository repoLanguagesRepository;
     final UserSocialAccountsRepository userSocialAccountsRepository;
-    final PullRequestCommitsRepository pullRequestCommitsRepository;
     final PullRequestClosingIssueRepository pullRequestClosingIssueRepository;
     final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository;
     final PullRequestReviewsRepository pullRequestReviewsRepository;
     final PublicEventRepository publicEventRepository;
+    final CommitRepository commitRepository;
 
     @Override
     public Optional<RawRepo> repo(Long repoId) {
-        return repoRepository.findById(repoId).map(RawRepoEntity::getData);
+        return repoRepository.findById(repoId).map(RawRepoEntity::data);
     }
 
     @Override
     public Optional<RawRepo> repo(String repoOwner, String repoName) {
-        return repoRepository.findByOwnerAndNameAndDeleted(repoOwner, repoName, false).map(RawRepoEntity::getData);
+        return repoRepository.findByOwnerAndNameAndDeleted(repoOwner, repoName, false).map(RawRepoEntity::data);
     }
 
     @Override
@@ -81,12 +84,19 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
 
     @Override
     public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
-        return pullRequestCommitsRepository.findById(pullRequestId).map(RawPullRequestCommitsEntity::getData);
+        return pullRequestRepository.findById(pullRequestId)
+                .flatMap(pr -> Optional.ofNullable(pr.getCommits()))
+                .map(c -> c.stream().map(RawCommitEntity::getData).toList());
+    }
+
+    @Override
+    public Optional<RawCommit> commit(Long repoId, String sha) {
+        return commitRepository.findById(sha).flatMap(c -> Optional.ofNullable(c.getData()));
     }
 
     @Override
     public Optional<RawPullRequestClosingIssues> pullRequestClosingIssues(String repoOwner, String repoName, Long pullRequestNumber) {
-        return pullRequestClosingIssueViewRepository.findById(new RawPullRequestClosingIssuesEntity.Id(repoOwner, repoName, pullRequestNumber))
+        return pullRequestClosingIssueViewRepository.findById(new RawPullRequestClosingIssuesEntity.PrimaryKey(repoOwner, repoName, pullRequestNumber))
                 .map(RawPullRequestClosingIssuesEntity::getData);
     }
 
@@ -97,52 +107,58 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
 
     @Override
     public void saveUser(RawAccount user) {
-        userRepository.save(RawUserEntity.of(user));
+        userRepository.merge(RawUserEntity.of(user));
     }
 
     @Override
     public void saveUserSocialAccounts(Long userId, List<RawSocialAccount> socialAccounts) {
-        userSocialAccountsRepository.save(RawUserSocialAccountsEntity.of(userId, socialAccounts));
+        userSocialAccountsRepository.merge(RawUserSocialAccountsEntity.of(userId, socialAccounts));
     }
 
     @Override
     public void savePullRequest(RawPullRequest pullRequest) {
-        pullRequestRepository.save(RawPullRequestEntity.of(pullRequest));
+        pullRequestRepository.findById(pullRequest.getId()).ifPresentOrElse(
+                pr -> pr.setData(pullRequest),
+                () -> pullRequestRepository.merge(RawPullRequestEntity.of(pullRequest)));
     }
 
     @Override
     public void savePullRequestReviews(Long pullRequestId, List<RawCodeReview> codeReviews) {
-        pullRequestReviewsRepository.save(RawPullRequestReviewEntity.of(pullRequestId, codeReviews));
+        pullRequestReviewsRepository.merge(RawPullRequestReviewEntity.of(pullRequestId, codeReviews));
     }
 
     @Override
+    @Transactional
     public void savePullRequestCommits(Long pullRequestId, List<RawCommit> commits) {
-        pullRequestCommitsRepository.save(RawPullRequestCommitsEntity.of(pullRequestId, commits));
+        pullRequestRepository.merge(pullRequestRepository.findById(pullRequestId)
+                .orElseThrow(() -> notFound("Pull request not found: " + pullRequestId))
+                .withCommits(commits));
     }
 
     @Override
     public void saveIssue(Long repoId, RawIssue issue) {
-        issueRepository.save(RawIssueEntity.of(repoId, issue));
+        issueRepository.merge(RawIssueEntity.of(repoId, issue));
     }
 
     @Override
     public void saveRepo(RawRepo repo) {
-        repoRepository.save(RawRepoEntity.of(repo));
+        repoRepository.merge(RawRepoEntity.of(repo));
     }
 
     @Override
+    @Transactional
     public void deleteRepo(Long repoId) {
-        repoRepository.findById(repoId).ifPresent(r -> repoRepository.save(r.toBuilder().deleted(true).build()));
+        repoRepository.findById(repoId).ifPresent(r -> r.deleted(true));
     }
 
     @Override
     public void saveRepoLanguages(Long repoId, RawLanguages languages) {
-        repoLanguagesRepository.save(RawRepoLanguagesEntity.of(repoId, languages));
+        repoLanguagesRepository.merge(RawRepoLanguagesEntity.of(repoId, languages));
     }
 
     @Override
     public void saveClosingIssues(String repoOwner, String repoName, Long pullRequestNumber, RawPullRequestClosingIssues closingIssues) {
-        pullRequestClosingIssueRepository.save(RawPullRequestClosingIssuesEntity.of(repoOwner, repoName, pullRequestNumber, closingIssues));
+        pullRequestClosingIssueRepository.merge(RawPullRequestClosingIssuesEntity.of(repoOwner, repoName, pullRequestNumber, closingIssues));
     }
 
     @Override
@@ -151,7 +167,17 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
     }
 
     @Override
+    public void saveCommit(Long repoId, RawCommit commit) {
+        commitRepository.merge(RawCommitEntity.of(repoId, commit));
+    }
+
+    @Override
     public void savePublicEvent(RawPublicEvent rawEvent) {
-        publicEventRepository.save(RawPublicEventEntity.of(rawEvent));
+        publicEventRepository.merge(RawPublicEventEntity.of(rawEvent));
+    }
+
+    @Override
+    public void saveCommits(Long repoId, List<RawShortCommit> commits) {
+        commitRepository.mergeAll(commits.stream().map(c -> RawCommitEntity.of(repoId, c)).toList());
     }
 }

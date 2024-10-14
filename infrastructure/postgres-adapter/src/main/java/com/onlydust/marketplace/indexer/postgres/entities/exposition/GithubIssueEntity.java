@@ -3,22 +3,24 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubIssue;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
 
 @Entity
-@Data
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 @AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@NoArgsConstructor(force = true)
+@Getter
 @Table(name = "github_issues", schema = "indexer_exp")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GithubIssueEntity {
     @Id
-    @EqualsAndHashCode.Include
     Long id;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -49,7 +51,7 @@ public class GithubIssueEntity {
             schema = "indexer_exp",
             joinColumns = @JoinColumn(name = "issue_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    List<GithubAccountEntity> assignees;
+    Set<GithubAccountEntity> assignees;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
@@ -57,7 +59,7 @@ public class GithubIssueEntity {
             schema = "indexer_exp",
             joinColumns = @JoinColumn(name = "issue_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id"))
-    List<GithubLabelEntity> labels;
+    Set<GithubLabelEntity> labels;
 
     public static GithubIssueEntity of(GithubIssue issue) {
         return GithubIssueEntity.builder()
@@ -78,25 +80,8 @@ public class GithubIssueEntity {
                 .authorLogin(issue.getAuthor().getLogin())
                 .authorHtmlUrl(issue.getAuthor().getHtmlUrl())
                 .authorAvatarUrl(issue.getAuthor().getAvatarUrl())
-                .assignees(issue.getAssignees().stream().map(GithubAccountEntity::of).toList())
-                .labels(issue.getLabels().stream().map(GithubLabelEntity::of).toList())
-                .build();
-    }
-
-    public GithubIssueEntity updateWith(GithubIssue issue) {
-        return this.toBuilder()
-                .id(issue.getId())
-                .number(issue.getNumber())
-                .title(issue.getTitle())
-                .status(Status.of(issue.getStatus()))
-                .createdAt(issue.getCreatedAt())
-                .closedAt(issue.getClosedAt())
-                .author(GithubAccountEntity.of(issue.getAuthor()))
-                .htmlUrl(issue.getHtmlUrl())
-                .body(issue.getBody())
-                .commentsCount(issue.getCommentsCount())
-                .assignees(issue.getAssignees().stream().map(GithubAccountEntity::of).toList())
-                .labels(issue.getLabels().stream().map(GithubLabelEntity::of).toList())
+                .assignees(issue.getAssignees().stream().map(GithubAccountEntity::of).collect(toSet()))
+                .labels(issue.getLabels().stream().map(GithubLabelEntity::of).collect(toSet()))
                 .build();
     }
 

@@ -1,9 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanRepo;
+import com.onlydust.marketplace.indexer.domain.models.clean.*;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
@@ -20,6 +17,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.*;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.CommitIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.*;
 import com.onlydust.marketplace.indexer.domain.services.events.*;
@@ -253,11 +251,12 @@ public class DomainConfiguration {
             final UserIndexer cachedUserIndexer,
             final RepoIndexer cachedRepoIndexer,
             final IssueIndexer cachedIssueIndexer,
+            final CommitIndexer cachedCommitIndexer,
             final Exposer<CleanPullRequest> pullRequestExposer,
             final MeterRegistry registry) {
         return new PullRequestExposerIndexer(
                 new MonitoredPullRequestIndexer(
-                        new PullRequestIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer),
+                        new PullRequestIndexingService(cachedRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer, cachedCommitIndexer),
                         registry),
                 pullRequestExposer
         );
@@ -269,9 +268,10 @@ public class DomainConfiguration {
             final UserIndexer cacheOnlyUserIndexer,
             final RepoIndexer cacheOnlyRepoIndexer,
             final IssueIndexer cacheOnlyIssueIndexer,
+            final CommitIndexer cacheOnlyCommitIndexer,
             final Exposer<CleanPullRequest> pullRequestExposer) {
         return new PullRequestExposerIndexer(
-                new PullRequestIndexingService(postgresRawStorage, cacheOnlyUserIndexer, cacheOnlyRepoIndexer, cacheOnlyIssueIndexer),
+                new PullRequestIndexingService(postgresRawStorage, cacheOnlyUserIndexer, cacheOnlyRepoIndexer, cacheOnlyIssueIndexer, cacheOnlyCommitIndexer),
                 pullRequestExposer
         );
     }
@@ -282,11 +282,12 @@ public class DomainConfiguration {
             final UserIndexer cachedUserIndexer,
             final RepoIndexer cachedRepoIndexer,
             final IssueIndexer cachedIssueIndexer,
+            final CommitIndexer cachedCommitIndexer,
             final Exposer<CleanPullRequest> pullRequestExposer,
             final MeterRegistry registry) {
         return new PullRequestExposerIndexer(
                 new MonitoredPullRequestIndexer(
-                        new PullRequestIndexingService(liveRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer),
+                        new PullRequestIndexingService(liveRawStorageReader, cachedUserIndexer, cachedRepoIndexer, cachedIssueIndexer, cachedCommitIndexer),
                         registry),
                 pullRequestExposer
         );
@@ -462,6 +463,12 @@ public class DomainConfiguration {
     }
 
     @Bean
+    public Exposer<CleanCommit> commitExposer(final UserFileExtensionStorage userFileExtensionStorage,
+                                              final CommitStorage commitStorage) {
+        return new CommitExposer(userFileExtensionStorage, commitStorage);
+    }
+
+    @Bean
     public IndexingOutboxObserver indexingOutboxObserver(final OutboxPort outboxPort) {
         return new IndexingOutboxObserver(outboxPort);
     }
@@ -469,5 +476,27 @@ public class DomainConfiguration {
     @Bean
     public GithubOutboxObserver githubOutboxObserver(final OutboxPort outboxPort) {
         return new GithubOutboxObserver(outboxPort);
+    }
+
+    @Bean
+    public JobManager commitIndexerJobManager(final CommitIndexer cachedCommitIndexer,
+                                              final CommitIndexingJobStorage commitIndexingJobStorage,
+                                              final RateLimitService rateLimitService
+    ) {
+        return new CommitIndexerJobService(cachedCommitIndexer, commitIndexingJobStorage, rateLimitService);
+    }
+
+    @Bean
+    public CommitIndexer cachedCommitIndexer(final RawStorageReader cachedRawStorageReader,
+                                             final Exposer<CleanCommit> commitExposer) {
+        return new CommitExposerIndexer(new CommitIndexingService(cachedRawStorageReader),
+                commitExposer);
+    }
+
+    @Bean
+    public CommitIndexer cacheOnlyCommitIndexer(final PostgresRawStorage postgresRawStorage,
+                                                final Exposer<CleanCommit> commitExposer) {
+        return new CommitExposerIndexer(new CommitIndexingService(postgresRawStorage),
+                commitExposer);
     }
 }

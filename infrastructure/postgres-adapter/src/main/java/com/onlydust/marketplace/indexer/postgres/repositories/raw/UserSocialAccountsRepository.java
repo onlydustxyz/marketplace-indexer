@@ -1,8 +1,12 @@
 package com.onlydust.marketplace.indexer.postgres.repositories.raw;
 
 import com.onlydust.marketplace.indexer.postgres.entities.raw.RawUserSocialAccountsEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 
-public interface UserSocialAccountsRepository extends JpaRepository<RawUserSocialAccountsEntity, Long> {
+import java.util.List;
 
+public interface UserSocialAccountsRepository extends BaseJpaRepository<RawUserSocialAccountsEntity, Long> {
+    void deleteAll();
+
+    List<RawUserSocialAccountsEntity> findAll();
 }

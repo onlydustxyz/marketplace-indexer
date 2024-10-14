@@ -1,0 +1,146 @@
+{
+    "sha": "ebc3121996a66a1bbd3ad8d95105cbfda42d48ea",
+    "node_id": "C_kwDOKZwcvtoAKGViYzMxMjE5OTZhNjZhMWJiZDNhZDhkOTUxMDVjYmZkYTQyZDQ4ZWE",
+    "commit": {
+        "author": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2024-09-27T14:32:11Z"
+        },
+        "committer": {
+            "name": "Anthony Buisset",
+            "email": "abuisset@gmail.com",
+            "date": "2024-09-30T18:01:18Z"
+        },
+        "message": "add projectIds and projectSlugs in project data filters",
+        "tree": {
+            "sha": "3df9667cad8620a5a4dd810d63212f9a33b4c1ad",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/git/trees/3df9667cad8620a5a4dd810d63212f9a33b4c1ad"
+        },
+        "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/git/commits/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea",
+        "comment_count": 0,
+        "verification": {
+            "verified": true,
+            "reason": "valid",
+            "signature": "-----BEGIN PGP SIGNATURE-----\n\niQGzBAABCAAdFiEEf2iRt5hVQQXKtppWNY4YwZLdMxsFAmb6524ACgkQNY4YwZLd\nMxvyXgwAgppLnC32ADXHDH+xE87ogIjjBELHNycphRvnwzqBDjSDezJOKG5XJWpo\nIz8L+c4QLzikkxZmFlDQAhoq4FdboXdVWKgLJrIR9/P9JqMc/63ZYHZI/hT6GxxT\nIyoBRRJemutORMWrEIar2oCBFmVpTcE4Y0loh5mWFXK3bX6W+KwGl4i/h8j06dYl\n+qepGuHrno2IvexMKUzNAVQHCnDj1SI2hopr7W1L5p/KF6j35JAIM2qLUusbuDrL\njqokq4VYqMDXq9ef0NyB0zbYlChf23ferN34hs5e0bN2cy8ODyOw0j3eIDQYvBB6\nsAMTPwSkLmAeHQdKcJP1EF6uafJ1DK9USuKPD9YU18ismeNVcYzxBid5LU3l/nI2\n340L97UUyK73B7LrykgwgIPSkAauexXNSBG2i3nXWIGCH6tjAjomxSaVVueQ7X9O\nFfyWnr8X9lvcFLuHLuU3r1J40uvhdFaCtwtPZbbPcBBGI2xDgfuN6e7sRpoW3N/K\naMEIk/uX\n=hoMU\n-----END PGP SIGNATURE-----",
+            "payload": "tree 3df9667cad8620a5a4dd810d63212f9a33b4c1ad\nparent 8d77c2f5353221dac48c06008d5ab4844012ee3b\nauthor Anthony Buisset <abuisset@gmail.com> 1727447531 +0200\ncommitter Anthony Buisset <abuisset@gmail.com> 1727719278 +0200\n\nadd projectIds and projectSlugs in project data filters\n"
+        }
+    },
+    "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea",
+    "html_url": "https://github.com/onlydustxyz/marketplace-api/commit/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea",
+    "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea/comments",
+    "author": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "committer": {
+        "login": "AnthonyBuisset",
+        "id": 43467246,
+        "node_id": "MDQ6VXNlcjQzNDY3MjQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/AnthonyBuisset",
+        "html_url": "https://github.com/AnthonyBuisset",
+        "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+        "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+        "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+        "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+        "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+        "type": "User",
+        "site_admin": false
+    },
+    "parents": [
+        {
+            "sha": "8d77c2f5353221dac48c06008d5ab4844012ee3b",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/commits/8d77c2f5353221dac48c06008d5ab4844012ee3b",
+            "html_url": "https://github.com/onlydustxyz/marketplace-api/commit/8d77c2f5353221dac48c06008d5ab4844012ee3b"
+        }
+    ],
+    "stats": {
+        "total": 82,
+        "additions": 53,
+        "deletions": 29
+    },
+    "files": [
+        {
+            "sha": "599346a25f73c6c3a4b57f3e20f7e71475e75ca0",
+            "filename": "bootstrap/src/test/java/onlydust/com/marketplace/api/it/api/bi/ProjectDeepKpisApiIT.java",
+            "status": "modified",
+            "additions": 26,
+            "deletions": 11,
+            "changes": 37,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea/bootstrap%2Fsrc%2Ftest%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fit%2Fapi%2Fbi%2FProjectDeepKpisApiIT.java",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea/bootstrap%2Fsrc%2Ftest%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fit%2Fapi%2Fbi%2FProjectDeepKpisApiIT.java",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/bootstrap%2Fsrc%2Ftest%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fit%2Fapi%2Fbi%2FProjectDeepKpisApiIT.java?ref=ebc3121996a66a1bbd3ad8d95105cbfda42d48ea",
+            "patch": "@@ -6,6 +6,7 @@\n import onlydust.com.marketplace.api.it.api.AbstractMarketplaceApiIT;\n import onlydust.com.marketplace.api.suites.tags.TagBI;\n import onlydust.com.marketplace.kernel.model.ProgramId;\n+import onlydust.com.marketplace.kernel.model.ProjectId;\n import onlydust.com.marketplace.project.domain.model.ProjectCategory;\n import onlydust.com.marketplace.project.domain.port.input.ProjectFacadePort;\n import org.apache.commons.lang3.mutable.MutableObject;\n@@ -51,6 +52,8 @@ class ActiveContributors {\n         private static UserAuthHelper.AuthenticatedUser james;\n         private static ProjectCategory defi;\n         private static ProjectCategory gaming;\n+        private static ProjectId onlyDustId;\n+        private static String onlyDustSlug;\n \n         private static String allProgramOrEcosystemIds;\n \n@@ -96,13 +99,15 @@ synchronized void setup() {\n             ethGrantingProgram = programHelper.create(ethFoundation.id(), \"Ethereum Granting Program\").id();\n             accountingHelper.allocate(ethFoundation.id(), ethGrantingProgram, 3_000, ETH);\n \n-            final var onlyDust = projectHelper.create(pierre, \"OnlyDust\", List.of(universe)).getLeft();\n-            projectHelper.addCategory(onlyDust, defi.id());\n-            at(\"2021-01-01T00:00:00Z\", () -> accountingHelper.grant(nethermind, onlyDust, 100, STRK));\n-            at(\"2021-01-05T00:00:00Z\", () -> accountingHelper.grant(ethGrantingProgram, onlyDust, 25, ETH));\n+            final var onlyDust = projectHelper.create(pierre, \"OnlyDust\", List.of(universe));\n+            onlyDustId = onlyDust.getLeft();\n+            onlyDustSlug = onlyDust.getRight();\n+            projectHelper.addCategory(onlyDustId, defi.id());\n+            at(\"2021-01-01T00:00:00Z\", () -> accountingHelper.grant(nethermind, onlyDustId, 100, STRK));\n+            at(\"2021-01-05T00:00:00Z\", () -> accountingHelper.grant(ethGrantingProgram, onlyDustId, 25, ETH));\n \n-            final var marketplace_api = githubHelper.createRepo(onlyDust);\n-            final var marketplace_frontend = githubHelper.createRepo(onlyDust);\n+            final var marketplace_api = githubHelper.createRepo(onlyDustId);\n+            final var marketplace_frontend = githubHelper.createRepo(onlyDustId);\n \n             final var bridge = projectHelper.create(mehdi, \"Bridge\", List.of(universe, starknet, ethereum)).getLeft();\n             projectHelper.addCategory(bridge, gaming.id());\n@@ -143,12 +148,12 @@ synchronized void setup() {\n             at(\"2021-02-21T00:00:08Z\", () -> githubHelper.createPullRequest(bridge_frontend, james));\n             at(\"2021-02-28T00:00:08Z\", () -> githubHelper.createPullRequest(bridge_api, james));\n \n-            at(\"2021-01-01T00:00:00Z\", () -> rewardHelper.create(onlyDust, pierre, antho.githubUserId(), 1, STRK));\n-            at(\"2021-01-01T00:00:00Z\", () -> rewardHelper.create(onlyDust, pierre, antho.githubUserId(), 2, STRK));\n-            at(\"2021-01-01T00:00:00Z\", () -> rewardHelper.create(onlyDust, pierre, james.githubUserId(), 3, STRK));\n-            at(\"2021-01-03T00:00:00Z\", () -> rewardHelper.create(onlyDust, pierre, james.githubUserId(), 4, STRK));\n+            at(\"2021-01-01T00:00:00Z\", () -> rewardHelper.create(onlyDustId, pierre, antho.githubUserId(), 1, STRK));\n+            at(\"2021-01-01T00:00:00Z\", () -> rewardHelper.create(onlyDustId, pierre, antho.githubUserId(), 2, STRK));\n+            at(\"2021-01-01T00:00:00Z\", () -> rewardHelper.create(onlyDustId, pierre, james.githubUserId(), 3, STRK));\n+            at(\"2021-01-03T00:00:00Z\", () -> rewardHelper.create(onlyDustId, pierre, james.githubUserId(), 4, STRK));\n \n-            at(\"2021-02-10T00:00:00Z\", () -> rewardHelper.create(onlyDust, pierre, abdel.githubUserId(), 5, STRK));\n+            at(\"2021-02-10T00:00:00Z\", () -> rewardHelper.create(onlyDustId, pierre, abdel.githubUserId(), 5, STRK));\n \n             allProgramOrEcosystemIds = String.join(\",\", Stream.of(universe).map(UUID::toString).toList());\n             projectFacadePort.refreshStats();\n@@ -578,6 +583,16 @@ public void should_get_projects_stats_with_filters() {\n                         assertThat(response.getProjects().get(1).getProject().getName()).contains(\"OnlyDust\");\n                     }, true\n             );\n+            test_projects_stats(\"projectIds\", onlyDustId.toString(),\n+                    response -> assertThat(response.getProjects())\n+                            .hasSize(1)\n+                            .extracting(BiProjectsPageItemResponse::getProject).extracting(ProjectLinkResponse::getId).contains(onlyDustId.value()), true\n+            );\n+            test_projects_stats(\"projectSlugs\", onlyDustSlug,\n+                    response -> assertThat(response.getProjects())\n+                            .hasSize(1)\n+                            .extracting(BiProjectsPageItemResponse::getProject).extracting(ProjectLinkResponse::getId).contains(onlyDustId.value()), true\n+            );\n             test_projects_stats(\"projectLeadIds\", mehdi.userId().toString(),\n                     response -> response.getProjects().forEach(project -> assertThat(project.getProjectLeads().stream().map(RegisteredUserResponse::getGithubUserId))\n                             .contains(mehdi.githubUserId().value())), true"
+        },
+        {
+            "sha": "978df37597e42ee4494db38786d282308e3a8fae",
+            "filename": "infrastructure/postgres-adapter/src/main/resources/db/changelog/changelogs/00000351_update_bi_views.sql",
+            "status": "modified",
+            "additions": 12,
+            "deletions": 15,
+            "changes": 27,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea/infrastructure%2Fpostgres-adapter%2Fsrc%2Fmain%2Fresources%2Fdb%2Fchangelog%2Fchangelogs%2F00000351_update_bi_views.sql",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea/infrastructure%2Fpostgres-adapter%2Fsrc%2Fmain%2Fresources%2Fdb%2Fchangelog%2Fchangelogs%2F00000351_update_bi_views.sql",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/infrastructure%2Fpostgres-adapter%2Fsrc%2Fmain%2Fresources%2Fdb%2Fchangelog%2Fchangelogs%2F00000351_update_bi_views.sql?ref=ebc3121996a66a1bbd3ad8d95105cbfda42d48ea",
+            "patch": "@@ -245,6 +245,7 @@ WITH project_programs AS (select distinct abt.program_id,\n                           where abt.project_id is not null\n                             and abt.reward_id is null)\n SELECT p.id                                                                                                       as project_id,\n+       p.slug                                                                                                     as project_slug,\n        p.created_at                                                                                               as created_at,\n        jsonb_build_object('id', p.id,\n                           'slug', p.slug,\n@@ -500,6 +501,8 @@ CREATE UNIQUE INDEX bi_contributor_global_data_pk ON bi.contributor_global_data\n CREATE FUNCTION bi.select_projects(fromDate timestamptz,\n                                    toDate timestamptz,\n                                    programOrEcosystemIds uuid[],\n+                                   projectIds uuid[],\n+                                   projectSlugs text[],\n                                    projectLeadIds uuid[],\n                                    categoryIds uuid[],\n                                    languageIds uuid[],\n@@ -584,21 +587,15 @@ FROM bi.project_global_data p\n                       and gd.timestamp < toDate\n                     group by gd.project_id) gd on gd.project_id = p.project_id\n \n-WHERE (p.program_ids && programOrEcosystemIds\n-    or p.ecosystem_ids && programOrEcosystemIds)\n-  and (ecosystemIds is null\n-    or p.ecosystem_ids && ecosystemIds)\n-  and (projectLeadIds is null\n-    or p.project_lead_ids && projectLeadIds)\n-  and (categoryIds is null\n-    or p.project_category_ids && categoryIds)\n-  and (languageIds is null\n-    or p.language_ids && languageIds)\n-  and (searchQuery is null\n-    or p.search ilike '%' || searchQuery || '%')\n-  and (cd.project_id is not null\n-    or rd.project_id is not null\n-    or gd.project_id is not null)\n+WHERE (p.program_ids && programOrEcosystemIds or p.ecosystem_ids && programOrEcosystemIds)\n+  and (ecosystemIds is null or p.ecosystem_ids && ecosystemIds)\n+  and (projectIds is null or p.project_id = any (projectIds))\n+  and (projectSlugs is null or p.project_slug = any (projectSlugs))\n+  and (projectLeadIds is null or p.project_lead_ids && projectLeadIds)\n+  and (categoryIds is null or p.project_category_ids && categoryIds)\n+  and (languageIds is null or p.language_ids && languageIds)\n+  and (searchQuery is null or p.search ilike '%' || searchQuery || '%')\n+  and (cd.project_id is not null or rd.project_id is not null or gd.project_id is not null)\n \n GROUP BY p.project_id, p.project_name, p.project, p.programs, p.ecosystems, p.languages, p.categories,\n          p.leads, p.budget, p.available_budget_usd, p.percent_spent_budget_usd"
+        },
+        {
+            "sha": "676888214857eb86ebe2fa99405d5d57718d41a5",
+            "filename": "marketplace-api-contract/src/main/resources/marketplace-api-contract.yaml",
+            "status": "modified",
+            "additions": 8,
+            "deletions": 0,
+            "changes": 8,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea/marketplace-api-contract%2Fsrc%2Fmain%2Fresources%2Fmarketplace-api-contract.yaml",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea/marketplace-api-contract%2Fsrc%2Fmain%2Fresources%2Fmarketplace-api-contract.yaml",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/marketplace-api-contract%2Fsrc%2Fmain%2Fresources%2Fmarketplace-api-contract.yaml?ref=ebc3121996a66a1bbd3ad8d95105cbfda42d48ea",
+            "patch": "@@ -10988,6 +10988,14 @@ components:\n             format: uuid\n         search:\n           type: string\n+        projectIds:\n+          type: array\n+          items:\n+            $ref: '#/components/schemas/ProjectId'\n+        projectSlugs:\n+          type: array\n+          items:\n+            $ref: '#/components/schemas/ProjectSlug'\n         projectLeadIds:\n           type: array\n           items:"
+        },
+        {
+            "sha": "4216ead580d3170f543da8942223ed2b9ea6dd00",
+            "filename": "read-api/src/main/java/onlydust/com/marketplace/api/read/adapters/ReadBiApiPostgresAdapter.java",
+            "status": "modified",
+            "additions": 2,
+            "deletions": 0,
+            "changes": 2,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Fadapters%2FReadBiApiPostgresAdapter.java",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Fadapters%2FReadBiApiPostgresAdapter.java",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Fadapters%2FReadBiApiPostgresAdapter.java?ref=ebc3121996a66a1bbd3ad8d95105cbfda42d48ea",
+            "patch": "@@ -301,6 +301,8 @@ private Page<ProjectKpisReadEntity> findProjects(BiProjectsQueryParams q) {\n                 sanitizedFromDate,\n                 getFilteredProgramOrEcosystemIds(q.getProgramOrEcosystemIds()),\n                 q.getSearch(),\n+                q.getProjectIds() == null ? null : q.getProjectIds().toArray(UUID[]::new),\n+                q.getProjectSlugs() == null ? null : q.getProjectSlugs().toArray(String[]::new),\n                 q.getProjectLeadIds() == null ? null : q.getProjectLeadIds().toArray(UUID[]::new),\n                 q.getCategoryIds() == null ? null : q.getCategoryIds().toArray(UUID[]::new),\n                 q.getLanguageIds() == null ? null : q.getLanguageIds().toArray(UUID[]::new),"
+        },
+        {
+            "sha": "832a65fb60a00b2ead1193fc9d027e81d646c24d",
+            "filename": "read-api/src/main/java/onlydust/com/marketplace/api/read/repositories/ProjectKpisReadRepository.java",
+            "status": "modified",
+            "additions": 5,
+            "deletions": 3,
+            "changes": 8,
+            "blob_url": "https://github.com/onlydustxyz/marketplace-api/blob/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Frepositories%2FProjectKpisReadRepository.java",
+            "raw_url": "https://github.com/onlydustxyz/marketplace-api/raw/ebc3121996a66a1bbd3ad8d95105cbfda42d48ea/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Frepositories%2FProjectKpisReadRepository.java",
+            "contents_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/contents/read-api%2Fsrc%2Fmain%2Fjava%2Fonlydust%2Fcom%2Fmarketplace%2Fapi%2Fread%2Frepositories%2FProjectKpisReadRepository.java?ref=ebc3121996a66a1bbd3ad8d95105cbfda42d48ea",
+            "patch": "@@ -67,9 +67,9 @@ static String getSortProperty(ProjectKpiSortEnum sort) {\n                    coalesce(previous_period.active_contributor_count, 0)    as previous_period_active_contributor_count,\n                    coalesce(previous_period.onboarded_contributor_count, 0) as previous_period_onboarded_contributor_count\n             \n-            FROM bi.select_projects(:fromDate, :toDate, :programOrEcosystemIds, :projectLeadIds, :categoryIds, :languageIds, :ecosystemIds, :search) d\n+            FROM bi.select_projects(:fromDate, :toDate, :programOrEcosystemIds, :projectIds, :projectSlugs, :projectLeadIds, :categoryIds, :languageIds, :ecosystemIds, :search) d\n                      LEFT JOIN (\n-                            select * from bi.select_projects(:fromDatePreviousPeriod, :toDatePreviousPeriod, :programOrEcosystemIds, :projectLeadIds, :categoryIds, :languageIds, :ecosystemIds, :search) \n+                            select * from bi.select_projects(:fromDatePreviousPeriod, :toDatePreviousPeriod, :programOrEcosystemIds, :projectIds, :projectSlugs, :projectLeadIds, :categoryIds, :languageIds, :ecosystemIds, :search) \n                          ) previous_period ON previous_period.project_id = d.project_id\n             \n             WHERE (coalesce(:availableBudgetUsdAmountMin) is null or d.available_budget_usd >= :availableBudgetUsdAmountMin)\n@@ -111,7 +111,7 @@ LEFT JOIN (\n             \"\"\",\n             countQuery = \"\"\"\n                     SELECT count(d.project_id)\n-                    FROM bi.select_projects(:fromDate, :toDate, :programOrEcosystemIds, :projectLeadIds, :categoryIds, :languageIds, :ecosystemIds, :search) d\n+                    FROM bi.select_projects(:fromDate, :toDate, :programOrEcosystemIds, :projectIds, :projectSlugs, :projectLeadIds, :categoryIds, :languageIds, :ecosystemIds, :search) d\n                     WHERE (coalesce(:availableBudgetUsdAmountMin) is null or d.available_budget_usd >= :availableBudgetUsdAmountMin)\n                       and (coalesce(:availableBudgetUsdAmountEq) is null or d.available_budget_usd = :availableBudgetUsdAmountEq)\n                       and (coalesce(:availableBudgetUsdAmountMax) is null or d.available_budget_usd <= :availableBudgetUsdAmountMax)\n@@ -156,6 +156,8 @@ Page<ProjectKpisReadEntity> findAll(@NonNull ZonedDateTime fromDate,\n                                         @NonNull ZonedDateTime toDatePreviousPeriod,\n                                         @NonNull UUID[] programOrEcosystemIds,\n                                         String search,\n+                                        UUID[] projectIds,\n+                                        String[] projectSlugs,\n                                         UUID[] projectLeadIds,\n                                         UUID[] categoryIds,\n                                         UUID[] languageIds,"
+        }
+    ]
+}

@@ -55,13 +55,25 @@ public class IssueIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        assertThat(issueRepository.findAll()).containsExactly(RawIssueEntity.of(marketplaceFrontend.getId(), issue78));
-        assertThat(repoRepository.findAll()).containsExactly(RawRepoEntity.of(marketplaceFrontend));
-        assertThat(userRepository.findAll()).containsExactlyInAnyOrder(RawUserEntity.of(anthony), RawUserEntity.of(onlyDust));
-        assertThat(userSocialAccountsRepository.findAll()).containsExactlyInAnyOrder(
-                RawUserSocialAccountsEntity.of(anthony.getId(), anthonySocialAccounts),
-                RawUserSocialAccountsEntity.of(onlyDust.getId(), List.of())
-        );
+        assertThat(issueRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .containsExactly(RawIssueEntity.of(marketplaceFrontend.getId(), issue78));
+
+        assertThat(repoRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .containsExactly(RawRepoEntity.of(marketplaceFrontend));
+
+        assertThat(userRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .containsExactlyInAnyOrder(RawUserEntity.of(anthony), RawUserEntity.of(onlyDust));
+
+        assertThat(userSocialAccountsRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .containsExactlyInAnyOrder(
+                        RawUserSocialAccountsEntity.of(anthony.getId(), anthonySocialAccounts),
+                        RawUserSocialAccountsEntity.of(onlyDust.getId(), List.of())
+                );
+        
         assertThat(contributionRepository.findAll()).hasSize(1);
     }
 

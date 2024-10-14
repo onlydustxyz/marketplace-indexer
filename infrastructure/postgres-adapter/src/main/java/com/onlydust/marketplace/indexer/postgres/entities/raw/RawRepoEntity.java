@@ -5,26 +5,28 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLInsert;
 import org.hibernate.type.SqlTypes;
 
 
-@Data
+@Getter
 @Entity
-@Builder(toBuilder = true)
-@NoArgsConstructor
+@Builder(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
-@EqualsAndHashCode
+@Setter
+@Accessors(chain = true, fluent = true)
 @Table(name = "repos", schema = "indexer_raw")
 @SQLInsert(sql = "INSERT INTO indexer_raw.repos (data, deleted, name, owner, id) VALUES (?, ?, ?, ?, ?) ON CONFLICT DO NOTHING")
 public class RawRepoEntity {
     @Id
-    Long id;
+    final Long id;
 
-    String owner;
+    final String owner;
 
-    String name;
+    final String name;
 
     @JdbcTypeCode(SqlTypes.JSON)
     RawRepo data;
@@ -33,6 +35,11 @@ public class RawRepoEntity {
     Boolean deleted = Boolean.FALSE;
 
     public static RawRepoEntity of(RawRepo repo) {
-        return RawRepoEntity.builder().id(repo.getId()).owner(repo.getOwner().getLogin()).name(repo.getName()).data(repo).build();
+        return RawRepoEntity.builder()
+                .id(repo.getId())
+                .owner(repo.getOwner().getLogin())
+                .name(repo.getName()).
+                data(repo)
+                .build();
     }
 }

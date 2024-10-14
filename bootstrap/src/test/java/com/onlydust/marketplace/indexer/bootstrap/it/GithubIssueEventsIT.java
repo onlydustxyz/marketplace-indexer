@@ -46,7 +46,7 @@ public class GithubIssueEventsIT extends IntegrationTest {
         assertThat(issue.getAuthor().getLogin()).isEqualTo("AnthonyBuisset");
         assertThat(issue.getRepo().getName()).isEqualTo("marketplace-frontend");
         assertThat(issue.getAssignees()).hasSize(1);
-        assertThat(issue.getAssignees().get(0).getLogin()).isEqualTo("AnthonyBuisset");
+        assertThat(issue.getAssignees().stream().findFirst().orElseThrow().getLogin()).isEqualTo("AnthonyBuisset");
         assertThat(issue.getLabels()).hasSize(6);
 
         final var labels = issue.getLabels().stream().sorted(comparing(GithubLabelEntity::getId)).toList();

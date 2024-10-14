@@ -5,17 +5,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
-@Data
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 @AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@NoArgsConstructor(force = true)
+@Getter
 @Table(name = "github_labels", schema = "indexer_exp")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GithubLabelEntity {
     @Id
-    @EqualsAndHashCode.Include
     @NonNull
     Long id;
 

@@ -5,8 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import onlydust.com.marketplace.kernel.model.Event;
 import onlydust.com.marketplace.kernel.model.EventIdResolver;
 import onlydust.com.marketplace.kernel.port.output.OutboxPort;
@@ -17,8 +18,8 @@ import org.hibernate.type.SqlTypes;
 
 @MappedSuperclass
 @NoArgsConstructor
-@EqualsAndHashCode
-@Data
+@Setter
+@Accessors(chain = true, fluent = true)
 public abstract class EventEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +42,7 @@ public abstract class EventEntity {
     }
 
     public OutboxPort.IdentifiableEvent toIdentifiableEvent() {
-        return new OutboxPort.IdentifiableEvent(id, payload.getEvent());
+        return new OutboxPort.IdentifiableEvent(id, payload.event());
     }
 
     public enum Status {

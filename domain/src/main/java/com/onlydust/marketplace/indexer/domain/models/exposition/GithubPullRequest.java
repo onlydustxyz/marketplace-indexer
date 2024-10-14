@@ -5,15 +5,13 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import lombok.Builder;
 import lombok.Value;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.reducing;
+import static com.onlydust.marketplace.indexer.domain.utils.FileUtils.fileExtension;
+import static java.util.stream.Collectors.*;
 
 @Value
 @Builder
@@ -35,7 +33,7 @@ public class GithubPullRequest {
     Boolean draft;
     List<GithubIssue> closingIssues;
     ReviewState reviewState;
-    Map<GithubAccount, Long> commitCounts;
+    Set<GithubCommit> commits;
     List<String> mainFileExtensions;
 
     public static GithubPullRequest of(CleanPullRequest pullRequest) {
@@ -55,10 +53,7 @@ public class GithubPullRequest {
                 .draft(pullRequest.getDraft())
                 .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssue::of).toList())
                 .reviewState(aggregateReviewState(pullRequest))
-                .commitCounts(pullRequest.getCommits().stream()
-                        .filter(c -> c.getAuthor() != null)
-                        .collect(groupingBy(c -> GithubAccount.of(c.getAuthor()), Collectors.counting()))
-                )
+                .commits(pullRequest.getCommits().stream().map(GithubCommit::of).collect(toSet()))
                 .mainFileExtensions(extractMainFileExtensions(pullRequest.getCommits()))
                 .build();
     }
@@ -75,14 +70,6 @@ public class GithubPullRequest {
                 .filter(e -> e.getValue() / (double) total > FILE_EXTENSION_RELEVANCE_THRESHOLD)
                 .map(Map.Entry::getKey)
                 .toList();
-    }
-
-    private static Optional<String> fileExtension(String filePath) {
-        final var fileName = new File(filePath).getName();
-        return Optional.of(fileName)
-                .filter(f -> f.contains("."))
-                .map(f -> f.substring(f.lastIndexOf('.') + 1))
-                .map(String::toLowerCase);
     }
 
     private static ReviewState aggregateReviewState(CleanPullRequest pullRequest) {

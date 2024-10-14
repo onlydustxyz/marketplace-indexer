@@ -4,6 +4,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserIndexingJobSto
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.UserIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEntityRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 import java.time.Instant;
@@ -20,33 +21,33 @@ public class PostgresUserIndexingJobStorage implements UserIndexingJobStorage {
 
     @Override
     public void add(Long userId) {
-        repository.save(new UserIndexingJobEntity(userId));
+        repository.merge(new UserIndexingJobEntity(userId));
     }
 
     @Override
+    @Transactional
     public void startJob(Long userId) {
-        repository.findById(userId).ifPresent(job ->
-                repository.save(job.toBuilder()
+        repository.findById(userId)
+                .ifPresent(job -> job
                         .status(JobStatus.RUNNING)
-                        .startedAt(Instant.now())
-                        .build()));
+                        .startedAt(Instant.now()));
     }
 
     @Override
+    @Transactional
     public void failJob(Long userId) {
-        repository.findById(userId).ifPresent(job ->
-                repository.save(job.toBuilder()
+        repository.findById(userId)
+                .ifPresent(job -> job
                         .status(JobStatus.FAILED)
-                        .finishedAt(Instant.now())
-                        .build()));
+                        .finishedAt(Instant.now()));
     }
 
     @Override
+    @Transactional
     public void endJob(Long userId) {
-        repository.findById(userId).ifPresent(job ->
-                repository.save(job.toBuilder()
+        repository.findById(userId)
+                .ifPresent(job -> job
                         .status(JobStatus.SUCCESS)
-                        .finishedAt(Instant.now())
-                        .build()));
+                        .finishedAt(Instant.now()));
     }
 }

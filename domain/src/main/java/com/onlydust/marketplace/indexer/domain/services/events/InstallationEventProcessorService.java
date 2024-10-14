@@ -13,6 +13,8 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static java.util.stream.Collectors.toSet;
+
 @AllArgsConstructor
 @Slf4j
 @Transactional
@@ -74,7 +76,7 @@ public class InstallationEventProcessorService implements EventHandler<RawInstal
 
         repoIndexingJobStorage.setInstallationForRepos(event.getInstallationId(), event.getRepos().stream()
                 .map(repo -> new RepoIndexingJobTrigger(repo.getId(), false, repo.getIsPublic()))
-                .toArray(RepoIndexingJobTrigger[]::new));
+                .collect(toSet()));
 
         githubAppInstallationStorage.save(GithubAppInstallation.of(event, owner, repos));
     }
@@ -82,7 +84,7 @@ public class InstallationEventProcessorService implements EventHandler<RawInstal
     private void onAdded(InstallationAddedEvent event) {
         repoIndexingJobStorage.setInstallationForRepos(event.getInstallationId(), event.getReposAdded().stream()
                 .map(repo -> new RepoIndexingJobTrigger(repo.getId(), false, repo.getIsPublic()))
-                .toArray(RepoIndexingJobTrigger[]::new));
+                .collect(toSet()));
 
         githubAppInstallationStorage.addRepos(event.getInstallationId(),
                 event.getReposAdded().stream()

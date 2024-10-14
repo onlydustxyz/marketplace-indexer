@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequestClosingIssues;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -12,13 +13,12 @@ import org.hibernate.type.SqlTypes;
 import java.io.Serializable;
 
 
-@Data
+@Getter
 @Entity
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
-@IdClass(RawPullRequestClosingIssuesEntity.Id.class)
+@NoArgsConstructor(force = true)
+@IdClass(RawPullRequestClosingIssuesEntity.PrimaryKey.class)
 @Table(name = "pull_request_closing_issues", schema = "indexer_raw")
 @SQLInsert(sql = """
                 INSERT INTO indexer_raw.pull_request_closing_issues (data, pull_request_number, repo_name, repo_owner)
@@ -26,14 +26,14 @@ import java.io.Serializable;
                 ON CONFLICT DO NOTHING
         """)
 public class RawPullRequestClosingIssuesEntity {
-    @jakarta.persistence.Id
-    String repoOwner;
+    @Id
+    final String repoOwner;
 
-    @jakarta.persistence.Id
-    String repoName;
+    @Id
+    final String repoName;
 
-    @jakarta.persistence.Id
-    Long pullRequestNumber;
+    @Id
+    final Long pullRequestNumber;
 
     @JdbcTypeCode(SqlTypes.JSON)
     RawPullRequestClosingIssues data;
@@ -50,7 +50,7 @@ public class RawPullRequestClosingIssuesEntity {
     @EqualsAndHashCode
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Id implements Serializable {
+    public static class PrimaryKey implements Serializable {
         String repoOwner;
         String repoName;
         Long pullRequestNumber;

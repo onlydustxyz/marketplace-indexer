@@ -9,6 +9,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEnt
 import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIndexingJobRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
+import io.hypersistence.utils.spring.repository.BaseJpaRepositoryImpl;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +25,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 })
 @EnableJpaRepositories(basePackages = {
         "com.onlydust.marketplace.indexer.postgres.repositories"
-})
+}, repositoryBaseClass = BaseJpaRepositoryImpl.class)
 @EnableTransactionManagement
 @EnableJpaAuditing
 public class PostgresConfiguration {
@@ -35,22 +36,22 @@ public class PostgresConfiguration {
                                                            final PullRequestRepository pullRequestRepository,
                                                            final RepoLanguagesRepository repoLanguagesRepository,
                                                            final UserSocialAccountsRepository userSocialAccountsRepository,
-                                                           final PullRequestCommitsRepository pullRequestCommitsRepository,
                                                            final PullRequestClosingIssueRepository pullRequestClosingIssueRepository,
                                                            final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository,
                                                            final PullRequestReviewsRepository pullRequestReviewsRepository,
-                                                           final PublicEventRepository publicEventRepository) {
+                                                           final PublicEventRepository publicEventRepository,
+                                                           final CommitRepository commitRepository) {
         return new PostgresRawStorage(issueRepository,
                 userRepository,
                 repoRepository,
                 pullRequestRepository,
                 repoLanguagesRepository,
                 userSocialAccountsRepository,
-                pullRequestCommitsRepository,
                 pullRequestClosingIssueRepository,
                 pullRequestClosingIssueViewRepository,
                 pullRequestReviewsRepository,
-                publicEventRepository);
+                publicEventRepository,
+                commitRepository);
     }
 
     @Bean
@@ -85,9 +86,9 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public PostgresRepoStorage postgresRepoStorage(final GithubRepoEntityRepository githubRepoEntityRepository,
+    public PostgresRepoStorage postgresRepoStorage(final GithubRepoRepository githubRepoRepository,
                                                    final GithubRepoStatsEntityRepository githubRepoStatsEntityRepository) {
-        return new PostgresRepoStorage(githubRepoEntityRepository, githubRepoStatsEntityRepository);
+        return new PostgresRepoStorage(githubRepoRepository, githubRepoStatsEntityRepository);
     }
 
     @Bean
@@ -96,12 +97,12 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public PostgresPullRequestStorage postgresPullRequestStorage(final com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubPullRequestRepository githubPullRequestRepository) {
+    public PostgresPullRequestStorage postgresPullRequestStorage(final GithubPullRequestRepository githubPullRequestRepository) {
         return new PostgresPullRequestStorage(githubPullRequestRepository);
     }
 
     @Bean
-    public PostgresIssueStorage postgresIssueStorage(final com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository githubIssueRepository) {
+    public PostgresIssueStorage postgresIssueStorage(final GithubIssueRepository githubIssueRepository) {
         return new PostgresIssueStorage(githubIssueRepository);
     }
 
@@ -113,5 +114,20 @@ public class PostgresConfiguration {
     @Bean
     public PostgresOutboxAdapter<ApiEventEntity> apiEventEntityPostgresOutboxAdapter(final ApiEventRepository apiEventRepository) {
         return new PostgresOutboxAdapter<>(apiEventRepository);
+    }
+
+    @Bean
+    public PostgresCommitIndexingJobStorage commitIndexingJobStorage(final CommitRepository commitRepository) {
+        return new PostgresCommitIndexingJobStorage(commitRepository);
+    }
+
+    @Bean
+    public PostgresUserFileExtensionsStorage postgresUserFileExtensionsStorage(final GithubUserFileExtensionsRepository githubUserFileExtensionsRepository) {
+        return new PostgresUserFileExtensionsStorage(githubUserFileExtensionsRepository);
+    }
+
+    @Bean
+    public PostgresCommitStorage postgresCommitStorage(final GithubCommitRepository githubCommitRepository) {
+        return new PostgresCommitStorage(githubCommitRepository);
     }
 }

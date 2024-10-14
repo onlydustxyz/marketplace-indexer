@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
@@ -10,12 +11,12 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
 @Builder(toBuilder = true)
 @AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
+@NoArgsConstructor(force = true)
+@Getter
 @Table(name = "github_repos", schema = "indexer_exp")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GithubRepoEntity {
     @Id
     Long id;
@@ -63,28 +64,7 @@ public class GithubRepoEntity {
                                 .build()).toList())
                 .parent(repo.getParent() == null ? null : GithubRepoEntity.of(repo.getParent()))
                 .visibility(Visibility.of(repo.getVisibility()))
-                .build();
-    }
-
-    public GithubRepoEntity updateWith(GithubRepo updated) {
-        this.languages.clear();
-        this.languages.addAll(updated.getLanguages().entrySet().stream()
-                .map(language -> GithubRepoLanguageEntity.builder()
-                        .repoId(updated.getId())
-                        .language(language.getKey())
-                        .lineCount(language.getValue())
-                        .build()).toList());
-
-        return this.toBuilder()
-                .name(updated.getName())
-                .htmlUrl(updated.getHtmlUrl())
-                .updatedAt(updated.getUpdatedAt())
-                .description(updated.getDescription())
-                .starsCount(updated.getStarsCount())
-                .forksCount(updated.getForksCount())
-                .hasIssues(updated.getHasIssues())
-                .visibility(Visibility.of(updated.getVisibility()))
-                .deletedAt(updated.getDeletedAt())
+                .deletedAt(repo.getDeletedAt())
                 .build();
     }
 

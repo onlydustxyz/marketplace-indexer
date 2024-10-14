@@ -1,8 +1,10 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
+import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCommit;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubPullRequest;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
@@ -10,21 +12,23 @@ import org.hibernate.type.SqlTypes;
 
 import java.util.Date;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @Entity
-@Data
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
+@NoArgsConstructor(force = true)
+@Getter
 @Table(name = "github_pull_requests", schema = "indexer_exp")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GithubPullRequestEntity {
     @Id
     Long id;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubRepoEntity repo;
+
     Long number;
     String title;
     @Enumerated(EnumType.STRING)
@@ -35,8 +39,10 @@ public class GithubPullRequestEntity {
     Date closedAt;
     Date mergedAt;
     String body;
+
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubAccountEntity author;
+
     String htmlUrl;
     Integer commentsCount;
     Boolean draft;
@@ -65,7 +71,20 @@ public class GithubPullRequestEntity {
     @OneToMany(mappedBy = "pullRequestId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     Set<GithubPullRequestCommitCountEntity> commitCounts;
 
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "github_pull_requests_commits",
+            schema = "indexer_exp",
+            joinColumns = @JoinColumn(name = "pull_request_id"),
+            inverseJoinColumns = @JoinColumn(name = "commit_sha")
+    )
+    Set<GithubCommitEntity> commits;
+
     public static GithubPullRequestEntity of(GithubPullRequest pullRequest) {
+        final var commitCounts = pullRequest.getCommits().stream()
+                .filter(c -> c.getAuthorId().isPresent())
+                .collect(groupingBy(GithubCommit::getAuthor, counting()));
+
         return GithubPullRequestEntity.builder()
                 .id(pullRequest.getId())
                 .repo(GithubRepoEntity.of(pullRequest.getRepo()))
@@ -87,11 +106,15 @@ public class GithubPullRequestEntity {
                 .authorHtmlUrl(pullRequest.getAuthor().getHtmlUrl())
                 .authorAvatarUrl(pullRequest.getAuthor().getAvatarUrl())
                 .reviewState(ReviewState.of(pullRequest.getReviewState()))
-                .commitCount(pullRequest.getCommitCounts().values().stream().mapToInt(Long::intValue).sum())
-                .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssueEntity::of).collect(Collectors.toUnmodifiableSet()))
-                .commitCounts(pullRequest.getCommitCounts().entrySet().stream()
+                .commitCount(pullRequest.getCommits().size())
+                .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssueEntity::of).collect(toUnmodifiableSet()))
+                .commitCounts(commitCounts.entrySet().stream()
                         .map(e -> GithubPullRequestCommitCountEntity.of(pullRequest.getId(), GithubAccountEntity.of(e.getKey()), e.getValue()))
-                        .collect(Collectors.toUnmodifiableSet()))
+                        .collect(toUnmodifiableSet()))
+                .commits(pullRequest.getCommits().stream()
+                        .filter(c -> c.getAuthorId().isPresent())
+                        .map(c -> GithubCommitEntity.of(c.getSha(), GithubAccountEntity.of(c.getAuthor())))
+                        .collect(toUnmodifiableSet()))
                 .mainFileExtensions(pullRequest.getMainFileExtensions().toArray(String[]::new))
                 .build();
     }

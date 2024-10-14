@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubPullRequestRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
+import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -26,8 +27,6 @@ public class PullRequestIndexingIT extends IntegrationTest {
     @Autowired
     public PullRequestRepository pullRequestsRepository;
     @Autowired
-    public PullRequestCommitsRepository pullRequestsCommitsRepository;
-    @Autowired
     public PullRequestReviewsRepository pullRequestReviewsRepository;
     @Autowired
     public RepoRepository repoRepository;
@@ -46,6 +45,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
 
     @Test
     @Order(1)
+    @Transactional
     public void should_index_pull_request_on_demand() throws IOException {
         // Given
         final var marketplaceFrontend = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend.json"),
@@ -80,22 +80,45 @@ public class PullRequestIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        assertThat(pullRequestsRepository.findAll()).containsExactly(RawPullRequestEntity.of(pr1257));
-        assertThat(repoRepository.findAll()).containsExactly(RawRepoEntity.of(marketplaceFrontend));
-        assertThat(pullRequestReviewsRepository.findAll()).containsExactly(RawPullRequestReviewEntity.of(pr1257.getId(), pr1257Reviews));
-        assertThat(pullRequestsCommitsRepository.findAll()).containsExactly(RawPullRequestCommitsEntity.of(pr1257.getId(), details(pr1257Commits)));
-        assertThat(userRepository.findAll()).containsExactlyInAnyOrder(RawUserEntity.of(pierre), RawUserEntity.of(olivier), RawUserEntity.of(anthony),
-                RawUserEntity.of(onlyDust));
-        assertThat(userSocialAccountsRepository.findAll()).containsExactlyInAnyOrder(
-                RawUserSocialAccountsEntity.of(pierre.getId(), pierreSocialAccounts),
-                RawUserSocialAccountsEntity.of(olivier.getId(), olivierSocialAccounts),
-                RawUserSocialAccountsEntity.of(anthony.getId(), anthonySocialAccounts),
-                RawUserSocialAccountsEntity.of(onlyDust.getId(), List.of())
-        );
-        assertThat(issueRepository.findAll()).containsExactly(RawIssueEntity.of(marketplaceFrontend.getId(), issue78));
-        assertThat(pullRequestClosingIssueRepository.findAll()).containsExactly(
-                RawPullRequestClosingIssuesEntity.of(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), pr1257.getNumber(),
-                        pr1257ClosingIssues));
+        assertThat(pullRequestsRepository.findAll())
+                .usingElementComparatorIgnoringFields("commits")
+                .containsExactly(RawPullRequestEntity.of(pr1257));
+
+        assertThat(pullRequestsRepository.findById(pr1257.getId()).orElseThrow().getCommits())
+                .usingFieldByFieldElementComparator()
+                .containsAll(details(marketplaceFrontend.getId(), pr1257Commits));
+
+        assertThat(repoRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .containsExactly(RawRepoEntity.of(marketplaceFrontend));
+
+        assertThat(pullRequestReviewsRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .containsExactly(RawPullRequestReviewEntity.of(pr1257.getId(), pr1257Reviews));
+
+        assertThat(userRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .containsExactlyInAnyOrder(RawUserEntity.of(pierre), RawUserEntity.of(olivier), RawUserEntity.of(anthony),
+                        RawUserEntity.of(onlyDust));
+
+        assertThat(userSocialAccountsRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .containsExactlyInAnyOrder(
+                        RawUserSocialAccountsEntity.of(pierre.getId(), pierreSocialAccounts),
+                        RawUserSocialAccountsEntity.of(olivier.getId(), olivierSocialAccounts),
+                        RawUserSocialAccountsEntity.of(anthony.getId(), anthonySocialAccounts),
+                        RawUserSocialAccountsEntity.of(onlyDust.getId(), List.of())
+                );
+
+        assertThat(issueRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .containsExactly(RawIssueEntity.of(marketplaceFrontend.getId(), issue78));
+
+        assertThat(pullRequestClosingIssueRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .containsExactly(
+                        RawPullRequestClosingIssuesEntity.of(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), pr1257.getNumber(),
+                                pr1257ClosingIssues));
         /*
          * Pull request 1257 from anthony (author is same as committer)
          * Code review from pierre
@@ -121,8 +144,8 @@ public class PullRequestIndexingIT extends IntegrationTest {
         assertThat(contribution.getMainFileExtensions()).containsExactly("sql");
     }
 
-    private List<RawCommit> details(List<RawCommit> commits) {
-        return commits.stream().map(this::details).filter(c -> c.getParents().size() < 2).toList();
+    private List<RawCommitEntity> details(Long repoId, List<RawCommit> commits) {
+        return commits.stream().map(this::details).map(c -> RawCommitEntity.of(repoId, c)).toList();
     }
 
     @SneakyThrows
@@ -134,16 +157,15 @@ public class PullRequestIndexingIT extends IntegrationTest {
 
     @Test
     @Order(2)
+    @Transactional
     public void should_index_pull_request_with_multiple_commits_on_demand() throws IOException {
         // Given
-        final var marketplaceFrontend = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend.json"),
-                RawRepo.class);
         final var pr1258 = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1258.json"),
                 RawPullRequest.class);
-        final var pr1258Reviews = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls" +
-                                                                                                "/1258_reviews.json"), RawCodeReview[].class));
-        final var pr1258Commits = Arrays.asList(mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls" +
-                                                                                                "/1258_commits.json"), RawCommit[].class));
+        final var pr1258Reviews = Arrays.asList(mapper.readValue(
+                getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1258_reviews.json"), RawCodeReview[].class));
+        final var pr1258Commits = Arrays.asList(mapper.readValue(
+                getClass().getResourceAsStream("/wiremock/github/__files/repos/marketplace-frontend/pulls/1258_commits.json"), RawCommit[].class));
 
         final var anthony = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
         final var pierre = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/pierre.json"), RawAccount.class);
@@ -156,11 +178,22 @@ public class PullRequestIndexingIT extends IntegrationTest {
         // Then
         response.expectStatus().isNoContent();
 
-        assertThat(pullRequestsRepository.findAll()).contains(RawPullRequestEntity.of(pr1258));
-        assertThat(pullRequestReviewsRepository.findAll()).contains(RawPullRequestReviewEntity.of(pr1258.getId(), pr1258Reviews));
-        assertThat(pullRequestsCommitsRepository.findAll()).contains(RawPullRequestCommitsEntity.of(pr1258.getId(), details(pr1258Commits)));
-        assertThat(userRepository.findAll()).contains(RawUserEntity.of(pierre), RawUserEntity.of(olivier), RawUserEntity.of(anthony),
-                RawUserEntity.of(onlyDust));
+        assertThat(pullRequestsRepository.findAll())
+                .usingElementComparatorIgnoringFields("commits")
+                .contains(RawPullRequestEntity.of(pr1258));
+
+        assertThat(pullRequestsRepository.findById(pr1258.getId()).orElseThrow().getCommits())
+                .usingFieldByFieldElementComparator()
+                .containsAll(details(pr1258.getBase().getRepo().getId(), pr1258Commits));
+
+        assertThat(pullRequestReviewsRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .contains(RawPullRequestReviewEntity.of(pr1258.getId(), pr1258Reviews));
+
+        assertThat(userRepository.findAll())
+                .usingFieldByFieldElementComparator()
+                .contains(RawUserEntity.of(pierre), RawUserEntity.of(olivier), RawUserEntity.of(anthony),
+                        RawUserEntity.of(onlyDust));
 
         assertThat(contributionRepository.findAll().size()).isEqualTo(7);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST).toList().size()).isEqualTo(2);
@@ -170,7 +203,7 @@ public class PullRequestIndexingIT extends IntegrationTest {
         assertThat(githubPullRequestRepository.findAll()).hasSize(2);
         final var githubPullRequest = githubPullRequestRepository.findAll().stream().filter(pr -> pr.getNumber() == 1258L).findFirst().orElseThrow();
         assertThat(githubPullRequest.getMainFileExtensions()).containsExactly("rs", "java", "sql");
-        assertThat(githubPullRequest.getCommitCount()).isEqualTo(9);
+        assertThat(githubPullRequest.getCommitCount()).isEqualTo(11);
         final var commitCounts = githubPullRequest.getCommitCounts().stream().findFirst().orElseThrow();
         assertThat(commitCounts.getPullRequestId()).isEqualTo(pr1258.getId());
         assertThat(commitCounts.getAuthor().getId()).isEqualTo(anthony.getId());

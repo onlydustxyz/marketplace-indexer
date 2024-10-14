@@ -1,19 +1,20 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
-import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.RepoIndexingJobTrigger;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.RepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.notFound;
 
 @AllArgsConstructor
 public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
@@ -27,7 +28,7 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     @Override
     public Set<RepoIndexingJobTrigger> reposUpdatedBefore(Long installationId, Instant since) {
         return repository.findReposUpdatedBefore(installationId, since)
-                .stream().map(job -> new RepoIndexingJobTrigger(job.getRepoId(), job.getFullIndexing(), job.getIsPublic()))
+                .stream().map(job -> new RepoIndexingJobTrigger(job.repoId(), job.fullIndexing(), job.isPublic()))
                 .collect(Collectors.toUnmodifiableSet());
     }
 
@@ -47,102 +48,86 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     }
 
     @Override
+    @Transactional
     public void startJob(Long repoId) {
-        final var job = repository.findById(repoId)
-                .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
-        repository.save(job.toBuilder()
+        job(repoId)
                 .status(JobStatus.RUNNING)
-                .startedAt(Instant.now())
-                .build());
+                .startedAt(Instant.now());
     }
 
     @Override
+    @Transactional
     public void failJob(Long repoId) {
-        final var job = repository.findById(repoId)
-                .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
-        repository.save(job.toBuilder()
+        job(repoId)
                 .status(JobStatus.FAILED)
-                .finishedAt(Instant.now())
-                .build());
+                .finishedAt(Instant.now());
     }
 
     @Override
+    @Transactional
     public void endJob(Long repoId) {
-        final var job = repository.findById(repoId)
-                .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
-        repository.save(job.toBuilder()
+        job(repoId)
                 .status(JobStatus.SUCCESS)
-                .finishedAt(Instant.now())
-                .build());
+                .finishedAt(Instant.now());
     }
 
     @Override
-    public void configureReposForFullIndexing(List<Long> repoIds, Boolean isPublic) {
-        final var jobs = repoIds.stream()
-                .map(repoId -> repository.findById(repoId)
-                        .orElse(RepoIndexingJobEntity.builder()
-                                .status(JobStatus.PENDING)
-                                .repoId(repoId)
-                                .isPublic(isPublic)
-                                .build())
-                ).map(job -> job.toBuilder()
+    @Transactional
+    public void configureReposForFullIndexing(Set<Long> repoIds, Boolean isPublic) {
+        repoIds.forEach(repoId -> repository.findById(repoId).ifPresentOrElse(
+                job -> job.fullIndexing(true),
+                () -> repository.persist(RepoIndexingJobEntity.builder()
+                        .status(JobStatus.PENDING)
+                        .repoId(repoId)
+                        .isPublic(isPublic)
                         .fullIndexing(true)
-                        .build())
-                .toList();
-
-        repository.saveAll(jobs);
-    }
-
-    @Override
-    public void setInstallationForRepos(Long installationId, RepoIndexingJobTrigger... triggers) {
-        final var jobs = Arrays.stream(triggers).
-                map(trigger -> repository.findById(trigger.getRepoId())
-                        .map(job -> job.toBuilder()
-                                .isPublic(trigger.getIsPublic())
-                                .build())
-                        .orElse(RepoIndexingJobEntity.builder()
-                                .repoId(trigger.getRepoId())
-                                .status(JobStatus.PENDING)
-                                .fullIndexing(false)
-                                .isPublic(trigger.getIsPublic())
-                                .build()))
-                .map(job -> job.toBuilder()
-                        .installationId(installationId)
-                        .build())
-                .toList();
-
-        repository.saveAll(jobs);
-    }
-
-    @Override
-    public void setPrivate(Long repoId) {
-        final var job = repository.findById(repoId)
-                .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
-        repository.save(job.toBuilder()
-                .isPublic(false)
-                .build());
-    }
-
-    @Override
-    public void setPublic(Long repoId) {
-        final var job = repository.findById(repoId)
-                .orElseThrow(() -> OnlyDustException.notFound("Job not found for repo %d".formatted(repoId)));
-        repository.save(job.toBuilder()
-                .isPublic(true)
-                .build());
-    }
-
-    @Override
-    public void configureRepoForLightIndexing(List<Long> repoIds) {
-        repository.saveAll(repository.findAllById(repoIds)
-                .stream()
-                .map(job -> job.toBuilder().fullIndexing(false).build())
-                .toList()
+                        .build()))
         );
+    }
+
+    @Override
+    @Transactional
+    public void setInstallationForRepos(Long installationId, Set<RepoIndexingJobTrigger> triggers) {
+        triggers.forEach(trigger -> repository.findById(trigger.getRepoId()).ifPresentOrElse(
+                job -> job
+                        .isPublic(trigger.getIsPublic())
+                        .installationId(installationId),
+                () -> repository.persist(RepoIndexingJobEntity.builder()
+                        .repoId(trigger.getRepoId())
+                        .status(JobStatus.PENDING)
+                        .fullIndexing(false)
+                        .isPublic(trigger.getIsPublic())
+                        .installationId(installationId)
+                        .build()))
+        );
+    }
+
+    @Override
+    @Transactional
+    public void setPrivate(Long repoId) {
+        job(repoId).isPublic(false);
+    }
+
+    @Override
+    @Transactional
+    public void setPublic(Long repoId) {
+        job(repoId).isPublic(true);
+    }
+
+    @Override
+    @Transactional
+    public void configureRepoForLightIndexing(Set<Long> repoIds) {
+        repository.findAllById(repoIds)
+                .forEach(job -> job.fullIndexing(false));
     }
 
     @Override
     public void delete(Long repoId) {
         repository.deleteById(repoId);
+    }
+
+    private RepoIndexingJobEntity job(Long repoId) {
+        return repository.findById(repoId)
+                .orElseThrow(() -> notFound("Job not found for repo %d".formatted(repoId)));
     }
 }

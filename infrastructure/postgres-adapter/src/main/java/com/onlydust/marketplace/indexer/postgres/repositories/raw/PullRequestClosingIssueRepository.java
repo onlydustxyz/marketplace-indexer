@@ -1,7 +1,10 @@
 package com.onlydust.marketplace.indexer.postgres.repositories.raw;
 
 import com.onlydust.marketplace.indexer.postgres.entities.raw.RawPullRequestClosingIssuesEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 
-public interface PullRequestClosingIssueRepository extends JpaRepository<RawPullRequestClosingIssuesEntity, RawPullRequestClosingIssuesEntity.Id> {
+import java.util.List;
+
+public interface PullRequestClosingIssueRepository extends BaseJpaRepository<RawPullRequestClosingIssuesEntity, RawPullRequestClosingIssuesEntity.PrimaryKey> {
+    List<RawPullRequestClosingIssuesEntity> findAll();
 }

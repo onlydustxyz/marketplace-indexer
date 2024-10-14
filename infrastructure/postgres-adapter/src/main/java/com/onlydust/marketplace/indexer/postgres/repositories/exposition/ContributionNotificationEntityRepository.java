@@ -1,12 +1,12 @@
 package com.onlydust.marketplace.indexer.postgres.repositories.exposition;
 
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionNotificationEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.Instant;
 
-public interface ContributionNotificationEntityRepository extends JpaRepository<ContributionNotificationEntity, Long> {
+public interface ContributionNotificationEntityRepository extends BaseJpaRepository<ContributionNotificationEntity, Long> {
     @Query(value = """
             select 
                 1 as id,

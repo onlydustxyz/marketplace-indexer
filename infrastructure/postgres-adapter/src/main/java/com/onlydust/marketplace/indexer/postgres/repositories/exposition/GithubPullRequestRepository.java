@@ -1,7 +1,10 @@
 package com.onlydust.marketplace.indexer.postgres.repositories.exposition;
 
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubPullRequestEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 
-public interface GithubPullRequestRepository extends JpaRepository<GithubPullRequestEntity, Long> {
+import java.util.List;
+
+public interface GithubPullRequestRepository extends BaseJpaRepository<GithubPullRequestEntity, Long> {
+    List<GithubPullRequestEntity> findAll();
 }

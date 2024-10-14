@@ -1,7 +1,7 @@
 package com.onlydust.marketplace.indexer.postgres.repositories.exposition;
 
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubIssueEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 
-public interface GithubIssueRepository extends JpaRepository<GithubIssueEntity, Long> {
+public interface GithubIssueRepository extends BaseJpaRepository<GithubIssueEntity, Long> {
 }

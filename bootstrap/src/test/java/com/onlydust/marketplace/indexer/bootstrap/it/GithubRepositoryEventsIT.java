@@ -2,7 +2,7 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.RepoRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -20,7 +20,7 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
     @Autowired
     public JobManager diffRepoRefreshJobManager;
     @Autowired
-    GithubRepoEntityRepository githubRepoRepository;
+    GithubRepoRepository githubRepoRepository;
     @Autowired
     RepoRepository rawRepoStorage;
 
@@ -41,7 +41,7 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
         );
 
         // Then
-        assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isFalse();
+        assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().isPublic()).isFalse();
         assertAllEventsAreProcessed("repository");
     }
 
@@ -54,7 +54,7 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
         );
 
         // Then
-        assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getIsPublic()).isTrue();
+        assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().isPublic()).isTrue();
         assertAllEventsAreProcessed("repository");
     }
 
@@ -82,6 +82,6 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
         // Then
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID)).isEmpty();
         assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getDeletedAt().toString()).isEqualTo("2023-12-05 08:02:21.0");
-        assertThat(rawRepoStorage.findById(CAIRO_STREAMS_ID).orElseThrow().getDeleted()).isTrue();
+        assertThat(rawRepoStorage.findById(CAIRO_STREAMS_ID).orElseThrow().deleted()).isTrue();
     }
 }

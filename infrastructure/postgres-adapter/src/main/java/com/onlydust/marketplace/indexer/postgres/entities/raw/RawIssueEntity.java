@@ -4,32 +4,39 @@ import com.onlydust.marketplace.indexer.domain.models.raw.RawIssue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLInsert;
 import org.hibernate.type.SqlTypes;
 
 
-@Data
+@Getter
 @Entity
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
+@NoArgsConstructor(force = true)
 @Table(name = "issues", schema = "indexer_raw")
 @SQLInsert(sql = "INSERT INTO indexer_raw.issues (data, number, repo_id, id) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING")
 public class RawIssueEntity {
     @Id
-    Long id;
+    final Long id;
 
-    Long repoId;
+    final Long repoId;
 
-    Long number;
+    final Long number;
 
     @JdbcTypeCode(SqlTypes.JSON)
     RawIssue data;
 
     public static RawIssueEntity of(Long repoId, RawIssue issue) {
-        return RawIssueEntity.builder().id(issue.getId()).repoId(repoId).number(issue.getNumber()).data(issue).build();
+        return RawIssueEntity.builder()
+                .id(issue.getId())
+                .repoId(repoId)
+                .number(issue.getNumber())
+                .data(issue)
+                .build();
     }
 }
