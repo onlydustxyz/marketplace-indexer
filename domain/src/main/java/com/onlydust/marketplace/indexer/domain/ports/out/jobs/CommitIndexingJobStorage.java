@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface CommitIndexingJobStorage {
     List<CommitIndexingJobItem> commitsForLeastIndexedUsers(int limit);
+
+    List<CommitIndexingJobItem> all();
 }

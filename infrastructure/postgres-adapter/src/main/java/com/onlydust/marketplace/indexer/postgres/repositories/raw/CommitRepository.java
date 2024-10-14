@@ -20,4 +20,6 @@ public interface CommitRepository extends BaseJpaRepository<RawCommitEntity, Str
             limit :limit
             """, nativeQuery = true)
     List<RawCommitEntity> findAllForLeastIndexedUsers(int limit);
+
+    List<RawCommitEntity> findAll();
 }
