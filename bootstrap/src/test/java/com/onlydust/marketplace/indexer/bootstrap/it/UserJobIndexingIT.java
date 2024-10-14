@@ -39,9 +39,9 @@ public class UserJobIndexingIT extends IntegrationTest {
         final var jobs = userIndexingJobEntityRepository.findAll();
         assertThat(jobs).hasSize(1);
         for (final var job : jobs) {
-            assertThat(job.getStartedAt()).isNotNull();
-            assertThat(job.getFinishedAt()).isNotNull();
-            assertThat(job.getStatus()).isEqualTo(JobStatus.SUCCESS);
+            assertThat(job.startedAt()).isNotNull();
+            assertThat(job.finishedAt()).isNotNull();
+            assertThat(job.status()).isEqualTo(JobStatus.SUCCESS);
         }
     }
 }

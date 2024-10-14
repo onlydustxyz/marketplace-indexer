@@ -1,12 +1,12 @@
 package com.onlydust.marketplace.indexer.postgres.repositories.raw;
 
 import com.onlydust.marketplace.indexer.postgres.entities.raw.RawCommitEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface CommitRepository extends JpaRepository<RawCommitEntity, String> {
+public interface CommitRepository extends BaseJpaRepository<RawCommitEntity, String> {
     @Query(value = """
             with missing_commits_per_user as (select author_name,
                                                      count(sha) as commit_count

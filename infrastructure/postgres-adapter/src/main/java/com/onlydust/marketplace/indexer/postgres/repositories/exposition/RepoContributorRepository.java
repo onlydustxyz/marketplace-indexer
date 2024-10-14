@@ -1,11 +1,13 @@
 package com.onlydust.marketplace.indexer.postgres.repositories.exposition;
 
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.RepoContributorEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-public interface RepoContributorRepository extends JpaRepository<RepoContributorEntity, String> {
+import java.util.List;
+
+public interface RepoContributorRepository extends BaseJpaRepository<RepoContributorEntity, String> {
     @Modifying
     @Query(value = """
             INSERT INTO indexer_exp.repos_contributors (repo_id, contributor_id, completed_contribution_count, total_contribution_count)
@@ -26,4 +28,6 @@ public interface RepoContributorRepository extends JpaRepository<RepoContributor
             WHERE repo_id = :repoId
             """, nativeQuery = true)
     void deleteAllByRepoId(Long repoId);
+
+    List<RepoContributorEntity> findAll();
 }

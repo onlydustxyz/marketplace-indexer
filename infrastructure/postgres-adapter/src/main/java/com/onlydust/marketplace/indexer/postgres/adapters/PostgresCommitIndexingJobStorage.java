@@ -13,8 +13,8 @@ public class PostgresCommitIndexingJobStorage implements CommitIndexingJobStorag
 
     @Override
     public List<CommitIndexingJobItem> commitsForLeastIndexedUsers(int limit) {
-        return commitRepository.findAllForLeastIndexedUsers(limit)
-                .stream().map(c -> new CommitIndexingJobItem(c.getRepoId(), c.getSha()))
+        return commitRepository.findAllForLeastIndexedUsers(limit).stream()
+                .map(c -> new CommitIndexingJobItem(c.getRepoId(), c.getSha()))
                 .toList();
     }
 }

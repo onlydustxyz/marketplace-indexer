@@ -20,7 +20,7 @@ public class PostgresUserFileExtensionsStorage implements UserFileExtensionStora
                                                     int modificationCount) {
         githubUserFileExtensionsRepository.findById(new GithubUserFileExtensionEntity.PrimaryKey(userId, fileExtension))
                 .ifPresentOrElse(entity -> entity.add(commitCount, fileCount, modificationCount),
-                        () -> githubUserFileExtensionsRepository.save(new GithubUserFileExtensionEntity(userId, fileExtension, commitCount, fileCount,
+                        () -> githubUserFileExtensionsRepository.persist(new GithubUserFileExtensionEntity(userId, fileExtension, commitCount, fileCount,
                                 modificationCount)));
     }
 }

@@ -12,6 +12,6 @@ public class PostgresAccountStorage implements AccountStorage {
 
     @Override
     public void save(GithubAccount account) {
-        githubAccountEntityRepository.save(GithubAccountEntity.of(account));
+        githubAccountEntityRepository.merge(GithubAccountEntity.of(account));
     }
 }

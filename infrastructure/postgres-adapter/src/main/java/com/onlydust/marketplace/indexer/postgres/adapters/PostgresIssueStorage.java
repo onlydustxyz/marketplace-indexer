@@ -12,10 +12,7 @@ public class PostgresIssueStorage implements IssueStorage {
 
     @Override
     public void save(GithubIssue issue) {
-        final var entity = issueRepository.findById(issue.getId())
-                .map(e -> e.updateWith(issue))
-                .orElse(GithubIssueEntity.of(issue));
-        issueRepository.save(entity);
+        issueRepository.merge(GithubIssueEntity.of(issue));
     }
 
     @Override

@@ -1,18 +1,19 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
-import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAppInstallation;
 import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.GithubAppInstallationStorage;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAppInstallationEntity;
-import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.notFound;
 
 @AllArgsConstructor
 public class PostgresGithubAppInstallationStorage implements GithubAppInstallationStorage {
@@ -21,21 +22,12 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
 
     @Override
     public void save(GithubAppInstallation installation) {
-        githubAppInstallationEntityRepository.save(GithubAppInstallationEntity.of(installation));
+        githubAppInstallationEntityRepository.merge(GithubAppInstallationEntity.of(installation));
     }
 
     @Override
     public void addRepos(Long installationId, List<GithubRepo> repos) {
-        final var installation = githubAppInstallationEntityRepository.findById(installationId)
-                .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
-
-        installation.repos().addAll(
-                repos.stream()
-                        .filter(repo -> installation.repos().stream().noneMatch(existing -> existing.getId().equals(repo.getId())))
-                        .map(GithubRepoEntity::of).toList()
-        );
-
-        githubAppInstallationEntityRepository.save(installation);
+        githubAppInstallationEntityRepository.merge(installation(installationId).withAddedRepos(repos));
     }
 
     @Override
@@ -45,18 +37,16 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
     }
 
     @Override
+    @Transactional
     public void removeRepos(Long installationId, List<Long> repoIds) {
-        final var installation = githubAppInstallationEntityRepository.findById(installationId)
-                .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
-        installation.repos().removeIf(repo -> repoIds.contains(repo.getId()));
-        githubAppInstallationEntityRepository.save(installation);
+        installation(installationId)
+                .repos().removeIf(repo -> repoIds.contains(repo.getId()));
     }
 
     @Override
+    @Transactional
     public void setSuspendedAt(Long installationId, Date suspendedAt) {
-        final var installation = githubAppInstallationEntityRepository.findById(installationId)
-                .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
-        githubAppInstallationEntityRepository.save(installation.suspendedAt(suspendedAt));
+        installation(installationId).suspendedAt(suspendedAt);
     }
 
     @Override
@@ -66,9 +56,13 @@ public class PostgresGithubAppInstallationStorage implements GithubAppInstallati
     }
 
     @Override
+    @Transactional
     public void setPermissions(Long installationId, Set<String> permissions) {
-        final var installation = githubAppInstallationEntityRepository.findById(installationId)
-                .orElseThrow(() -> OnlyDustException.notFound("Installation %d not found".formatted(installationId)));
-        githubAppInstallationEntityRepository.save(installation.permissions(permissions));
+        installation(installationId).permissions(permissions);
+    }
+
+    private GithubAppInstallationEntity installation(Long installationId) {
+        return githubAppInstallationEntityRepository.findById(installationId)
+                .orElseThrow(() -> notFound("Installation %d not found".formatted(installationId)));
     }
 }

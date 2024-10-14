@@ -17,21 +17,26 @@ import org.hibernate.type.SqlTypes;
 @Entity
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Table(name = "issues", schema = "indexer_raw")
 @SQLInsert(sql = "INSERT INTO indexer_raw.issues (data, number, repo_id, id) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING")
 public class RawIssueEntity {
     @Id
-    Long id;
+    final Long id;
 
-    Long repoId;
+    final Long repoId;
 
-    Long number;
+    final Long number;
 
     @JdbcTypeCode(SqlTypes.JSON)
     RawIssue data;
 
     public static RawIssueEntity of(Long repoId, RawIssue issue) {
-        return RawIssueEntity.builder().id(issue.getId()).repoId(repoId).number(issue.getNumber()).data(issue).build();
+        return RawIssueEntity.builder()
+                .id(issue.getId())
+                .repoId(repoId)
+                .number(issue.getNumber())
+                .data(issue)
+                .build();
     }
 }

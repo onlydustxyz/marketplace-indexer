@@ -7,7 +7,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.exposition.Contributio
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubUserFileExtensionEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIndexingJobRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubUserFileExtensionsRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
     @Autowired
     ContributionRepository contributionRepository;
     @Autowired
-    GithubRepoEntityRepository repoRepository;
+    GithubRepoRepository repoRepository;
     @Autowired
     PublicEventRawStorageReaderStub githubArchivesReaderStub;
     @Autowired

@@ -18,18 +18,21 @@ import java.util.List;
 @Getter
 @Entity
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Table(name = "pull_request_reviews", schema = "indexer_raw")
 @SQLInsert(sql = "INSERT INTO indexer_raw.pull_request_reviews (data, pull_request_id) VALUES (?, ?) ON CONFLICT DO NOTHING")
 public class RawPullRequestReviewEntity {
     @Id
-    Long pullRequestId;
+    final Long pullRequestId;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    List<RawCodeReview> data;
+    final List<RawCodeReview> data;
 
     public static RawPullRequestReviewEntity of(Long pullRequestId, List<RawCodeReview> codeReviews) {
-        return RawPullRequestReviewEntity.builder().pullRequestId(pullRequestId).data(codeReviews).build();
+        return RawPullRequestReviewEntity.builder()
+                .pullRequestId(pullRequestId)
+                .data(codeReviews)
+                .build();
     }
 }

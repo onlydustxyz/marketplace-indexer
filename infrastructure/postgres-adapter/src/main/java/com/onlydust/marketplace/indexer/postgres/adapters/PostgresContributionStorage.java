@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.domain.ports.out.exposition.Contribution
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionNotificationEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 import java.time.Instant;
@@ -23,8 +24,9 @@ public class PostgresContributionStorage implements ContributionStorage {
     }
 
     @Override
+    @Transactional
     public void saveAll(Contribution... contributions) {
-        contributionRepository.saveAll(Arrays.stream(contributions).map(ContributionEntity::of).toList());
+        contributionRepository.mergeAll(Arrays.stream(contributions).map(ContributionEntity::of).toList());
     }
 
     @Override

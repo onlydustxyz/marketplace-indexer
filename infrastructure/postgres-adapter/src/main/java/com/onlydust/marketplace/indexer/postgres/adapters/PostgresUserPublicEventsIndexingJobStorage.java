@@ -4,7 +4,9 @@ import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIn
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.UserPublicEventsIndexingJobEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIndexingJobRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -18,8 +20,9 @@ public class PostgresUserPublicEventsIndexingJobStorage implements UserPublicEve
     private final UserPublicEventsIndexingJobRepository repository;
 
     @Override
+    @Transactional
     public void add(Long userId) {
-        repository.save(UserPublicEventsIndexingJobEntity.builder()
+        repository.merge(UserPublicEventsIndexingJobEntity.builder()
                 .userId(userId)
                 .build());
     }
@@ -32,35 +35,32 @@ public class PostgresUserPublicEventsIndexingJobStorage implements UserPublicEve
 
     @Override
     public Set<Long> all() {
-        return repository.findAll().stream()
+        return repository.findAll(Sort.by("userId")).stream()
                 .map(UserPublicEventsIndexingJobEntity::userId)
                 .collect(toSet());
     }
 
     @Override
+    @Transactional
     public void startJob(Long userId) {
-        repository.findById(userId).ifPresent(job ->
-                repository.save(job.toBuilder()
-                        .status(JobStatus.RUNNING)
-                        .startedAt(Instant.now())
-                        .build()));
+        repository.findById(userId).ifPresent(job -> job
+                .status(JobStatus.RUNNING)
+                .startedAt(Instant.now()));
     }
 
     @Override
+    @Transactional
     public void failJob(Long userId) {
-        repository.findById(userId).ifPresent(job ->
-                repository.save(job.toBuilder()
-                        .status(JobStatus.FAILED)
-                        .finishedAt(Instant.now())
-                        .build()));
+        repository.findById(userId).ifPresent(job -> job
+                .status(JobStatus.FAILED)
+                .finishedAt(Instant.now()));
     }
 
     @Override
+    @Transactional
     public void endJob(Long userId) {
-        repository.findById(userId).ifPresent(job ->
-                repository.save(job.toBuilder()
-                        .status(JobStatus.SUCCESS)
-                        .finishedAt(Instant.now())
-                        .build()));
+        repository.findById(userId).ifPresent(job -> job
+                .status(JobStatus.SUCCESS)
+                .finishedAt(Instant.now()));
     }
 }

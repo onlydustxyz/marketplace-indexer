@@ -1,16 +1,18 @@
 package com.onlydust.marketplace.indexer.postgres.repositories;
 
 import com.onlydust.marketplace.indexer.postgres.entities.RepoIndexingJobEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.ListPagingAndSortingRepository;
 
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-public interface RepoIndexingJobEntityRepository extends JpaRepository<RepoIndexingJobEntity, Long> {
+public interface RepoIndexingJobEntityRepository extends BaseJpaRepository<RepoIndexingJobEntity, Long>,
+        ListPagingAndSortingRepository<RepoIndexingJobEntity, Long> {
     @Modifying
     @Query("UPDATE RepoIndexingJobEntity SET installationId = NULL WHERE installationId = :installationId")
     void deleteInstallationId(Long installationId);
@@ -34,4 +36,6 @@ public interface RepoIndexingJobEntityRepository extends JpaRepository<RepoIndex
     @Modifying
     @Query("UPDATE RepoIndexingJobEntity SET installationSuspendedAt = :suspendedAt WHERE installationId = :installationId")
     void setSuspendedAt(Long installationId, Date suspendedAt);
+
+    List<RepoIndexingJobEntity> findAll();
 }

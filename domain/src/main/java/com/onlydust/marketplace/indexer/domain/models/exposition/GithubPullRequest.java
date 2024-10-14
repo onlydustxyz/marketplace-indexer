@@ -8,11 +8,10 @@ import lombok.Value;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import static com.onlydust.marketplace.indexer.domain.utils.FileUtils.fileExtension;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.reducing;
+import static java.util.stream.Collectors.*;
 
 @Value
 @Builder
@@ -34,7 +33,7 @@ public class GithubPullRequest {
     Boolean draft;
     List<GithubIssue> closingIssues;
     ReviewState reviewState;
-    Map<GithubAccount, Long> commitCounts;
+    Set<GithubCommit> commits;
     List<String> mainFileExtensions;
 
     public static GithubPullRequest of(CleanPullRequest pullRequest) {
@@ -54,10 +53,7 @@ public class GithubPullRequest {
                 .draft(pullRequest.getDraft())
                 .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssue::of).toList())
                 .reviewState(aggregateReviewState(pullRequest))
-                .commitCounts(pullRequest.getCommits().stream()
-                        .filter(c -> c.getAuthor() != null)
-                        .collect(groupingBy(c -> GithubAccount.of(c.getAuthor()), Collectors.counting()))
-                )
+                .commits(pullRequest.getCommits().stream().map(GithubCommit::of).collect(toSet()))
                 .mainFileExtensions(extractMainFileExtensions(pullRequest.getCommits()))
                 .build();
     }

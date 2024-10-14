@@ -19,10 +19,10 @@ import java.io.Serializable;
 @Table(name = "github_user_file_extensions", schema = "indexer_exp")
 public class GithubUserFileExtensionEntity {
     @Id
-    Long userId;
+    final Long userId;
 
     @Id
-    String fileExtension;
+    final String fileExtension;
 
     int commitCount;
     int fileCount;

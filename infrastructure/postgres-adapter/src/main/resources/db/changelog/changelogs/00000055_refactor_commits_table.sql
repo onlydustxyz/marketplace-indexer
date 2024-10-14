@@ -98,3 +98,23 @@ create trigger indexer_exp_github_user_file_extensions_set_tech_updated_at
     on indexer_exp.github_user_file_extensions
     for each row
 execute function indexer.set_tech_updated_at();
+
+create table indexer_exp.github_commits
+(
+    sha             text primary key,
+    pull_request_id bigint references indexer_exp.github_pull_requests (id),
+    author_id       bigint references indexer_exp.github_accounts (id),
+    tech_created_at timestamp with time zone not null default now(),
+    tech_updated_at timestamp with time zone not null default now()
+);
+
+create trigger indexer_exp_github_commits_set_tech_updated_at
+    before update
+    on indexer_exp.github_commits
+    for each row
+execute function indexer.set_tech_updated_at();
+
+insert into indexer_exp.github_commits(sha, pull_request_id, author_id, tech_created_at, tech_updated_at)
+select prc.commit_sha, prc.pull_request_id, c.author_id, prc.tech_created_at, prc.tech_updated_at
+from indexer_raw.pull_request_commits prc
+         join indexer_raw.commits c on prc.commit_sha = c.sha;

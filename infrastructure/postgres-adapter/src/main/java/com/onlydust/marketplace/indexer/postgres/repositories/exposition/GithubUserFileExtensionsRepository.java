@@ -1,7 +1,10 @@
 package com.onlydust.marketplace.indexer.postgres.repositories.exposition;
 
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubUserFileExtensionEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 
-public interface GithubUserFileExtensionsRepository extends JpaRepository<GithubUserFileExtensionEntity, GithubUserFileExtensionEntity.PrimaryKey> {
+import java.util.List;
+
+public interface GithubUserFileExtensionsRepository extends BaseJpaRepository<GithubUserFileExtensionEntity, GithubUserFileExtensionEntity.PrimaryKey> {
+    List<GithubUserFileExtensionEntity> findAll();
 }

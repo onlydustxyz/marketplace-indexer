@@ -1,8 +1,12 @@
 package com.onlydust.marketplace.indexer.postgres.repositories.raw;
 
 import com.onlydust.marketplace.indexer.postgres.entities.raw.RawUserEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 
-public interface UserRepository extends JpaRepository<RawUserEntity, Long> {
+import java.util.List;
 
+public interface UserRepository extends BaseJpaRepository<RawUserEntity, Long> {
+    void deleteAll();
+
+    List<RawUserEntity> findAll();
 }

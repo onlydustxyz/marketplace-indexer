@@ -17,19 +17,23 @@ import org.hibernate.type.SqlTypes;
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Table(name = "users", schema = "indexer_raw")
 @SQLInsert(sql = "INSERT INTO indexer_raw.users (data, login, id) VALUES (?, ?, ?) ON CONFLICT DO NOTHING")
 public class RawUserEntity {
     @Id
-    Long id;
+    final Long id;
 
-    String login;
+    final String login;
 
     @JdbcTypeCode(SqlTypes.JSON)
     RawAccount data;
 
     public static RawUserEntity of(RawAccount user) {
-        return RawUserEntity.builder().id(user.getId()).login(user.getLogin()).data(user).build();
+        return RawUserEntity.builder()
+                .id(user.getId())
+                .login(user.getLogin())
+                .data(user)
+                .build();
     }
 }

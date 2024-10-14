@@ -2,7 +2,9 @@ package com.onlydust.marketplace.indexer.domain.services.exposers;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanCommit;
+import com.onlydust.marketplace.indexer.domain.models.exposition.GithubCommit;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
+import com.onlydust.marketplace.indexer.domain.ports.out.exposition.CommitStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.UserFileExtensionStorage;
 import com.onlydust.marketplace.indexer.domain.utils.FileUtils;
 import lombok.AllArgsConstructor;
@@ -16,10 +18,14 @@ import static java.util.stream.Collectors.*;
 @AllArgsConstructor
 public class CommitExposer implements Exposer<CleanCommit> {
     UserFileExtensionStorage userFileExtensionStorage;
+    CommitStorage commitStorage;
 
     @Override
     public void expose(CleanCommit commit) {
-        Optional.ofNullable(commit.getAuthor()).map(CleanAccount::getId)
+        commitStorage.save(GithubCommit.of(commit));
+
+        Optional.ofNullable(commit.getAuthor())
+                .map(CleanAccount::getId)
                 .ifPresent(authorId -> expose(authorId, commit.getModifiedFiles()));
     }
 

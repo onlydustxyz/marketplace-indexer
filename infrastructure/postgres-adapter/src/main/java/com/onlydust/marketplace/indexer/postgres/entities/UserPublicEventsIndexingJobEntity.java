@@ -15,16 +15,17 @@ import java.time.ZonedDateTime;
 @Table(name = "user_public_events_indexing_jobs", schema = "indexer")
 @DynamicUpdate
 @NoArgsConstructor(force = true)
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 @Getter
-@Accessors(fluent = true)
+@Setter
+@Accessors(fluent = true, chain = true)
 @ToString
 public class UserPublicEventsIndexingJobEntity {
     @Id
     @NonNull
-    Long userId;
+    final Long userId;
 
     @NonNull
     @Enumerated(EnumType.STRING)

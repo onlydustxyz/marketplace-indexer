@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.entities.raw;
 
+import com.onlydust.marketplace.indexer.domain.models.raw.RawCommit;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,30 +9,28 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLInsert;
 import org.hibernate.type.SqlTypes;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
 
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Builder
+@Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Table(name = "pull_requests", schema = "indexer_raw")
 @SQLInsert(sql = "INSERT INTO indexer_raw.pull_requests (data, number, repo_id, id) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING")
 public class RawPullRequestEntity {
     @Id
-    Long id;
+    final Long id;
 
-    Long repoId;
+    final Long repoId;
 
-    Long number;
-
-    @JdbcTypeCode(SqlTypes.JSON)
-    RawPullRequest data;
-
+    final Long number;
+    
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "pull_request_commits",
@@ -39,7 +38,11 @@ public class RawPullRequestEntity {
             joinColumns = @JoinColumn(name = "pull_request_id"),
             inverseJoinColumns = @JoinColumn(name = "commit_sha")
     )
-    Set<RawCommitEntity> commits;
+    final Set<RawCommitEntity> commits;
+
+    @Setter
+    @JdbcTypeCode(SqlTypes.JSON)
+    RawPullRequest data;
 
     public static RawPullRequestEntity of(RawPullRequest pullRequest) {
         return RawPullRequestEntity.builder()
@@ -50,17 +53,9 @@ public class RawPullRequestEntity {
                 .build();
     }
 
-    public RawPullRequestEntity withCommits(List<RawCommitEntity> commits) {
-        if (this.commits == null) this.commits = new HashSet<>();
-
-        this.commits.clear();
-        this.commits.addAll(commits);
-
-        return this;
-    }
-
-    public RawPullRequestEntity withData(RawPullRequest pullRequest) {
-        this.data = pullRequest;
-        return this;
+    public RawPullRequestEntity withCommits(List<RawCommit> commits) {
+        return toBuilder()
+                .commits(commits.stream().map(c -> RawCommitEntity.of(repoId, c)).collect(toSet()))
+                .build();
     }
 }

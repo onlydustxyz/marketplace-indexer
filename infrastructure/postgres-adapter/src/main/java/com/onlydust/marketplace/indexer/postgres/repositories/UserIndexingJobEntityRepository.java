@@ -1,13 +1,14 @@
 package com.onlydust.marketplace.indexer.postgres.repositories;
 
 import com.onlydust.marketplace.indexer.postgres.entities.UserIndexingJobEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
-public interface UserIndexingJobEntityRepository extends JpaRepository<UserIndexingJobEntity, Long> {
+public interface UserIndexingJobEntityRepository extends BaseJpaRepository<UserIndexingJobEntity, Long> {
     @Query("""
             SELECT DISTINCT userId
             FROM UserIndexingJobEntity
@@ -15,4 +16,5 @@ public interface UserIndexingJobEntityRepository extends JpaRepository<UserIndex
             """)
     Set<Long> findUsersUpdatedBefore(Instant since);
 
+    List<UserIndexingJobEntity> findAll();
 }

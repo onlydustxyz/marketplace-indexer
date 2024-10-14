@@ -8,27 +8,21 @@ import java.io.Serializable;
 @Entity
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Getter
 @IdClass(GithubPullRequestCommitCountEntity.PrimaryKey.class)
 @Table(name = "github_pull_request_commit_counts", schema = "indexer_exp")
 public class GithubPullRequestCommitCountEntity {
     @Id
-    Long pullRequestId;
-
-    @Id
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
-    GithubAccountEntity author;
-
+    final GithubAccountEntity author;
+    @Id
+    Long pullRequestId;
     Integer commitCount;
 
     public static GithubPullRequestCommitCountEntity of(Long pullRequestId, GithubAccountEntity author, Long commitCount) {
-        return GithubPullRequestCommitCountEntity.builder()
-                .author(author)
-                .pullRequestId(pullRequestId)
-                .commitCount(Math.toIntExact(commitCount))
-                .build();
+        return GithubPullRequestCommitCountEntity.builder().author(author).pullRequestId(pullRequestId).commitCount(Math.toIntExact(commitCount)).build();
     }
 
     @Data

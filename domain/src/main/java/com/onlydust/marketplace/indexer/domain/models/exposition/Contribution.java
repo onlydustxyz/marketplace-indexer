@@ -60,8 +60,8 @@ public class Contribution {
                 .build();
     }
 
-    public static Contribution of(GithubCommit commit) {
-        return Contribution.of(commit.getPullRequest()).toBuilder()
+    public static Contribution of(GithubPullRequest pullRequest, GithubCommit commit) {
+        return Contribution.of(pullRequest).toBuilder()
                 .contributor(commit.getAuthor())
                 .build();
     }

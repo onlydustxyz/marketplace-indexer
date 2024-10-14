@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 import com.onlydust.marketplace.indexer.domain.models.exposition.*;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
@@ -14,30 +15,39 @@ import java.util.Optional;
 @Entity
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Table(name = "contributions", schema = "indexer_exp")
 public class ContributionEntity {
     @Id
     String id;
+    
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubRepoEntity repo;
+
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubAccountEntity contributor;
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "contribution_type")
     @JdbcType(PostgreSQLEnumJdbcType.class)
     Type type;
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "contribution_status")
     @JdbcType(PostgreSQLEnumJdbcType.class)
     Status status;
+
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubPullRequestEntity pullRequest;
+
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubIssueEntity issue;
+
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubCodeReviewEntity codeReview;
+
     Date createdAt;
     Date completedAt;
     Long githubNumber;
@@ -56,10 +66,12 @@ public class ContributionEntity {
     String contributorLogin;
     String contributorHtmlUrl;
     String contributorAvatarUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "github_pull_request_review_state")
     @JdbcType(PostgreSQLEnumJdbcType.class)
     GithubPullRequestEntity.ReviewState prReviewState;
+
     @JdbcTypeCode(SqlTypes.ARRAY)
     String[] mainFileExtensions;
 

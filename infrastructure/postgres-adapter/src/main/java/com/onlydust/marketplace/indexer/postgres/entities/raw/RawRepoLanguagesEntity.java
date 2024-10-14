@@ -16,13 +16,13 @@ import org.hibernate.type.SqlTypes;
 @Getter
 @Entity
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Table(name = "repo_languages", schema = "indexer_raw")
 @SQLInsert(sql = "INSERT INTO indexer_raw.repo_languages (data, repo_id) VALUES (?, ?) ON CONFLICT DO NOTHING")
 public class RawRepoLanguagesEntity {
     @Id
-    Long repoId;
+    final Long repoId;
 
     @JdbcTypeCode(SqlTypes.JSON)
     RawLanguages data;

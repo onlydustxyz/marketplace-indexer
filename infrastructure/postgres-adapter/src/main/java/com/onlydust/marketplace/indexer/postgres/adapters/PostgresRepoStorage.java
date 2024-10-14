@@ -4,7 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.exposition.GithubRepo;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.RepoStorage;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoStatsEntity;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoStatsEntityRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -13,12 +13,12 @@ import java.time.Instant;
 
 @AllArgsConstructor
 public class PostgresRepoStorage implements RepoStorage {
-    private final GithubRepoEntityRepository githubRepoEntityRepository;
+    private final GithubRepoRepository githubRepoRepository;
     private final GithubRepoStatsEntityRepository githubRepoStatsEntityRepository;
 
     @Override
     public void setLastIndexedTime(Long repoId, Instant lastIndexedTime) {
-        githubRepoStatsEntityRepository.save(GithubRepoStatsEntity.builder()
+        githubRepoStatsEntityRepository.merge(GithubRepoStatsEntity.builder()
                 .id(repoId)
                 .lastIndexedAt(lastIndexedTime)
                 .build());
@@ -26,10 +26,7 @@ public class PostgresRepoStorage implements RepoStorage {
 
     @Override
     @Transactional
-    public void save(GithubRepo updated) {
-        final var repo = githubRepoEntityRepository.findById(updated.getId())
-                .map(r -> r.updateWith(updated))
-                .orElse(GithubRepoEntity.of(updated));
-        githubRepoEntityRepository.save(repo);
+    public void save(GithubRepo repo) {
+        githubRepoRepository.merge(GithubRepoEntity.of(repo));
     }
 }

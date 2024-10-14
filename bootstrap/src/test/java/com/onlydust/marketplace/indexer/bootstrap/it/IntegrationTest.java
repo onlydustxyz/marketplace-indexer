@@ -172,8 +172,8 @@ public class IntegrationTest {
     }
 
     protected void assertAllEventsAreProcessed(String type) {
-        final var events = eventsInboxEntityRepository.findAll().stream().filter(e -> e.getType().equals(type)).toList();
+        final var events = eventsInboxEntityRepository.findAllByType(type);
         assertThat(events).isNotEmpty();
-        assertThat(events.stream().allMatch(e -> e.getStatus().equals(EventsInboxEntity.Status.PROCESSED)));
+        assertThat(events.stream().allMatch(e -> e.status().equals(EventsInboxEntity.Status.PROCESSED)));
     }
 }

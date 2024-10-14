@@ -463,8 +463,9 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public Exposer<CleanCommit> commitExposer(final UserFileExtensionStorage userFileExtensionStorage) {
-        return new CommitExposer(userFileExtensionStorage);
+    public Exposer<CleanCommit> commitExposer(final UserFileExtensionStorage userFileExtensionStorage,
+                                              final CommitStorage commitStorage) {
+        return new CommitExposer(userFileExtensionStorage, commitStorage);
     }
 
     @Bean

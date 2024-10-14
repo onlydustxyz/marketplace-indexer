@@ -49,13 +49,4 @@ public class RawCommitEntity {
                 .authorName(commit.getAuthor() == null ? null : commit.getAuthor().getName())
                 .build();
     }
-
-    public RawCommitEntity update(RawCommit commit) {
-        if (commit.getAuthor() != null) {
-            this.authorId = commit.getAuthor().getId();
-            this.authorName = commit.getAuthor().getLogin();
-        }
-        this.data = commit;
-        return this;
-    }
 }

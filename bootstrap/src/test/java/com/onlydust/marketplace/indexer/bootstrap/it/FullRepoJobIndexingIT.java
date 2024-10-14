@@ -9,7 +9,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.exposition.RepoContrib
 import com.onlydust.marketplace.indexer.postgres.repositories.ApiEventRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoEntityRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoStatsEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
@@ -40,7 +40,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     @Autowired
     public IssueRepository issuesRepository;
     @Autowired
-    public GithubRepoEntityRepository githubRepoEntityRepository;
+    public GithubRepoRepository githubRepoRepository;
     @Autowired
     public GithubRepoStatsEntityRepository githubRepoStatsEntityRepository;
     @Autowired
@@ -90,9 +90,9 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
         // Jobs are finished
         for (final var repoId : new Long[]{BRETZEL_APP, MARKETPLACE}) {
             final var job = repoIndexingJobEntityRepository.findById(repoId).orElseThrow();
-            assertThat(job.getStartedAt()).isNotNull();
-            assertThat(job.getFinishedAt()).isNotNull();
-            assertThat(job.getStatus()).isEqualTo(JobStatus.SUCCESS);
+            assertThat(job.startedAt()).isNotNull();
+            assertThat(job.finishedAt()).isNotNull();
+            assertThat(job.status()).isEqualTo(JobStatus.SUCCESS);
 
             final var stats = githubRepoStatsEntityRepository.findById(repoId).orElseThrow();
             assertThat(stats.getLastIndexedAt()).isNotNull();
@@ -104,7 +104,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     @Test
     @Order(2)
     public void should_expose_indexed_repo_even_if_no_contributions() {
-        assertThat(githubRepoEntityRepository.findById(BRETZEL_APP)).isPresent();
+        assertThat(githubRepoRepository.findById(BRETZEL_APP)).isPresent();
         assertThat(pullRequestsRepository.findAllByRepoId(BRETZEL_APP)).hasSize(0);
         assertThat(issuesRepository.findAllByRepoId(BRETZEL_APP)).hasSize(0);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getRepo().getId().equals(BRETZEL_APP))).hasSize(0);
@@ -117,7 +117,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     @Order(2)
     @Transactional
     public void should_index_repo_with_contributions() {
-        final var exposedRepo = githubRepoEntityRepository.findById(MARKETPLACE);
+        final var exposedRepo = githubRepoRepository.findById(MARKETPLACE);
         assertThat(exposedRepo).isPresent();
         assertThat(exposedRepo.get().getLanguages())
                 .usingFieldByFieldElementComparator()
@@ -195,13 +195,13 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     @Order(4)
     public void should_change_to_light_mode_upon_request() {
         onRepoLinkChanged(List.of(), List.of(BRETZEL_APP)).expectStatus().isNoContent();
-        assertThat(repoIndexingJobEntityRepository.findById(BRETZEL_APP).orElseThrow().getFullIndexing()).isFalse();
+        assertThat(repoIndexingJobEntityRepository.findById(BRETZEL_APP).orElseThrow().fullIndexing()).isFalse();
     }
 
     @Test
     @Order(4)
     public void should_change_to_full_mode_upon_request() {
         onRepoLinkChanged(List.of(BRETZEL_APP), List.of()).expectStatus().isNoContent();
-        assertThat(repoIndexingJobEntityRepository.findById(BRETZEL_APP).orElseThrow().getFullIndexing()).isTrue();
+        assertThat(repoIndexingJobEntityRepository.findById(BRETZEL_APP).orElseThrow().fullIndexing()).isTrue();
     }
 }

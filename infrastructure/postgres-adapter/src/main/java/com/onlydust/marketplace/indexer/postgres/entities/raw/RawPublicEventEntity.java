@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
 @Entity
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Table(name = "public_events", schema = "indexer_raw")
 @SQLInsert(sql = """
         INSERT INTO indexer_raw.public_events (actor, actor_id, created_at, org, payload, repo, repo_id, type, id) 
@@ -29,31 +29,31 @@ import java.time.ZonedDateTime;
 public class RawPublicEventEntity {
     @Id
     @NonNull
-    Long id;
+    final Long id;
 
     @NonNull
-    Long actorId;
+    final Long actorId;
 
     @NonNull
-    Long repoId;
+    final Long repoId;
 
     @NonNull
-    String type;
+    final String type;
 
     @NonNull
-    ZonedDateTime createdAt;
-
-    @NonNull
-    @JdbcTypeCode(SqlTypes.JSON)
-    RawPublicEvent.Account actor;
+    final ZonedDateTime createdAt;
 
     @NonNull
     @JdbcTypeCode(SqlTypes.JSON)
-    RawPublicEvent.Repo repo;
+    final RawPublicEvent.Account actor;
 
     @NonNull
     @JdbcTypeCode(SqlTypes.JSON)
-    RawPublicEvent.Account org;
+    final RawPublicEvent.Repo repo;
+
+    @NonNull
+    @JdbcTypeCode(SqlTypes.JSON)
+    final RawPublicEvent.Account org;
 
     @NonNull
     @JdbcTypeCode(SqlTypes.JSON)
