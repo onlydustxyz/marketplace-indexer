@@ -22,7 +22,7 @@ import java.util.Optional;
 public class ContributionEntity {
     @Id
     String id;
-    
+
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubRepoEntity repo;
 
@@ -84,10 +84,12 @@ public class ContributionEntity {
                 .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getAuthor))
                 .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getAuthor));
 
+        final var contributor = Optional.ofNullable(contribution.getContributor());
+
         return ContributionEntity.builder()
                 .id(contribution.getId())
                 .repo(GithubRepoEntity.of(contribution.getRepo()))
-                .contributor(GithubAccountEntity.of(contribution.getContributor()))
+                .contributor(contributor.map(GithubAccountEntity::of).orElse(null))
                 .type(Type.of(contribution.getType()))
                 .status(Status.of(contribution.getStatus()))
                 .pullRequest(contribution.getPullRequest() != null ? GithubPullRequestEntity.of(contribution.getPullRequest()) : null)
@@ -126,9 +128,9 @@ public class ContributionEntity {
                 .githubAuthorLogin(author.map(GithubAccount::getLogin).orElse(null))
                 .githubAuthorHtmlUrl(author.map(GithubAccount::getHtmlUrl).orElse(null))
                 .githubAuthorAvatarUrl(author.map(GithubAccount::getAvatarUrl).orElse(null))
-                .contributorLogin(contribution.getContributor().getLogin())
-                .contributorHtmlUrl(contribution.getContributor().getHtmlUrl())
-                .contributorAvatarUrl(contribution.getContributor().getAvatarUrl())
+                .contributorLogin(contributor.map(GithubAccount::getLogin).orElse(null))
+                .contributorHtmlUrl(contributor.map(GithubAccount::getHtmlUrl).orElse(null))
+                .contributorAvatarUrl(contributor.map(GithubAccount::getAvatarUrl).orElse(null))
                 .prReviewState(Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getReviewState).map(GithubPullRequestEntity.ReviewState::of).orElse(null))
                 .mainFileExtensions(Optional.ofNullable(contribution.getPullRequest()).map(pr -> pr.getMainFileExtensions().toArray(String[]::new)).orElse(null))
                 .build();

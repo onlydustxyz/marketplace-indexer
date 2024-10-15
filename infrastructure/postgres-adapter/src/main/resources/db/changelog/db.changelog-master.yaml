@@ -113,3 +113,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000054_create_raw_user_events.sql
   - include:
       file: db/changelog/changelogs/00000055_refactor_commits_table.sql
+  - include:
+      file: db/changelog/changelogs/00000056_update_contributions.sql

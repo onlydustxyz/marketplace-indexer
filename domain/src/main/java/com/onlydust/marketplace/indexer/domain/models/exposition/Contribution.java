@@ -47,6 +47,17 @@ public class Contribution {
                 .build();
     }
 
+    public static Contribution of(GithubIssue issue) {
+        return Contribution.builder()
+                .repo(issue.getRepo())
+                .type(Type.ISSUE)
+                .status(Status.of(issue.getStatus()))
+                .issue(issue)
+                .createdAt(issue.getCreatedAt())
+                .completedAt(issue.getClosedAt())
+                .build();
+    }
+
     public static Contribution of(GithubCodeReview codeReview) {
         final var status = Status.of(codeReview.getState(), codeReview.getPullRequest().getStatus());
         return Contribution.builder()
@@ -78,7 +89,7 @@ public class Contribution {
     }
 
     public String getId() {
-        return sha256Hex(String.format("(%s,%s,%d)", type, getDetailsId(), contributor.getId()));
+        return sha256Hex(String.format("(%s,%s,%d)", type, getDetailsId(), contributor == null ? null : contributor.getId()));
     }
 
     private String getDetailsId() {
