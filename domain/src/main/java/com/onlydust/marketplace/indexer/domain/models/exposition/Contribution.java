@@ -19,6 +19,7 @@ public class Contribution {
     GithubIssue issue;
     GithubCodeReview codeReview;
     Date createdAt;
+    Date updatedAt;
     Date completedAt;
     GithubPullRequest.ReviewState pullRequestReviewState;
 
@@ -30,6 +31,7 @@ public class Contribution {
                 .status(Status.of(pullRequest.getStatus()))
                 .pullRequest(pullRequest)
                 .createdAt(pullRequest.getCreatedAt())
+                .updatedAt(pullRequest.getUpdatedAt())
                 .completedAt(pullRequest.getClosedAt())
                 .pullRequestReviewState(pullRequest.getReviewState())
                 .build();
@@ -43,6 +45,7 @@ public class Contribution {
                 .status(Status.of(issue.getStatus()))
                 .issue(issue)
                 .createdAt(issue.getCreatedAt())
+                .updatedAt(issue.getUpdatedAt())
                 .completedAt(issue.getClosedAt())
                 .build();
     }
@@ -54,6 +57,7 @@ public class Contribution {
                 .status(Status.of(issue.getStatus()))
                 .issue(issue)
                 .createdAt(issue.getCreatedAt())
+                .updatedAt(issue.getUpdatedAt())
                 .completedAt(issue.getClosedAt())
                 .build();
     }
@@ -67,6 +71,7 @@ public class Contribution {
                 .status(status)
                 .codeReview(codeReview)
                 .createdAt(codeReview.getRequestedAt())
+                .updatedAt(codeReview.getUpdatedAt())
                 .completedAt(GetCompletionDate(codeReview))
                 .build();
     }

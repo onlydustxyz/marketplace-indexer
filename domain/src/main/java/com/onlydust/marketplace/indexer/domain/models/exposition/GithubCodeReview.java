@@ -42,6 +42,10 @@ public class GithubCodeReview {
         return sha256Hex(String.format("(%d,%d)", pullRequest.getId(), author.getId()));
     }
 
+    public Date getUpdatedAt() {
+        return submittedAt != null ? submittedAt : requestedAt;
+    }
+
     public enum State {
         PENDING,
         COMMENTED,
