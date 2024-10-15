@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Value;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -27,5 +28,9 @@ public class CleanCommit {
 
     public CleanCommit withAuthor(CleanAccount author) {
         return toBuilder().author(author).build();
+    }
+
+    public Optional<Long> authorId() {
+        return Optional.ofNullable(author).flatMap(a -> Optional.ofNullable(a.getId()));
     }
 }

@@ -84,7 +84,7 @@ public class ContributionEntity {
                 .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getAuthor))
                 .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getAuthor));
 
-        final var contributor = Optional.ofNullable(contribution.getContributor());
+        final var contributor = Optional.ofNullable(contribution.getContributor()).filter(c -> c.getId() != null);
 
         return ContributionEntity.builder()
                 .id(contribution.getId())

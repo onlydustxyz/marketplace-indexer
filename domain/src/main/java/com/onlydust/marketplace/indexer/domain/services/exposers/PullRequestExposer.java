@@ -23,7 +23,7 @@ public class PullRequestExposer implements Exposer<CleanPullRequest> {
     public void expose(CleanPullRequest pullRequest) {
         final var fromPullRequest = Stream.of(pullRequest).map(GithubPullRequest::of).map(Contribution::of);
         final var fromCommits = pullRequest.getCommits().stream()
-                .filter(c -> c.getAuthor() != null)
+                .filter(c -> c.authorId().isPresent())
                 .map(GithubCommit::of)
                 .map(c -> Contribution.of(GithubPullRequest.of(pullRequest), c));
         final var fromCodeReviewsCompleted = pullRequest.getReviews().stream()
