@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.domain.services.jobs;
 import com.github.javafaker.Faker;
 import com.onlydust.marketplace.indexer.domain.models.CommitIndexingJobItem;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.CommitIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.out.exposition.UserFileExtensionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.CommitIndexingJobStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,11 +17,13 @@ class CommitRefreshJobServiceTest {
     private final static Faker faker = new Faker();
     private final CommitIndexingJobStorage commitIndexingJobStorage = mock(CommitIndexingJobStorage.class);
     private final CommitIndexer commitIndexer = mock(CommitIndexer.class);
-    private final CommitRefreshJobService commitRefreshJobService = new CommitRefreshJobService(commitIndexingJobStorage, commitIndexer);
+    private final UserFileExtensionStorage userFileExtensionStorage = mock(UserFileExtensionStorage.class);
+    private final CommitRefreshJobService commitRefreshJobService = new CommitRefreshJobService(commitIndexingJobStorage, commitIndexer,
+            userFileExtensionStorage);
 
     @BeforeEach
     void setup() {
-        reset(commitIndexingJobStorage, commitIndexer);
+        reset(commitIndexingJobStorage, commitIndexer, userFileExtensionStorage);
     }
 
     @Test
@@ -38,6 +41,7 @@ class CommitRefreshJobServiceTest {
         commitRefreshJobService.createJob().run();
 
         // Then
+        verify(userFileExtensionStorage).clear();
         commits.forEach(c -> verify(commitIndexer).indexCommit(c.repoId(), c.sha()));
     }
 }

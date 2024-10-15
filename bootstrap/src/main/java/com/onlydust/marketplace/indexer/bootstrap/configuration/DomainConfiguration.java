@@ -395,9 +395,10 @@ public class DomainConfiguration {
     @Bean
     public JobManager cacheOnlyCommitRefreshJobManager(
             final PostgresCommitIndexingJobStorage commitIndexingJobStorage,
-            final CommitIndexer cacheOnlyCommitIndexer
+            final CommitIndexer cacheOnlyCommitIndexer,
+            final UserFileExtensionStorage userFileExtensionStorage
     ) {
-        return new CommitRefreshJobService(commitIndexingJobStorage, cacheOnlyCommitIndexer);
+        return new CommitRefreshJobService(commitIndexingJobStorage, cacheOnlyCommitIndexer, userFileExtensionStorage);
     }
 
     @Bean

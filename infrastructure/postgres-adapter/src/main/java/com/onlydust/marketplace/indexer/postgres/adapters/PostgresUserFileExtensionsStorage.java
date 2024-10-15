@@ -23,4 +23,9 @@ public class PostgresUserFileExtensionsStorage implements UserFileExtensionStora
                         () -> githubUserFileExtensionsRepository.persist(new GithubUserFileExtensionEntity(userId, fileExtension, commitCount, fileCount,
                                 modificationCount)));
     }
+
+    @Override
+    public void clear() {
+        githubUserFileExtensionsRepository.deleteAll();
+    }
 }
