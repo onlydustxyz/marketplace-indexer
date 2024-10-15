@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
+import com.onlydust.marketplace.indexer.cli.CommitRefreshCliAdapter;
 import com.onlydust.marketplace.indexer.cli.RepoRefreshCliAdapter;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import org.springframework.context.annotation.Bean;
@@ -14,5 +15,12 @@ public class CliConfiguration {
             final JobManager cacheOnlyRepoRefreshJobManager
     ) {
         return new RepoRefreshCliAdapter(cacheOnlyRepoRefreshJobManager);
+    }
+
+    @Bean
+    public CommitRefreshCliAdapter commitRefreshCliAdapter(
+            final JobManager cacheOnlyCommitRefreshJobManager
+    ) {
+        return new CommitRefreshCliAdapter(cacheOnlyCommitRefreshJobManager);
     }
 }

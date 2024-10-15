@@ -17,4 +17,11 @@ public class PostgresCommitIndexingJobStorage implements CommitIndexingJobStorag
                 .map(c -> new CommitIndexingJobItem(c.getRepoId(), c.getSha()))
                 .toList();
     }
+
+    @Override
+    public List<CommitIndexingJobItem> all() {
+        return commitRepository.findAll().stream()
+                .map(c -> new CommitIndexingJobItem(c.getRepoId(), c.getSha()))
+                .toList();
+    }
 }

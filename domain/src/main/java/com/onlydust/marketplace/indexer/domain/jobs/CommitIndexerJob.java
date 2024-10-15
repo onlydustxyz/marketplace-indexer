@@ -2,35 +2,27 @@ package com.onlydust.marketplace.indexer.domain.jobs;
 
 import com.onlydust.marketplace.indexer.domain.models.CommitIndexingJobItem;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.CommitIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
-import com.onlydust.marketplace.indexer.domain.ports.out.jobs.CommitIndexingJobStorage;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @AllArgsConstructor
 @Slf4j
 public class CommitIndexerJob extends Job {
     private final CommitIndexer commitIndexer;
-    private final CommitIndexingJobStorage commitIndexingJobStorage;
-    private final RateLimitService rateLimitService;
+    private final List<CommitIndexingJobItem> items;
 
     @Override
     public void execute() {
-        final var batchSize = rateLimitService.rateLimit().remaining() - 1000;
-
-        if (batchSize <= 0) {
-            LOGGER.info("Rate limit exceeded, waiting for reset");
-            return;
-        }
-
-        LOGGER.info("Indexing {} commits", batchSize);
-        commitIndexingJobStorage.commitsForLeastIndexedUsers(batchSize)
-                .forEach(this::index);
+        LOGGER.info("Indexing {} commits", items.size());
+        items.forEach(this::index);
     }
 
     private void index(final @NonNull CommitIndexingJobItem item) {
         try {
+            LOGGER.debug("Indexing commit {}/{}", item.repoId(), item.sha());
             commitIndexer.indexCommit(item.repoId(), item.sha());
         } catch (Throwable e) {
             LOGGER.error("Failed to index commit {}/{} ", item.repoId(), item.sha(), e);

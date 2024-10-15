@@ -4,24 +4,19 @@ import com.onlydust.marketplace.indexer.domain.jobs.CommitIndexerJob;
 import com.onlydust.marketplace.indexer.domain.jobs.Job;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.CommitIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
-import com.onlydust.marketplace.indexer.domain.ports.out.RateLimitService;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.CommitIndexingJobStorage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @AllArgsConstructor
 @Slf4j
-public class CommitIndexerJobService implements JobManager {
-    private final CommitIndexer commitIndexer;
+public class CommitRefreshJobService implements JobManager {
     private final CommitIndexingJobStorage commitIndexingJobStorage;
-    private final RateLimitService rateLimitService;
+    private final CommitIndexer commitIndexer;
 
     @Override
     public Job createJob() {
-        final var batchSize = rateLimitService.rateLimit().remaining() - 1000;
-
-        LOGGER.info("Indexing max {} commits", batchSize);
-        final var items = commitIndexingJobStorage.commitsForLeastIndexedUsers(batchSize);
+        final var items = commitIndexingJobStorage.all();
         return new CommitIndexerJob(commitIndexer, items);
     }
 }

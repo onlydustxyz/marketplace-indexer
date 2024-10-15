@@ -31,6 +31,7 @@ import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUser
 import com.onlydust.marketplace.indexer.domain.services.observers.GithubOutboxObserver;
 import com.onlydust.marketplace.indexer.domain.services.observers.IndexingOutboxObserver;
 import com.onlydust.marketplace.indexer.domain.services.readers.PublicEventRawStorageReaderAggregator;
+import com.onlydust.marketplace.indexer.postgres.adapters.PostgresCommitIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresUserIndexingJobStorage;
@@ -388,6 +389,15 @@ public class DomainConfiguration {
     ) {
         return new RepoRefreshJobService(applicationTaskExecutor, repoIndexingJobTriggerRepository, cacheOnlyFullRepoIndexer, cacheOnlyRepoIndexer,
                 githubAppContext, repoRefreshJobConfig);
+    }
+
+
+    @Bean
+    public JobManager cacheOnlyCommitRefreshJobManager(
+            final PostgresCommitIndexingJobStorage commitIndexingJobStorage,
+            final CommitIndexer cacheOnlyCommitIndexer
+    ) {
+        return new CommitRefreshJobService(commitIndexingJobStorage, cacheOnlyCommitIndexer);
     }
 
     @Bean
