@@ -17,7 +17,7 @@ public interface RepoContributorRepository extends BaseJpaRepository<RepoContrib
               count(c.id) filter ( where c.status = 'COMPLETED' ),
               count(c.id)
             FROM indexer_exp.contributions c
-            WHERE c.repo_id = :repoId
+            WHERE c.repo_id = :repoId AND c.contributor_id IS NOT NULL
             GROUP BY (c.repo_id, c.contributor_id)
             """, nativeQuery = true)
     void insertAllByRepoId(Long repoId);

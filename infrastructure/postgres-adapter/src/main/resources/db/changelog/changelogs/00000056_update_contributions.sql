@@ -1,0 +1,70 @@
+alter table indexer_exp.contributions
+    alter column contributor_id drop not null,
+    alter column contributor_login drop not null,
+    alter column contributor_html_url drop not null,
+    alter column contributor_avatar_url drop not null;
+
+
+insert into indexer_exp.contributions(id,
+                                      repo_id,
+                                      contributor_id,
+                                      type,
+                                      status,
+                                      pull_request_id,
+                                      issue_id,
+                                      code_review_id,
+                                      created_at,
+                                      completed_at,
+                                      github_number,
+                                      github_status,
+                                      github_title,
+                                      github_html_url,
+                                      github_body,
+                                      github_comments_count,
+                                      repo_owner_login,
+                                      repo_name,
+                                      repo_html_url,
+                                      github_author_id,
+                                      github_author_login,
+                                      github_author_html_url,
+                                      github_author_avatar_url,
+                                      contributor_login,
+                                      contributor_html_url,
+                                      contributor_avatar_url,
+                                      pr_review_state,
+                                      main_file_extensions)
+select encode(sha256(row ('ISSUE', id, null)::text::bytea), 'hex') as id,
+       repo_id                                                     as repo_id,
+       null                                                        as contributor_id,
+       'ISSUE'                                                     as type,
+       case
+           when status = 'OPEN' then 'IN_PROGRESS'::indexer_exp.contribution_status
+           when status = 'CANCELLED' then 'CANCELLED'::indexer_exp.contribution_status
+           else 'COMPLETED'::indexer_exp.contribution_status
+           end                                                     as status,
+       null                                                        as pull_request_id,
+       id                                                          as issue_id,
+       null                                                        as code_review_id,
+       created_at                                                  as created_at,
+       closed_at                                                   as completed_at,
+       number                                                      as github_number,
+       status                                                      as github_status,
+       title                                                       as github_title,
+       html_url                                                    as github_html_url,
+       body                                                        as github_body,
+       comments_count                                              as github_comments_count,
+       repo_owner_login                                            as repo_owner_login,
+       repo_name                                                   as repo_name,
+       repo_html_url                                               as repo_html_url,
+       author_id                                                   as github_author_id,
+       author_login                                                as github_author_login,
+       author_html_url                                             as github_author_html_url,
+       author_avatar_url                                           as github_author_avatar_url,
+       null                                                        as contributor_login,
+       null                                                        as contributor_html_url,
+       null                                                        as contributor_avatar_url,
+       null                                                        as pr_review_state,
+       null                                                        as main_file_extensions
+from indexer_exp.github_issues i
+         left join indexer_exp.github_issues_assignees ia on i.id = ia.issue_id
+where ia.user_id is null;

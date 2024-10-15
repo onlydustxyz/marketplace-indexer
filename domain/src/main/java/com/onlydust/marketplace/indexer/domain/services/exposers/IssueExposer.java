@@ -20,12 +20,15 @@ public class IssueExposer implements Exposer<CleanIssue> {
     @Override
     @Transactional
     public void expose(CleanIssue issue) {
-        final var fromAssignees = issue.getAssignees().stream().map(GithubAccount::of).map(assignee -> Contribution.of(GithubIssue.of(issue), assignee));
-
-        final var contributions = fromAssignees.toArray(Contribution[]::new);
-
         contributionStorage.deleteAllByRepoIdAndGithubNumber(issue.getRepo().getId(), issue.getNumber());
-        contributionStorage.saveAll(contributions);
+        
+        if (issue.getAssignees().isEmpty())
+            contributionStorage.saveAll(Contribution.of(GithubIssue.of(issue)));
+        else
+            contributionStorage.saveAll(issue.getAssignees().stream()
+                    .map(assignee -> Contribution.of(GithubIssue.of(issue), GithubAccount.of(assignee)))
+                    .toArray(Contribution[]::new));
+
         indexingObserver.onContributionsChanged(issue.getRepo().getId());
         issueStorage.save(GithubIssue.of(issue));
     }

@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static java.util.Comparator.comparing;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -137,11 +138,12 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
          * Pull request 1258 from anthony (author is same as committer)
          * Code review requested to olivier and pierre
          * Issue 78 assigned to anthony
+         * Issue 82 not assigned
          */
-        assertThat(contributionRepository.findAll()).hasSize(7);
+        assertThat(contributionRepository.findAll()).hasSize(8);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST)).hasSize(2);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(4);
-        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE)).hasSize(1);
+        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE)).hasSize(2);
         assertThat(repoContributorRepository.findAll()).hasSize(3);
 
         assertThat(repoContributorRepository.findAll()).containsExactlyInAnyOrder(
@@ -181,14 +183,19 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
          * Pull request 1258 from anthony (author is same as committer)
          * Code review requested to olivier and pierre
          * Issue 78 assigned to olivier
+         * Issue 82 not assigned
          */
-        assertThat(contributionRepository.findAll()).hasSize(6);
+        assertThat(contributionRepository.findAll()).hasSize(7);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST)).hasSize(2);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(3);
 
-        final var issues = contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE).toList();
-        assertThat(issues).hasSize(1);
+        final var issues = contributionRepository.findAll().stream()
+                .filter(c -> c.getType() == ContributionEntity.Type.ISSUE)
+                .sorted(comparing(ContributionEntity::getGithubNumber))
+                .toList();
+        assertThat(issues).hasSize(2);
         assertThat(issues.get(0).getContributor().getLogin()).isEqualTo("ofux");
+        assertThat(issues.get(1).getContributor()).isNull();
     }
 
     @Test
