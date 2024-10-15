@@ -18,6 +18,7 @@ public class CleanPullRequest {
     String title;
     String state;
     Date createdAt;
+    Date updatedAt;
     Date closedAt;
     Date mergedAt;
     Boolean merged;
@@ -43,6 +44,7 @@ public class CleanPullRequest {
                 .title(pullRequest.getTitle())
                 .state(pullRequest.getState())
                 .createdAt(pullRequest.getCreatedAt())
+                .updatedAt(pullRequest.getUpdatedAt())
                 .closedAt(pullRequest.getClosedAt())
                 .mergedAt(pullRequest.getMergedAt())
                 .merged(pullRequest.getMerged())
@@ -62,6 +64,7 @@ public class CleanPullRequest {
                 .title(pullRequest.getTitle())
                 .state(pullRequest.getState())
                 .createdAt(pullRequest.getCreatedAt())
+                .updatedAt(pullRequest.getUpdatedAt())
                 .closedAt(pullRequest.getClosedAt())
                 .mergedAt(pullRequest.getMergedAt())
                 .merged(pullRequest.getMerged())

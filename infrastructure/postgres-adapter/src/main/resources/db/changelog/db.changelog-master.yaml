@@ -115,3 +115,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000055_refactor_commits_table.sql
   - include:
       file: db/changelog/changelogs/00000056_update_contributions.sql
+  - include:
+      file: db/changelog/changelogs/00000057_add_contributions_updated_at.sql

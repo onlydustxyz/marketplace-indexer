@@ -32,6 +32,7 @@ public class GithubIssueEntity {
     @JdbcType(PostgreSQLEnumJdbcType.class)
     Status status;
     Date createdAt;
+    Date updatedAt;
     Date closedAt;
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubAccountEntity author;
@@ -69,6 +70,7 @@ public class GithubIssueEntity {
                 .title(issue.getTitle())
                 .status(Status.of(issue.getStatus()))
                 .createdAt(issue.getCreatedAt())
+                .updatedAt(issue.getUpdatedAt())
                 .closedAt(issue.getClosedAt())
                 .author(GithubAccountEntity.of(issue.getAuthor()))
                 .htmlUrl(issue.getHtmlUrl())

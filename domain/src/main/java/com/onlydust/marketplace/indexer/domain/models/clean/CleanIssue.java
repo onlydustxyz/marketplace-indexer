@@ -18,6 +18,7 @@ public class CleanIssue {
     String state;
     String stateReason;
     Date createdAt;
+    Date updatedAt;
     Date closedAt;
     CleanAccount author;
     String htmlUrl;
@@ -35,6 +36,7 @@ public class CleanIssue {
                 .state(issue.getState())
                 .stateReason(issue.getStateReason())
                 .createdAt(issue.getCreatedAt())
+                .updatedAt(issue.getUpdatedAt())
                 .closedAt(issue.getClosedAt())
                 .author(author)
                 .htmlUrl(issue.getHtmlUrl())

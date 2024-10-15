@@ -27,6 +27,7 @@ public class GithubPullRequest {
     String htmlUrl;
     Integer commentsCount;
     Date createdAt;
+    Date updatedAt;
     Date closedAt;
     Date mergedAt;
     String body;
@@ -47,6 +48,7 @@ public class GithubPullRequest {
                 .htmlUrl(pullRequest.getHtmlUrl())
                 .commentsCount(pullRequest.getComments())
                 .createdAt(pullRequest.getCreatedAt())
+                .updatedAt(pullRequest.getUpdatedAt())
                 .closedAt(pullRequest.getClosedAt())
                 .mergedAt(pullRequest.getMergedAt())
                 .body(pullRequest.getBody())

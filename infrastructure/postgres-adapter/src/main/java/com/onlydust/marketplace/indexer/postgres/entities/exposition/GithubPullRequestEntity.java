@@ -36,6 +36,7 @@ public class GithubPullRequestEntity {
     @JdbcType(PostgreSQLEnumJdbcType.class)
     Status status;
     Date createdAt;
+    Date updatedAt;
     Date closedAt;
     Date mergedAt;
     String body;
@@ -92,6 +93,7 @@ public class GithubPullRequestEntity {
                 .title(pullRequest.getTitle())
                 .status(Status.of(pullRequest.getStatus()))
                 .createdAt(pullRequest.getCreatedAt())
+                .updatedAt(pullRequest.getUpdatedAt())
                 .closedAt(pullRequest.getClosedAt())
                 .mergedAt(pullRequest.getMergedAt())
                 .body(pullRequest.getBody())

@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.domain.models.exposition;
 
-import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,6 +7,8 @@ import lombok.Value;
 
 import java.util.Date;
 import java.util.List;
+
+import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.internalServerError;
 
 @Value
 @Builder(access = AccessLevel.PRIVATE)
@@ -18,6 +19,7 @@ public class GithubIssue {
     String title;
     Status status;
     Date createdAt;
+    Date updatedAt;
     Date closedAt;
     GithubAccount author;
     String htmlUrl;
@@ -34,6 +36,7 @@ public class GithubIssue {
                 .title(issue.getTitle())
                 .status(Status.of(issue))
                 .createdAt(issue.getCreatedAt())
+                .updatedAt(issue.getUpdatedAt())
                 .closedAt(issue.getClosedAt())
                 .author(GithubAccount.of(issue.getAuthor()))
                 .htmlUrl(issue.getHtmlUrl())
@@ -61,7 +64,7 @@ public class GithubIssue {
                             return Status.CANCELLED;
                     }
             }
-            throw OnlyDustException.internalServerError("Unknown issue state: " + issue.getState() + " " + issue.getStateReason());
+            throw internalServerError("Unknown issue state: " + issue.getState() + " " + issue.getStateReason());
         }
 
     }
