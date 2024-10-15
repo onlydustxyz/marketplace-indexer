@@ -9,4 +9,6 @@ public interface UserFileExtensionStorage {
                                              int commitCount,
                                              int fileCount,
                                              int modificationCount);
+
+    void clear();
 }

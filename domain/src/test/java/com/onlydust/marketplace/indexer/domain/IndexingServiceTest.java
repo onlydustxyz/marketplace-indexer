@@ -60,7 +60,7 @@ public class IndexingServiceTest {
             new IssueIndexingService(rawStorageReader, userIndexingService, repoIndexingService),
             new IssueExposer(contributionRepository, issueStorage, indexingObserver)
     );
-    final CommitIndexingService commitIndexingService = new CommitIndexingService(rawStorageReader);
+    final CommitIndexingService commitIndexingService = new CommitIndexingService(rawStorageReader, userIndexingService);
     final PullRequestIndexer pullRequestIndexer = new PullRequestExposerIndexer(
             new PullRequestIndexingService(rawStorageReader, userIndexingService, repoIndexingService, issueIndexer, commitIndexingService),
             new PullRequestExposer(contributionRepository, pullRequestStorage, indexingObserver)

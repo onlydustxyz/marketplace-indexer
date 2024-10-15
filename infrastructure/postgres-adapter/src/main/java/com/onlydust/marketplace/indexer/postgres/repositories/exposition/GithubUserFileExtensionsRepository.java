@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface GithubUserFileExtensionsRepository extends BaseJpaRepository<GithubUserFileExtensionEntity, GithubUserFileExtensionEntity.PrimaryKey> {
     List<GithubUserFileExtensionEntity> findAll();
+
+    void deleteAll();
 }

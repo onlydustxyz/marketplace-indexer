@@ -51,13 +51,6 @@ public class PullRequestIndexingService implements PullRequestIndexer {
                     return List.of();
                 }).stream()
                 .flatMap(c -> commitIndexer.indexCommit(repoId, c.getSha()).stream())
-                .map(c -> {
-                    final var author = Optional.ofNullable(c.getAuthor())
-                            .flatMap(a -> Optional.ofNullable(a.getId()))
-                            .flatMap(userIndexer::indexUser)
-                            .orElse(null);
-                    return c.withAuthor(author);
-                })
                 .toList();
     }
 

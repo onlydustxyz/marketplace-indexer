@@ -395,9 +395,10 @@ public class DomainConfiguration {
     @Bean
     public JobManager cacheOnlyCommitRefreshJobManager(
             final PostgresCommitIndexingJobStorage commitIndexingJobStorage,
-            final CommitIndexer cacheOnlyCommitIndexer
+            final CommitIndexer cacheOnlyCommitIndexer,
+            final UserFileExtensionStorage userFileExtensionStorage
     ) {
-        return new CommitRefreshJobService(commitIndexingJobStorage, cacheOnlyCommitIndexer);
+        return new CommitRefreshJobService(commitIndexingJobStorage, cacheOnlyCommitIndexer, userFileExtensionStorage);
     }
 
     @Bean
@@ -498,15 +499,17 @@ public class DomainConfiguration {
 
     @Bean
     public CommitIndexer cachedCommitIndexer(final RawStorageReader cachedRawStorageReader,
+                                             final UserIndexer cachedUserIndexer,
                                              final Exposer<CleanCommit> commitExposer) {
-        return new CommitExposerIndexer(new CommitIndexingService(cachedRawStorageReader),
+        return new CommitExposerIndexer(new CommitIndexingService(cachedRawStorageReader, cachedUserIndexer),
                 commitExposer);
     }
 
     @Bean
     public CommitIndexer cacheOnlyCommitIndexer(final PostgresRawStorage postgresRawStorage,
+                                                final UserIndexer cacheOnlyUserIndexer,
                                                 final Exposer<CleanCommit> commitExposer) {
-        return new CommitExposerIndexer(new CommitIndexingService(postgresRawStorage),
+        return new CommitExposerIndexer(new CommitIndexingService(postgresRawStorage, cacheOnlyUserIndexer),
                 commitExposer);
     }
 }
