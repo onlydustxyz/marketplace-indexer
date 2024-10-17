@@ -213,7 +213,8 @@ FROM indexer_exp.contributions c;
 
 INSERT INTO indexer_exp.grouped_contribution_contributors (contribution_uuid, contributor_id)
 SELECT c.contribution_uuid, c.contributor_id
-FROM indexer_exp.contributions c;
+FROM indexer_exp.contributions c
+WHERE c.contributor_id IS NOT NULL;
 
 
 
