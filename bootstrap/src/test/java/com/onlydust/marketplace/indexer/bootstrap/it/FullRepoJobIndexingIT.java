@@ -8,10 +8,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubRepoL
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.RepoContributorEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.ApiEventRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoStatsEntityRepository;
-import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.PullRequestRepository;
 import jakarta.transaction.Transactional;
@@ -34,6 +31,8 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
 
     @Autowired
     public ContributionRepository contributionRepository;
+    @Autowired
+    public GroupedContributionRepository groupedContributionRepository;
     @Autowired
     public RepoContributorRepository repoContributorRepository;
     @Autowired
@@ -140,16 +139,21 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
          * Issue 78 assigned to anthony
          * Issue 82 not assigned
          */
-        assertThat(contributionRepository.findAll()).hasSize(8);
-        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST)).hasSize(2);
+        assertThat(contributionRepository.findAll()).hasSize(9);
+        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST)).hasSize(3);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(4);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE)).hasSize(2);
-        assertThat(repoContributorRepository.findAll()).hasSize(3);
 
+        assertThat(groupedContributionRepository.findAll()).hasSize(8);
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST)).hasSize(2);
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(4);
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE)).hasSize(2);
+
+        assertThat(repoContributorRepository.findAll()).hasSize(3);
         assertThat(repoContributorRepository.findAll()).containsExactlyInAnyOrder(
                 new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE, 43467246L), 2, 3),
                 new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE, 16590657L), 1, 2),
-                new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE, 595505L), 0, 2));
+                new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE, 595505L), 0, 3));
     }
 
     @Test
@@ -180,14 +184,16 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
         /*
          * Pull request 1257 from anthony (author is same as committer)
          * Code review from pierre
-         * Pull request 1258 from anthony (author is same as committer)
+         * Pull request 1258 from anthony (author is same as committer + olivier is committer)
          * Code review requested to olivier and pierre
          * Issue 78 assigned to olivier
          * Issue 82 not assigned
          */
-        assertThat(contributionRepository.findAll()).hasSize(7);
-        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST)).hasSize(2);
+        assertThat(contributionRepository.findAll()).hasSize(8);
+        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST)).hasSize(3);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(3);
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST)).hasSize(2);
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(3);
 
         final var issues = contributionRepository.findAll().stream()
                 .filter(c -> c.getType() == ContributionEntity.Type.ISSUE)

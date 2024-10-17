@@ -28,6 +28,10 @@ public class GithubIssue {
     List<GithubAccount> assignees;
     List<GithubLabel> labels;
 
+    public ContributionUUID getContributionUUID() {
+        return ContributionUUID.of(id);
+    }
+
     public static GithubIssue of(CleanIssue issue) {
         return GithubIssue.builder()
                 .id(issue.getId())

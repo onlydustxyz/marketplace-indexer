@@ -23,6 +23,14 @@ public class Contribution {
     Date completedAt;
     GithubPullRequest.ReviewState pullRequestReviewState;
 
+    public ContributionUUID getContributionUUID() {
+        return switch (type) {
+            case PULL_REQUEST -> pullRequest.getContributionUUID();
+            case ISSUE -> issue.getContributionUUID();
+            case CODE_REVIEW -> codeReview.getContributionUUID();
+        };
+    }
+
     public static Contribution of(GithubPullRequest pullRequest) {
         return Contribution.builder()
                 .repo(pullRequest.getRepo())

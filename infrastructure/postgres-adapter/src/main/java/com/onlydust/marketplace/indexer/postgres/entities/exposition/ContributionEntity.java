@@ -11,6 +11,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 @Entity
 @Builder(access = AccessLevel.PRIVATE)
@@ -22,6 +23,8 @@ import java.util.Optional;
 public class ContributionEntity {
     @Id
     String id;
+
+    UUID contributionUuid;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubRepoEntity repo;
@@ -89,6 +92,7 @@ public class ContributionEntity {
 
         return ContributionEntity.builder()
                 .id(contribution.getId())
+                .contributionUuid(contribution.getContributionUUID().value())
                 .repo(GithubRepoEntity.of(contribution.getRepo()))
                 .contributor(contributor.map(GithubAccountEntity::of).orElse(null))
                 .type(Type.of(contribution.getType()))

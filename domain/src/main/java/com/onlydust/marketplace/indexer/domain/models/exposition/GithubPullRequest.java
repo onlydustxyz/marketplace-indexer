@@ -37,6 +37,10 @@ public class GithubPullRequest {
     Set<GithubCommit> commits;
     List<String> mainFileExtensions;
 
+    public ContributionUUID getContributionUUID() {
+        return ContributionUUID.of(id);
+    }
+
     public static GithubPullRequest of(CleanPullRequest pullRequest) {
         return GithubPullRequest.builder()
                 .id(pullRequest.getId())
