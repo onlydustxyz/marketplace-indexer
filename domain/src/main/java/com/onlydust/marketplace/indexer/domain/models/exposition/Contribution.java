@@ -4,7 +4,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 
+import java.lang.reflect.Array;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
@@ -22,6 +26,10 @@ public class Contribution {
     Date updatedAt;
     Date completedAt;
     GithubPullRequest.ReviewState pullRequestReviewState;
+
+    public UUID getGroupedId() {
+        return GroupedId.of(this);
+    }
 
     public static Contribution of(GithubPullRequest pullRequest) {
         return Contribution.builder()
@@ -142,6 +150,37 @@ public class Contribution {
                 case APPROVED, CHANGES_REQUESTED -> Status.COMPLETED;
                 case DISMISSED -> Status.CANCELLED;
             };
+        }
+    }
+
+
+    public static class GroupedId {
+        public static UUID of(Contribution contribution) {
+            final String name = switch (contribution.getType()) {
+                case ISSUE -> contribution.getIssue().getId().toString();
+                case PULL_REQUEST -> contribution.getPullRequest().getId().toString();
+                case CODE_REVIEW -> contribution.getCodeReview().getId();
+            };
+            final byte[] bytes = concatenate(toByteArray(new UUID(0L, 0L)), name.getBytes(StandardCharsets.UTF_8));
+            return UUID.nameUUIDFromBytes(bytes);
+        }
+
+        private static byte[] toByteArray(UUID uuid) {
+            final ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+            bb.putLong(uuid.getMostSignificantBits());
+            bb.putLong(uuid.getLeastSignificantBits());
+            return bb.array();
+        }
+
+        private static byte[] concatenate(byte[] a, byte[] b) {
+            int aLen = a.length;
+            int bLen = b.length;
+
+            final byte[] c = (byte[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
+            System.arraycopy(a, 0, c, 0, aLen);
+            System.arraycopy(b, 0, c, aLen, bLen);
+
+            return c;
         }
     }
 }

@@ -24,7 +24,6 @@ import static java.util.stream.Collectors.groupingBy;
 @Table(name = "grouped_contributions", schema = "indexer_exp")
 public class GroupedContributionEntity {
     @Id
-    @org.hibernate.annotations.Generated
     UUID id;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -110,9 +109,8 @@ public class GroupedContributionEntity {
                     .or(() -> Optional.ofNullable(contribution.getIssue()).map(GithubIssue::getAuthor))
                     .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getAuthor));
 
-            final var contributor = Optional.ofNullable(contribution.getContributor()).filter(c -> c.getId() != null);
-
             return GroupedContributionEntity.builder()
+                    .id(contribution.getGroupedId())
                     .repo(GithubRepoEntity.of(contribution.getRepo()))
                     .contributors(contributors)
                     .type(ContributionEntity.Type.of(contribution.getType()))
