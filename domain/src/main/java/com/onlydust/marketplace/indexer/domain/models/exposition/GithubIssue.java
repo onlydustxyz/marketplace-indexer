@@ -1,7 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.models.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
-import com.onlydust.marketplace.indexer.domain.utils.ContributionUUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;

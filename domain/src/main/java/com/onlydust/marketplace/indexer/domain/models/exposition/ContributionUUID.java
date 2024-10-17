@@ -1,4 +1,4 @@
-package com.onlydust.marketplace.indexer.domain.utils;
+package com.onlydust.marketplace.indexer.domain.models.exposition;
 
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
