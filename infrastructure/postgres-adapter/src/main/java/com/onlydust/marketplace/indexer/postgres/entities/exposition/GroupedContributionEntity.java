@@ -71,9 +71,6 @@ public class GroupedContributionEntity {
     String githubAuthorLogin;
     String githubAuthorHtmlUrl;
     String githubAuthorAvatarUrl;
-    String contributorLogin;
-    String contributorHtmlUrl;
-    String contributorAvatarUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "github_pull_request_review_state")
@@ -157,9 +154,6 @@ public class GroupedContributionEntity {
                     .githubAuthorLogin(author.map(GithubAccount::getLogin).orElse(null))
                     .githubAuthorHtmlUrl(author.map(GithubAccount::getHtmlUrl).orElse(null))
                     .githubAuthorAvatarUrl(author.map(GithubAccount::getAvatarUrl).orElse(null))
-                    .contributorLogin(contributor.map(GithubAccount::getLogin).orElse(null))
-                    .contributorHtmlUrl(contributor.map(GithubAccount::getHtmlUrl).orElse(null))
-                    .contributorAvatarUrl(contributor.map(GithubAccount::getAvatarUrl).orElse(null))
                     .prReviewState(Optional.ofNullable(contribution.getPullRequest()).map(GithubPullRequest::getReviewState).map(GithubPullRequestEntity.ReviewState::of).orElse(null))
                     .mainFileExtensions(Optional.ofNullable(contribution.getPullRequest()).map(pr -> pr.getMainFileExtensions().toArray(String[]::new)).orElse(null))
                     .build();

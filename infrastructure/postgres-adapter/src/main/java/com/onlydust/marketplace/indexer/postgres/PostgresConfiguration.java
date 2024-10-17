@@ -71,8 +71,9 @@ public class PostgresConfiguration {
 
     @Bean
     public ContributionStorage contributionStorageRepository(final ContributionRepository contributionRepository,
+                                                             final GroupedContributionRepository groupedContributionRepository,
                                                              final ContributionNotificationEntityRepository contributionNotificationEntityRepository) {
-        return new PostgresContributionStorage(contributionRepository, contributionNotificationEntityRepository);
+        return new PostgresContributionStorage(contributionRepository, groupedContributionRepository, contributionNotificationEntityRepository);
     }
 
     @Bean

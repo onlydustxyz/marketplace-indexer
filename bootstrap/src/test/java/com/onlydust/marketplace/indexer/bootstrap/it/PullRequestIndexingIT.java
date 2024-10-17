@@ -2,9 +2,11 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
+import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubPullRequestCommitCountEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubPullRequestRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GroupedContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
@@ -17,6 +19,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +45,8 @@ public class PullRequestIndexingIT extends IntegrationTest {
     public ContributionRepository contributionRepository;
     @Autowired
     public GithubPullRequestRepository githubPullRequestRepository;
+    @Autowired
+    public GroupedContributionRepository groupedContributionRepository;
 
     @Test
     @Order(1)
@@ -130,6 +135,12 @@ public class PullRequestIndexingIT extends IntegrationTest {
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW)).hasSize(2);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE)).hasSize(1);
 
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST).toList().size()).isEqualTo(1);
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST).findFirst().orElseThrow()
+                .getContributors().size()).isEqualTo(1);
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW).toList().size()).isEqualTo(2);
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE).toList().size()).isEqualTo(1);
+
         assertThat(githubPullRequestRepository.findAll()).hasSize(1);
         final var githubPullRequest = githubPullRequestRepository.findAll().stream().findFirst().orElseThrow();
         assertThat(githubPullRequest.getCreatedAt().toString()).isEqualTo("2023-09-21 12:42:45.0");
@@ -195,19 +206,30 @@ public class PullRequestIndexingIT extends IntegrationTest {
                 .contains(RawUserEntity.of(pierre), RawUserEntity.of(olivier), RawUserEntity.of(anthony),
                         RawUserEntity.of(onlyDust));
 
-        assertThat(contributionRepository.findAll().size()).isEqualTo(7);
-        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST).toList().size()).isEqualTo(2);
+        assertThat(contributionRepository.findAll().size()).isEqualTo(8);
+        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST).toList().size()).isEqualTo(3);
+        assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST && c.getPullRequest().getId().equals(pr1258.getId())).toList().size()).isEqualTo(2);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW).toList().size()).isEqualTo(4);
         assertThat(contributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE).toList().size()).isEqualTo(1);
+
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST && c.getPullRequest().getId().equals(pr1258.getId())).toList().size()).isEqualTo(1);
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.PULL_REQUEST && c.getPullRequest().getId().equals(pr1258.getId())).findFirst().orElseThrow()
+                .getContributors().size()).isEqualTo(2);
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.CODE_REVIEW).toList().size()).isEqualTo(4);
+        assertThat(groupedContributionRepository.findAll().stream().filter(c -> c.getType() == ContributionEntity.Type.ISSUE).toList().size()).isEqualTo(1);
 
         assertThat(githubPullRequestRepository.findAll()).hasSize(2);
         final var githubPullRequest = githubPullRequestRepository.findAll().stream().filter(pr -> pr.getNumber() == 1258L).findFirst().orElseThrow();
         assertThat(githubPullRequest.getMainFileExtensions()).containsExactly("rs", "java", "sql");
         assertThat(githubPullRequest.getCommitCount()).isEqualTo(11);
-        final var commitCounts = githubPullRequest.getCommitCounts().stream().findFirst().orElseThrow();
-        assertThat(commitCounts.getPullRequestId()).isEqualTo(pr1258.getId());
-        assertThat(commitCounts.getAuthor().getId()).isEqualTo(anthony.getId());
-        assertThat(commitCounts.getCommitCount()).isEqualTo(9);
+        final var commitCounts =
+                githubPullRequest.getCommitCounts().stream().sorted(Comparator.comparing(GithubPullRequestCommitCountEntity::getCommitCount)).toList();
+        assertThat(commitCounts.get(0).getPullRequestId()).isEqualTo(pr1258.getId());
+        assertThat(commitCounts.get(0).getAuthor().getId()).isEqualTo(olivier.getId());
+        assertThat(commitCounts.get(0).getCommitCount()).isEqualTo(1);
+        assertThat(commitCounts.get(1).getPullRequestId()).isEqualTo(pr1258.getId());
+        assertThat(commitCounts.get(1).getAuthor().getId()).isEqualTo(anthony.getId());
+        assertThat(commitCounts.get(1).getCommitCount()).isEqualTo(8);
     }
 
     private WebTestClient.ResponseSpec indexPullRequest(String repoOwner, String repoName, Long pullRequestNumber, String token) {
