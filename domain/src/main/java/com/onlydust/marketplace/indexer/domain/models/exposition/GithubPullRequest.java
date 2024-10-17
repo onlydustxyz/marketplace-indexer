@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.domain.models.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanCommit;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
+import com.onlydust.marketplace.indexer.domain.utils.ContributionUUID;
 import lombok.Builder;
 import lombok.Value;
 
@@ -36,6 +37,10 @@ public class GithubPullRequest {
     ReviewState reviewState;
     Set<GithubCommit> commits;
     List<String> mainFileExtensions;
+
+    public ContributionUUID getContributionUUID() {
+        return ContributionUUID.of(id);
+    }
 
     public static GithubPullRequest of(CleanPullRequest pullRequest) {
         return GithubPullRequest.builder()

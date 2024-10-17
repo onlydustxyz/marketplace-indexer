@@ -9,6 +9,7 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -22,6 +23,8 @@ import static java.util.stream.Collectors.toSet;
 public class GithubIssueEntity {
     @Id
     Long id;
+
+    UUID contributionUuid;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubRepoEntity repo;
@@ -65,6 +68,7 @@ public class GithubIssueEntity {
     public static GithubIssueEntity of(GithubIssue issue) {
         return GithubIssueEntity.builder()
                 .id(issue.getId())
+                .contributionUuid(issue.getContributionUUID().value())
                 .repo(GithubRepoEntity.of(issue.getRepo()))
                 .number(issue.getNumber())
                 .title(issue.getTitle())

@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.domain.models.exposition;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanCodeReview;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
+import com.onlydust.marketplace.indexer.domain.utils.ContributionUUID;
 import lombok.Builder;
 import lombok.Value;
 
@@ -40,6 +41,10 @@ public class GithubCodeReview {
 
     public String getId() {
         return sha256Hex(String.format("(%d,%d)", pullRequest.getId(), author.getId()));
+    }
+
+    public ContributionUUID getContributionUUID() {
+        return ContributionUUID.of(getId());
     }
 
     public Date getUpdatedAt() {

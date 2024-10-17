@@ -24,14 +24,14 @@ import static java.util.stream.Collectors.groupingBy;
 @Table(name = "grouped_contributions", schema = "indexer_exp")
 public class GroupedContributionEntity {
     @Id
-    UUID id;
+    UUID contributionUuid;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubRepoEntity repo;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "grouped_contribution_contributors", schema = "indexer_exp",
-            joinColumns = @JoinColumn(name = "grouped_contribution_id"),
+            joinColumns = @JoinColumn(name = "contribution_uuid"),
             inverseJoinColumns = @JoinColumn(name = "contributor_id"))
     Set<GithubAccountEntity> contributors;
 
@@ -110,7 +110,7 @@ public class GroupedContributionEntity {
                     .or(() -> Optional.ofNullable(contribution.getCodeReview()).map(GithubCodeReview::getAuthor));
 
             return GroupedContributionEntity.builder()
-                    .id(contribution.getGroupedId())
+                    .contributionUuid(contribution.getContributionUUID().value())
                     .repo(GithubRepoEntity.of(contribution.getRepo()))
                     .contributors(contributors)
                     .type(ContributionEntity.Type.of(contribution.getType()))

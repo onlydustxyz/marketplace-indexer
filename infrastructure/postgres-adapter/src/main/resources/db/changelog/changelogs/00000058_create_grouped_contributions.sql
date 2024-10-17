@@ -10,22 +10,66 @@ $$ LANGUAGE SQL
     PARALLEL SAFE;
 
 
+
 alter table indexer_exp.contributions
-    add column grouped_id uuid;
+    add column contribution_uuid uuid;
 
 update indexer_exp.contributions
-set grouped_id = indexer.uuid_of(coalesce(pull_request_id::text, issue_id::text, code_review_id));
+set contribution_uuid = indexer.uuid_of(coalesce(pull_request_id::text, issue_id::text, code_review_id));
 
 alter table indexer_exp.contributions
-    alter column grouped_id set not null;
+    alter column contribution_uuid set not null;
 
-create index contributions_grouped_id_index
-    on indexer_exp.contributions (grouped_id);
+create index contributions_contribution_uuid_index
+    on indexer_exp.contributions (contribution_uuid);
+
+
+
+alter table indexer_exp.github_issues
+    add column contribution_uuid uuid;
+
+update indexer_exp.github_issues
+set contribution_uuid = indexer.uuid_of(id::text);
+
+alter table indexer_exp.github_issues
+    alter column contribution_uuid set not null;
+
+create unique index github_issues_contribution_uuid_index
+    on indexer_exp.github_issues (contribution_uuid);
+
+
+
+alter table indexer_exp.github_pull_requests
+    add column contribution_uuid uuid;
+
+update indexer_exp.github_pull_requests
+set contribution_uuid = indexer.uuid_of(id::text);
+
+alter table indexer_exp.github_pull_requests
+    alter column contribution_uuid set not null;
+
+create unique index github_pull_requests_contribution_uuid_index
+    on indexer_exp.github_pull_requests (contribution_uuid);
+
+
+
+alter table indexer_exp.github_code_reviews
+    add column contribution_uuid uuid;
+
+update indexer_exp.github_code_reviews
+set contribution_uuid = indexer.uuid_of(id::text);
+
+alter table indexer_exp.github_code_reviews
+    alter column contribution_uuid set not null;
+
+create unique index github_code_reviews_contribution_uuid_index
+    on indexer_exp.github_code_reviews (contribution_uuid);
+
 
 
 create table indexer_exp.grouped_contributions
 (
-    id                       uuid primary key,
+    contribution_uuid        uuid primary key,
     repo_id                  bigint                          not null references indexer_exp.github_repos,
     type                     indexer_exp.contribution_type   not null,
     status                   indexer_exp.contribution_status not null,
@@ -97,11 +141,11 @@ create index grouped_contributions_type_as_text_index
 
 create table indexer_exp.grouped_contribution_contributors
 (
-    grouped_contribution_id uuid                    not null references indexer_exp.grouped_contributions,
-    contributor_id          bigint                  not null references indexer_exp.github_accounts,
-    tech_created_at         timestamp default now() not null,
-    tech_updated_at         timestamp default now() not null,
-    primary key (grouped_contribution_id, contributor_id)
+    contribution_uuid uuid                    not null references indexer_exp.grouped_contributions,
+    contributor_id    bigint                  not null references indexer_exp.github_accounts,
+    tech_created_at   timestamp default now() not null,
+    tech_updated_at   timestamp default now() not null,
+    primary key (contribution_uuid, contributor_id)
 );
 
 create trigger grouped_contribution_contributors_set_tech_updated_at
@@ -111,10 +155,10 @@ create trigger grouped_contribution_contributors_set_tech_updated_at
 execute function set_tech_updated_at();
 
 create unique index grouped_contribution_contributors_pk_inv
-    on indexer_exp.grouped_contribution_contributors (contributor_id, grouped_contribution_id);
+    on indexer_exp.grouped_contribution_contributors (contributor_id, contribution_uuid);
 
 
-INSERT INTO indexer_exp.grouped_contributions (id,
+INSERT INTO indexer_exp.grouped_contributions (contribution_uuid,
                                                repo_id,
                                                type,
                                                status,
@@ -139,36 +183,36 @@ INSERT INTO indexer_exp.grouped_contributions (id,
                                                github_author_avatar_url,
                                                pr_review_state,
                                                main_file_extensions)
-SELECT DISTINCT ON (c.grouped_id) c.grouped_id,
-                                  c.repo_id,
-                                  c.type,
-                                  c.status,
-                                  c.pull_request_id,
-                                  c.issue_id,
-                                  c.code_review_id,
-                                  c.created_at,
-                                  c.updated_at,
-                                  c.completed_at,
-                                  c.github_number,
-                                  c.github_status,
-                                  c.github_title,
-                                  c.github_html_url,
-                                  c.github_body,
-                                  c.github_comments_count,
-                                  c.repo_owner_login,
-                                  c.repo_name,
-                                  c.repo_html_url,
-                                  c.github_author_id,
-                                  c.github_author_login,
-                                  c.github_author_html_url,
-                                  c.github_author_avatar_url,
-                                  c.pr_review_state,
-                                  c.main_file_extensions
+SELECT DISTINCT ON (c.contribution_uuid) c.contribution_uuid,
+                                         c.repo_id,
+                                         c.type,
+                                         c.status,
+                                         c.pull_request_id,
+                                         c.issue_id,
+                                         c.code_review_id,
+                                         c.created_at,
+                                         c.updated_at,
+                                         c.completed_at,
+                                         c.github_number,
+                                         c.github_status,
+                                         c.github_title,
+                                         c.github_html_url,
+                                         c.github_body,
+                                         c.github_comments_count,
+                                         c.repo_owner_login,
+                                         c.repo_name,
+                                         c.repo_html_url,
+                                         c.github_author_id,
+                                         c.github_author_login,
+                                         c.github_author_html_url,
+                                         c.github_author_avatar_url,
+                                         c.pr_review_state,
+                                         c.main_file_extensions
 FROM indexer_exp.contributions c;
 
 
-INSERT INTO indexer_exp.grouped_contribution_contributors (grouped_contribution_id, contributor_id)
-SELECT c.grouped_id, c.contributor_id
+INSERT INTO indexer_exp.grouped_contribution_contributors (contribution_uuid, contributor_id)
+SELECT c.contribution_uuid, c.contributor_id
 FROM indexer_exp.contributions c;
 
 

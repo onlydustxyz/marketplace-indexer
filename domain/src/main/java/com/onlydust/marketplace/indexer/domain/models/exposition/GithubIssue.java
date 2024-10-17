@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.models.exposition;
 
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
+import com.onlydust.marketplace.indexer.domain.utils.ContributionUUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
@@ -27,6 +28,10 @@ public class GithubIssue {
     Integer commentsCount;
     List<GithubAccount> assignees;
     List<GithubLabel> labels;
+
+    public ContributionUUID getContributionUUID() {
+        return ContributionUUID.of(id);
+    }
 
     public static GithubIssue of(CleanIssue issue) {
         return GithubIssue.builder()

@@ -12,6 +12,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.*;
 
@@ -25,6 +26,8 @@ import static java.util.stream.Collectors.*;
 public class GithubPullRequestEntity {
     @Id
     Long id;
+
+    UUID contributionUuid;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubRepoEntity repo;
@@ -88,6 +91,7 @@ public class GithubPullRequestEntity {
 
         return GithubPullRequestEntity.builder()
                 .id(pullRequest.getId())
+                .contributionUuid(pullRequest.getContributionUUID().value())
                 .repo(GithubRepoEntity.of(pullRequest.getRepo()))
                 .number(pullRequest.getNumber())
                 .title(pullRequest.getTitle())

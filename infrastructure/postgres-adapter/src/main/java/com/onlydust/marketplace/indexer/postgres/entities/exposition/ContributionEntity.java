@@ -24,8 +24,7 @@ public class ContributionEntity {
     @Id
     String id;
 
-    @NonNull
-    UUID groupedId;
+    UUID contributionUuid;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubRepoEntity repo;
@@ -93,7 +92,7 @@ public class ContributionEntity {
 
         return ContributionEntity.builder()
                 .id(contribution.getId())
-                .groupedId(contribution.getGroupedId())
+                .contributionUuid(contribution.getContributionUUID().value())
                 .repo(GithubRepoEntity.of(contribution.getRepo()))
                 .contributor(contributor.map(GithubAccountEntity::of).orElse(null))
                 .type(Type.of(contribution.getType()))

@@ -8,6 +8,7 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Builder(access = AccessLevel.PRIVATE)
@@ -19,6 +20,8 @@ import java.util.Date;
 public class GithubCodeReviewEntity {
     @Id
     String id;
+
+    UUID contributionUuid;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubPullRequestEntity pullRequest;
@@ -48,6 +51,7 @@ public class GithubCodeReviewEntity {
     public static GithubCodeReviewEntity of(GithubCodeReview codeReview) {
         return GithubCodeReviewEntity.builder()
                 .id(codeReview.getId())
+                .contributionUuid(codeReview.getContributionUUID().value())
                 .pullRequest(GithubPullRequestEntity.of(codeReview.getPullRequest()))
                 .author(GithubAccountEntity.of(codeReview.getAuthor()))
                 .state(State.of(codeReview.getState()))
