@@ -4,6 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
+import onlydust.com.marketplace.kernel.model.ContributionUUID;
 
 import java.util.Date;
 import java.util.List;
@@ -28,10 +29,6 @@ public class GithubIssue {
     List<GithubAccount> assignees;
     List<GithubLabel> labels;
 
-    public ContributionUUID getContributionUUID() {
-        return ContributionUUID.of(id);
-    }
-
     public static GithubIssue of(CleanIssue issue) {
         return GithubIssue.builder()
                 .id(issue.getId())
@@ -49,6 +46,10 @@ public class GithubIssue {
                 .assignees(issue.getAssignees().stream().map(GithubAccount::of).toList())
                 .labels(issue.getLabels().stream().map(GithubLabel::of).toList())
                 .build();
+    }
+
+    public ContributionUUID getContributionUUID() {
+        return ContributionUUID.of(id);
     }
 
     public enum Status {

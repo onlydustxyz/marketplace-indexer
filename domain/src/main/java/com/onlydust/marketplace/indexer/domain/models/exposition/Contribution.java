@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.domain.models.exposition;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
+import onlydust.com.marketplace.kernel.model.ContributionUUID;
 
 import java.util.Date;
 
@@ -22,14 +23,6 @@ public class Contribution {
     Date updatedAt;
     Date completedAt;
     GithubPullRequest.ReviewState pullRequestReviewState;
-
-    public ContributionUUID getContributionUUID() {
-        return switch (type) {
-            case PULL_REQUEST -> pullRequest.getContributionUUID();
-            case ISSUE -> issue.getContributionUUID();
-            case CODE_REVIEW -> codeReview.getContributionUUID();
-        };
-    }
 
     public static Contribution of(GithubPullRequest pullRequest) {
         return Contribution.builder()
@@ -98,6 +91,14 @@ public class Contribution {
                 default -> null;
             };
             default -> codeReview.getSubmittedAt();
+        };
+    }
+
+    public ContributionUUID getContributionUUID() {
+        return switch (type) {
+            case PULL_REQUEST -> pullRequest.getContributionUUID();
+            case ISSUE -> issue.getContributionUUID();
+            case CODE_REVIEW -> codeReview.getContributionUUID();
         };
     }
 

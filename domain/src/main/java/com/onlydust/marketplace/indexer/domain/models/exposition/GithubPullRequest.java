@@ -4,6 +4,7 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanCommit;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import lombok.Builder;
 import lombok.Value;
+import onlydust.com.marketplace.kernel.model.ContributionUUID;
 
 import java.util.Date;
 import java.util.List;
@@ -36,10 +37,6 @@ public class GithubPullRequest {
     ReviewState reviewState;
     Set<GithubCommit> commits;
     List<String> mainFileExtensions;
-
-    public ContributionUUID getContributionUUID() {
-        return ContributionUUID.of(id);
-    }
 
     public static GithubPullRequest of(CleanPullRequest pullRequest) {
         return GithubPullRequest.builder()
@@ -86,6 +83,10 @@ public class GithubPullRequest {
             return ReviewState.APPROVED;
 
         return pullRequest.getReviews().isEmpty() && pullRequest.getRequestedReviewers().isEmpty() ? ReviewState.PENDING_REVIEWER : ReviewState.UNDER_REVIEW;
+    }
+
+    public ContributionUUID getContributionUUID() {
+        return ContributionUUID.of(id);
     }
 
     public enum Status {

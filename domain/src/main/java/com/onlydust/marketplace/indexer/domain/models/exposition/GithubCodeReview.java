@@ -5,6 +5,7 @@ import com.onlydust.marketplace.indexer.domain.models.clean.CleanCodeReview;
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanPullRequest;
 import lombok.Builder;
 import lombok.Value;
+import onlydust.com.marketplace.kernel.model.ContributionUUID;
 
 import java.util.Date;
 
