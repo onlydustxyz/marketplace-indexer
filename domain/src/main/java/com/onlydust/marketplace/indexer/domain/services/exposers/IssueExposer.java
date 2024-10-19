@@ -11,6 +11,8 @@ import com.onlydust.marketplace.indexer.domain.ports.out.exposition.IssueStorage
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
+import java.util.stream.Stream;
+
 @AllArgsConstructor
 public class IssueExposer implements Exposer<CleanIssue> {
     private final ContributionStorage contributionStorage;
@@ -21,15 +23,21 @@ public class IssueExposer implements Exposer<CleanIssue> {
     @Transactional
     public void expose(CleanIssue issue) {
         contributionStorage.deleteAllByRepoIdAndGithubNumber(issue.getRepo().getId(), issue.getNumber());
-        
-        if (issue.getAssignees().isEmpty())
-            contributionStorage.saveAll(Contribution.of(GithubIssue.of(issue)));
-        else
-            contributionStorage.saveAll(issue.getAssignees().stream()
-                    .map(assignee -> Contribution.of(GithubIssue.of(issue), GithubAccount.of(assignee)))
-                    .toArray(Contribution[]::new));
 
-        indexingObserver.onContributionsChanged(issue.getRepo().getId());
+        final var contributions = contributionsOf(issue);
+        contributionStorage.saveAll(contributions);
+        Stream.of(contributions).map(Contribution::getContributionUUID).distinct()
+                .forEach(contributionUUID -> indexingObserver.onContributionsChanged(issue.getRepo().getId(), contributionUUID));
+
         issueStorage.save(GithubIssue.of(issue));
+    }
+
+    private Contribution[] contributionsOf(CleanIssue issue) {
+        if (issue.getAssignees().isEmpty())
+            return new Contribution[]{Contribution.of(GithubIssue.of(issue))};
+
+        return issue.getAssignees().stream()
+                .map(assignee -> Contribution.of(GithubIssue.of(issue), GithubAccount.of(assignee)))
+                .toArray(Contribution[]::new);
     }
 }

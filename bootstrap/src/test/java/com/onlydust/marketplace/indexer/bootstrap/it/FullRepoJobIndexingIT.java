@@ -98,7 +98,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
             assertThat(stats.getLastIndexedAt()).isNotNull();
         }
 
-        assertThat(apiEventRepository.findAll()).hasSize(5);
+        assertThat(apiEventRepository.findAll()).hasSize(9);
     }
 
     @Test

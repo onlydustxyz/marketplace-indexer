@@ -16,6 +16,7 @@ import com.onlydust.marketplace.indexer.domain.services.indexers.*;
 import com.onlydust.marketplace.indexer.domain.stubs.ContributionStorageStub;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
 import lombok.SneakyThrows;
+import onlydust.com.marketplace.kernel.model.ContributionUUID;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -145,7 +146,13 @@ public class IndexingServiceTest {
         assertThat(contributionRepository.contributions().stream().filter(c -> c.getType().equals(Contribution.Type.CODE_REVIEW) && c.getStatus().equals(Contribution.Status.COMPLETED))).hasSize(1);
 
         verify(pullRequestStorage, times(1)).saveAll(any());
-        verify(indexingObserver, times(2)).onContributionsChanged(marketplaceFrontend.getId());
+        verify(indexingObserver, times(4)).onContributionsChanged(eq(marketplaceFrontend.getId()), any(ContributionUUID.class));
+        verify(indexingObserver, times(1)).onContributionsChanged(marketplaceFrontend.getId(), ContributionUUID.of(pr1257.getId()));
+        verify(indexingObserver, times(1)).onContributionsChanged(marketplaceFrontend.getId(), ContributionUUID.of(issue78.getId()));
+        verify(indexingObserver, times(1)).onContributionsChanged(marketplaceFrontend.getId(), ContributionUUID.of(
+                "71692f0d932c2f0c91791567c347d74afeb3648daa06f49856bc34a4ff914993"));
+        verify(indexingObserver, times(1)).onContributionsChanged(marketplaceFrontend.getId(), ContributionUUID.of(
+                "eada5d9c5fee512cf4c4a2d6af5125d6b5930f40ae84a59026d523ee8849e197"));
     }
 
     @Test
