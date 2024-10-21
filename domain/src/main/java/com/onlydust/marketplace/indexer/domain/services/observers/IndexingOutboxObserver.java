@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.domain.services.observers;
 
 import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import lombok.AllArgsConstructor;
+import onlydust.com.marketplace.kernel.model.ContributionUUID;
 import onlydust.com.marketplace.kernel.model.event.OnContributionChanged;
 import onlydust.com.marketplace.kernel.port.output.OutboxPort;
 
@@ -10,7 +11,10 @@ public class IndexingOutboxObserver implements IndexingObserver {
     private final OutboxPort outboxPort;
 
     @Override
-    public void onContributionsChanged(Long repoId) {
-        outboxPort.push(OnContributionChanged.builder().repoId(repoId).build());
+    public void onContributionsChanged(Long repoId, ContributionUUID contributionUUID) {
+        outboxPort.push(OnContributionChanged.builder()
+                .repoId(repoId)
+                .contributionUUID(contributionUUID.value())
+                .build());
     }
 }
