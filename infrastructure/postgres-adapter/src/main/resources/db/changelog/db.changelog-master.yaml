@@ -119,3 +119,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000057_add_contributions_updated_at.sql
   - include:
       file: db/changelog/changelogs/00000058_create_grouped_contributions.sql
+  - include:
+      file: db/changelog/changelogs/00000059_fix_uuid_of.sql
