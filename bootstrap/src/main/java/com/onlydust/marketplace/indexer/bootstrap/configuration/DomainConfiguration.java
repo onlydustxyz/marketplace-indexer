@@ -31,17 +31,22 @@ import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUser
 import com.onlydust.marketplace.indexer.domain.services.observers.GithubOutboxObserver;
 import com.onlydust.marketplace.indexer.domain.services.observers.IndexingOutboxObserver;
 import com.onlydust.marketplace.indexer.domain.services.readers.PublicEventRawStorageReaderAggregator;
+import com.onlydust.marketplace.indexer.infrastructure.github_archives.GithubArchivesClient;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresCommitIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresUserIndexingJobStorage;
 import io.micrometer.core.instrument.MeterRegistry;
+import lombok.extern.slf4j.Slf4j;
 import onlydust.com.marketplace.kernel.port.output.OutboxPort;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 
+import java.util.stream.Stream;
+
+@Slf4j
 @Configuration
 public class DomainConfiguration {
     @Bean
@@ -92,8 +97,14 @@ public class DomainConfiguration {
     @Bean
     PublicEventRawStorageReader livePublicEventRawStorageReader(
             final PublicEventRawStorageReader aggregatedPublicEventRawStorageReader,
-            final PostgresRawStorage postgresRawStorage
+            final PostgresRawStorage postgresRawStorage,
+            final GithubArchivesClient.Properties githubArchivesProperties
     ) {
+        if (githubArchivesProperties.credentials == null || githubArchivesProperties.projectId == null) {
+            LOGGER.info("Github archives credentials not found, disabling public event indexing");
+            return (userId, since) -> Stream.empty();
+        }
+
         return CacheWritePublicEventRawStorageReaderDecorator.builder()
                 .fetcher(aggregatedPublicEventRawStorageReader)
                 .cache(postgresRawStorage)
