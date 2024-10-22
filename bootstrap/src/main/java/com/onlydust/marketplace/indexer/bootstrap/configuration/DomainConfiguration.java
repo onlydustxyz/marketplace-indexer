@@ -149,7 +149,8 @@ public class DomainConfiguration {
                                                          final RawStorageWriter rawStorageWriter,
                                                          final IssueStorage issueStorage,
                                                          final ContributionStorage contributionStorage,
-                                                         final GithubObserver githubObserver) {
+                                                         final GithubObserver githubObserver,
+                                                         final IndexingObserver indexingObserver) {
         return new IssueEventProcessorService(
                 liveIssueIndexer,
                 repoContributorsExposer,
@@ -157,7 +158,8 @@ public class DomainConfiguration {
                 rawStorageWriter,
                 issueStorage,
                 contributionStorage,
-                githubObserver);
+                githubObserver,
+                indexingObserver);
     }
 
     @Bean

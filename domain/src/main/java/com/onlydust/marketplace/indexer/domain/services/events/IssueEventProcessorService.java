@@ -7,12 +7,14 @@ import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContex
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
+import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.IssueStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import onlydust.com.marketplace.kernel.model.ContributionUUID;
 
 @AllArgsConstructor
 @Slf4j
@@ -25,6 +27,7 @@ public class IssueEventProcessorService implements EventHandler<RawIssueEvent> {
     private final IssueStorage issueStorage;
     private final ContributionStorage contributionStorage;
     private final GithubObserver githubObserver;
+    private final IndexingObserver indexingObserver;
 
     @Override
     public void process(RawIssueEvent event) {
@@ -39,6 +42,7 @@ public class IssueEventProcessorService implements EventHandler<RawIssueEvent> {
             rawStorageWriter.deleteIssue(event.getIssue().getId());
             contributionStorage.deleteAllByRepoIdAndGithubNumber(event.getRepository().getId(), event.getIssue().getNumber());
             issueStorage.delete(event.getIssue().getId());
+            indexingObserver.onContributionsChanged(event.getRepository().getId(), ContributionUUID.of(event.getIssue().getId()));
         } else {
             githubAppContext.withGithubApp(event.getInstallation().getId(), () ->
                     issueIndexer.indexIssue(event.getRepository().getOwner().getLogin(), event.getRepository().getName(), event.getIssue().getNumber())
