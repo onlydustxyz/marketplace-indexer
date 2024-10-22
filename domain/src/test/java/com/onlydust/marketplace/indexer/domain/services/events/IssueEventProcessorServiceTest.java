@@ -6,10 +6,12 @@ import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
+import com.onlydust.marketplace.indexer.domain.ports.out.IndexingObserver;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.ContributionStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.exposition.IssueStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
 import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
+import onlydust.com.marketplace.kernel.model.ContributionUUID;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
@@ -22,8 +24,9 @@ class IssueEventProcessorServiceTest {
     private final IssueStorage issueStorage = mock(IssueStorage.class);
     private final ContributionStorage contributionStorage = mock(ContributionStorage.class);
     private final GithubObserver githubObserver = mock(GithubObserver.class);
+    private final IndexingObserver indexingObserver = mock(IndexingObserver.class);
     final IssueEventProcessorService issueEventProcessorService = new IssueEventProcessorService(issueIndexer, repoExposer, githubAppContext, rawStorageWriter
-            , issueStorage, contributionStorage, githubObserver);
+            , issueStorage, contributionStorage, githubObserver, indexingObserver);
 
     @Test
     void should_ignore_issue_that_is_pull_requests_event() {
@@ -55,6 +58,7 @@ class IssueEventProcessorServiceTest {
         verify(contributionStorage).deleteAllByRepoIdAndGithubNumber(498695724L, 78L);
         verify(issueIndexer, never()).indexIssue(any(), any(), any());
         verify(githubObserver).on(event);
+        verify(indexingObserver).onContributionsChanged(498695724L, ContributionUUID.of(1301824165L));
     }
 
 
@@ -72,5 +76,6 @@ class IssueEventProcessorServiceTest {
         verify(contributionStorage).deleteAllByRepoIdAndGithubNumber(699283256L, 160L);
         verify(issueIndexer, never()).indexIssue(any(), any(), any());
         verify(githubObserver).on(event);
+        verify(indexingObserver).onContributionsChanged(699283256L, ContributionUUID.of(2346568062L));
     }
 }
