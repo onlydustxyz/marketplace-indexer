@@ -49,7 +49,7 @@ public class GithubPullRequestEntity {
 
     String htmlUrl;
     Integer commentsCount;
-    Boolean draft;
+    boolean draft;
     String repoOwnerLogin;
     String repoName;
     String repoHtmlUrl;
@@ -104,7 +104,7 @@ public class GithubPullRequestEntity {
                 .author(GithubAccountEntity.of(pullRequest.getAuthor()))
                 .htmlUrl(pullRequest.getHtmlUrl())
                 .commentsCount(pullRequest.getCommentsCount())
-                .draft(pullRequest.getDraft())
+                .draft(pullRequest.isDraft())
                 .repoOwnerLogin(pullRequest.getRepo().getOwner().getLogin())
                 .repoName(pullRequest.getRepo().getName())
                 .repoHtmlUrl(pullRequest.getRepo().getHtmlUrl())

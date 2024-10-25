@@ -32,7 +32,7 @@ public class GithubPullRequest {
     Date closedAt;
     Date mergedAt;
     String body;
-    Boolean draft;
+    boolean draft;
     List<GithubIssue> closingIssues;
     ReviewState reviewState;
     Set<GithubCommit> commits;
@@ -53,7 +53,7 @@ public class GithubPullRequest {
                 .closedAt(pullRequest.getClosedAt())
                 .mergedAt(pullRequest.getMergedAt())
                 .body(pullRequest.getBody())
-                .draft(pullRequest.getDraft())
+                .draft(pullRequest.isDraft())
                 .closingIssues(pullRequest.getClosingIssues().stream().map(GithubIssue::of).toList())
                 .reviewState(aggregateReviewState(pullRequest))
                 .commits(pullRequest.getCommits().stream().map(GithubCommit::of).collect(toSet()))
@@ -97,7 +97,7 @@ public class GithubPullRequest {
 
         public static Status of(CleanPullRequest pullRequest) {
             return switch (pullRequest.getState()) {
-                case "open" -> pullRequest.getDraft() ? Status.DRAFT : Status.OPEN;
+                case "open" -> pullRequest.isDraft() ? Status.DRAFT : Status.OPEN;
                 case "closed" -> pullRequest.getMerged() ? Status.MERGED : Status.CLOSED;
                 default -> throw new RuntimeException("Unknown pull request state: " + pullRequest.getState());
             };

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static java.lang.Boolean.TRUE;
+
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 @Value
 public class CleanPullRequest {
@@ -26,7 +28,7 @@ public class CleanPullRequest {
     String htmlUrl;
     String body;
     Integer comments;
-    Boolean draft;
+    boolean draft;
     @Builder.Default
     List<CleanCodeReview> reviews = new ArrayList<>();
     @Builder.Default
@@ -52,7 +54,7 @@ public class CleanPullRequest {
                 .body(pullRequest.getBody())
                 .comments(pullRequest.getComments())
                 .author(CleanAccount.of(pullRequest.getAuthor()))
-                .draft(pullRequest.getDraft())
+                .draft(TRUE.equals(pullRequest.getDraft()))
                 .build();
     }
 
@@ -72,7 +74,7 @@ public class CleanPullRequest {
                 .body(pullRequest.getBody())
                 .comments(pullRequest.getComments())
                 .author(author)
-                .draft(pullRequest.getDraft())
+                .draft(TRUE.equals(pullRequest.getDraft()))
                 .build();
     }
 
