@@ -51,7 +51,6 @@ public class RawPublicEventEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     final RawPublicEvent.Repo repo;
 
-    @NonNull
     @JdbcTypeCode(SqlTypes.JSON)
     final RawPublicEvent.Account org;
 

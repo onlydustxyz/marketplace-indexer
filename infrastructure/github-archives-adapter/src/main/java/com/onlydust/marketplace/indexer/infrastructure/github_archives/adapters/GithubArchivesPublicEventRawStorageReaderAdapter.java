@@ -8,6 +8,7 @@ import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPubli
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.infrastructure.github_archives.GithubArchivesClient;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.time.ZoneOffset;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
 
 import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.internalServerError;
 
+@Slf4j
 @AllArgsConstructor
 public class GithubArchivesPublicEventRawStorageReaderAdapter implements PublicEventRawStorageReader {
     private final static ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
@@ -46,8 +48,10 @@ public class GithubArchivesPublicEventRawStorageReaderAdapter implements PublicE
         final var from = since.truncatedTo(ChronoUnit.DAYS);
         final var to = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS);
 
-        if (from.isAfter(to))
+        if (from.isAfter(to)) {
+            LOGGER.info("No events to index for user {}", userId);
             return Stream.empty();
+        }
 
         final var query = """
                     SELECT  id                    as id,
@@ -64,7 +68,8 @@ public class GithubArchivesPublicEventRawStorageReaderAdapter implements PublicE
 
         final var params = Map.of("actor_id", QueryParameterValue.int64(userId));
 
-        return Stream.iterate(since, date -> date.isBefore(to), date -> date.plusDays(1))
+        return Stream.iterate(from, date -> date.isBefore(to), date -> date.plusDays(1))
+                .peek(date -> LOGGER.info("Querying events for user {} on {}", userId, date))
                 .map(date -> date.format(YYYYMMDD))
                 .flatMap(day -> client.query(query.formatted(day), params).streamAll())
                 .map(GithubArchivesPublicEventRawStorageReaderAdapter::from);

@@ -30,7 +30,7 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
 
     @Override
     public void indexUser(final @NonNull Long userId, final @NonNull ZonedDateTime since) {
-        LOGGER.debug("Indexing stats for user {} since {}", userId, since);
+        LOGGER.info("Indexing stats for user {} since {}", userId, since);
         publicEventRawStorageReader.userPublicEvents(userId, since)
                 .distinct()
                 .forEach(this::index);
