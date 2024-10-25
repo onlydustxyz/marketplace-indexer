@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.time.ZonedDateTime;
+
 import static com.onlydust.marketplace.indexer.bootstrap.it.helpers.DateHelper.at;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,7 +55,7 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
         // Then
         assertThat(userPublicEventsIndexingJobRepository.findAll())
                 .hasSize(1)
-                .allMatch(job -> nonNull(job.startedAt()) && nonNull(job.finishedAt()) && job.status() == JobStatus.SUCCESS);
+                .allMatch(job -> nonNull(job.startedAt()) && nonNull(job.finishedAt()) && job.status() == JobStatus.SUCCESS && job.lastEventTimestamp().equals(ZonedDateTime.parse("2024-10-03T16:00:29Z")));
 
         assertThat(contributionRepository.findAll())
                 .hasSize(6)

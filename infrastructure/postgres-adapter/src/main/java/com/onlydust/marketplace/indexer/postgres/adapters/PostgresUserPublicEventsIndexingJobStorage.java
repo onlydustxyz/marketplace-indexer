@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.UserPublicEventsIndexi
 import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIndexingJobRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.data.domain.Sort;
 
 import java.time.Instant;
@@ -38,6 +39,12 @@ public class PostgresUserPublicEventsIndexingJobStorage implements UserPublicEve
         return repository.findAll(Sort.by("userId")).stream()
                 .map(UserPublicEventsIndexingJobEntity::userId)
                 .collect(toSet());
+    }
+
+    @Override
+    @Transactional
+    public void saveLastEventTimestamp(Long userId, @NonNull ZonedDateTime timestamp) {
+        repository.findById(userId).ifPresent(job -> job.lastEventTimestamp(timestamp));
     }
 
     @Override

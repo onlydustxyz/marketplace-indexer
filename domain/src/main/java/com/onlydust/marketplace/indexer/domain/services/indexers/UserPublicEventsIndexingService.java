@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPubli
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPullRequestEventPayload;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPushEventPayload;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
@@ -20,6 +21,7 @@ import java.time.ZonedDateTime;
 @Slf4j
 public class UserPublicEventsIndexingService implements UserPublicEventsIndexer {
     private final PublicEventRawStorageReader publicEventRawStorageReader;
+    private final UserPublicEventsIndexingJobStorage userPublicEventsIndexingJobStorage;
     private final RawStorageWriter rawStorageWriter;
     private final RawStorageReader rawStorageReader;
 
@@ -38,6 +40,7 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
 
     private void index(final @NonNull RawPublicEvent event) {
         event.decode().ifPresentOrElse(payload -> index(event, payload), () -> LOGGER.debug("Unknown event type: {}", event.type()));
+        userPublicEventsIndexingJobStorage.saveLastEventTimestamp(event.actor().getId(), event.createdAt());
     }
 
     private void index(final @NonNull RawPublicEvent event, final @NonNull RawPublicEvent.Payload rawPayload) {

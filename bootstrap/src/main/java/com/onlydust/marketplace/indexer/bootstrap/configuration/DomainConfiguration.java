@@ -193,6 +193,7 @@ public class DomainConfiguration {
 
     @Bean
     public UserPublicEventsIndexer cachedUserPublicEventsIndexer(final PublicEventRawStorageReader livePublicEventRawStorageReader,
+                                                                 final UserPublicEventsIndexingJobStorage userPublicEventsIndexingJobStorage,
                                                                  final RawStorageWriter rawStorageWriter,
                                                                  final RawStorageReader cachedRawStorageReader,
                                                                  final RepoIndexer cacheOnlyRepoIndexer,
@@ -201,6 +202,7 @@ public class DomainConfiguration {
                                                                  final IssueIndexer cacheOnlyIssueIndexer
     ) {
         return new UserPublicEventsIndexingService(livePublicEventRawStorageReader,
+                userPublicEventsIndexingJobStorage,
                 rawStorageWriter,
                 cachedRawStorageReader,
                 cacheOnlyRepoIndexer,

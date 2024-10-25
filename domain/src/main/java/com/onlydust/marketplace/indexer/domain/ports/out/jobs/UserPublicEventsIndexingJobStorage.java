@@ -1,5 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.jobs;
 
+import lombok.NonNull;
+
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Set;
@@ -16,4 +18,6 @@ public interface UserPublicEventsIndexingJobStorage {
     Optional<ZonedDateTime> lastEventTimestamp(Long userId);
 
     Set<Long> all();
+
+    void saveLastEventTimestamp(Long userId, @NonNull ZonedDateTime timestamp);
 }
