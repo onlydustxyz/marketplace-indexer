@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
+import lombok.NonNull;
 import org.assertj.core.groups.Tuple;
 
 import java.io.IOException;
@@ -197,13 +198,13 @@ public class RawStorageWriterStub implements RawStorageWriter, RawStorageReader 
     }
 
     @Override
-    public void saveCommit(Long repoId, RawCommit commit) {
+    public void saveCommit(@NonNull Long repoId, @NonNull RawCommit commit) {
         commits.add(commit);
     }
 
     @Override
-    public void saveCommits(Long repoId, List<RawShortCommit> commits) {
-        
+    public void saveCommits(@NonNull Long repoId, @NonNull List<RawShortCommit> commits) {
+
     }
 
     public List<RawRepo> repos() {

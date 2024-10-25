@@ -32,7 +32,7 @@ public class RawCommitEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     RawCommit data;
 
-    public static RawCommitEntity of(Long repoId, RawCommit commit) {
+    public static RawCommitEntity of(@NonNull Long repoId, @NonNull RawCommit commit) {
         return RawCommitEntity.builder()
                 .sha(commit.getSha())
                 .repoId(repoId)
@@ -42,7 +42,7 @@ public class RawCommitEntity {
                 .build();
     }
 
-    public static RawCommitEntity of(Long repoId, RawShortCommit commit) {
+    public static RawCommitEntity of(@NonNull Long repoId, @NonNull RawShortCommit commit) {
         return RawCommitEntity.builder()
                 .sha(commit.getSha())
                 .repoId(repoId)

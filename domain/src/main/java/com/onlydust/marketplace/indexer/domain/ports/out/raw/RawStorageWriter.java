@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.domain.ports.out.raw;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import lombok.NonNull;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public interface RawStorageWriter {
 
     void deleteIssue(Long id);
 
-    void saveCommit(Long repoId, RawCommit commit);
+    void saveCommit(@NonNull Long repoId, @NonNull RawCommit commit);
 
-    void saveCommits(Long repoId, List<RawShortCommit> commits);
+    void saveCommits(@NonNull Long repoId, @NonNull List<RawShortCommit> commits);
 }

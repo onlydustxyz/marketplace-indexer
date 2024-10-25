@@ -25,12 +25,15 @@ import static java.util.stream.Collectors.toSet;
 @SQLInsert(sql = "INSERT INTO indexer_raw.pull_requests (data, number, repo_id, id) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING")
 public class RawPullRequestEntity {
     @Id
+    @NonNull
     final Long id;
 
+    @NonNull
     final Long repoId;
 
+    @NonNull
     final Long number;
-    
+
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "pull_request_commits",

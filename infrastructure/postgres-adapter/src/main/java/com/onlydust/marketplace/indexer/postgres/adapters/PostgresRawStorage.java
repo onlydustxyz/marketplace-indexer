@@ -10,6 +10,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -167,7 +168,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
     }
 
     @Override
-    public void saveCommit(Long repoId, RawCommit commit) {
+    public void saveCommit(@NonNull Long repoId, @NonNull RawCommit commit) {
         commitRepository.merge(RawCommitEntity.of(repoId, commit));
     }
 
@@ -177,7 +178,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
     }
 
     @Override
-    public void saveCommits(Long repoId, List<RawShortCommit> commits) {
+    public void saveCommits(@NonNull Long repoId, @NonNull List<RawShortCommit> commits) {
         commitRepository.mergeAll(commits.stream().map(c -> RawCommitEntity.of(repoId, c)).toList());
     }
 }

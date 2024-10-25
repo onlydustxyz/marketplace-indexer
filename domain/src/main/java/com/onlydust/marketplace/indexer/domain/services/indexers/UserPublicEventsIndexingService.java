@@ -37,18 +37,18 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
     }
 
     private void index(final @NonNull RawPublicEvent event) {
-        event.decode().ifPresentOrElse(this::index, () -> LOGGER.debug("Unknown event type: {}", event.type()));
+        event.decode().ifPresentOrElse(payload -> index(event, payload), () -> LOGGER.debug("Unknown event type: {}", event.type()));
     }
 
-    private void index(final @NonNull RawPublicEvent.Payload rawPayload) {
+    private void index(final @NonNull RawPublicEvent event, final @NonNull RawPublicEvent.Payload rawPayload) {
         if (rawPayload instanceof RawPullRequestEventPayload payload)
-            index(payload);
+            index(event, payload);
         else if (rawPayload instanceof RawPushEventPayload payload)
-            index(payload);
+            index(event, payload);
     }
 
-    private void index(RawPushEventPayload payload) {
-        rawStorageWriter.saveCommits(payload.repoId(), payload.commits());
+    private void index(final @NonNull RawPublicEvent event, RawPushEventPayload payload) {
+        rawStorageWriter.saveCommits(event.repo().getId(), payload.commits());
     }
 
     private void index(final @NonNull RawAccount user) {
@@ -72,8 +72,8 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
                 });
     }
 
-    private void index(final @NonNull RawPullRequestEventPayload event) {
+    private void index(final @NonNull RawPublicEvent event, final @NonNull RawPullRequestEventPayload payload) {
         LOGGER.debug("Indexing event: {}", event);
-        index(event.pullRequest());
+        index(payload.pullRequest());
     }
 }
