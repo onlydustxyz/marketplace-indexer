@@ -9,10 +9,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.raw.JsonDocument;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.Value;
+import lombok.*;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -20,13 +17,13 @@ import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record RawPublicEvent(Long id,
-                             String type,
-                             Account actor,
-                             Repo repo,
+public record RawPublicEvent(@NonNull Long id,
+                             @NonNull String type,
+                             @NonNull Account actor,
+                             @NonNull Repo repo,
                              Account org,
-                             ZonedDateTime createdAt,
-                             JsonNode payload) {
+                             @NonNull ZonedDateTime createdAt,
+                             @NonNull JsonNode payload) {
 
     public Optional<Payload> decode() {
         return Optional.ofNullable(switch (type) {
