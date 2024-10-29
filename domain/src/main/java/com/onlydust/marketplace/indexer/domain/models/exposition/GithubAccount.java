@@ -28,7 +28,7 @@ public class GithubAccount {
         return GithubAccount.builder()
                 .id(account.getId())
                 .login(account.getLogin())
-                .type(Type.valueOf(account.getType().toUpperCase()))
+                .type(account.getType() == null ? null : Type.valueOf(account.getType().toUpperCase()))
                 .htmlUrl(account.getHtmlUrl())
                 .avatarUrl(account.getAvatarUrl())
                 .name(account.getName())
