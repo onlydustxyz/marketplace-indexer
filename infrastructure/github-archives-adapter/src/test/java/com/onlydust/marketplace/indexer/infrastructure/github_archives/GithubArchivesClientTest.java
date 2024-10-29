@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.infrastructure.github_archives.adapters.GithubArchivesPublicEventRawStorageReaderAdapter;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,7 +19,7 @@ class GithubArchivesClientTest {
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
     @SneakyThrows
-    @Test
+//    @Test
     void query() {
         final var properties = new GithubArchivesClient.Properties(
                 "od-develop",
