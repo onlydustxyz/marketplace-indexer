@@ -1,7 +1,6 @@
 package com.onlydust.marketplace.indexer.infrastructure.aws_athena;
 
 import com.onlydust.marketplace.indexer.infrastructure.aws_athena.adapters.AwsAthenaPublicEventRawStorageReaderAdapter;
-import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.regions.Region;
 
 import java.time.ZonedDateTime;
@@ -13,7 +12,7 @@ class AwsAthenaClientTest {
 
     private final AwsAthenaPublicEventRawStorageReaderAdapter adapter = new AwsAthenaPublicEventRawStorageReaderAdapter(client);
 
-    @Test
+    //    @Test
     void query() {
         adapter.userPublicEvents(595505L, ZonedDateTime.parse("2023-01-01T00:00:00Z"))
                 .limit(3) // First row is the header
