@@ -26,7 +26,6 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     final PullRequestClosingIssueRepository pullRequestClosingIssueRepository;
     final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository;
     final PullRequestReviewsRepository pullRequestReviewsRepository;
-    final PublicEventRepository publicEventRepository;
     final CommitRepository commitRepository;
 
     @Override

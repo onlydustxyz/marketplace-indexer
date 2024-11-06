@@ -1,0 +1,1 @@
+drop table indexer_raw.public_events;
