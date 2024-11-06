@@ -1,24 +1,19 @@
 package com.onlydust.marketplace.indexer.github.adapters;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
-import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
 import com.onlydust.marketplace.indexer.github.GithubPage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static java.util.Comparator.comparing;
-
 @AllArgsConstructor
 @Slf4j
-public class GithubRawStorageReader implements RawStorageReader, PublicEventRawStorageReader {
+public class GithubRawStorageReader implements RawStorageReader {
     private final GithubHttpClient client;
 
     @Override
@@ -104,13 +99,5 @@ public class GithubRawStorageReader implements RawStorageReader, PublicEventRawS
         );
 
         return client.graphql(query, variables, RawPullRequestClosingIssues.class);
-    }
-
-    @Override
-    public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
-        final var page = new GithubPage<>(client, "/user/" + userId + "/events", RawPublicEvent[].class);
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(page, Spliterator.ORDERED), false)
-                .takeWhile(event -> event.createdAt().isAfter(since))
-                .sorted(comparing(RawPublicEvent::createdAt));
     }
 }

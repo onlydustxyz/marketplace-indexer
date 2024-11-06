@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.github.GithubConfig;
 import com.onlydust.marketplace.indexer.github.GithubHttpClient;
@@ -44,11 +43,6 @@ public class GithubApiConfiguration {
 
     @Bean
     RawStorageReader githubRawStorageReader(final GithubHttpClient githubHttpClient) {
-        return new GithubRawStorageReader(githubHttpClient);
-    }
-
-    @Bean
-    PublicEventRawStorageReader githubPublicEventRawStorageReader(final GithubHttpClient githubHttpClient) {
         return new GithubRawStorageReader(githubHttpClient);
     }
 }
