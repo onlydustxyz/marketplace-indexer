@@ -123,3 +123,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000059_fix_uuid_of.sql
   - include:
       file: db/changelog/changelogs/00000060_public_events_org_nullable.sql
+  - include:
+      file: db/changelog/changelogs/00000061_drop_user_public_events_raw.sql

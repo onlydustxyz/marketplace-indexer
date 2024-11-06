@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.bootstrap.it.stubs.PublicEventRawStorageReaderStub;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubUserFileExtensionEntity;
@@ -10,6 +11,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.exposition.Contrib
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubUserFileExtensionsRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -30,9 +32,8 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
     @Autowired
     GithubRepoRepository repoRepository;
     @Autowired
-    PublicEventRawStorageReaderStub githubArchivesReaderStub;
-    @Autowired
-    PublicEventRawStorageReaderStub githubApiReaderStub;
+    PublicEventRawStorageReader publicEventRawStorageReader;
+    PublicEventRawStorageReaderStub publicEventRawStorageReaderStub;
     @Autowired
     JobManager commitIndexerJobManager;
     @Autowired
@@ -42,12 +43,16 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
         return put("/api/v1/users/" + userId);
     }
 
+    @BeforeEach
+    public void setUp() {
+        publicEventRawStorageReaderStub = (PublicEventRawStorageReaderStub) publicEventRawStorageReader;
+    }
+
     @Test
     @Transactional
     public void should_index_user_from_public_events() {
         // Given
-        githubArchivesReaderStub.add("/github/public_events/antho_20231002.json");
-        githubApiReaderStub.add("/github/public_events/antho_last_events.json");
+        publicEventRawStorageReaderStub.add("/github/public_events/antho_20231002.json");
 
         // When
         at("2024-10-03T17:00:00Z", () -> indexUser(ANTHONY).expectStatus().isNoContent());
@@ -71,8 +76,7 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
     @Transactional
     public void should_index_user_languages_from_public_events() {
         // Given
-        githubArchivesReaderStub.add("/github/public_events/antho_20231002.json");
-        githubApiReaderStub.add("/github/public_events/antho_last_events.json");
+        publicEventRawStorageReaderStub.add("/github/public_events/antho_20231002.json");
 
         // When
         at("2024-10-03T17:00:00Z", () -> indexUser(ANTHONY).expectStatus().isNoContent());

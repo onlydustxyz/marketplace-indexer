@@ -30,7 +30,6 @@ import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPull
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
 import com.onlydust.marketplace.indexer.domain.services.observers.GithubOutboxObserver;
 import com.onlydust.marketplace.indexer.domain.services.observers.IndexingOutboxObserver;
-import com.onlydust.marketplace.indexer.domain.services.readers.PublicEventRawStorageReaderAggregator;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresCommitIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRepoIndexingJobStorage;
@@ -93,21 +92,9 @@ public class DomainConfiguration {
 
     @Bean
     PublicEventRawStorageReader livePublicEventRawStorageReader(
-            final PublicEventRawStorageReader aggregatedPublicEventRawStorageReader,
-            final PostgresRawStorage postgresRawStorage
+            final PublicEventRawStorageReader awsAthenaPublicEventRawStorageReaderAdapter
     ) {
-        return CacheWritePublicEventRawStorageReaderDecorator.builder()
-                .fetcher(aggregatedPublicEventRawStorageReader)
-                .cache(postgresRawStorage)
-                .build();
-    }
-
-    @Bean
-    PublicEventRawStorageReader aggregatedPublicEventRawStorageReader(
-            final PublicEventRawStorageReader githubArchivesPublicEventRawStorageReaderAdapter,
-            final PublicEventRawStorageReader githubPublicEventRawStorageReader
-    ) {
-        return new PublicEventRawStorageReaderAggregator(githubArchivesPublicEventRawStorageReaderAdapter, githubPublicEventRawStorageReader);
+        return awsAthenaPublicEventRawStorageReaderAdapter;
     }
 
     @Bean
@@ -396,7 +383,6 @@ public class DomainConfiguration {
         return new RepoRefreshJobService(applicationTaskExecutor, repoIndexingJobTriggerRepository, cacheOnlyFullRepoIndexer, cacheOnlyRepoIndexer,
                 githubAppContext, repoRefreshJobConfig);
     }
-
 
     @Bean
     public JobManager cacheOnlyCommitRefreshJobManager(

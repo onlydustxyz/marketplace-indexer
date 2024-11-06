@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.raw.JsonDocument;
 import lombok.*;
@@ -24,6 +25,15 @@ public record RawPublicEvent(@NonNull Long id,
                              Account org,
                              @NonNull ZonedDateTime createdAt,
                              @NonNull JsonNode payload) {
+
+    public static RawPublicEvent fromJson(String json) {
+        final var objectMapper = JsonMapper.builder().findAndAddModules().build();
+        try {
+            return objectMapper.readValue(json, RawPublicEvent.class);
+        } catch (IOException e) {
+            throw OnlyDustException.internalServerError("Error deserializing event", e);
+        }
+    }
 
     public Optional<Payload> decode() {
         return Optional.ofNullable(switch (type) {

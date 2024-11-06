@@ -13,9 +13,12 @@ infrastructure:
   api-client:
     api-key: ${INTERNAL_API_KEY}
     base-uri: ${API_BACKEND_BASE_URL}
-  github-archives:
-    project-id: ${GCP_PROJECT_ID}
-    credentials: ${GCP_CREDENTIALS}
+  aws:
+    athena:
+      database: gha_db
+      output-location: s3://gha-athena-results
+      polling-interval: 10 # 10s
+      region: eu-west-3
 
 application:
   web:

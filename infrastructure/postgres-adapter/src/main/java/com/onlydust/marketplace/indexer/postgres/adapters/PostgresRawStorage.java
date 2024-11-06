@@ -1,9 +1,6 @@
 package com.onlydust.marketplace.indexer.postgres.adapters;
 
 import com.onlydust.marketplace.indexer.domain.models.raw.*;
-import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageWriter;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.*;
@@ -12,7 +9,6 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -20,7 +16,7 @@ import java.util.stream.Stream;
 import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.notFound;
 
 @AllArgsConstructor
-public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, PublicEventRawStorageReader, PublicEventRawStorageWriter {
+public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     final IssueRepository issueRepository;
     final UserRepository userRepository;
     final RepoRepository repoRepository;
@@ -30,7 +26,6 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
     final PullRequestClosingIssueRepository pullRequestClosingIssueRepository;
     final PullRequestClosingIssueViewRepository pullRequestClosingIssueViewRepository;
     final PullRequestReviewsRepository pullRequestReviewsRepository;
-    final PublicEventRepository publicEventRepository;
     final CommitRepository commitRepository;
 
     @Override
@@ -102,11 +97,6 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
     }
 
     @Override
-    public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
-        return publicEventRepository.findAllByActorIdAndCreatedAtGreaterThanEqual(userId, since).stream().map(RawPublicEventEntity::event);
-    }
-
-    @Override
     public void saveUser(RawAccount user) {
         userRepository.merge(RawUserEntity.of(user));
     }
@@ -170,11 +160,6 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader, P
     @Override
     public void saveCommit(@NonNull Long repoId, @NonNull RawCommit commit) {
         commitRepository.merge(RawCommitEntity.of(repoId, commit));
-    }
-
-    @Override
-    public void savePublicEvent(RawPublicEvent rawEvent) {
-        publicEventRepository.merge(RawPublicEventEntity.of(rawEvent));
     }
 
     @Override
