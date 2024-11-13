@@ -23,7 +23,7 @@ runs:
       shell: bash
       run: |
         echo ECR_REPOSITORY_URI=$(aws ecr describe-repositories --query "repositories[?contains(@.repositoryName, 'indexerrepository') == \`true\`].repositoryUri" --output text) >> "$GITHUB_ENV"
-        echo SHA_SHORT=$(git rev-parse --short HEAD) >> $GITHUB_ENV
+        echo SHA_SHORT=$(git rev-parse --short HEAD) >> "$GITHUB_ENV"
 
     - name: Login to ECR
       uses: docker/login-action@v3
