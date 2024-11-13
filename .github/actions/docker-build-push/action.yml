@@ -9,9 +9,6 @@ inputs:
   role-to-assume:
     description: ARN of the role to assume
     required: true
-  tag:
-    description: Additional Docker image tag
-    required: false
 
 runs:
   using: 'composite'
@@ -22,16 +19,16 @@ runs:
         aws-region: ${{ inputs.aws-region }}
         role-to-assume: ${{ inputs.role-to-assume }}
 
-    - name: Retrieve AWS parameters
-      id: aws-parameters
+    - name: Retrieve parameters
       shell: bash
       run: |
-        echo ECR_REPOSITORY_URI=$(aws ecr describe-repositories --query "repositories[?contains(@.repositoryName, 'indexerrepository') == \`true\`].repositoryUri" --output text) >> "$GITHUB_OUTPUT"
+        echo ECR_REPOSITORY_URI=$(aws ecr describe-repositories --query "repositories[?contains(@.repositoryName, 'indexerrepository') == \`true\`].repositoryUri" --output text) >> "$GITHUB_ENV"
+        echo SHA_SHORT=$(git rev-parse --short HEAD) >> $GITHUB_ENV
 
     - name: Login to ECR
       uses: docker/login-action@v3
       with:
-        registry: ${{ steps.aws-parameters.outputs.ECR_REPOSITORY_URI }}
+        registry: ${{ env.ECR_REPOSITORY_URI }}
 
     - name: Build, tag, and push image to Amazon ECR
       uses: docker/build-push-action@v6
@@ -39,6 +36,5 @@ runs:
         push: true
         context: .
         tags: |
-          ${{ steps.aws-parameters.outputs.ECR_REPOSITORY_URI }}:latest
-          ${{ steps.aws-parameters.outputs.ECR_REPOSITORY_URI }}:${{ github.sha }}
-          ${{ steps.aws-parameters.outputs.ECR_REPOSITORY_URI }}:${{ inputs.tag }}
+          ${{ env.ECR_REPOSITORY_URI }}:latest
+          ${{ env.ECR_REPOSITORY_URI }}:${{ env.SHA_SHORT }}

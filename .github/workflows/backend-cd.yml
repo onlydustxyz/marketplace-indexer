@@ -30,7 +30,6 @@ jobs:
         with:
           aws-region: eu-west-1
           role-to-assume: arn:aws:iam::116981777789:role/OnlyDustRepositoryStack-IndexerRepositoryGitHubActi-ZKFOzYHhV3sw
-          tag: develop
 
       - name: Docker build and push [Staging]
         uses: ./.github/actions/docker-build-push
@@ -38,7 +37,6 @@ jobs:
         with:
           aws-region: eu-west-1
           role-to-assume: arn:aws:iam::102790067838:role/OnlyDustRepositoryStack-MarketplaceRepositoryGitHub-GUtlNwyyGXdz
-          tag: staging
 
       - name: Docker build and push [Production]
         uses: ./.github/actions/docker-build-push
@@ -46,4 +44,3 @@ jobs:
         with:
           aws-region: eu-west-1
           role-to-assume: arn:aws:iam::102790067838:role/OnlyDustRepositoryStack-MarketplaceRepositoryGitHub-GUtlNwyyGXdz
-          tag: production
