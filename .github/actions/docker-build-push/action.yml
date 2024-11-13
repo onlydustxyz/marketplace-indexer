@@ -9,8 +9,8 @@ inputs:
   role-to-assume:
     description: ARN of the role to assume
     required: true
-  tags:
-    description: Additional Docker image tags
+  tag:
+    description: Additional Docker image tag
     required: false
 
 runs:
@@ -39,6 +39,6 @@ runs:
         push: true
         context: .
         tags: |
-          latest
-          ${{ github.sha }}
-          ${{ inputs.tags }}
+          ${{ steps.aws-parameters.outputs.ECR_REPOSITORY_URI }}:latest
+          ${{ steps.aws-parameters.outputs.ECR_REPOSITORY_URI }}:${{ github.sha }}
+          ${{ steps.aws-parameters.outputs.ECR_REPOSITORY_URI }}:${{ inputs.tag }}
