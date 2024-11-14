@@ -15,6 +15,10 @@ jobs:
     name: Build and push docker image to AWS ECR
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment: ${{ github.ref == 'refs/heads/production' && 'production' || (github.ref == 'refs/heads/staging' && 'staging' || 'develop') }}
+    concurrency:
+      group: ${{ github.ref }}
+      cancel-in-progress: true
     permissions:
       id-token: write
       contents: read
@@ -25,23 +29,28 @@ jobs:
       - name: Java setup
         uses: ./.github/actions/java-setup
 
-      - name: Docker build and push [Develop]
-        uses: ./.github/actions/docker-build-push
-        if: github.ref == 'refs/heads/main'
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::116981777789:role/OnlyDustRepositoryStack-IndexerRepositoryGitHubActi-ZKFOzYHhV3sw
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ env.AWS_ROLE }}
 
-      - name: Docker build and push [Staging]
-        uses: ./.github/actions/docker-build-push
-        if: github.ref == 'refs/heads/staging'
-        with:
-          aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::102790067838:role/OnlyDustRepositoryStack-MarketplaceRepositoryGitHub-GUtlNwyyGXdz
+      - name: Retrieve parameters
+        shell: bash
+        run: |
+          echo ECR_REPOSITORY_URI=$(aws ecr describe-repositories --query "repositories[?contains(@.repositoryName, 'indexerrepository') == \`true\`].repositoryUri" --output text) >> "$GITHUB_ENV"
+          echo SHA_SHORT=$(git rev-parse --short HEAD) >> "$GITHUB_ENV"
 
-      - name: Docker build and push [Production]
-        uses: ./.github/actions/docker-build-push
-        if: github.ref == 'refs/heads/production'
+      - name: Login to ECR
+        uses: docker/login-action@v3
         with:
-          aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::102790067838:role/OnlyDustRepositoryStack-MarketplaceRepositoryGitHub-GUtlNwyyGXdz
+          registry: ${{ env.ECR_REPOSITORY_URI }}
+
+      - name: Build, tag, and push image to Amazon ECR
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: .
+          tags: |
+            ${{ env.ECR_REPOSITORY_URI }}:latest
+            ${{ env.ECR_REPOSITORY_URI }}:${{ env.SHA_SHORT }}
