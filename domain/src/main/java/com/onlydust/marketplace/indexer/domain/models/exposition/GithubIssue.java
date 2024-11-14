@@ -26,7 +26,6 @@ public class GithubIssue {
     String htmlUrl;
     String body;
     Integer commentsCount;
-    List<GithubAccount> assignees;
     List<GithubLabel> labels;
 
     public static GithubIssue of(CleanIssue issue) {
@@ -43,7 +42,6 @@ public class GithubIssue {
                 .htmlUrl(issue.getHtmlUrl())
                 .body(issue.getBody())
                 .commentsCount(issue.getComments())
-                .assignees(issue.getAssignees().stream().map(GithubAccount::of).toList())
                 .labels(issue.getLabels().stream().map(GithubLabel::of).toList())
                 .build();
     }

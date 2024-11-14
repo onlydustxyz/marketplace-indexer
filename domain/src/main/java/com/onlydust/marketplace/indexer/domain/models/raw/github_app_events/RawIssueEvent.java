@@ -17,4 +17,5 @@ public class RawIssueEvent extends JsonDocument {
     RawRepo repository;
     RawInstallation installation;
     RawShortAccount assignee;
+    RawShortAccount sender;
 }
