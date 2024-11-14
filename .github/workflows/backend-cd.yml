@@ -14,6 +14,7 @@ jobs:
   build_and_push_docker_image:
     name: Build and push docker image to AWS ECR
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       id-token: write
       contents: read
