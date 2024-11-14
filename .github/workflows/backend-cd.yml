@@ -1,11 +1,14 @@
 name: Backend CD
 
 on:
-  push:
+  workflow_run:
+    workflows: [ "Backend CI" ]
     branches:
-      - "main"
-      - "staging"
-      - "production"
+      - main
+      - staging
+      - production
+    types:
+      - completed
 
 jobs:
   build_and_push_docker_image:
@@ -20,9 +23,6 @@ jobs:
 
       - name: Java setup
         uses: ./.github/actions/java-setup
-
-      - name: Maven build
-        run: ./mvnw clean install -T 4 -DskipTests -DskipITs
 
       - name: Docker build and push [Develop]
         uses: ./.github/actions/docker-build-push
