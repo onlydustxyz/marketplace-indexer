@@ -16,9 +16,9 @@ public class UserIndexerJob extends Job {
 
     @Override
     public void execute() {
+        LOGGER.info("Indexing users {}", userIds);
         userIds.forEach(user -> {
             try {
-                LOGGER.info("Indexing users {}", userIds);
                 userIndexingJobStorage.startJob(user);
                 userIndexer.indexUser(user);
                 userIndexingJobStorage.endJob(user);
