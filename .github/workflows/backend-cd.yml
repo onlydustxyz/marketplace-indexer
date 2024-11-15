@@ -28,8 +28,13 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
 
-      - name: Java setup
-        uses: ./.github/actions/java-setup
+      - name: Download jar file
+        uses: actions/download-artifact@v4
+        with:
+          name: marketplace-indexer.jar
+          run-id: ${{ github.event.workflow_run.id }}
+          path: bootstrap/target/marketplace-indexer.jar
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
