@@ -91,5 +91,12 @@ public class GithubIssueEventsIT extends IntegrationTest {
         assertThat(assignees).hasSize(1);
         assertThat(assignees.get(0).getUser().getId()).isEqualTo(43467246L);
         assertThat(assignees.get(0).getAssignedByUser().getId()).isEqualTo(595505L);
+
+        // When
+        processEventsFromPaths("issues",
+                "/github/webhook/events/issues/marketplace-frontend-issue-78-unassigned.json");
+
+        // Then
+        assertThat(githubIssueAssigneeRepository.findAllByIssueId(ISSUE_ID)).isEmpty();
     }
 }
