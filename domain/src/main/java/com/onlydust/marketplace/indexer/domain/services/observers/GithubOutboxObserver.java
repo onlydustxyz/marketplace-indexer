@@ -1,8 +1,8 @@
 package com.onlydust.marketplace.indexer.domain.services.observers;
 
+import com.onlydust.marketplace.indexer.domain.models.raw.RawLabel;
 import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawIssueCommentEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawIssueEvent;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawLabel;
 import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawPullRequestEvent;
 import com.onlydust.marketplace.indexer.domain.ports.out.GithubObserver;
 import lombok.AllArgsConstructor;
@@ -24,6 +24,7 @@ public class GithubOutboxObserver implements GithubObserver {
                     .id(event.getIssue().getId())
                     .repoId(event.getRepository().getId())
                     .assigneeId(event.getAssignee().getId())
+                    .assignedById(event.getSender().getId())
                     .labels(event.getIssue().getLabels().stream().map(RawLabel::getName).collect(toSet()))
                     .createdAt(event.getIssue().getCreatedAt().toInstant().atZone(ZoneOffset.UTC))
                     .assignedAt(event.getIssue().getUpdatedAt().toInstant().atZone(ZoneOffset.UTC))

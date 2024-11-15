@@ -101,8 +101,9 @@ public class PostgresConfiguration {
     }
 
     @Bean
-    public PostgresIssueStorage postgresIssueStorage(final GithubIssueRepository githubIssueRepository) {
-        return new PostgresIssueStorage(githubIssueRepository);
+    public PostgresIssueStorage postgresIssueStorage(final GithubIssueRepository githubIssueRepository,
+                                                     final GithubIssueAssigneeRepository githubIssueAssigneeRepository) {
+        return new PostgresIssueStorage(githubIssueRepository, githubIssueAssigneeRepository);
     }
 
     @Bean

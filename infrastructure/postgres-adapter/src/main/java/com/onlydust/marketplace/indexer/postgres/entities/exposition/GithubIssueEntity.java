@@ -51,14 +51,6 @@ public class GithubIssueEntity {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
-            name = "github_issues_assignees",
-            schema = "indexer_exp",
-            joinColumns = @JoinColumn(name = "issue_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    Set<GithubAccountEntity> assignees;
-
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinTable(
             name = "github_issues_labels",
             schema = "indexer_exp",
             joinColumns = @JoinColumn(name = "issue_id"),
@@ -86,7 +78,6 @@ public class GithubIssueEntity {
                 .authorLogin(issue.getAuthor().getLogin())
                 .authorHtmlUrl(issue.getAuthor().getHtmlUrl())
                 .authorAvatarUrl(issue.getAuthor().getAvatarUrl())
-                .assignees(issue.getAssignees().stream().map(GithubAccountEntity::of).collect(toSet()))
                 .labels(issue.getLabels().stream().map(GithubLabelEntity::of).collect(toSet()))
                 .build();
     }

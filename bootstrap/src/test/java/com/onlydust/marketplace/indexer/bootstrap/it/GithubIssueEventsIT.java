@@ -5,6 +5,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubIssue
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubLabelEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.RepoContributorEntity;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
+import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueAssigneeRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import jakarta.transaction.Transactional;
@@ -25,6 +26,8 @@ public class GithubIssueEventsIT extends IntegrationTest {
     ContributionRepository contributionRepository;
     @Autowired
     RepoContributorRepository repoContributorRepository;
+    @Autowired
+    GithubIssueAssigneeRepository githubIssueAssigneeRepository;
 
     @Test
     @Transactional
@@ -45,8 +48,6 @@ public class GithubIssueEventsIT extends IntegrationTest {
         assertThat(issue.getCreatedAt()).isEqualTo("2022-07-12T09:55:06.000");
         assertThat(issue.getAuthor().getLogin()).isEqualTo("AnthonyBuisset");
         assertThat(issue.getRepo().getName()).isEqualTo("marketplace-frontend");
-        assertThat(issue.getAssignees()).hasSize(1);
-        assertThat(issue.getAssignees().stream().findFirst().orElseThrow().getLogin()).isEqualTo("AnthonyBuisset");
         assertThat(issue.getLabels()).hasSize(6);
 
         final var labels = issue.getLabels().stream().sorted(comparing(GithubLabelEntity::getId)).toList();
@@ -78,5 +79,24 @@ public class GithubIssueEventsIT extends IntegrationTest {
         assertThat(repoContributorRepository.findAll()).containsExactlyInAnyOrder(
                 new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE_FRONTEND_ID, ANTHONY_ID), 1, 1)
         );
+
+        assertThat(githubIssueAssigneeRepository.findAllByIssueId(ISSUE_ID)).isEmpty();
+
+        // When
+        processEventsFromPaths("issues",
+                "/github/webhook/events/issues/marketplace-frontend-issue-78-assigned.json");
+
+        // Then
+        final var assignees = githubIssueAssigneeRepository.findAllByIssueId(ISSUE_ID);
+        assertThat(assignees).hasSize(1);
+        assertThat(assignees.get(0).getUser().getId()).isEqualTo(43467246L);
+        assertThat(assignees.get(0).getAssignedByUser().getId()).isEqualTo(595505L);
+
+        // When
+        processEventsFromPaths("issues",
+                "/github/webhook/events/issues/marketplace-frontend-issue-78-unassigned.json");
+
+        // Then
+        assertThat(githubIssueAssigneeRepository.findAllByIssueId(ISSUE_ID)).isEmpty();
     }
 }

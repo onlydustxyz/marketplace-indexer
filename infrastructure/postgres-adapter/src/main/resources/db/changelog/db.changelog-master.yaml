@@ -125,3 +125,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000060_public_events_org_nullable.sql
   - include:
       file: db/changelog/changelogs/00000061_drop_user_public_events_raw.sql
+  - include:
+      file: db/changelog/changelogs/00000062_add_issue_assigned_by.sql
