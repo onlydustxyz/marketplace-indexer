@@ -1,6 +1,7 @@
 #!/bin/bash
 
-LOG_FILE=$0.log
+LOG_FILE=$(readlink -f "$0").log
+touch "$LOG_FILE"
 
 # Color
 RED='\033[1;91m'

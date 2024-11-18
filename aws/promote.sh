@@ -6,6 +6,8 @@ SCRIPT_DIR=$(readlink -f "$0" | xargs dirname)
 unset -v FROM_BRANCH
 unset -v TO_BRANCH
 unset -v GIT_FORCE
+unset -v MAINTENANCE
+unset -v MAINTENANCE_REPO_DIR
 
 REMOTE=promote-origin
 
@@ -96,10 +98,43 @@ deploy() {
     fi
 }
 
+activate_maintenance() {
+  log_info "Activating maintenance mode"
+  MAINTENANCE_REPO_DIR=$(mktemp -d)
+
+  (
+    cd "$MAINTENANCE_REPO_DIR" || exit_error "Unable to change directory"
+    execute git clone https://github.com/onlydustxyz/od-maintenance-page.git .
+
+    if [ "$(npx wrangler whoami | grep -c 'You are not authenticated')" -eq 1 ]; then
+      execute npx wrangler login
+    fi
+    execute npx wrangler deploy --env $TO_BRANCH
+  )
+}
+
+deactivate_maintenance() {
+  if ! ask "Do you want to deactivate maintenance mode"; then
+    log_warning Skipping maintenance deactivation, to deactivate maintenance, use the following command:
+    log_warning "(cd $MAINTENANCE_REPO_DIR && npx wrangler delete --env $TO_BRANCH)"
+    return
+  fi
+
+  log_info "Deactivating maintenance"
+  (
+      cd "$MAINTENANCE_REPO_DIR" || exit_error "Unable to change directory"
+      execute npx wrangler delete --env $TO_BRANCH
+    )
+
+  [ -d "$MAINTENANCE_REPO_DIR" ] && rm -rf "$MAINTENANCE_REPO_DIR"
+}
+
 usage() {
-  echo "Usage: $0 [ --staging | --production ]"
+  echo "Usage: $0 [ --staging | --production ] [--force] [--maintenance]"
   echo "  --staging         Promote to staging"
   echo "  --production      Promote to production"
+  echo "  --force           Force push to GitHub"
+  echo "  --maintenance     Activate maintenance mode during deployment"
   echo ""
 }
 
@@ -119,6 +154,10 @@ while [[ $# -gt 0 ]]; do
       GIT_FORCE=--force
       shift
       ;;
+    --maintenance)
+      MAINTENANCE=1
+      shift
+      ;;
     --help | -h)
       usage
       exit 0
@@ -132,10 +171,19 @@ done
 check_args
 check_command git
 check_command aws
+check_command npm
 check_cwd
 create_remote
 
+if [ -n "$MAINTENANCE" ]; then
+  activate_maintenance
+fi
+
 deploy
+
+if [ -n "$MAINTENANCE" ]; then
+  deactivate_maintenance
+fi
 
 delete_remote
 
