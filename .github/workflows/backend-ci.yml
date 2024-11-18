@@ -8,6 +8,7 @@ on:
       - main
       - staging
       - production
+      - perf
 
 jobs:
   build:
