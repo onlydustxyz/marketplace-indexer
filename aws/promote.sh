@@ -100,6 +100,14 @@ deploy() {
 }
 
 activate_maintenance() {
+  ask "Do you want to activate maintenance mode during deployment"
+  MAINTENANCE=$((1 - $?))
+
+  if [ $MAINTENANCE -eq 0 ]; then
+    log_warning "⚠️ Skipping maintenance activation"
+    return
+  fi
+
   log_info "🛠️ Activating maintenance mode"
   MAINTENANCE_REPO_DIR=$(mktemp -d)
 
@@ -115,6 +123,10 @@ activate_maintenance() {
 }
 
 deactivate_maintenance() {
+  if [ $MAINTENANCE -eq 0 ]; then
+    return
+  fi
+
   if ! ask "Do you want to deactivate maintenance mode"; then
     log_warning "⚠️ Skipping maintenance deactivation, to deactivate maintenance, use the following command:"
     log_warning "(cd $MAINTENANCE_REPO_DIR && npx wrangler delete --env $TO_BRANCH)"
@@ -131,11 +143,10 @@ deactivate_maintenance() {
 }
 
 usage() {
-  echo "Usage: $0 [ --staging | --production ] [--force] [--maintenance]"
+  echo "Usage: $0 [ --staging | --production ] [--force]"
   echo "  --staging         Promote to staging"
   echo "  --production      Promote to production"
   echo "  --force           Force push to GitHub"
-  echo "  --maintenance     Activate maintenance mode during deployment"
   echo ""
 }
 
@@ -155,10 +166,6 @@ while [[ $# -gt 0 ]]; do
       GIT_FORCE=--force
       shift
       ;;
-    --maintenance)
-      MAINTENANCE=1
-      shift
-      ;;
     --help | -h)
       usage
       exit 0
@@ -173,14 +180,10 @@ check_args
 check_commands git aws npm
 check_cwd
 
-if [ -n "$MAINTENANCE" ]; then
-  activate_maintenance
-fi
+activate_maintenance
 
 deploy
 
-if [ -n "$MAINTENANCE" ]; then
-  deactivate_maintenance
-fi
+deactivate_maintenance
 
 exit_success
