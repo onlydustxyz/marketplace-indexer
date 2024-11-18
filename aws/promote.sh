@@ -5,7 +5,6 @@ SCRIPT_DIR=$(readlink -f "$0" | xargs dirname)
 
 unset -v FROM_BRANCH
 unset -v TO_BRANCH
-unset -v GIT_FORCE
 unset -v MAINTENANCE
 unset -v MAINTENANCE_REPO_DIR
 
@@ -68,8 +67,14 @@ git_push() {
       exit_error "❌ Unable to checkout $FROM_BRANCH to $LOCAL_BRANCH."
     fi
 
-    if ! git push "$GIT_FORCE" "$REMOTE" "$LOCAL_BRANCH:$TO_BRANCH"; then
-      exit_error "❌ Unable to push $FROM_BRANCH to $TO_BRANCH. Please rebase then try again."
+    if ! git push "$REMOTE" "$LOCAL_BRANCH:$TO_BRANCH"; then
+      log_error "❌ Unable to push $LOCAL_BRANCH to $TO_BRANCH."
+
+      if ask "Do you want to force push"; then
+        if ! execute git push -f "$REMOTE" "$LOCAL_BRANCH:$TO_BRANCH"; then
+          exit_error "❌ Unable to force push $FROM_BRANCH to $TO_BRANCH."
+        fi
+      fi
     fi
 
     git checkout -
@@ -143,10 +148,9 @@ deactivate_maintenance() {
 }
 
 usage() {
-  echo "Usage: $0 [ --staging | --production ] [--force]"
+  echo "Usage: $0 [ --staging | --production ]"
   echo "  --staging         Promote to staging"
   echo "  --production      Promote to production"
-  echo "  --force           Force push to GitHub"
   echo ""
 }
 
@@ -160,10 +164,6 @@ while [[ $# -gt 0 ]]; do
     --production)
       FROM_BRANCH=staging
       TO_BRANCH=production
-      shift
-      ;;
-    --force)
-      GIT_FORCE=--force
       shift
       ;;
     --help | -h)
