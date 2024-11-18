@@ -8,6 +8,7 @@ import lombok.Value;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.Boolean.TRUE;
 
@@ -25,6 +26,7 @@ public class CleanPullRequest {
     Date mergedAt;
     Boolean merged;
     CleanAccount author;
+    CleanAccount mergedBy;
     String htmlUrl;
     String body;
     Integer comments;
@@ -54,6 +56,7 @@ public class CleanPullRequest {
                 .body(pullRequest.getBody())
                 .comments(pullRequest.getComments())
                 .author(CleanAccount.of(pullRequest.getAuthor()))
+                .mergedBy(Optional.ofNullable(pullRequest.getMergedBy()).map(CleanAccount::of).orElse(null))
                 .draft(TRUE.equals(pullRequest.getDraft()))
                 .build();
     }
@@ -74,6 +77,7 @@ public class CleanPullRequest {
                 .body(pullRequest.getBody())
                 .comments(pullRequest.getComments())
                 .author(author)
+                .mergedBy(Optional.ofNullable(pullRequest.getMergedBy()).map(CleanAccount::of).orElse(null))
                 .draft(TRUE.equals(pullRequest.getDraft()))
                 .build();
     }

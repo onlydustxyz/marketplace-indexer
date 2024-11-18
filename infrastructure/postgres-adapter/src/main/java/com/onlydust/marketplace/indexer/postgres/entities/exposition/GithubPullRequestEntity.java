@@ -11,6 +11,7 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.hibernate.type.SqlTypes;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -46,6 +47,9 @@ public class GithubPullRequestEntity {
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     GithubAccountEntity author;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    GithubAccountEntity mergedBy;
 
     String htmlUrl;
     Integer commentsCount;
@@ -102,6 +106,7 @@ public class GithubPullRequestEntity {
                 .mergedAt(pullRequest.getMergedAt())
                 .body(pullRequest.getBody())
                 .author(GithubAccountEntity.of(pullRequest.getAuthor()))
+                .mergedBy(Optional.ofNullable(pullRequest.getMergedBy()).map(GithubAccountEntity::of).orElse(null))
                 .htmlUrl(pullRequest.getHtmlUrl())
                 .commentsCount(pullRequest.getCommentsCount())
                 .draft(pullRequest.isDraft())

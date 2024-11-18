@@ -6,10 +6,7 @@ import lombok.Builder;
 import lombok.Value;
 import onlydust.com.marketplace.kernel.model.ContributionUUID;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.onlydust.marketplace.indexer.domain.utils.FileUtils.fileExtension;
 import static java.util.stream.Collectors.*;
@@ -25,6 +22,7 @@ public class GithubPullRequest {
     String title;
     Status status;
     GithubAccount author;
+    GithubAccount mergedBy;
     String htmlUrl;
     Integer commentsCount;
     Date createdAt;
@@ -46,6 +44,7 @@ public class GithubPullRequest {
                 .title(pullRequest.getTitle())
                 .status(Status.of(pullRequest))
                 .author(GithubAccount.of(pullRequest.getAuthor()))
+                .mergedBy(Optional.ofNullable(pullRequest.getMergedBy()).map(GithubAccount::of).orElse(null))
                 .htmlUrl(pullRequest.getHtmlUrl())
                 .commentsCount(pullRequest.getComments())
                 .createdAt(pullRequest.getCreatedAt())
