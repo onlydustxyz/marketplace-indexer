@@ -9,6 +9,8 @@ import com.onlydust.marketplace.indexer.domain.ports.out.jobs.CommitIndexingJobS
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static java.lang.Math.max;
+
 @AllArgsConstructor
 @Slf4j
 public class CommitIndexerJobService implements JobManager {
@@ -18,7 +20,7 @@ public class CommitIndexerJobService implements JobManager {
 
     @Override
     public Job createJob() {
-        final var batchSize = rateLimitService.rateLimit().remaining() - 1000;
+        final var batchSize = max(0, rateLimitService.rateLimit().remaining() - 1000);
 
         LOGGER.info("Indexing max {} commits", batchSize);
         final var items = commitIndexingJobStorage.commitsForLeastIndexedUsers(batchSize);

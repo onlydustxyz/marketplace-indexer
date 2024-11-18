@@ -69,6 +69,7 @@ class CommitIndexerJobServiceTest {
         commitIndexerJobService.createJob().run();
 
         // Then
+        verify(commitIndexingJobStorage).commitsForLeastIndexedUsers(0);
         verifyNoMoreInteractions(commitIndexer);
     }
 }
