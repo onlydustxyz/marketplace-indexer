@@ -23,6 +23,9 @@ public class RawPullRequest extends JsonDocument {
     @JsonProperty("user")
     RawShortAccount author;
 
+    @JsonProperty("merged_by")
+    RawShortAccount mergedBy;
+
     String title;
     String state;
     @JsonProperty("created_at")
