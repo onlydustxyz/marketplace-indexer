@@ -129,3 +129,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000062_add_issue_assigned_by.sql
   - include:
       file: db/changelog/changelogs/00000063_add_pull_request_merged_by.sql
+  - include:
+      file: db/changelog/changelogs/00000064_add_missing_indexes.sql
