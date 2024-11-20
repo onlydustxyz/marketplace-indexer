@@ -84,8 +84,6 @@ git_push() {
 }
 
 deploy() {
-    create_remote
-
     from_commit=$REMOTE/$FROM_BRANCH
     to_commit=$REMOTE/$TO_BRANCH
 
@@ -102,8 +100,6 @@ deploy() {
           log_success "✅ Deployment successful"
       fi
     fi
-
-    delete_remote
 }
 
 activate_maintenance() {
@@ -184,8 +180,14 @@ check_cwd
 
 activate_maintenance
 
+create_remote
+
 deploy
 
+./wait_for_deployment.sh -e $TO_BRANCH -c $REMOTE/$TO_BRANCH
+
 deactivate_maintenance
+
+delete_remote
 
 exit_success
