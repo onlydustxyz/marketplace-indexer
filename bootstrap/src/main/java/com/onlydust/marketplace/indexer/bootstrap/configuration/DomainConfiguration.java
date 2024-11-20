@@ -30,6 +30,7 @@ import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPull
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
 import com.onlydust.marketplace.indexer.domain.services.observers.GithubOutboxObserver;
 import com.onlydust.marketplace.indexer.domain.services.observers.IndexingOutboxObserver;
+import com.onlydust.marketplace.indexer.infrastructure.aws_athena.AwsAthenaClient;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresCommitIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRepoIndexingJobStorage;
@@ -41,6 +42,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
+
+import java.util.stream.Stream;
 
 @Slf4j
 @Configuration
@@ -92,8 +95,11 @@ public class DomainConfiguration {
 
     @Bean
     PublicEventRawStorageReader livePublicEventRawStorageReader(
+            final AwsAthenaClient.Properties awsAthenaProperties,
             final PublicEventRawStorageReader awsAthenaPublicEventRawStorageReaderAdapter
     ) {
+        if (awsAthenaProperties.getDatabase() == null)
+            return (userId, since) -> Stream.empty();
         return awsAthenaPublicEventRawStorageReaderAdapter;
     }
 

@@ -13,12 +13,12 @@ infrastructure:
   api-client:
     api-key: ${INTERNAL_API_KEY}
     base-uri: ${API_BACKEND_BASE_URL}
-  aws:
-    athena:
-      database: gha_db
-      output-location: s3://gha-athena-results
-      polling-interval: 10 # 10s
-      region: eu-west-3
+#  aws:
+#    athena:
+#      database: ${AWS_GHA_DATABASE_NAME}
+#      output-location: ${AWS_GHA_OUTPUT_LOCATION}
+#      polling-interval: ${AWS_GHA_POLLING_INTERVAL}
+#      region: ${AWS_REGION}
 
 application:
   web:
