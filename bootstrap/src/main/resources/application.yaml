@@ -90,6 +90,20 @@ spring:
 server:
   port: ${PORT}
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  info:
+    git:
+      enabled: true
+      mode: simple
+    java:
+      enabled: false
+    env:
+      enabled: false
+    build:
+      enabled: false
   datadog:
     metrics:
       export:

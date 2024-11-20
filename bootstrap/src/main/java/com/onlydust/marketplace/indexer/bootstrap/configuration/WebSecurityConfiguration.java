@@ -54,11 +54,6 @@ public class WebSecurityConfiguration {
         return new WebCorsProperties();
     }
 
-    @Data
-    public static class WebCorsProperties {
-        private String[] hosts;
-    }
-
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain filterChain(HttpSecurity http,
@@ -75,6 +70,7 @@ public class WebSecurityConfiguration {
                                 .requestMatchers(antMatcher(HttpMethod.GET, "/v3/api-docs/**")).permitAll()
                                 .requestMatchers(antMatcher(HttpMethod.GET, "/swagger-ui/**")).permitAll()
                                 .requestMatchers(antMatcher(HttpMethod.GET, "/actuator/health")).permitAll()
+                                .requestMatchers(antMatcher(HttpMethod.GET, "/actuator/info")).permitAll()
                                 .requestMatchers(antMatcher(HttpMethod.GET, "/")).permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(apiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -82,6 +78,11 @@ public class WebSecurityConfiguration {
                         (exceptionHandling) -> exceptionHandling.authenticationEntryPoint(authEntryPoint)
                 );
         return http.build();
+    }
+
+    @Data
+    public static class WebCorsProperties {
+        private String[] hosts;
     }
 
 }
