@@ -97,7 +97,6 @@ deploy() {
       echo
       if ask "OK to continue"; then
           git_push
-          log_success "✅ Deployment successful"
       fi
     fi
 }
@@ -107,7 +106,7 @@ activate_maintenance() {
   MAINTENANCE=$((1 - $?))
 
   if [ $MAINTENANCE -eq 0 ]; then
-    log_warning "⚠️ Skipping maintenance activation"
+    log_warning "⚠️  Skipping maintenance activation"
     return
   fi
 
@@ -175,7 +174,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 check_args
-check_commands git aws npm
+check_commands git aws npm gh
 check_cwd
 
 activate_maintenance
@@ -184,6 +183,7 @@ create_remote
 
 deploy
 
+log_info "🔄 Waiting for deployment to complete"
 "$SCRIPT_DIR"/wait_for_deployment.sh -e $TO_BRANCH -c $REMOTE/$TO_BRANCH
 
 deactivate_maintenance
