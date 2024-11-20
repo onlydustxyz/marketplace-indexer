@@ -184,7 +184,7 @@ create_remote
 
 deploy
 
-./wait_for_deployment.sh -e $TO_BRANCH -c $REMOTE/$TO_BRANCH
+"$SCRIPT_DIR"/wait_for_deployment.sh -e $TO_BRANCH -c $REMOTE/$TO_BRANCH
 
 deactivate_maintenance
 
