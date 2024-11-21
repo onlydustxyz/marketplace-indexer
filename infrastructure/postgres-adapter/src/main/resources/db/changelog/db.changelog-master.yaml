@@ -131,3 +131,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000063_add_pull_request_merged_by.sql
   - include:
       file: db/changelog/changelogs/00000064_add_missing_indexes.sql
+  - include:
+      file: db/changelog/changelogs/00000065_add_missing_indexes.sql
