@@ -4,7 +4,6 @@ import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.athena.AthenaClient;
 import software.amazon.awssdk.services.athena.model.*;
@@ -24,7 +23,6 @@ public class AwsAthenaClient {
         this.properties = properties;
         this.client = AthenaClient.builder()
                 .region(properties.region)
-                .credentialsProvider(ProfileCredentialsProvider.create())
                 .build();
     }
 
