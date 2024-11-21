@@ -3,19 +3,46 @@
 SCRIPT_DIR=$(readlink -f "$0" | xargs dirname)
 . "$SCRIPT_DIR"/utils.sh
 
+unset -v FROM_ENV
 unset -v FROM_BRANCH
 unset -v TO_BRANCH
+unset -v TO_ENV
 unset -v MAINTENANCE
 unset -v MAINTENANCE_REPO_DIR
 
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --from|-f)
+      FROM_ENV=$2
+      FROM_BRANCH=$([ "$FROM_ENV" = "develop" ] && echo main || echo "$FROM_ENV")
+      shift 2
+      ;;
+    --to|-t)
+      TO_ENV=$2
+      TO_BRANCH=$([ "$TO_ENV" = "develop" ] && echo main || echo "$TO_ENV")
+      shift 2
+      ;;
+    --help | -h)
+      usage
+      exit 0
+      ;;
+    *)
+      exit_error "❌ Error: unrecognized option '$1'"
+      ;;
+  esac
+done
+
 REMOTE=promote-origin
+FROM_COMMIT=$REMOTE/$FROM_BRANCH
+TO_COMMIT=$REMOTE/$TO_BRANCH
 
 GIT_REPO_URL=https://github.com/onlydustxyz/marketplace-indexer.git
 ENV_FILES="**/application.yaml"
 
 check_args() {
-    if [[ -z $FROM_BRANCH || -z $TO_BRANCH ]]; then
-      exit_error "❌ Invalid arguments, you must specify at least --staging or --production flag"
+    if [[ -z $FROM_ENV || -z $TO_ENV ]]; then
+      exit_error "❌ Invalid arguments, you must specify --from and --to options"
     fi
 }
 
@@ -44,7 +71,7 @@ create_remote() {
 
 check_env_vars_diff() {
     log_info "🧐 Checking diff in environment variables"
-    GIT_DIFF_CMD="git diff $to_commit..$from_commit -- $ENV_FILES"
+    GIT_DIFF_CMD="git diff $TO_COMMIT..$FROM_COMMIT -- $ENV_FILES"
     DIFF=$(eval "$GIT_DIFF_CMD")
 
     if [ -z "$DIFF" ]; then
@@ -84,11 +111,8 @@ git_push() {
 }
 
 deploy() {
-    from_commit=$REMOTE/$FROM_BRANCH
-    to_commit=$REMOTE/$TO_BRANCH
-
-    log_info "🧐 Checking diff to be loaded in $TO_BRANCH ($to_commit..$from_commit)"
-    git log --color --graph --pretty=format:'%Cred%h%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' $to_commit..$from_commit | tee
+    log_info "🧐 Checking diff to be loaded in $TO_BRANCH ($TO_COMMIT..$FROM_COMMIT)"
+    git log --color --graph --pretty=format:'%Cred%h%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' $TO_COMMIT..$FROM_COMMIT | tee
 
     echo
     if ask "OK to continue"; then
@@ -120,7 +144,7 @@ activate_maintenance() {
     if [ "$(npx wrangler whoami | grep -c 'You are not authenticated')" -eq 1 ]; then
       execute npx wrangler login
     fi
-    execute npx wrangler deploy --env $TO_BRANCH
+    execute npx wrangler deploy --env "$TO_ENV"
   )
 }
 
@@ -131,47 +155,25 @@ deactivate_maintenance() {
 
   if ! ask "Do you want to deactivate maintenance mode"; then
     log_warning "⚠️ Skipping maintenance deactivation, to deactivate maintenance, use the following command:"
-    log_warning "(cd $MAINTENANCE_REPO_DIR && npx wrangler delete --env $TO_BRANCH)"
+    log_warning "(cd $MAINTENANCE_REPO_DIR && npx wrangler delete --env $TO_ENV)"
     return
   fi
 
   log_info "🛠️ Deactivating maintenance"
   (
       cd "$MAINTENANCE_REPO_DIR" || exit_error "❌ Unable to change directory"
-      execute npx wrangler delete --env $TO_BRANCH
+      execute npx wrangler delete --env "$TO_ENV"
     )
 
   [ -d "$MAINTENANCE_REPO_DIR" ] && rm -rf "$MAINTENANCE_REPO_DIR"
 }
 
 usage() {
-  echo "Usage: $0 [ --staging | --production ]"
-  echo "  --staging         Promote to staging"
-  echo "  --production      Promote to production"
+  echo "Usage: $0 [ --from ENV ] [ --to ENV ]"
+  echo "  --from | -f ENV     The source environment to promote from (develop,staging,perf,production)"
+  echo "  --to | -t ENV       The target environment to promote to (develop,staging,perf,production)"
   echo ""
 }
-
-while [[ $# -gt 0 ]]; do
-  case $1 in
-    --staging)
-      FROM_BRANCH=main
-      TO_BRANCH=staging
-      shift
-      ;;
-    --production)
-      FROM_BRANCH=staging
-      TO_BRANCH=production
-      shift
-      ;;
-    --help | -h)
-      usage
-      exit 0
-      ;;
-    *)
-      exit_error "❌ Error: unrecognized option '$1'"
-      ;;
-  esac
-done
 
 check_args
 check_commands git aws npm gh
@@ -184,7 +186,7 @@ create_remote
 deploy
 
 log_info "🔄 Waiting for deployment to complete"
-"$SCRIPT_DIR"/wait_for_deployment.sh -e $TO_BRANCH -c $REMOTE/$TO_BRANCH
+"$SCRIPT_DIR"/wait_for_deployment.sh -e "$TO_ENV" -c "$REMOTE/$TO_BRANCH"
 
 deactivate_maintenance
 
