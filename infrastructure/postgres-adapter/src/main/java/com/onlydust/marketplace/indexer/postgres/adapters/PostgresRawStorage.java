@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -82,7 +83,7 @@ public class PostgresRawStorage implements RawStorageWriter, RawStorageReader {
     public Optional<List<RawCommit>> pullRequestCommits(Long repoId, Long pullRequestId, Long pullRequestNumber) {
         return pullRequestRepository.findById(pullRequestId)
                 .flatMap(pr -> Optional.ofNullable(pr.getCommits()))
-                .map(c -> c.stream().map(RawCommitEntity::getData).toList());
+                .map(c -> c.stream().map(RawCommitEntity::getData).filter(Objects::nonNull).toList());
     }
 
     @Override
