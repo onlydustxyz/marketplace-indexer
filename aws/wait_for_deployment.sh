@@ -64,7 +64,7 @@ check_ci() {
 check_cd() {
   id=$(gh api "/repos/$REPO_OWNER_NAME/deployments?sha=$SHA&environment=$ENV" | jq -r '.[0].id')
 
-  if [ -n "$id" ]; then
+  if [ "$id" != "null" ]; then
     status=$(gh api "/repos/$REPO_OWNER_NAME/deployments/$id/statuses" | jq -r '.[0].state')
   fi
 
