@@ -38,6 +38,7 @@ public class AwsAthenaClient {
                 .queryString(query)
                 .executionParameters(args)
                 .queryExecutionContext(QueryExecutionContext.builder()
+                        .catalog(properties.catalog)
                         .database(properties.database)
                         .build())
                 .resultConfiguration(ResultConfiguration.builder()
@@ -92,6 +93,7 @@ public class AwsAthenaClient {
     public static class Properties {
         Region region;
         String database;
+        String catalog;
         String outputLocation;
         Integer pollingInterval;
     }

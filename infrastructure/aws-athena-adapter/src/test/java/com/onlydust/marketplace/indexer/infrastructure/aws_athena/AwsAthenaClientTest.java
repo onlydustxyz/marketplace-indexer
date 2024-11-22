@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 
 class AwsAthenaClientTest {
     private final AwsAthenaClient client = new AwsAthenaClient(Executors.newSingleThreadScheduledExecutor(),
-            new AwsAthenaClient.Properties(Region.EU_WEST_3, "gha_db", "s3://gha-athena-results", 1));
+            new AwsAthenaClient.Properties(Region.EU_WEST_3, "gha_db", "116981777789", "s3://gha-athena-results", 1));
 
     private final AwsAthenaPublicEventRawStorageReaderAdapter adapter = new AwsAthenaPublicEventRawStorageReaderAdapter(client);
 

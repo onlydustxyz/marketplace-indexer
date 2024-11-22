@@ -8,10 +8,11 @@ infrastructure:
     api-key: "INTERNAL_API_KEY"
   aws:
     athena:
-      database: "gha_db"
-      output-location: "s3://gha-athena-results"
+      database: gha_db
+      output-location: s3://gha-athena-results
       polling-interval: 10
-      region: "eu-west-1"
+      region: eu-west-1
+      catalog: 116981777789
 
 application:
   web:
