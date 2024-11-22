@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.cron;
 import com.onlydust.marketplace.indexer.domain.jobs.InstallationEventsInboxJob;
 import com.onlydust.marketplace.indexer.domain.jobs.OtherEventsInboxJob;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserPublicEventsIndexingJobManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -19,6 +20,7 @@ public class JobScheduler {
     private final InstallationEventsInboxJob installationEventsInboxJob;
     private final OtherEventsInboxJob otherEventsInboxJob;
     private final JobManager commitIndexerJobManager;
+    private final UserPublicEventsIndexingJobManager userStatsJobManager;
 
     @Scheduled(fixedDelayString = "${application.cron.repo-refresh-job-delay}")
     public void scheduleRepoRefresherJobs() {
@@ -46,5 +48,12 @@ public class JobScheduler {
     public void scheduleCommitIndexerJobs() {
         LOGGER.info("Indexing commits");
         commitIndexerJobManager.createJob().run();
+    }
+
+
+    @Scheduled(cron = "${application.cron.public-event-refresh-job-cron}")
+    public void schedulePublicEventRefreshJob() {
+        LOGGER.info("Refreshing public events");
+        userStatsJobManager.refresh().run();
     }
 }
