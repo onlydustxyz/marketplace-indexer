@@ -25,7 +25,7 @@ public class UserPublicEventIndexerJob extends Job {
 
     @Override
     public String name() {
-        return "user-public-events-indexer";
+        return "user-public-events-indexer-" + (userIds.size() == 1 ? userIds.iterator().next() : "many");
     }
 
     private void index(RawAccount user) {
