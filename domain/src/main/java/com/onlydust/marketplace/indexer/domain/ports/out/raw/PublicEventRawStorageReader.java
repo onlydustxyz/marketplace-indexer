@@ -7,4 +7,6 @@ import java.util.stream.Stream;
 
 public interface PublicEventRawStorageReader {
     Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since);
+
+    Stream<RawPublicEvent> allPublicEvents(ZonedDateTime since);
 }

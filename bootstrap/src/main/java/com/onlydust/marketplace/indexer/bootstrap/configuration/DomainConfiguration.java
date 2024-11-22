@@ -3,6 +3,7 @@ package com.onlydust.marketplace.indexer.bootstrap.configuration;
 import com.onlydust.marketplace.indexer.domain.models.clean.*;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
@@ -43,6 +44,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 
+import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -99,7 +101,17 @@ public class DomainConfiguration {
             final PublicEventRawStorageReader awsAthenaPublicEventRawStorageReaderAdapter
     ) {
         if (awsAthenaProperties.getDatabase() == null)
-            return (userId, since) -> Stream.empty();
+            return new PublicEventRawStorageReader() {
+                @Override
+                public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
+                    return Stream.empty();
+                }
+
+                @Override
+                public Stream<RawPublicEvent> allPublicEvents(ZonedDateTime since) {
+                    return Stream.empty();
+                }
+            };
         return awsAthenaPublicEventRawStorageReaderAdapter;
     }
 

@@ -16,6 +16,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
 
 @AllArgsConstructor
 @Slf4j
@@ -34,6 +35,15 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
     public void indexUser(final @NonNull Long userId, final @NonNull ZonedDateTime since) {
         LOGGER.info("Indexing public events for user {} since {}", userId, since);
         publicEventRawStorageReader.userPublicEvents(userId, since)
+                .distinct()
+                .forEach(this::index);
+    }
+
+    @Override
+    public void indexUsers(final @NonNull Set<Long> userIds, final @NonNull ZonedDateTime since) {
+        LOGGER.info("Indexing public events for {} users since {}", userIds.size(), since);
+        publicEventRawStorageReader.allPublicEvents(since)
+                .filter(event -> userIds.contains(event.actor().getId()))
                 .distinct()
                 .forEach(this::index);
     }

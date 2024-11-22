@@ -15,7 +15,7 @@ public interface UserPublicEventsIndexingJobStorage {
 
     void endJob(Long userId);
 
-    Optional<ZonedDateTime> lastEventTimestamp(Long userId);
+    Optional<ZonedDateTime> lastEventTimestamp(Set<Long> userIds);
 
     Set<Long> all();
 

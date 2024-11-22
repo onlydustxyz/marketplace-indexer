@@ -14,6 +14,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.onlydust.marketplace.indexer.postgres.entities.JobStatus.SUCCESS;
 import static java.util.stream.Collectors.toSet;
 
 @AllArgsConstructor
@@ -29,14 +30,14 @@ public class PostgresUserPublicEventsIndexingJobStorage implements UserPublicEve
     }
 
     @Override
-    public Optional<ZonedDateTime> lastEventTimestamp(Long userId) {
-        return repository.findById(userId)
-                .map(UserPublicEventsIndexingJobEntity::lastEventTimestamp);
+    public Optional<ZonedDateTime> lastEventTimestamp(Set<Long> userIds) {
+        return repository.findFirstByUserIdInOrderByLastEventTimestamp(userIds)
+                .flatMap(j -> Optional.ofNullable(j.lastEventTimestamp()));
     }
 
     @Override
     public Set<Long> all() {
-        return repository.findAll(Sort.by("userId")).stream()
+        return repository.findAllByStatus(SUCCESS, Sort.by("userId")).stream()
                 .map(UserPublicEventsIndexingJobEntity::userId)
                 .collect(toSet());
     }
@@ -67,7 +68,7 @@ public class PostgresUserPublicEventsIndexingJobStorage implements UserPublicEve
     @Transactional
     public void endJob(Long userId) {
         repository.findById(userId).ifPresent(job -> job
-                .status(JobStatus.SUCCESS)
+                .status(SUCCESS)
                 .finishedAt(Instant.now()));
     }
 }

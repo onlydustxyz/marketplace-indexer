@@ -40,4 +40,11 @@ public class PublicEventRawStorageReaderStub implements PublicEventRawStorageRea
                 .filter(e -> e.actor().getId().equals(userId) && e.createdAt().isAfter(since))
                 .sorted(comparing(RawPublicEvent::createdAt));
     }
+
+    @Override
+    public Stream<RawPublicEvent> allPublicEvents(ZonedDateTime since) {
+        return events.stream()
+                .filter(e -> e.createdAt().isAfter(since))
+                .sorted(comparing(RawPublicEvent::createdAt));
+    }
 }

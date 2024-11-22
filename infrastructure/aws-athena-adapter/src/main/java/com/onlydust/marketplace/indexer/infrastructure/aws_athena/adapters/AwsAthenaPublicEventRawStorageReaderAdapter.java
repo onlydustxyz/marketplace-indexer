@@ -29,4 +29,23 @@ public class AwsAthenaPublicEventRawStorageReaderAdapter implements PublicEventR
                 .map(r -> r.data().get(0).varCharValue())
                 .map(RawPublicEvent::fromJson);
     }
+
+    @SneakyThrows
+    @Override
+    public Stream<RawPublicEvent> allPublicEvents(ZonedDateTime since) {
+        return client.query("""
+                                SELECT event from gha_data_per_actor
+                                where year >= ? and month >= ? and day >= ? and hour >= ? and created_at >= ?
+                                order by created_at
+                                """, String.valueOf(since.getYear()),
+                        String.valueOf(since.getMonthValue()),
+                        String.valueOf(since.getDayOfMonth()),
+                        String.valueOf(since.getHour()),
+                        "timestamp '%s'".formatted(since.format(ATHENA_TIMESTAMP_FORMATTER)))
+                .get()
+                .stream().flatMap(r -> r.resultSet().rows().stream())
+                .skip(1) // First row is the header
+                .map(r -> r.data().get(0).varCharValue())
+                .map(RawPublicEvent::fromJson);
+    }
 }

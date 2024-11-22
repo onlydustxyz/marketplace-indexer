@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserPublicEventsIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
@@ -9,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
+
+import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.internalServerError;
 
 @AllArgsConstructor
 @Slf4j
@@ -20,24 +21,41 @@ public class UserPublicEventIndexerJob extends Job {
 
     @Override
     public void execute() {
-        userIds.forEach(userId -> rawStorageReader.user(userId).ifPresentOrElse(this::index, () -> LOGGER.warn("User {} not found", userId)));
+        try {
+            start();
+            final var since = userPublicEventsIndexingJobStorage.lastEventTimestamp(userIds);
+
+            if (userIds.size() == 1) {
+                final var userId = userIds.iterator().next();
+                rawStorageReader.user(userId)
+                        .ifPresentOrElse(user -> userPublicEventsIndexer.indexUser(user.getId(), since.orElse(ZonedDateTime.parse(user.getCreatedAt()))),
+                                () -> LOGGER.warn("User {} not found", userId));
+            } else {
+                userPublicEventsIndexer.indexUsers(userIds,
+                        since.orElseThrow(() -> internalServerError("No last event timestamp found for users: " + userIds)));
+            }
+
+            end();
+        } catch (Throwable e) {
+            fail(e);
+        }
+    }
+
+    private void end() {
+        userIds.forEach(userPublicEventsIndexingJobStorage::endJob);
+    }
+
+    private void start() {
+        userIds.forEach(userPublicEventsIndexingJobStorage::startJob);
+    }
+
+    private void fail(Throwable e) {
+        LOGGER.error("Failed to index public events for users: {}", userIds, e);
+        userIds.forEach(userPublicEventsIndexingJobStorage::failJob);
     }
 
     @Override
     public String name() {
         return "user-public-events-indexer-" + (userIds.size() == 1 ? userIds.iterator().next() : "many");
-    }
-
-    private void index(RawAccount user) {
-        try {
-            userPublicEventsIndexingJobStorage.startJob(user.getId());
-            final var since = userPublicEventsIndexingJobStorage.lastEventTimestamp(user.getId())
-                    .orElse(ZonedDateTime.parse(user.getCreatedAt()));
-            userPublicEventsIndexer.indexUser(user.getId(), since);
-            userPublicEventsIndexingJobStorage.endJob(user.getId());
-        } catch (Throwable e) {
-            LOGGER.error("Failed to index public events for user {}", user.getId(), e);
-            userPublicEventsIndexingJobStorage.failJob(user.getId());
-        }
     }
 }
