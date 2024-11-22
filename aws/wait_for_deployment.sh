@@ -38,11 +38,11 @@ check_ci() {
   run=$(gh api "repos/$REPO_OWNER_NAME/actions/runs?head_sha=$SHA&branch=$BRANCH" | jq '.workflow_runs[] | select(.name == "Backend CI")')
 
   id=$(echo "$run" | jq -r '.id')
-  status=$(echo "$run" | jq -r '.status')
+  status=$(echo "$run" | jq -r '.conclusion')
 
   printf "   Backend CI\r"
   case $status in
-    completed)
+    success)
       echo "✅"
       return 0
       ;;
