@@ -59,7 +59,7 @@ import static org.testcontainers.utility.MountableFile.forClasspathResource;
         @ConfigureWireMock(name = "api", property = "infrastructure.api-client.baseUri")
 })
 public class IntegrationTest {
-    static final PostgreSQLContainer postgresSQLContainer = new PostgreSQLContainer<>("postgres:14.3-alpine")
+    static final PostgreSQLContainer postgresSQLContainer = new PostgreSQLContainer<>("postgres:16.4-alpine")
             .withDatabaseName("marketplace_db")
             .withUsername("test")
             .withPassword("test")
