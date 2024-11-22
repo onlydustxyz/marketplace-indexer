@@ -30,7 +30,6 @@ public class UserPublicEventIndexerJob extends Job {
 
     private void index(RawAccount user) {
         try {
-            LOGGER.info("Indexing public events for user {}", user.getId());
             userPublicEventsIndexingJobStorage.startJob(user.getId());
             final var since = userPublicEventsIndexingJobStorage.lastEventTimestamp(user.getId())
                     .orElse(ZonedDateTime.parse(user.getCreatedAt()));
