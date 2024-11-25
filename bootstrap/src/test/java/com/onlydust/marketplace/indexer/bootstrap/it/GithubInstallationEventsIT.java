@@ -72,7 +72,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
 
         // Then
         assertThat(repoIndexingJobEntityRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator()
                 .containsExactlyInAnyOrder(new RepoIndexingJobEntity(CAIRO_STREAMS_ID, OLD_INSTALLATION_ID, false, true),
                         new RepoIndexingJobEntity(MARKETPLACE_FRONTEND_ID, OLD_INSTALLATION_ID, false, true));
 
@@ -87,7 +87,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
         assertThat(installations.get(0).id()).isEqualTo(OLD_INSTALLATION_ID);
-        assertThat(installations.get(0).account()).isEqualToComparingFieldByField(account);
+        assertThat(installations.get(0).account()).usingRecursiveComparison().isEqualTo(account);
         assertThat(installations.get(0).permissions()).containsExactlyInAnyOrder("issues:read", "metadata:read", "pull_requests:read");
 
         final var repos = installations.get(0).repos().stream().sorted(Comparator.comparing(GithubRepoEntity::getId)).toList();
@@ -121,7 +121,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
         final var installations = githubAppInstallationEntityRepository.findAll();
         assertThat(installations).hasSize(1);
         assertThat(installations.get(0).id()).isEqualTo(INSTALLATION_ID);
-        assertThat(installations.get(0).account()).isEqualToComparingFieldByField(account);
+        assertThat(installations.get(0).account()).usingRecursiveComparison().isEqualTo(account);
 
         final var repos = installations.get(0).repos();
         assertThat(repos).hasSize(1);

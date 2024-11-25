@@ -13,6 +13,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.raw.IssueRepositor
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.RepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserSocialAccountsRepository;
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -56,24 +57,24 @@ public class IssueIndexingIT extends IntegrationTest {
         response.expectStatus().isNoContent();
 
         assertThat(issueRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder().withIgnoreAllOverriddenEquals(false).build())
                 .containsExactly(RawIssueEntity.of(marketplaceFrontend.getId(), issue78));
 
         assertThat(repoRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder().withIgnoreAllOverriddenEquals(false).build())
                 .containsExactly(RawRepoEntity.of(marketplaceFrontend));
 
         assertThat(userRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder().withIgnoreAllOverriddenEquals(false).build())
                 .containsExactlyInAnyOrder(RawUserEntity.of(anthony), RawUserEntity.of(onlyDust));
 
         assertThat(userSocialAccountsRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator()
                 .containsExactlyInAnyOrder(
                         RawUserSocialAccountsEntity.of(anthony.getId(), anthonySocialAccounts),
                         RawUserSocialAccountsEntity.of(onlyDust.getId(), List.of())
                 );
-        
+
         assertThat(contributionRepository.findAll()).hasSize(1);
     }
 
