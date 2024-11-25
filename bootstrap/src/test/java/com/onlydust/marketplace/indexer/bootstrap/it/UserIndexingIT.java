@@ -13,6 +13,8 @@ import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEnt
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserSocialAccountsRepository;
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
+import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,6 +25,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -63,12 +66,14 @@ public class UserIndexingIT extends IntegrationTest {
         response.expectStatus().isNoContent();
 
         final var expectedUser = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
-        assertThat(userRepository.findAll()).usingFieldByFieldElementComparator().containsExactly(RawUserEntity.of(expectedUser));
+        assertThat(userRepository.findAll())
+                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder().withIgnoreAllOverriddenEquals(false).build())
+                .containsExactly(RawUserEntity.of(expectedUser));
 
         final var expectedUserSocialAccounts = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony_social_accounts.json")
                 , RawSocialAccount[].class);
         assertThat(userSocialAccountsRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator()
                 .containsExactly(RawUserSocialAccountsEntity.of(ANTHONY, Arrays.asList(expectedUserSocialAccounts)));
 
         final var user = githubAccountEntityRepository.findById(ANTHONY);
@@ -76,7 +81,7 @@ public class UserIndexingIT extends IntegrationTest {
         assertThat(user.get().getId()).isEqualTo(ANTHONY);
         assertThat(user.get().getLogin()).isEqualTo("AnthonyBuisset");
         assertThat(user.get().getType()).isEqualTo(GithubAccountEntity.Type.USER);
-        assertThat(user.get().getCreatedAt()).isEqualToIgnoringNanos(ZonedDateTime.parse("2018-09-21T08:45:50Z"));
+        assertThat(user.get().getCreatedAt()).isCloseTo(ZonedDateTime.parse("2018-09-21T08:45:50Z"), new TemporalUnitLessThanOffset(1, ChronoUnit.MICROS));
 
         assertThat(userIndexingJobEntityRepository.findById(ANTHONY)).isPresent();
     }

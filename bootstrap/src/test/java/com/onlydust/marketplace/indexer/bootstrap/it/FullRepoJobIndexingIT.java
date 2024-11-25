@@ -103,7 +103,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
 
         // Jobs are pending, even if BRETZEL_APP was previously indexed in light mode
         assertThat(repoIndexingJobEntityRepository.findAll(Sort.by("repoId")))
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator()
                 .contains(
                         new RepoIndexingJobEntity(BRETZEL_APP, null, true, true),
                         new RepoIndexingJobEntity(MARKETPLACE, null, true, true)
@@ -147,7 +147,7 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
         final var exposedRepo = githubRepoRepository.findById(MARKETPLACE);
         assertThat(exposedRepo).isPresent();
         assertThat(exposedRepo.get().getLanguages())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator()
                 .containsExactlyInAnyOrder(
                         GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("TypeScript").lineCount(2761826L).build(),
                         GithubRepoLanguageEntity.builder().repoId(MARKETPLACE).language("Shell").lineCount(11474L).build(),

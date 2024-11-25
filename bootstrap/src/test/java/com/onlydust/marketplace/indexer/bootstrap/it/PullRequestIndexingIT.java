@@ -10,6 +10,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.exposition.Grouped
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -86,28 +87,31 @@ public class PullRequestIndexingIT extends IntegrationTest {
         response.expectStatus().isNoContent();
 
         assertThat(pullRequestsRepository.findAll())
-                .usingElementComparatorIgnoringFields("commits")
+                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder()
+                        .withIgnoredFields("commits")
+                        .withIgnoreAllOverriddenEquals(false)
+                        .build())
                 .containsExactly(RawPullRequestEntity.of(pr1257));
 
         assertThat(pullRequestsRepository.findById(pr1257.getId()).orElseThrow().getCommits())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator()
                 .containsAll(details(marketplaceFrontend.getId(), pr1257Commits));
 
         assertThat(repoRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder().withIgnoreAllOverriddenEquals(false).build())
                 .containsExactly(RawRepoEntity.of(marketplaceFrontend));
 
         assertThat(pullRequestReviewsRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator()
                 .containsExactly(RawPullRequestReviewEntity.of(pr1257.getId(), pr1257Reviews));
 
         assertThat(userRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder().withIgnoreAllOverriddenEquals(false).build())
                 .containsExactlyInAnyOrder(RawUserEntity.of(pierre), RawUserEntity.of(olivier), RawUserEntity.of(anthony),
                         RawUserEntity.of(onlyDust));
 
         assertThat(userSocialAccountsRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator()
                 .containsExactlyInAnyOrder(
                         RawUserSocialAccountsEntity.of(pierre.getId(), pierreSocialAccounts),
                         RawUserSocialAccountsEntity.of(olivier.getId(), olivierSocialAccounts),
@@ -116,11 +120,11 @@ public class PullRequestIndexingIT extends IntegrationTest {
                 );
 
         assertThat(issueRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder().withIgnoreAllOverriddenEquals(false).build())
                 .containsExactly(RawIssueEntity.of(marketplaceFrontend.getId(), issue78));
 
         assertThat(pullRequestClosingIssueRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder().withIgnoreAllOverriddenEquals(false).build())
                 .containsExactly(
                         RawPullRequestClosingIssuesEntity.of(marketplaceFrontend.getOwner().getLogin(), marketplaceFrontend.getName(), pr1257.getNumber(),
                                 pr1257ClosingIssues));
@@ -191,19 +195,22 @@ public class PullRequestIndexingIT extends IntegrationTest {
         response.expectStatus().isNoContent();
 
         assertThat(pullRequestsRepository.findAll())
-                .usingElementComparatorIgnoringFields("commits")
+                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder()
+                        .withIgnoredFields("commits")
+                        .withIgnoreAllOverriddenEquals(false)
+                        .build())
                 .contains(RawPullRequestEntity.of(pr1258));
 
         assertThat(pullRequestsRepository.findById(pr1258.getId()).orElseThrow().getCommits())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator()
                 .containsAll(details(pr1258.getBase().getRepo().getId(), pr1258Commits));
 
         assertThat(pullRequestReviewsRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator()
                 .contains(RawPullRequestReviewEntity.of(pr1258.getId(), pr1258Reviews));
 
         assertThat(userRepository.findAll())
-                .usingFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder().withIgnoreAllOverriddenEquals(false).build())
                 .contains(RawUserEntity.of(pierre), RawUserEntity.of(olivier), RawUserEntity.of(anthony),
                         RawUserEntity.of(onlyDust));
 
