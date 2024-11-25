@@ -81,8 +81,8 @@ public class PullRequestIndexingService implements PullRequestIndexer {
 
             return userIndexer.indexUser(pullRequest.getAuthor().getId()).map(author -> {
                 final var codeReviews = indexPullRequestReviews(repo.getId(), pullRequest.getId(), prNumber);
-                final var requestedReviewers =
-                        pullRequest.getRequestedReviewers().stream().map(reviewer -> userIndexer.indexUser(reviewer.getId()).orElseGet(() -> {
+                final var requestedReviewers = pullRequest.getRequestedReviewers().stream()
+                        .map(reviewer -> userIndexer.indexUser(reviewer.getId()).orElseGet(() -> {
                             LOGGER.warn("User {} not found, skipping requested reviewer {}", reviewer.getId(), reviewer.getLogin());
                             return null;
                         })).filter(Objects::nonNull).toList();
