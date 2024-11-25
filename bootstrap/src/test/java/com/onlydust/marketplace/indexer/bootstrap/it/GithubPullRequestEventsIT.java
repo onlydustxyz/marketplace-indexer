@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GithubPullRequestEventsIT extends IntegrationTest {
@@ -66,5 +68,8 @@ public class GithubPullRequestEventsIT extends IntegrationTest {
                 new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE_FRONTEND_ID, ANTHONY_ID), 2, 2),
                 new RepoContributorEntity(new RepoContributorEntity.Id(MARKETPLACE_FRONTEND_ID, PIERRE_ID), 1, 1)
         );
+
+        // verify there was no interaction with the GitHub API
+        githubWireMockServer.verify(0, getRequestedFor(urlPathMatching(".*/pulls/1257")));
     }
 }
