@@ -25,22 +25,27 @@ public class RepositoryEventProcessorService implements EventHandler<RawReposito
     public void process(RawRepositoryEvent rawEvent) {
         final var event = RepositoryEvent.of(rawEvent);
 
-        if (RepositoryEvent.Action.DELETED.equals(event.getAction())) {
-            githubRepoStorage.save(GithubRepo.of(event.getRepository()).deleted());
-        } else if (!RepositoryEvent.Action.CREATED.equals(event.getAction())) {
-            repoIndexer.indexRepo(event.getRepository().getId());
-        }
-
-        if (event.getAction() == null)
-            return;
-
         switch (event.getAction()) {
-            case PRIVATIZED -> repoIndexingJobStorage.setPrivate(event.getRepository().getId());
-            case PUBLICIZED -> repoIndexingJobStorage.setPublic(event.getRepository().getId());
-            case DELETED -> {
+            case "created" -> {
+            }
+
+            case "deleted" -> {
+                githubRepoStorage.save(GithubRepo.of(event.getRepository()).deleted());
                 repoIndexingJobStorage.delete(event.getRepository().getId());
                 rawStorageWriter.deleteRepo(event.getRepository().getId());
             }
+
+            case "privatized" -> {
+                repoIndexer.indexRepo(event.getRepository().getId());
+                repoIndexingJobStorage.setPrivate(event.getRepository().getId());
+            }
+
+            case "publicized" -> {
+                repoIndexer.indexRepo(event.getRepository().getId());
+                repoIndexingJobStorage.setPublic(event.getRepository().getId());
+            }
+
+            default -> repoIndexer.indexRepo(event.getRepository().getId());
         }
     }
 }
