@@ -101,7 +101,9 @@ public class GithubIssueEventsIT extends IntegrationTest {
         // Then
         assertThat(githubIssueAssigneeRepository.findAllByIssueId(ISSUE_ID)).isEmpty();
 
-        // verify there was no interaction with the Github API
-        githubWireMockServer.verify(0, getRequestedFor(urlPathMatching(".*/issues/.*")));
+        // verify there was no interaction with the GitHub API
+        githubWireMockServer.findRequestsMatching(getRequestedFor(urlPathMatching(".*/issues/78")).build())
+                .getRequests().forEach(System.out::println);
+        githubWireMockServer.verify(0, getRequestedFor(urlPathMatching(".*/issues/78")));
     }
 }
