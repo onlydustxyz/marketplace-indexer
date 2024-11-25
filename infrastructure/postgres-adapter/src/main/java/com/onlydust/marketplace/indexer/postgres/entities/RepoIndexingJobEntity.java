@@ -19,6 +19,7 @@ import java.util.Date;
 @Setter
 @Accessors(chain = true, fluent = true)
 @DynamicUpdate
+@ToString
 public class RepoIndexingJobEntity {
     @Id
     Long repoId;

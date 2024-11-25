@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -71,12 +73,35 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     }
 
     @Test
+    @Order(0)
+    public void index_repos_in_light_mode() {
+        // Add repos to index in light mode
+        repoIndexingJobEntityRepository.persist(new RepoIndexingJobEntity(BRETZEL_APP, null, false, true));
+
+        // Run all jobs
+        final var before = ZonedDateTime.now();
+        diffRepoRefreshJobManager.createJob().run();
+        final var after = ZonedDateTime.now();
+
+        // Jobs are finished
+        final var job = repoIndexingJobEntityRepository.findById(BRETZEL_APP).orElseThrow();
+        assertThat(job.startedAt().atZone(ZoneOffset.UTC)).isNotNull().isAfter(before);
+        assertThat(job.finishedAt().atZone(ZoneOffset.UTC)).isNotNull().isAfter(job.startedAt().atZone(ZoneOffset.UTC)).isBefore(after);
+        assertThat(job.status()).isEqualTo(JobStatus.SUCCESS);
+
+        final var stats = githubRepoStatsEntityRepository.findById(BRETZEL_APP).orElseThrow();
+        assertThat(stats.getLastIndexedAt()).isNotNull();
+
+        assertThat(apiEventRepository.findAll()).isEmpty();
+    }
+
+    @Test
     @Order(1)
-    public void index_repos() {
+    public void index_repos_in_full_mode() {
         // Add repos to index (full mode = from REST API)
         onRepoLinkChanged(List.of(BRETZEL_APP, MARKETPLACE), List.of()).expectStatus().isNoContent();
 
-        // Jobs are pending
+        // Jobs are pending, even if BRETZEL_APP was previously indexed in light mode
         assertThat(repoIndexingJobEntityRepository.findAll(Sort.by("repoId")))
                 .usingFieldByFieldElementComparator()
                 .contains(
@@ -85,13 +110,15 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
                 );
 
         // Run all jobs
+        final var before = ZonedDateTime.now();
         diffRepoRefreshJobManager.createJob().run();
+        final var after = ZonedDateTime.now();
 
         // Jobs are finished
         for (final var repoId : new Long[]{BRETZEL_APP, MARKETPLACE}) {
             final var job = repoIndexingJobEntityRepository.findById(repoId).orElseThrow();
-            assertThat(job.startedAt()).isNotNull();
-            assertThat(job.finishedAt()).isNotNull();
+            assertThat(job.startedAt().atZone(ZoneOffset.UTC)).isNotNull().isAfter(before);
+            assertThat(job.finishedAt().atZone(ZoneOffset.UTC)).isNotNull().isAfter(job.startedAt().atZone(ZoneOffset.UTC)).isBefore(after);
             assertThat(job.status()).isEqualTo(JobStatus.SUCCESS);
 
             final var stats = githubRepoStatsEntityRepository.findById(repoId).orElseThrow();
@@ -161,6 +188,9 @@ public class FullRepoJobIndexingIT extends IntegrationTest {
     @Transactional
     public void should_delete_contributions_before_saving_new_ones() {
         // Given
+        // This will reset the jobs to force running them again
+        onRepoLinkChanged(List.of(BRETZEL_APP, MARKETPLACE), List.of()).expectStatus().isNoContent();
+
         githubWireMockServer.stubFor(get(urlEqualTo("/repositories/498695724/pulls?state=all&sort=updated&per_page=100"))
                 .atPriority(1)
                 .willReturn(aResponse().withBodyFile("repos/marketplace-frontend/pulls-page-1-updated.json")));
