@@ -38,6 +38,7 @@ public class IssueEventProcessorService implements EventHandler<RawIssueEvent> {
             return;
 
         githubObserver.on(event);
+        rawStorageWriter.saveIssue(event.getRepository().getId(), event.getIssue());
 
         switch (event.getAction()) {
             case "transferred", "deleted" -> onIssueTransferredOrDeleted(event);

@@ -49,6 +49,7 @@ class IssueEventProcessorServiceTest {
         issueEventProcessorService.process(event);
 
         // Then
+        verify(rawStorageWriter, never()).saveIssue(any(), any());
         verify(rawStorageWriter, never()).deleteIssue(any());
         verify(issueStorage, never()).delete(any());
         verify(contributionStorage, never()).deleteAllByRepoIdAndGithubNumber(any(), any());
@@ -65,6 +66,7 @@ class IssueEventProcessorServiceTest {
         issueEventProcessorService.process(event);
 
         // Then
+        verify(rawStorageWriter).saveIssue(event.getRepository().getId(), event.getIssue());
         verify(rawStorageWriter).deleteIssue(1301824165L);
         verify(issueStorage).delete(1301824165L);
         verify(contributionStorage).deleteAllByRepoIdAndGithubNumber(498695724L, 78L);
@@ -83,6 +85,7 @@ class IssueEventProcessorServiceTest {
         issueEventProcessorService.process(event);
 
         // Then
+        verify(rawStorageWriter).saveIssue(event.getRepository().getId(), event.getIssue());
         verify(rawStorageWriter).deleteIssue(2346568062L);
         verify(issueStorage).delete(2346568062L);
         verify(contributionStorage).deleteAllByRepoIdAndGithubNumber(699283256L, 160L);
@@ -112,6 +115,7 @@ class IssueEventProcessorServiceTest {
         issueEventProcessorService.process(event);
 
         // Then
+        verify(rawStorageWriter).saveIssue(event.getRepository().getId(), event.getIssue());
         verify(githubObserver).on(event);
         verify(rawStorageWriter, never()).deleteIssue(any());
         verify(issueStorage, never()).delete(any());
