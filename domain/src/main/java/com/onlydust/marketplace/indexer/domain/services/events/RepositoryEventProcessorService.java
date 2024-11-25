@@ -23,6 +23,8 @@ public class RepositoryEventProcessorService implements EventHandler<RawReposito
 
     @Override
     public void process(RawRepositoryEvent rawEvent) {
+        rawStorageWriter.saveRepo(rawEvent.getRepository());
+        
         final var event = RepositoryEvent.of(rawEvent);
 
         switch (event.getAction()) {

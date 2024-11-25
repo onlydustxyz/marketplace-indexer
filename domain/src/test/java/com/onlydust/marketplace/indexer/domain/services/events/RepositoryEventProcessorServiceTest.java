@@ -28,6 +28,7 @@ class RepositoryEventProcessorServiceTest {
         repositoryEventProcessorService.process(event);
 
         // Then
+        verify(rawStorageWriter).saveRepo(event.getRepository());
         verify(githubRepoStorage, never()).save(any());
         verify(repoIndexer).indexRepo(493795808L);
     }
@@ -41,6 +42,7 @@ class RepositoryEventProcessorServiceTest {
         repositoryEventProcessorService.process(event);
 
         // Then
+        verify(rawStorageWriter).saveRepo(event.getRepository());
         verify(githubRepoStorage, never()).save(any());
         verify(repoIndexer).indexRepo(493795808L);
         verify(repoIndexingJobStorage).setPrivate(493795808L);
@@ -55,6 +57,7 @@ class RepositoryEventProcessorServiceTest {
         repositoryEventProcessorService.process(event);
 
         // Then
+        verify(rawStorageWriter).saveRepo(event.getRepository());
         verify(githubRepoStorage, never()).save(any());
         verify(repoIndexer).indexRepo(493795808L);
         verify(repoIndexingJobStorage).setPublic(493795808L);
@@ -69,6 +72,7 @@ class RepositoryEventProcessorServiceTest {
         repositoryEventProcessorService.process(event);
 
         // Then
+        verify(rawStorageWriter).saveRepo(event.getRepository());
         verify(githubRepoStorage).save(argThat(repo -> repo.getId().equals(493795808L) && repo.getDeletedAt().equals(event.getRepository().getUpdatedAt())));
         verify(repoIndexer, never()).indexRepo(any());
         verify(repoIndexingJobStorage).delete(493795808L);
