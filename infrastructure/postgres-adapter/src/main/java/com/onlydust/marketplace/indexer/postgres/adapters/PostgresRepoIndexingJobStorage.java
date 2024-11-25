@@ -75,7 +75,10 @@ public class PostgresRepoIndexingJobStorage implements RepoIndexingJobStorage {
     @Transactional
     public void configureReposForFullIndexing(Set<Long> repoIds, Boolean isPublic) {
         repoIds.forEach(repoId -> repository.findById(repoId).ifPresentOrElse(
-                job -> job.fullIndexing(true),
+                job -> job.fullIndexing(true)
+                        .status(JobStatus.PENDING)
+                        .startedAt(null)
+                        .finishedAt(null),
                 () -> repository.persist(RepoIndexingJobEntity.builder()
                         .status(JobStatus.PENDING)
                         .repoId(repoId)

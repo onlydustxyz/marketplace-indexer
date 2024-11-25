@@ -23,8 +23,8 @@ public interface RepoIndexingJobEntityRepository extends BaseJpaRepository<RepoI
     @Query("""
             SELECT j
             FROM RepoIndexingJobEntity j
-            WHERE (:installationId IS NULL AND (j.installationId IS NULL OR j.installationSuspendedAt IS NOT NULL) AND j.isPublic = TRUE)
-               OR (:installationId IS NOT NULL AND j.installationId = :installationId AND j.installationSuspendedAt IS NULL)
+            WHERE ((:installationId IS NULL AND (j.installationId IS NULL OR j.installationSuspendedAt IS NOT NULL) AND j.isPublic = TRUE)
+               OR (:installationId IS NOT NULL AND j.installationId = :installationId AND j.installationSuspendedAt IS NULL))
                 AND (j.finishedAt IS NULL OR j.finishedAt < :since)
             """)
     Set<RepoIndexingJobEntity> findReposUpdatedBefore(Long installationId, Instant since);
