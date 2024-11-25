@@ -6,6 +6,7 @@ import com.onlydust.marketplace.indexer.postgres.entities.exposition.RepoContrib
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.ContributionRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubPullRequestRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -27,6 +28,11 @@ public class GithubPullRequestEventsIT extends IntegrationTest {
     ContributionRepository contributionRepository;
     @Autowired
     RepoContributorRepository repoContributorRepository;
+
+    @BeforeEach
+    void setUp() {
+        githubWireMockServer.resetAll();
+    }
 
     @Test
     void should_handle_pull_request_events() {
@@ -70,6 +76,8 @@ public class GithubPullRequestEventsIT extends IntegrationTest {
         );
 
         // verify there was no interaction with the GitHub API
+        githubWireMockServer.findRequestsMatching(getRequestedFor(urlPathMatching(".*/pulls/1257")).build())
+                .getRequests().forEach(System.out::println);
         githubWireMockServer.verify(0, getRequestedFor(urlPathMatching(".*/pulls/1257")));
     }
 }
