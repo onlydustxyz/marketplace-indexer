@@ -9,6 +9,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubI
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,6 +31,11 @@ public class GithubIssueEventsIT extends IntegrationTest {
     RepoContributorRepository repoContributorRepository;
     @Autowired
     GithubIssueAssigneeRepository githubIssueAssigneeRepository;
+
+    @BeforeEach
+    void setUp() {
+        githubWireMockServer.resetAll();
+    }
 
     @Test
     @Transactional
