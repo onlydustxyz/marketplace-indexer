@@ -52,7 +52,6 @@ public class AwsAthenaClient {
     private void pollForCompletion(final String queryExecutionId, CompletableFuture<GetQueryResultsIterable> results) {
         final var checkFuture = executor.scheduleAtFixedRate(() -> {
             final var status = queryExecutionStatus(queryExecutionId);
-            System.out.println("Query status: " + status.state());
             switch (status.state()) {
                 case QUEUED:
                 case RUNNING:
