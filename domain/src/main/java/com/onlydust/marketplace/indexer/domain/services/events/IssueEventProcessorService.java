@@ -37,55 +37,46 @@ public class IssueEventProcessorService implements EventHandler<RawIssueEvent> {
         if (event.getIssue().getPullRequest() != null)
             return;
 
-        final var action = event.getAction();
-
         githubObserver.on(event);
 
-        if (action.equals("transferred") || action.equals("deleted")) {
-            processTransferredOrDeleted(event);
-        } else if (action.equals("assigned")) {
-            processAssigned(event);
-        } else if (action.equals("unassigned")) {
-            processUnassigned(event);
-        } else {
-            processDefault(event);
+        switch (event.getAction()) {
+            case "transferred", "deleted" -> onIssueTransferredOrDeleted(event);
+            case "assigned" -> onIssueAssigned(event);
+            case "unassigned" -> onIssueUnassigned(event);
+            default -> onIssueUpdated(event);
         }
     }
 
-    private void processTransferredOrDeleted(RawIssueEvent event) {
+    private void onIssueTransferredOrDeleted(RawIssueEvent event) {
         rawStorageWriter.deleteIssue(event.getIssue().getId());
         contributionStorage.deleteAllByRepoIdAndGithubNumber(event.getRepository().getId(), event.getIssue().getNumber());
         issueStorage.delete(event.getIssue().getId());
         indexingObserver.onContributionsChanged(event.getRepository().getId(), ContributionUUID.of(event.getIssue().getId()));
     }
 
-    private void processAssigned(RawIssueEvent event) {
+    private void onIssueAssigned(RawIssueEvent event) {
         githubAppContext.withGithubApp(event.getInstallation().getId(), () ->
                 issueIndexer.indexIssue(event.getRepository().getOwner().getLogin(), event.getRepository().getName(), event.getIssue().getNumber())
                         .ifPresent(issue -> {
                             repoExposer.expose(issue.getRepo());
-                            userIndexer.indexUser(event.getAssignee().getId()).ifPresent(assignee -> {
-                                userIndexer.indexUser(event.getSender().getId()).ifPresent(assignedBy -> {
-                                    issueStorage.saveAssignee(event.getIssue().getId(), GithubAccount.of(assignee), GithubAccount.of(assignedBy));
-                                    indexingObserver.onContributionsChanged(event.getRepository().getId(),
-                                            ContributionUUID.of(event.getIssue().getId()));
-                                });
-                            });
+                            userIndexer.indexUser(event.getAssignee().getId()).ifPresent(assignee ->
+                                    userIndexer.indexUser(event.getSender().getId()).ifPresent(assignedBy -> {
+                                        issueStorage.saveAssignee(event.getIssue().getId(), GithubAccount.of(assignee), GithubAccount.of(assignedBy));
+                                        indexingObserver.onContributionsChanged(event.getRepository().getId(), ContributionUUID.of(event.getIssue().getId()));
+                                    }));
                         })
         );
     }
 
-    private void processUnassigned(RawIssueEvent event) {
+    private void onIssueUnassigned(RawIssueEvent event) {
         issueStorage.deleteAssignee(event.getIssue().getId(), event.getAssignee().getId());
         indexingObserver.onContributionsChanged(event.getRepository().getId(), ContributionUUID.of(event.getIssue().getId()));
     }
 
-    private void processDefault(RawIssueEvent event) {
+    private void onIssueUpdated(RawIssueEvent event) {
         githubAppContext.withGithubApp(event.getInstallation().getId(), () ->
                 issueIndexer.indexIssue(event.getRepository().getOwner().getLogin(), event.getRepository().getName(), event.getIssue().getNumber())
-                        .ifPresent(issue -> {
-                            repoExposer.expose(issue.getRepo());
-                        })
+                        .ifPresent(issue -> repoExposer.expose(issue.getRepo()))
         );
     }
 }
