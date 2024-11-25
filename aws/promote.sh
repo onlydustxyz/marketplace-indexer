@@ -163,7 +163,7 @@ deactivate_maintenance() {
   (
       cd "$MAINTENANCE_REPO_DIR" || exit_error "❌ Unable to change directory"
       execute npx wrangler delete --env "$TO_ENV"
-    )
+  )
 
   [ -d "$MAINTENANCE_REPO_DIR" ] && rm -rf "$MAINTENANCE_REPO_DIR"
 }

@@ -53,7 +53,7 @@ check_ci() {
         gh api -X POST "repos/$REPO_OWNER_NAME/actions/runs/$id/rerun"
         return 1
       fi
-      exit_error "☠️ Aborting"
+      exit_error "☠️  Aborting"
       ;;
     *)
       return 1
@@ -64,6 +64,7 @@ check_ci() {
 check_cd() {
   id=$(gh api "/repos/$REPO_OWNER_NAME/deployments?sha=$SHA&environment=$ENV" | jq -r '.[0].id')
 
+  status=
   if [ "$id" != "null" ]; then
     status=$(gh api "/repos/$REPO_OWNER_NAME/deployments/$id/statuses" | jq -r '.[0].state')
   fi
@@ -79,7 +80,7 @@ check_cd() {
       if ask "CD has failed, please re-run it manually. Keep waiting"; then
         return 1
       fi
-      exit_error "☠️ Aborting"
+      exit_error "☠️  Aborting"
       ;;
     *)
       return 1
