@@ -11,24 +11,10 @@ import lombok.EqualsAndHashCode;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 public class RepositoryEvent extends GithubAppEvent {
-    Action action;
+    String action;
     CleanRepo repository;
 
     public static RepositoryEvent of(RawRepositoryEvent event) {
-        return new RepositoryEvent(Action.of(event.getAction()), CleanRepo.of(event.getRepository()));
-    }
-
-    public enum Action {
-        PUBLICIZED, PRIVATIZED, DELETED, CREATED;
-
-        public static Action of(String rawAction) {
-            return switch (rawAction.toUpperCase()) {
-                case "CREATED" -> CREATED;
-                case "PUBLICIZED" -> PUBLICIZED;
-                case "PRIVATIZED" -> PRIVATIZED;
-                case "DELETED" -> DELETED;
-                default -> null;
-            };
-        }
+        return new RepositoryEvent(event.getAction(), CleanRepo.of(event.getRepository()));
     }
 }

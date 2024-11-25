@@ -1,15 +1,13 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
-import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.postgres.repositories.RepoIndexingJobEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.RepoRepository;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -18,11 +16,14 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
     @Autowired
     public RepoIndexingJobEntityRepository repoIndexingJobEntityRepository;
     @Autowired
-    public JobManager diffRepoRefreshJobManager;
-    @Autowired
     GithubRepoRepository githubRepoRepository;
     @Autowired
     RepoRepository rawRepoStorage;
+
+    @BeforeEach
+    void setUp() {
+        githubWireMockServer.resetAll();
+    }
 
     @Test
     @Order(1)
@@ -43,6 +44,8 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
         // Then
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().isPublic()).isFalse();
         assertAllEventsAreProcessed("repository");
+        githubWireMockServer.verify(0, getRequestedFor(urlEqualTo("/repos/onlydust/cairo-streams")));
+        githubWireMockServer.verify(0, getRequestedFor(urlEqualTo("/repositories/" + CAIRO_STREAMS_ID)));
     }
 
     @Test
@@ -56,6 +59,8 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
         // Then
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID).orElseThrow().isPublic()).isTrue();
         assertAllEventsAreProcessed("repository");
+        githubWireMockServer.verify(0, getRequestedFor(urlEqualTo("/repos/onlydust/cairo-streams")));
+        githubWireMockServer.verify(0, getRequestedFor(urlEqualTo("/repositories/" + CAIRO_STREAMS_ID)));
     }
 
     @Test
@@ -66,14 +71,13 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
                 "/github/webhook/events/repository/cairo-streams-edited.json"
         );
         assertAllEventsAreProcessed("repository");
+        githubWireMockServer.verify(0, getRequestedFor(urlEqualTo("/repos/onlydust/cairo-streams")));
+        githubWireMockServer.verify(0, getRequestedFor(urlEqualTo("/repositories/" + CAIRO_STREAMS_ID)));
     }
 
     @Test
     @Order(4)
     void should_handle_repo_deleted() {
-        // Given
-        diffRepoRefreshJobManager.createJob().run();
-
         // When
         processEventsFromPaths("repository",
                 "/github/webhook/events/repository/cairo-streams-deleted.json"
@@ -83,5 +87,8 @@ public class GithubRepositoryEventsIT extends IntegrationTest {
         assertThat(repoIndexingJobEntityRepository.findById(CAIRO_STREAMS_ID)).isEmpty();
         assertThat(githubRepoRepository.findById(CAIRO_STREAMS_ID).orElseThrow().getDeletedAt().toString()).isEqualTo("2023-12-05 08:02:21.0");
         assertThat(rawRepoStorage.findById(CAIRO_STREAMS_ID).orElseThrow().deleted()).isTrue();
+
+        githubWireMockServer.verify(0, getRequestedFor(urlEqualTo("/repos/onlydust/cairo-streams")));
+        githubWireMockServer.verify(0, getRequestedFor(urlEqualTo("/repositories/" + CAIRO_STREAMS_ID)));
     }
 }

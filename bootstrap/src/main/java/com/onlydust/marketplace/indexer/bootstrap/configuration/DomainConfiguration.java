@@ -127,10 +127,10 @@ public class DomainConfiguration {
     public EventHandler<RawRepositoryEvent> repositoryEventHandler(final PostgresRepoIndexingJobStorage repoIndexingJobRepository,
                                                                    final RepoStorage repoStorage,
                                                                    final RawStorageWriter rawStorageWriter,
-                                                                   final RepoIndexer liveRepoIndexer) {
+                                                                   final RepoIndexer cachedRepoIndexer) {
         return new RepositoryEventProcessorService(
                 repoIndexingJobRepository,
-                repoStorage, rawStorageWriter, liveRepoIndexer);
+                repoStorage, rawStorageWriter, cachedRepoIndexer);
     }
 
     @Bean
