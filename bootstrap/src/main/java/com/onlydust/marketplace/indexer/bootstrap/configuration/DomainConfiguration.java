@@ -167,12 +167,14 @@ public class DomainConfiguration {
 
     @Bean
     public EventHandler<RawPullRequestEvent> pullRequestEventHandler(final Exposer<CleanRepo> repoContributorsExposer,
-                                                                     final PullRequestIndexer livePullRequestIndexer,
+                                                                     final RawStorageWriter rawStorageWriter,
+                                                                     final PullRequestIndexer cachedPullRequestIndexer,
                                                                      final GithubAppContext githubAppContext,
                                                                      final GithubObserver githubObserver) {
         return new PullRequestEventProcessorService(
                 repoContributorsExposer,
-                livePullRequestIndexer,
+                rawStorageWriter,
+                cachedPullRequestIndexer,
                 githubAppContext,
                 githubObserver);
     }
