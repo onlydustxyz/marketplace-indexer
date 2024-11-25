@@ -9,9 +9,12 @@ import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubI
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static java.util.Comparator.comparing;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,6 +31,11 @@ public class GithubIssueEventsIT extends IntegrationTest {
     RepoContributorRepository repoContributorRepository;
     @Autowired
     GithubIssueAssigneeRepository githubIssueAssigneeRepository;
+
+    @BeforeEach
+    void setUp() {
+        githubWireMockServer.resetAll();
+    }
 
     @Test
     @Transactional
@@ -98,5 +106,10 @@ public class GithubIssueEventsIT extends IntegrationTest {
 
         // Then
         assertThat(githubIssueAssigneeRepository.findAllByIssueId(ISSUE_ID)).isEmpty();
+
+        // verify there was no interaction with the GitHub API
+        githubWireMockServer.findRequestsMatching(getRequestedFor(urlPathMatching(".*/issues/78")).build())
+                .getRequests().forEach(System.out::println);
+        githubWireMockServer.verify(0, getRequestedFor(urlPathMatching(".*/issues/78")));
     }
 }

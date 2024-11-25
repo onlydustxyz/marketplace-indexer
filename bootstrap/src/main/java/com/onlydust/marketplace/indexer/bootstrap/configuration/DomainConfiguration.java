@@ -139,7 +139,7 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public EventHandler<RawIssueEvent> issueEventHandler(final IssueIndexer liveIssueIndexer,
+    public EventHandler<RawIssueEvent> issueEventHandler(final IssueIndexer cachedIssueIndexer,
                                                          final UserIndexer cachedUserIndexer,
                                                          final Exposer<CleanRepo> repoContributorsExposer,
                                                          final GithubAppContext githubAppContext,
@@ -149,7 +149,7 @@ public class DomainConfiguration {
                                                          final GithubObserver githubObserver,
                                                          final IndexingObserver indexingObserver) {
         return new IssueEventProcessorService(
-                liveIssueIndexer,
+                cachedIssueIndexer,
                 cachedUserIndexer,
                 repoContributorsExposer,
                 githubAppContext,
