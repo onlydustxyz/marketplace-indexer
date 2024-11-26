@@ -1,6 +1,6 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.*;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.*;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
 import com.onlydust.marketplace.indexer.domain.ports.out.EventInboxStorage;
@@ -20,6 +20,7 @@ public class OtherEventsInboxJob extends Job {
     private final EventHandler<RawIssueEvent> issueEventHandler;
     private final EventHandler<RawIssueCommentEvent> issueCommentEventHandler;
     private final EventHandler<RawPullRequestEvent> pullRequestEventHandler;
+    private final EventHandler<RawPullRequestReviewEvent> pullRequestReviewEventHandler;
 
     @Override
     protected void execute() {
@@ -48,8 +49,12 @@ public class OtherEventsInboxJob extends Job {
                     issueCommentEventHandler.process(event.payload(RawIssueCommentEvent.class));
                     eventInboxStorage.ack(event.id());
                     break;
-                case "pull_request", "pull_request_review":
+                case "pull_request":
                     pullRequestEventHandler.process(event.payload(RawPullRequestEvent.class));
+                    eventInboxStorage.ack(event.id());
+                    break;
+                case "pull_request_review":
+                    pullRequestReviewEventHandler.process(event.payload(RawPullRequestReviewEvent.class));
                     eventInboxStorage.ack(event.id());
                     break;
             }
