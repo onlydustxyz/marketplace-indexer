@@ -24,7 +24,7 @@ public class GithubCodeReview {
         return GithubCodeReview.builder()
                 .pullRequest(GithubPullRequest.of(pullRequest))
                 .author(GithubAccount.of(codeReview.getAuthor()))
-                .state(State.valueOf(codeReview.getState()))
+                .state(State.valueOf(codeReview.getState().toUpperCase()))
                 .requestedAt(pullRequest.getCreatedAt())
                 .submittedAt(codeReview.getSubmittedAt())
                 .build();

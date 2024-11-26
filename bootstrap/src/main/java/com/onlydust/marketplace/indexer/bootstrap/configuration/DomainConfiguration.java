@@ -180,6 +180,20 @@ public class DomainConfiguration {
     }
 
     @Bean
+    public EventHandler<RawPullRequestReviewEvent> pullRequestReviewEventHandler(final Exposer<CleanRepo> repoContributorsExposer,
+                                                                                 final RawStorageReader postgresRawStorageRepository,
+                                                                                 final RawStorageWriter rawStorageWriter,
+                                                                                 final PullRequestIndexer cachedPullRequestIndexer,
+                                                                                 final GithubAppContext githubAppContext) {
+        return new PullRequestReviewEventProcessorService(
+                repoContributorsExposer,
+                postgresRawStorageRepository,
+                rawStorageWriter,
+                cachedPullRequestIndexer,
+                githubAppContext);
+    }
+
+    @Bean
     public UserIndexer cachedUserIndexer(final RawStorageReader cachedRawStorageReader, final MeterRegistry registry) {
         return new MonitoredUserIndexer(new UserIndexingService(cachedRawStorageReader), registry);
     }
