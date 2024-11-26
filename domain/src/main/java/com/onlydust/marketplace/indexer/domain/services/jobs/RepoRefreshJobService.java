@@ -17,7 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.Executor;
-import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 
 @AllArgsConstructor
 @Slf4j
@@ -40,12 +42,22 @@ public class RepoRefreshJobService implements JobManager {
     }
 
     private Optional<Job> createJobForInstallationId(Long installationId) {
-        final var repos = repoIndexingJobStorage.reposUpdatedBefore(installationId, Instant.now().minusSeconds(installationId == null ? config.unauthorizedReposrefreshInterval : config.authorizedReposrefreshInterval));
+        final var repos = repoIndexingJobStorage.reposUpdatedBefore(installationId, Instant.now().minusSeconds(installationId == null ?
+                config.unauthorizedReposRefreshInterval : config.authorizedReposRefreshInterval));
 
         if (repos.isEmpty()) return Optional.empty();
 
-        final var fullIndexingRepos = repos.stream().filter(RepoIndexingJobTrigger::getFullIndexing).map(RepoIndexingJobTrigger::getRepoId).collect(Collectors.toUnmodifiableSet());
-        final var lightIndexingRepos = repos.stream().filter(r -> !r.getFullIndexing()).map(RepoIndexingJobTrigger::getRepoId).collect(Collectors.toUnmodifiableSet());
+        final var fullIndexingRepos = repos.stream()
+                .filter(RepoIndexingJobTrigger::getFullIndexing)
+                .map(RepoIndexingJobTrigger::getRepoId)
+                .collect(toUnmodifiableSet());
+
+        final var lightIndexingRepos = repos.stream()
+                .filter(r -> !r.getFullIndexing())
+                .sorted(comparing(RepoIndexingJobTrigger::getRepoId))
+                .limit(config.unauthorizedReposRefreshLimit)
+                .map(RepoIndexingJobTrigger::getRepoId)
+                .collect(toUnmodifiableSet());
 
         if (fullIndexingRepos.isEmpty())
             return Optional.of(new RepoIndexerJob(lightRepoIndexer, installationId, lightIndexingRepos, repoIndexingJobStorage, githubAppContext));
@@ -63,7 +75,8 @@ public class RepoRefreshJobService implements JobManager {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Config {
-        Integer unauthorizedReposrefreshInterval;
-        Integer authorizedReposrefreshInterval;
+        Integer unauthorizedReposRefreshInterval;
+        Integer unauthorizedReposRefreshLimit;
+        Integer authorizedReposRefreshInterval;
     }
 }
