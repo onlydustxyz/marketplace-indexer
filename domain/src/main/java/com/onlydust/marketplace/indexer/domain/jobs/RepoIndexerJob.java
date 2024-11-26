@@ -15,21 +15,20 @@ public class RepoIndexerJob extends Job {
     final Long installationId;
     final Set<Long> repoIds;
     final RepoIndexingJobStorage repoIndexingJobStorage;
-    GithubAppContext githubAppContext;
+    final GithubAppContext githubAppContext;
 
     @Override
     public void execute() {
-        LOGGER.info("Indexing installation {} for repos {}", installationId, repoIds);
         githubAppContext.withGithubApp(installationId,
                 () -> repoIds.forEach(repo -> {
                     try {
-                        LOGGER.info("Start indexing repo {}", repo);
+                        LOGGER.info("Indexing repo {}", repo);
                         repoIndexingJobStorage.startJob(repo);
                         if (fullRepoIndexer.indexRepo(repo).isEmpty())
                             LOGGER.warn("Repo {} not found", repo);
                         repoIndexingJobStorage.endJob(repo);
                     } catch (Throwable e) {
-                        LOGGER.error("Error indexing repo {}", repo, e);
+                        LOGGER.error("Failed to index repo {}", repo, e);
                         repoIndexingJobStorage.failJob(repo);
                     }
                 })

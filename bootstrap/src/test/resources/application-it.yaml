@@ -22,13 +22,14 @@ application:
     repo-refresh-job-delay: 100
     user-refresh-job-delay: 100
 
-logging:
-  level:
-    com.onlydust.marketplace.indexer: DEBUG
-
 decorator:
   datasource:
     datasource-proxy:
       query:
         log-level: INFO
         enable-logging: false # Comment this line to enable SQL query logging
+
+spring:
+  output:
+    ansi:
+      enabled: always

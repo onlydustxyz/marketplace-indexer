@@ -1,5 +1,0 @@
-spring:
-  application:
-    name: cli-liquibase
-  liquibase:
-    enabled: true

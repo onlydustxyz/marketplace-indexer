@@ -24,13 +24,13 @@ public class JobScheduler {
 
     @Scheduled(fixedDelayString = "${application.cron.repo-refresh-job-delay}")
     public void scheduleRepoRefresherJobs() {
-        LOGGER.info("Refreshing repos");
+        LOGGER.debug("Refreshing repos");
         diffRepoRefreshJobManager.createJob().run();
     }
 
     @Scheduled(fixedDelayString = "${application.cron.user-refresh-job-delay}")
     public void scheduleUserRefresherJobs() {
-        LOGGER.info("Refreshing users");
+        LOGGER.debug("Refreshing users");
         diffUserRefreshJobManager.createJob().run();
     }
 
@@ -46,14 +46,13 @@ public class JobScheduler {
 
     @Scheduled(fixedDelayString = "${application.cron.commit-indexer-delay}")
     public void scheduleCommitIndexerJobs() {
-        LOGGER.info("Indexing commits");
+        LOGGER.debug("Indexing commits");
         commitIndexerJobManager.createJob().run();
     }
 
-
     @Scheduled(cron = "${application.cron.public-event-refresh-job-cron}")
     public void schedulePublicEventRefreshJob() {
-        LOGGER.info("Refreshing public events");
+        LOGGER.debug("Refreshing public events");
         userStatsJobManager.refresh().run();
     }
 }

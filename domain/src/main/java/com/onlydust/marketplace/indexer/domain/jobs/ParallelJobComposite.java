@@ -1,10 +1,11 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
-import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
-
 import java.util.Collection;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
+
+import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.internalServerError;
+import static java.util.stream.Collectors.joining;
 
 public class ParallelJobComposite extends Job {
     private final Executor executor;
@@ -23,13 +24,13 @@ public class ParallelJobComposite extends Job {
             try {
                 task.get();
             } catch (Exception e) {
-                throw OnlyDustException.internalServerError("Error running job %s".formatted(name()), e);
+                throw internalServerError("Error running job %s".formatted(name()), e);
             }
         });
     }
 
     @Override
     public String name() {
-        return "[%s]".formatted(String.join(", ", jobs.stream().map(Job::name).toList()));
+        return "(%s)".formatted(jobs.stream().map(Job::name).collect(joining(" // ")));
     }
 }
