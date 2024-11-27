@@ -37,7 +37,6 @@ REMOTE=promote-origin
 FROM_COMMIT=$REMOTE/$FROM_BRANCH
 TO_COMMIT=$REMOTE/$TO_BRANCH
 
-GIT_REPO_URL=https://github.com/onlydustxyz/marketplace-indexer.git
 ENV_FILES="**/application.yaml"
 
 check_args() {
@@ -64,6 +63,7 @@ delete_remote() {
 
 create_remote() {
     delete_remote
+    GIT_REPO_URL=$(git remote | head -1 | xargs git remote get-url)
     if ! git remote add $REMOTE "$GIT_REPO_URL" -f; then
       exit_error "❌ Unable add remote."
     fi

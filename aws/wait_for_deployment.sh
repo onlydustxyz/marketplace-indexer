@@ -125,7 +125,7 @@ while getopts "e:c:h" o; do
 done
 shift $((OPTIND-1))
 
-REPO_OWNER_NAME=$(git remote get-url upstream | sed 's@https://github.com/\(.*\).git@\1@')
+REPO_OWNER_NAME=$(git remote | head -1 | xargs git remote get-url | sed -E 's;.*[:/]([^:/]+)/([^/]+)\.git$;\1/\2;')
 SHA=$(git --no-pager rev-parse "$COMMIT")
 SHORT_SHA=$(echo "$SHA" | cut -c-7)
 
