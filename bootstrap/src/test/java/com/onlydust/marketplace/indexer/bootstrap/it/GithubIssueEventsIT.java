@@ -9,8 +9,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubI
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
@@ -18,6 +17,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static java.util.Comparator.comparing;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GithubIssueEventsIT extends IntegrationTest {
     final static Long ISSUE_ID = 1301824165L;
     final static Long ANTHONY_ID = 43467246L;
@@ -37,9 +37,18 @@ public class GithubIssueEventsIT extends IntegrationTest {
         githubWireMockServer.resetAll();
     }
 
+    @AfterEach
+    void tearDown() {
+        // verify there was no interaction with the GitHub API
+        githubWireMockServer.findRequestsMatching(getRequestedFor(urlPathMatching(".*/issues/78")).build())
+                .getRequests().forEach(System.out::println);
+        githubWireMockServer.verify(0, getRequestedFor(urlPathMatching(".*/issues/78")));
+    }
+
     @Test
+    @Order(1)
     @Transactional
-    void should_handle_issue_events() {
+    void should_handle_issue_opened() {
         // When
         processEventsFromPaths("issues",
                 "/github/webhook/events/issues/marketplace-frontend-issue-78-opened.json");
@@ -89,7 +98,13 @@ public class GithubIssueEventsIT extends IntegrationTest {
         );
 
         assertThat(githubIssueAssigneeRepository.findAllByIssueId(ISSUE_ID)).isEmpty();
+    }
 
+
+    @Test
+    @Order(2)
+    @Transactional
+    void should_handle_issue_assigned() {
         // When
         processEventsFromPaths("issues",
                 "/github/webhook/events/issues/marketplace-frontend-issue-78-assigned.json");
@@ -99,17 +114,17 @@ public class GithubIssueEventsIT extends IntegrationTest {
         assertThat(assignees).hasSize(1);
         assertThat(assignees.get(0).getUser().getId()).isEqualTo(43467246L);
         assertThat(assignees.get(0).getAssignedByUser().getId()).isEqualTo(595505L);
+    }
 
+    @Test
+    @Order(3)
+    @Transactional
+    void should_handle_issue_unassigned() {
         // When
         processEventsFromPaths("issues",
                 "/github/webhook/events/issues/marketplace-frontend-issue-78-unassigned.json");
 
         // Then
         assertThat(githubIssueAssigneeRepository.findAllByIssueId(ISSUE_ID)).isEmpty();
-
-        // verify there was no interaction with the GitHub API
-        githubWireMockServer.findRequestsMatching(getRequestedFor(urlPathMatching(".*/issues/78")).build())
-                .getRequests().forEach(System.out::println);
-        githubWireMockServer.verify(0, getRequestedFor(urlPathMatching(".*/issues/78")));
     }
 }
