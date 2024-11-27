@@ -128,13 +128,13 @@ public class GithubIssueEventsIT extends IntegrationTest {
         assertThat(githubIssueAssigneeRepository.findAllByIssueId(ISSUE_ID)).isEmpty();
     }
 
-
     @Test
     @Order(4)
     @Transactional
     void should_handle_issue_transferred() {
         // When
         processEventsFromPaths("issues",
+                "/github/webhook/events/issues/marketplace-frontend-issue-78-assigned.json", // Make sure issue has assignees
                 "/github/webhook/events/issues/marketplace-frontend-issue-78-transferred.json");
 
         // Then

@@ -21,6 +21,7 @@ public class PostgresIssueStorage implements IssueStorage {
 
     @Override
     public void delete(Long id) {
+        assigneeRepository.deleteByIssueId(id);
         issueRepository.deleteById(id);
     }
 
