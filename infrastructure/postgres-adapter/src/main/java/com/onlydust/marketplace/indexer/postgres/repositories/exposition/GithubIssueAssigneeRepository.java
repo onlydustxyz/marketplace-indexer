@@ -9,4 +9,6 @@ public interface GithubIssueAssigneeRepository extends BaseJpaRepository<GithubI
     void deleteByIssueIdAndUserId(Long issueId, Long assigneeId);
 
     List<GithubIssueAssigneeEntity> findAllByIssueId(Long issueId);
+
+    void deleteByIssueId(Long issueId);
 }
