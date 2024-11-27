@@ -13,13 +13,13 @@ infrastructure:
   api-client:
     api-key: ${INTERNAL_API_KEY}
     base-uri: ${API_BACKEND_BASE_URL}
-#  aws:
-#    athena:
-#      database: ${AWS_GHA_DATABASE_NAME}
-#      output-location: ${AWS_GHA_OUTPUT_LOCATION}
-#      polling-interval: ${AWS_GHA_POLLING_INTERVAL}
-#      region: ${AWS_REGION}
-#      catalog: ${AWS_GHA_CATALOG} # TODO remove
+  aws:
+    athena:
+      database: ${AWS_GHA_DATABASE_NAME}
+      output-location: ${AWS_GHA_OUTPUT_LOCATION}
+      polling-interval: ${AWS_GHA_POLLING_INTERVAL}
+      region: ${AWS_REGION}
+      catalog: ${AWS_GHA_CATALOG}
 
 application:
   web:

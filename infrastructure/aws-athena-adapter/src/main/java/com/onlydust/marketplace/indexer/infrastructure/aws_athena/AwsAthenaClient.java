@@ -1,6 +1,5 @@
 package com.onlydust.marketplace.indexer.infrastructure.aws_athena;
 
-import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +11,8 @@ import software.amazon.awssdk.services.athena.paginators.GetQueryResultsIterable
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.internalServerError;
 
 public class AwsAthenaClient {
     private final AthenaClient client;
@@ -60,7 +61,7 @@ public class AwsAthenaClient {
                     results.complete(queryResults(queryExecutionId));
                     break;
                 case FAILED:
-                    results.completeExceptionally(OnlyDustException.internalServerError("Query failed: " + status.athenaError().toString()));
+                    results.completeExceptionally(internalServerError("Query failed: " + status.athenaError().toString()));
                     break;
                 case CANCELLED:
                     results.completeExceptionally(new RuntimeException("Query cancelled"));
