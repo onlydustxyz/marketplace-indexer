@@ -7,17 +7,10 @@ if [ -z "$SPRING_PROFILES_ACTIVE" ]; then
   exit 1
 fi
 
-if [ -z "$DD_ENV" ]; then
-  echo "ERROR - Missing datadog env parameter"
-  exit 1
-fi
-
 jar=$1
 shift
 
-echo "Starting $jar [$SPRING_PROFILES_ACTIVE] in $DD_ENV"
-
-java -javaagent:/webapp/dd-java-agent.jar "$@" \
+java -javaagent:/webapp/dd-java-agent.jar \
   -server \
   -XX:MaxRAMPercentage=75.0 \
   -XX:MaxMetaspaceSize=256m \
@@ -28,5 +21,6 @@ java -javaagent:/webapp/dd-java-agent.jar "$@" \
   -Dliquibase.changelogLockPollRate=1 \
   -Ddd.profiling.enabled=true \
   -Ddd.logs.injection=true \
+  -Dspring.profiles.active="$SPRING_PROFILES_ACTIVE" \
   -jar "$jar" \
-  --spring.profiles.active="$SPRING_PROFILES_ACTIVE"
+  "$@"
