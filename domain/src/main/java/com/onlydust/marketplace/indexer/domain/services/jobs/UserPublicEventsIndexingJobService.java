@@ -29,4 +29,9 @@ public class UserPublicEventsIndexingJobService implements UserPublicEventsIndex
         final var users = userPublicEventsIndexingJobStorage.all();
         return new UserPublicEventIndexerJob(userPublicEventsIndexer, users, userPublicEventsIndexingJobStorage, rawStorageReader);
     }
+
+    @Override
+    public String name() {
+        return "user_public_event_indexer";
+    }
 }

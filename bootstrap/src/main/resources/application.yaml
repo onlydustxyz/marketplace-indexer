@@ -20,6 +20,9 @@ infrastructure:
       polling-interval: ${AWS_GHA_POLLING_INTERVAL}
       region: ${AWS_REGION}
       catalog: ${AWS_GHA_CATALOG}
+    batch:
+      queue: ${AWS_BATCH_QUEUE}
+      job-definition: ${AWS_BATCH_JOB_DEFINITION}
 
 application:
   web:

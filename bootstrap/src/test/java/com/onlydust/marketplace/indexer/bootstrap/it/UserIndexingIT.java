@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
+import com.onlydust.marketplace.indexer.infrastructure.aws_athena.adapters.AwsBatchJobExecutorAdapter;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.RawUserEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.RawUserSocialAccountsEntity;
@@ -13,6 +14,8 @@ import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEnt
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserSocialAccountsRepository;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,18 +36,22 @@ import java.util.function.BiFunction;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserIndexingIT extends IntegrationTest {
     private final ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
 
     @Autowired
-    public UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-    public UserSocialAccountsRepository userSocialAccountsRepository;
+    UserSocialAccountsRepository userSocialAccountsRepository;
     @Autowired
-    public GithubAccountEntityRepository githubAccountEntityRepository;
+    GithubAccountEntityRepository githubAccountEntityRepository;
     @Autowired
-    public UserIndexingJobEntityRepository userIndexingJobEntityRepository;
+    UserIndexingJobEntityRepository userIndexingJobEntityRepository;
+    @Autowired
+    AwsBatchJobExecutorAdapter awsBatchJobExecutorAdapterMock;
 
     @BeforeEach
     void setup() {
@@ -64,6 +71,8 @@ public class UserIndexingIT extends IntegrationTest {
 
         // Then
         response.expectStatus().isNoContent();
+
+        verify(awsBatchJobExecutorAdapterMock).execute("user_public_event_indexer", "43467246");
 
         final var expectedUser = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
         assertThat(userRepository.findAll())

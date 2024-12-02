@@ -1,6 +1,7 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
 import com.onlydust.marketplace.indexer.bootstrap.it.stubs.PublicEventRawStorageReaderStub;
+import com.onlydust.marketplace.indexer.cli.UserPublicEventIndexerCliAdapter;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.postgres.entities.JobStatus;
@@ -14,11 +15,9 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.ZonedDateTime;
 
-import static com.onlydust.marketplace.indexer.bootstrap.it.helpers.DateHelper.at;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,10 +37,8 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
     JobManager commitIndexerJobManager;
     @Autowired
     GithubUserFileExtensionsRepository githubUserFileExtensionsRepository;
-
-    private WebTestClient.ResponseSpec indexUser(Long userId) {
-        return put("/api/v1/users/" + userId);
-    }
+    @Autowired
+    UserPublicEventIndexerCliAdapter userPublicEventIndexerCliAdapter;
 
     @BeforeEach
     public void setUp() {
@@ -55,7 +52,7 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
         publicEventRawStorageReaderStub.add("/github/public_events/antho_20231002.json");
 
         // When
-        at("2024-10-03T17:00:00Z", () -> indexUser(ANTHONY).expectStatus().isNoContent());
+        userPublicEventIndexerCliAdapter.run("user_public_event_indexer", ANTHONY.toString());
 
         // Then
         assertThat(userPublicEventsIndexingJobRepository.findAll())
@@ -79,7 +76,7 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
         publicEventRawStorageReaderStub.add("/github/public_events/antho_20231002.json");
 
         // When
-        at("2024-10-03T17:00:00Z", () -> indexUser(ANTHONY).expectStatus().isNoContent());
+        userPublicEventIndexerCliAdapter.run("user_public_event_indexer", ANTHONY.toString());
 
         // Then
         assertThat(userPublicEventsIndexingJobRepository.findAll())

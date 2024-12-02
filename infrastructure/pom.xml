@@ -19,6 +19,7 @@
         <module>api-client-adapter</module>
         <module>github-api-adapter</module>
         <module>aws-athena-adapter</module>
+        <module>aws-batch-adapter</module>
     </modules>
 
     <properties>

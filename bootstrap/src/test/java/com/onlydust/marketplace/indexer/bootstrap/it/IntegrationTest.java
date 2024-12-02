@@ -24,7 +24,6 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -48,7 +47,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.testcontainers.utility.MountableFile.forClasspathResource;
 
-@ActiveProfiles({"it", "api", "github"})
+@ActiveProfiles({"it", "api", "github", "cli"})
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = ApplicationIT.class)
 @Testcontainers
@@ -85,15 +84,13 @@ public class IntegrationTest {
     @Autowired
     OtherEventsInboxJob otherEventsInboxJob;
     @Autowired
-    JdbcTemplate jdbcTemplate;
-    @Autowired
     EventsInboxEntityRepository eventsInboxEntityRepository;
 
     @BeforeAll
     static void beforeAll() throws IOException, InterruptedException {
-        if (!postgresSQLContainer.isRunning()) {
+        if (!postgresSQLContainer.isRunning())
             postgresSQLContainer.start();
-        }
+
         assertThat(postgresSQLContainer.execInContainer("psql", "-d", "marketplace_db", "-U", "test", "-f", "/scripts/clean.sql").getExitCode()).isEqualTo(0);
     }
 
@@ -172,8 +169,9 @@ public class IntegrationTest {
     }
 
     protected void assertAllEventsAreProcessed(String type) {
-        final var events = eventsInboxEntityRepository.findAllByType(type);
-        assertThat(events).isNotEmpty();
-        assertThat(events.stream().allMatch(e -> e.status().equals(EventsInboxEntity.Status.PROCESSED)));
+        assertThat(eventsInboxEntityRepository.findAllByType(type))
+                .isNotEmpty()
+                .extracting(EventsInboxEntity::status)
+                .containsOnly(EventsInboxEntity.Status.PROCESSED);
     }
 }

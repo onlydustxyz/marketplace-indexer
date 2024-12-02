@@ -6,13 +6,11 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserPublicEventsInd
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
 
 import java.util.Arrays;
 
-@AllArgsConstructor
 @Slf4j
-@Profile("cli")
+@AllArgsConstructor
 public class UserPublicEventIndexerCliAdapter implements CommandLineRunner {
     private final UserPublicEventsIndexingJobManager userPublicEventsIndexingJobManager;
 

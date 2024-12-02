@@ -6,4 +6,6 @@ public interface UserPublicEventsIndexingJobManager {
     Job create(Long userId);
 
     Job refresh();
+
+    String name();
 }
