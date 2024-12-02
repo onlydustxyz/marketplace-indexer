@@ -10,7 +10,14 @@ fi
 jar=$1
 shift
 
-java -javaagent:/webapp/dd-java-agent.jar \
+echo "Starting $jar [$SPRING_PROFILES_ACTIVE]"
+
+java_agent=
+if echo ",$SPRING_PROFILES_ACTIVE," | grep -q ",api,"; then
+  java_agent=-javaagent:/webapp/dd-java-agent.jar
+fi
+
+java $java_agent \
   -server \
   -XX:MaxRAMPercentage=75.0 \
   -XX:MaxMetaspaceSize=256m \
