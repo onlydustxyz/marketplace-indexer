@@ -10,13 +10,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.TimeZone;
 
 @SpringBootApplication(scanBasePackages = "com.onlydust.marketplace.indexer")
 @EnableConfigurationProperties
-@EnableScheduling
 @EnableRetry
 @Import({PostgresConfiguration.class, GithubConfiguration.class, JobScheduler.class, BatchRunner.class})
 public class MarketplaceIndexerApplication {
