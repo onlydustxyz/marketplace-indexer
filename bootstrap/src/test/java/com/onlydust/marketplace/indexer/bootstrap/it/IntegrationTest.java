@@ -47,7 +47,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.testcontainers.utility.MountableFile.forClasspathResource;
 
-@ActiveProfiles({"it", "api", "github", "cli"})
+@ActiveProfiles({"it", "cli", "api", "github"})
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = ApplicationIT.class)
 @Testcontainers

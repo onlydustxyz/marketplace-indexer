@@ -1,0 +1,5 @@
+spring:
+  main:
+    web-application-type: servlet
+  application:
+    name: marketplace-indexer-api

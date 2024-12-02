@@ -52,7 +52,7 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
         publicEventRawStorageReaderStub.add("/github/public_events/antho_20231002.json");
 
         // When
-        userPublicEventIndexerCliAdapter.run("user_public_event_indexer", ANTHONY.toString());
+        userPublicEventIndexerCliAdapter.run(ANTHONY.toString());
 
         // Then
         assertThat(userPublicEventsIndexingJobRepository.findAll())
@@ -76,7 +76,7 @@ public class UserPublicEventIndexingIT extends IntegrationTest {
         publicEventRawStorageReaderStub.add("/github/public_events/antho_20231002.json");
 
         // When
-        userPublicEventIndexerCliAdapter.run("user_public_event_indexer", ANTHONY.toString());
+        userPublicEventIndexerCliAdapter.run(ANTHONY.toString());
 
         // Then
         assertThat(userPublicEventsIndexingJobRepository.findAll())
