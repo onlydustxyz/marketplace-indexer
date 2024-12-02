@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.RawGithubAppEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventsInbox;
 import com.onlydust.marketplace.indexer.rest.github.security.GithubSignatureVerifier;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,12 +23,15 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @AllArgsConstructor
 @Slf4j
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Profile("github")
 public class GithubWebhookRestApi {
     private static final String X_GITHUB_EVENT = "X-GitHub-Event";
     private static final String X_HUB_SIGNATURE_256 = "X-Hub-Signature-256";
-    private final Config config;
-    private final EventsInbox inbox;
-    private final ObjectMapper objectMapper;
+
+    Config config;
+    EventsInbox inbox;
+    ObjectMapper objectMapper;
 
     @PostMapping("/github-app/webhook")
     public ResponseEntity<Void> consumeWebhook(final @RequestBody byte[] payload,

@@ -1,20 +1,19 @@
 package com.onlydust.marketplace.indexer.cli;
 
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
+import lombok.experimental.FieldDefaults;
+import org.springframework.stereotype.Controller;
 
-@Slf4j
+@Controller("refresh_commits")
 @AllArgsConstructor
-public class CommitRefreshCliAdapter implements CommandLineRunner {
-    private final JobManager cacheOnlyCommitRefreshJobManager;
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class CommitRefreshCliAdapter implements Batch {
+    JobManager cacheOnlyCommitRefreshJobManager;
 
     @Override
     public void run(String... args) {
-        if (args.length == 0 || !args[0].equals("refresh_commits")) return;
-
-        LOGGER.info("Refreshing commits");
         cacheOnlyCommitRefreshJobManager.createJob().run();
     }
 }

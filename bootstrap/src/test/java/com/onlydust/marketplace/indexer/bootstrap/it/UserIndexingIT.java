@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
-import com.onlydust.marketplace.indexer.infrastructure.aws_athena.adapters.AwsBatchJobExecutorAdapter;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.RawUserEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.raw.RawUserSocialAccountsEntity;
@@ -36,7 +35,6 @@ import java.util.function.BiFunction;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserIndexingIT extends IntegrationTest {
@@ -50,8 +48,6 @@ public class UserIndexingIT extends IntegrationTest {
     GithubAccountEntityRepository githubAccountEntityRepository;
     @Autowired
     UserIndexingJobEntityRepository userIndexingJobEntityRepository;
-    @Autowired
-    AwsBatchJobExecutorAdapter awsBatchJobExecutorAdapterMock;
 
     @BeforeEach
     void setup() {
@@ -71,8 +67,6 @@ public class UserIndexingIT extends IntegrationTest {
 
         // Then
         response.expectStatus().isNoContent();
-
-        verify(awsBatchJobExecutorAdapterMock).execute("user_public_event_indexer", "43467246");
 
         final var expectedUser = mapper.readValue(getClass().getResourceAsStream("/wiremock/github/__files/users/anthony.json"), RawAccount.class);
         assertThat(userRepository.findAll())

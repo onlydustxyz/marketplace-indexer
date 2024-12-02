@@ -194,8 +194,13 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public UserIndexer cachedUserIndexer(final RawStorageReader cachedRawStorageReader, final MeterRegistry registry) {
-        return new MonitoredUserIndexer(new UserIndexingService(cachedRawStorageReader), registry);
+    public UserIndexer cachedUserIndexer(final RawStorageReader cachedRawStorageReader,
+                                         final MeterRegistry registry,
+                                         final Exposer<CleanAccount> userExposer) {
+        return new MonitoredUserIndexer(
+                new UserExposerIndexer(
+                        new UserIndexingService(cachedRawStorageReader), userExposer),
+                registry);
     }
 
     @Bean

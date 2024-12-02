@@ -19,7 +19,7 @@ public class UsersRestApi implements UsersApi {
     private final UserIndexer cachedUserIndexer;
     private final AuthorizationContext authorizationContext;
     private final UserIndexingJobStorage userIndexingJobStorage;
-    private final UserPublicEventsIndexingJobManager userStatsJobManager;
+    private final UserPublicEventsIndexingJobManager userPublicEventsIndexingJobManager;
     private final JobExecutor jobExecutor;
 
     @Override
@@ -29,7 +29,7 @@ public class UsersRestApi implements UsersApi {
         authorizationContext.withAuthorization(authorization,
                 () -> {
                     cachedUserIndexer.indexUser(userId);
-                    jobExecutor.execute(userStatsJobManager.name(), userId.toString());
+                    jobExecutor.execute(userPublicEventsIndexingJobManager.name(), userId.toString());
                 });
         return noContent().build();
     }

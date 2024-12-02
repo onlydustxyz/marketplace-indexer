@@ -2,8 +2,11 @@ package com.onlydust.marketplace.indexer.bootstrap;
 
 import com.onlydust.marketplace.indexer.bootstrap.it.stubs.PublicEventRawStorageReaderStub;
 import com.onlydust.marketplace.indexer.bootstrap.it.stubs.TaskExecutorStub;
+import com.onlydust.marketplace.indexer.cli.BatchRunner;
+import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobExecutor;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
-import com.onlydust.marketplace.indexer.infrastructure.aws_athena.adapters.AwsBatchJobExecutorAdapter;
+import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -11,11 +14,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.TaskExecutor;
 
-import static org.mockito.Mockito.mock;
-
 @SpringBootApplication
 @EnableConfigurationProperties
 public class ApplicationIT {
+    @Autowired
+    private BatchRunner batchRunner;
+
     public static void main(String[] args) {
         SpringApplication.run(MarketplaceIndexerApplication.class, args);
     }
@@ -34,7 +38,14 @@ public class ApplicationIT {
 
     @Bean
     @Primary
-    AwsBatchJobExecutorAdapter awsBatchJobExecutorAdapterMock() {
-        return mock(AwsBatchJobExecutorAdapter.class);
+    @SneakyThrows
+    JobExecutor jobExecutorStub() {
+        return new JobExecutor() {
+            @Override
+            @SneakyThrows
+            public void execute(String... args) {
+                batchRunner.run(args);
+            }
+        };
     }
 }

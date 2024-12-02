@@ -1,5 +1,6 @@
 package com.onlydust.marketplace.indexer.bootstrap;
 
+import com.onlydust.marketplace.indexer.cli.BatchRunner;
 import com.onlydust.marketplace.indexer.cron.JobScheduler;
 import com.onlydust.marketplace.indexer.github.GithubConfiguration;
 import com.onlydust.marketplace.indexer.postgres.PostgresConfiguration;
@@ -13,11 +14,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.TimeZone;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.onlydust.marketplace.indexer")
 @EnableConfigurationProperties
 @EnableScheduling
 @EnableRetry
-@Import({PostgresConfiguration.class, GithubConfiguration.class, JobScheduler.class})
+@Import({PostgresConfiguration.class, GithubConfiguration.class, JobScheduler.class, BatchRunner.class})
 public class MarketplaceIndexerApplication {
 
     public static void main(String[] args) {
