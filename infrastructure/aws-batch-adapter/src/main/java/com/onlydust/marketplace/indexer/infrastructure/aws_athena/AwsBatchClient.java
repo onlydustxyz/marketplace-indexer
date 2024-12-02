@@ -14,8 +14,9 @@ public class AwsBatchClient {
         this.properties = properties;
     }
 
-    public void execute(String... args) {
+    public void execute(String jobName, String... args) {
         client.submitJob(SubmitJobRequest.builder()
+                .jobName(jobName)
                 .jobDefinition(properties.jobDefinition)
                 .jobQueue(properties.queue)
                 .containerOverrides(ContainerOverrides.builder()
