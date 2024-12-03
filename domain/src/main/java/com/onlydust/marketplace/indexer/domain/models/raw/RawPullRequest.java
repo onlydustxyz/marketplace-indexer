@@ -2,10 +2,7 @@ package com.onlydust.marketplace.indexer.domain.models.raw;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.Value;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
@@ -45,7 +42,12 @@ public class RawPullRequest extends JsonDocument {
 
 
     @JsonProperty("requested_reviewers")
+    @Getter(AccessLevel.NONE)
     List<RawShortAccount> requestedReviewers;
+
+    public List<RawShortAccount> getRequestedReviewers() {
+        return requestedReviewers == null ? List.of() : requestedReviewers;
+    }
 
     @Value
     @EqualsAndHashCode(callSuper = true)
