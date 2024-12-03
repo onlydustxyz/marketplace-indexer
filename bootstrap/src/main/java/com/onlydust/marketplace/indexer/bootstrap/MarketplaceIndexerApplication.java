@@ -23,10 +23,14 @@ import java.util.TimeZone;
 public class MarketplaceIndexerApplication {
 
     public static void main(String[] args) {
-        final var context = SpringApplication.run(MarketplaceIndexerApplication.class, args);
+        try {
+            final var context = SpringApplication.run(MarketplaceIndexerApplication.class, args);
 
-        if (context.getEnvironment().getProperty("spring.main.web-application-type", WebApplicationType.class) == WebApplicationType.NONE)
-            System.exit(SpringApplication.exit(context));
+            if (context.getEnvironment().getProperty("spring.main.web-application-type", WebApplicationType.class) == WebApplicationType.NONE)
+                System.exit(SpringApplication.exit(context));
+        } catch (Exception e) {
+            System.exit(1);
+        }
     }
 
     @PostConstruct
