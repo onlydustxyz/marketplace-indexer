@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toSet;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class UserPublicEventsIndexerJobTest {
@@ -95,7 +96,9 @@ class UserPublicEventsIndexerJobTest {
             doThrow(new RuntimeException("Failed to index user")).when(userPublicEventsIndexer).indexUser(user.getId(), userCreationDate);
 
             // When
-            userPublicEventIndexerJob.execute();
+            assertThatThrownBy(userPublicEventIndexerJob::execute)
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessageContaining("Failed to index user");
 
             // Then
             verify(userPublicEventsIndexingJobStorage).startJob(user.getId());
@@ -156,7 +159,9 @@ class UserPublicEventsIndexerJobTest {
             doThrow(new RuntimeException("Failed to index user")).when(userPublicEventsIndexer).indexUsers(userIds, lastEventTimestamp);
 
             // When
-            userPublicEventIndexerJob.execute();
+            assertThatThrownBy(userPublicEventIndexerJob::execute)
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessageContaining("Failed to index user");
 
             // Then
             userIds.forEach(id -> verify(userPublicEventsIndexingJobStorage).startJob(id));

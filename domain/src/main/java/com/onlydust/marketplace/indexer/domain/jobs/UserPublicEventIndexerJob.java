@@ -36,6 +36,7 @@ public class UserPublicEventIndexerJob extends Job {
             end();
         } catch (Throwable e) {
             fail(e);
+            throw e;
         }
     }
 
