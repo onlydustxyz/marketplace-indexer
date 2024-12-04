@@ -38,7 +38,6 @@ application:
     user-refresh-job-delay: 5000 # 5s
     event-inbox-dequeuer-delay: 1000 # 1s
     commit-indexer-delay: 3600000 # 1h
-    public-event-refresh-job-cron: 0 30 * * * * # every hour (gha download starts at 00:15 and has 15min timeout)
   repo-refresh-job:
     unauthorized-repos-refresh-interval: 86400 # 24h
     unauthorized-repos-refresh-limit: 20

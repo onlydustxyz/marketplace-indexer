@@ -24,14 +24,16 @@ public class PostgresUserPublicEventsIndexingJobStorage implements UserPublicEve
     @Override
     @Transactional
     public void add(Long userId) {
-        repository.merge(UserPublicEventsIndexingJobEntity.builder()
-                .userId(userId)
-                .build());
+        repository.findById(userId).ifPresentOrElse(
+                job -> job.status(JobStatus.PENDING),
+                () -> repository.persist(UserPublicEventsIndexingJobEntity.builder()
+                        .userId(userId)
+                        .build()));
     }
 
     @Override
-    public Optional<ZonedDateTime> lastEventTimestamp(Set<Long> userIds) {
-        return repository.findFirstByUserIdInOrderByLastEventTimestamp(userIds)
+    public Optional<ZonedDateTime> lastEventTimestamp(Long userId) {
+        return repository.findByUserId(userId)
                 .flatMap(j -> Optional.ofNullable(j.lastEventTimestamp()));
     }
 

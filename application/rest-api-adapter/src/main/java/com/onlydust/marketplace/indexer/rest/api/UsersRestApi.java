@@ -29,7 +29,7 @@ public class UsersRestApi implements UsersApi {
         authorizationContext.withAuthorization(authorization,
                 () -> {
                     cachedUserIndexer.indexUser(userId);
-                    jobExecutor.execute(userPublicEventsIndexingJobManager.name(), userId.toString());
+                    jobExecutor.execute(userPublicEventsIndexingJobManager.name(userId), "user_public_event_indexer", userId.toString());
                 });
         return noContent().build();
     }

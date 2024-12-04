@@ -32,16 +32,15 @@ public class AwsAthenaPublicEventRawStorageReaderAdapter implements PublicEventR
 
     @SneakyThrows
     @Override
-    public Stream<RawPublicEvent> allPublicEvents(ZonedDateTime since) {
+    public Stream<RawPublicEvent> allPublicEvents(ZonedDateTime timestamp) {
         return client.query("""
-                                SELECT event from gha_data_per_actor
-                                where year >= ? and month >= ? and day >= ? and hour >= ? and created_at >= ?
+                                SELECT event from gha_data_per_date
+                                where year = ? and month = ? and day = ? and hour = ?
                                 order by created_at
-                                """, String.valueOf(since.getYear()),
-                        String.valueOf(since.getMonthValue()),
-                        String.valueOf(since.getDayOfMonth()),
-                        String.valueOf(since.getHour()),
-                        "timestamp '%s'".formatted(since.format(ATHENA_TIMESTAMP_FORMATTER)))
+                                """, String.valueOf(timestamp.getYear()),
+                        String.valueOf(timestamp.getMonthValue()),
+                        String.valueOf(timestamp.getDayOfMonth()),
+                        String.valueOf(timestamp.getHour()))
                 .get()
                 .stream().flatMap(r -> r.resultSet().rows().stream())
                 .skip(1) // First row is the header

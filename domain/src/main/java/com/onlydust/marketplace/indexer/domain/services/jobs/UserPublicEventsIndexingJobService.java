@@ -9,8 +9,6 @@ import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Set;
-
 @AllArgsConstructor
 @Slf4j
 public class UserPublicEventsIndexingJobService implements UserPublicEventsIndexingJobManager {
@@ -21,17 +19,15 @@ public class UserPublicEventsIndexingJobService implements UserPublicEventsIndex
     @Override
     public Job create(Long userId) {
         userPublicEventsIndexingJobStorage.add(userId);
-        return new UserPublicEventIndexerJob(userPublicEventsIndexer, Set.of(userId), userPublicEventsIndexingJobStorage, rawStorageReader);
+        return job(userId);
     }
 
     @Override
-    public Job refresh() {
-        final var users = userPublicEventsIndexingJobStorage.all();
-        return new UserPublicEventIndexerJob(userPublicEventsIndexer, users, userPublicEventsIndexingJobStorage, rawStorageReader);
+    public String name(Long userId) {
+        return job(userId).name();
     }
 
-    @Override
-    public String name() {
-        return "user_public_event_indexer";
+    private Job job(Long userId) {
+        return new UserPublicEventIndexerJob(userPublicEventsIndexer, userId, userPublicEventsIndexingJobStorage, rawStorageReader);
     }
 }

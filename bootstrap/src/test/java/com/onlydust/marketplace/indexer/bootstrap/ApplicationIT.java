@@ -14,8 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.TaskExecutor;
 
-import java.util.stream.Stream;
-
 @SpringBootApplication
 @EnableConfigurationProperties
 public class ApplicationIT {
@@ -46,8 +44,7 @@ public class ApplicationIT {
             @Override
             @SneakyThrows
             public void execute(String jobName, String... args) {
-                batchRunner.run(Stream.concat(Stream.of(jobName), Stream.of(args))
-                        .toArray(String[]::new));
+                batchRunner.run(args);
             }
         };
     }

@@ -51,10 +51,4 @@ public class JobScheduler {
         LOGGER.debug("Indexing commits");
         commitIndexerJobManager.createJob().run();
     }
-
-    @Scheduled(cron = "${application.cron.public-event-refresh-job-cron}")
-    public void schedulePublicEventRefreshJob() {
-        LOGGER.debug("Refreshing public events");
-        userStatsJobManager.refresh().run();
-    }
 }

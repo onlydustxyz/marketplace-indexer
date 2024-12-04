@@ -108,7 +108,7 @@ public class DomainConfiguration {
                 }
 
                 @Override
-                public Stream<RawPublicEvent> allPublicEvents(ZonedDateTime since) {
+                public Stream<RawPublicEvent> allPublicEvents(ZonedDateTime timestamp) {
                     return Stream.empty();
                 }
             };
@@ -224,19 +224,13 @@ public class DomainConfiguration {
                                                                  final UserPublicEventsIndexingJobStorage userPublicEventsIndexingJobStorage,
                                                                  final RawStorageWriter rawStorageWriter,
                                                                  final RawStorageReader cachedRawStorageReader,
-                                                                 final RepoIndexer cacheOnlyRepoIndexer,
-                                                                 final UserIndexer cacheOnlyUserIndexer,
-                                                                 final PullRequestIndexer cacheOnlyPullRequestIndexer,
-                                                                 final IssueIndexer cacheOnlyIssueIndexer
+                                                                 final PullRequestIndexer cacheOnlyPullRequestIndexer
     ) {
         return new UserPublicEventsIndexingService(livePublicEventRawStorageReader,
                 userPublicEventsIndexingJobStorage,
                 rawStorageWriter,
                 cachedRawStorageReader,
-                cacheOnlyRepoIndexer,
-                cacheOnlyUserIndexer,
-                cacheOnlyPullRequestIndexer,
-                cacheOnlyIssueIndexer);
+                cacheOnlyPullRequestIndexer);
     }
 
     @Bean
