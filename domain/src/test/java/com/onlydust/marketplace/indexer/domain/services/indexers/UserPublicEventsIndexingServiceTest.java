@@ -44,7 +44,7 @@ class UserPublicEventsIndexingServiceTest {
             pullRequestIndexer
     );
 
-    private final RawAccount onlyDust = RawStorageWriterStub.load("/github/users/onlydust.json", RawAccount.class);
+    private final RawAccount onlyDust = RawStorageWriterStub.load("/github/users/onlyDust.json", RawAccount.class);
     private final RawAccount antho = RawStorageWriterStub.load("/github/users/anthony.json", RawAccount.class);
     private final RawRepo marketplaceApi = RawStorageWriterStub.load("/github/repos/marketplace-api.json", RawRepo.class);
     private final RawPublicEvent[] events = RawStorageWriterStub.load("/github/public_events/antho_last_events.json", RawPublicEvent[].class);
