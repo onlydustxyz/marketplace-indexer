@@ -7,4 +7,4 @@ ADD docker-start.sh .
 
 RUN curl -L -o dd-java-agent.jar https://dtdg.co/latest-java-tracer
 
-CMD ./docker-start.sh marketplace-indexer.jar
+ENTRYPOINT ["./docker-start.sh", "marketplace-indexer.jar"]

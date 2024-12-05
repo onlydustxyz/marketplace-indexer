@@ -6,7 +6,6 @@ import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.ListPagingAndSortingRepository;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +13,7 @@ public interface UserPublicEventsIndexingJobRepository extends BaseJpaRepository
         ListPagingAndSortingRepository<UserPublicEventsIndexingJobEntity, Long> {
     List<UserPublicEventsIndexingJobEntity> findAll();
 
-    Optional<UserPublicEventsIndexingJobEntity> findFirstByUserIdInOrderByLastEventTimestamp(Collection<Long> userIds);
+    Optional<UserPublicEventsIndexingJobEntity> findByUserId(Long userIds);
 
     List<UserPublicEventsIndexingJobEntity> findAllByStatus(JobStatus status, Sort sort);
 }

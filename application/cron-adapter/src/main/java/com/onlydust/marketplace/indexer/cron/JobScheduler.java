@@ -7,6 +7,7 @@ import com.onlydust.marketplace.indexer.domain.ports.in.jobs.UserPublicEventsInd
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @AllArgsConstructor
 @Profile("job")
+@EnableScheduling
 public class JobScheduler {
     private final JobManager diffRepoRefreshJobManager;
     private final JobManager diffUserRefreshJobManager;
@@ -48,11 +50,5 @@ public class JobScheduler {
     public void scheduleCommitIndexerJobs() {
         LOGGER.debug("Indexing commits");
         commitIndexerJobManager.createJob().run();
-    }
-
-    @Scheduled(cron = "${application.cron.public-event-refresh-job-cron}")
-    public void schedulePublicEventRefreshJob() {
-        LOGGER.debug("Refreshing public events");
-        userStatsJobManager.refresh().run();
     }
 }

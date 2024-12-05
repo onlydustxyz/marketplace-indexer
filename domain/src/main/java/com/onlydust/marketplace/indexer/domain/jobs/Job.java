@@ -17,6 +17,7 @@ public abstract class Job implements Runnable {
             else LOGGER.info("already running, skipped");
         } finally {
             unlock(key);
+            LOGGER.info("Job finished");
             MDC.remove("job");
         }
     }

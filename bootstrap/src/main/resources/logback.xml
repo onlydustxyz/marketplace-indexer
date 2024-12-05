@@ -28,7 +28,18 @@
         </encoder>
     </appender>
 
-    <root level="info">
-        <appender-ref ref="JSON"/>
-    </root>
+    <springProfile name="!local">
+        <root level="info">
+            <appender-ref ref="JSON"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="local">
+        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+        <root level="info">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
 </configuration>

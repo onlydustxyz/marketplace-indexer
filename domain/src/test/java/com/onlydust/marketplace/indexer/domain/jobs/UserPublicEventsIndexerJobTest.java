@@ -12,10 +12,8 @@ import org.junit.jupiter.api.Test;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.toSet;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class UserPublicEventsIndexerJobTest {
@@ -39,7 +37,7 @@ class UserPublicEventsIndexerJobTest {
                 .build();
 
         final UserPublicEventIndexerJob userPublicEventIndexerJob = new UserPublicEventIndexerJob(userPublicEventsIndexer,
-                Set.of(user.getId()),
+                user.getId(),
                 userPublicEventsIndexingJobStorage,
                 rawStorageReader);
 
@@ -47,7 +45,7 @@ class UserPublicEventsIndexerJobTest {
         void should_not_index_non_existing_user() {
             // Given
             when(rawStorageReader.user(user.getId())).thenReturn(Optional.empty());
-            when(userPublicEventsIndexingJobStorage.lastEventTimestamp(Set.of(user.getId()))).thenReturn(Optional.empty());
+            when(userPublicEventsIndexingJobStorage.lastEventTimestamp(user.getId())).thenReturn(Optional.empty());
 
             // When
             userPublicEventIndexerJob.execute();
@@ -60,7 +58,7 @@ class UserPublicEventsIndexerJobTest {
         void should_index_new_user_from_creation_date() {
             // Given
             when(rawStorageReader.user(user.getId())).thenReturn(Optional.of(user));
-            when(userPublicEventsIndexingJobStorage.lastEventTimestamp(Set.of(user.getId()))).thenReturn(Optional.empty());
+            when(userPublicEventsIndexingJobStorage.lastEventTimestamp(user.getId())).thenReturn(Optional.empty());
 
             // When
             userPublicEventIndexerJob.execute();
@@ -76,7 +74,7 @@ class UserPublicEventsIndexerJobTest {
             // Given
             final var lastEventTimestamp = ZonedDateTime.now();
             when(rawStorageReader.user(user.getId())).thenReturn(Optional.of(user));
-            when(userPublicEventsIndexingJobStorage.lastEventTimestamp(Set.of(user.getId()))).thenReturn(Optional.of(lastEventTimestamp));
+            when(userPublicEventsIndexingJobStorage.lastEventTimestamp(user.getId())).thenReturn(Optional.of(lastEventTimestamp));
 
             // When
             userPublicEventIndexerJob.execute();
@@ -91,77 +89,18 @@ class UserPublicEventsIndexerJobTest {
         void should_fail_upon_exception() {
             // Given
             when(rawStorageReader.user(user.getId())).thenReturn(Optional.of(user));
-            when(userPublicEventsIndexingJobStorage.lastEventTimestamp(Set.of(user.getId()))).thenReturn(Optional.empty());
+            when(userPublicEventsIndexingJobStorage.lastEventTimestamp(user.getId())).thenReturn(Optional.empty());
             doThrow(new RuntimeException("Failed to index user")).when(userPublicEventsIndexer).indexUser(user.getId(), userCreationDate);
 
             // When
-            userPublicEventIndexerJob.execute();
+            assertThatThrownBy(userPublicEventIndexerJob::execute)
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessageContaining("Failed to index user");
 
             // Then
             verify(userPublicEventsIndexingJobStorage).startJob(user.getId());
             verify(userPublicEventsIndexer).indexUser(user.getId(), userCreationDate);
             verify(userPublicEventsIndexingJobStorage).failJob(user.getId());
-        }
-    }
-
-    @Nested
-    class GivenManyUsersRefresh {
-        private final ZonedDateTime userCreationDate = faker.date().birthday().toInstant().atZone(ZoneOffset.UTC);
-        private final Set<RawAccount> users = IntStream.range(0, 10)
-                .mapToObj(i -> RawAccount.builder()
-                        .id(faker.random().nextLong())
-                        .createdAt(userCreationDate.minusDays(i).toString())
-                        .build())
-                .collect(toSet());
-        final Set<Long> userIds = users.stream().map(RawAccount::getId).collect(toSet());
-
-        final UserPublicEventIndexerJob userPublicEventIndexerJob = new UserPublicEventIndexerJob(userPublicEventsIndexer,
-                userIds,
-                userPublicEventsIndexingJobStorage,
-                rawStorageReader);
-
-        @Test
-        void should_not_index_users_for_the_first_time() {
-            // Given
-            when(userPublicEventsIndexingJobStorage.lastEventTimestamp(userIds)).thenReturn(Optional.empty());
-
-            // When
-            userPublicEventIndexerJob.execute();
-
-            // Then
-//            userIds.forEach(id -> verify(userPublicEventsIndexingJobStorage).failJob(id));
-            verifyNoInteractions(userPublicEventsIndexer);
-        }
-
-        @Test
-        void should_index_users_from_last_event() {
-            // Given
-            final var lastEventTimestamp = ZonedDateTime.now().minusHours(2);
-            when(userPublicEventsIndexingJobStorage.lastEventTimestamp(userIds)).thenReturn(Optional.of(lastEventTimestamp));
-
-            // When
-            userPublicEventIndexerJob.execute();
-
-            // Then
-            userIds.forEach(id -> verify(userPublicEventsIndexingJobStorage).startJob(id));
-            verify(userPublicEventsIndexer).indexUsers(userIds, lastEventTimestamp);
-            userIds.forEach(id -> verify(userPublicEventsIndexingJobStorage).endJob(id));
-        }
-
-        @Test
-        void should_fail_upon_exception() {
-            // Given
-            final var lastEventTimestamp = ZonedDateTime.now().minusHours(2);
-            when(userPublicEventsIndexingJobStorage.lastEventTimestamp(userIds)).thenReturn(Optional.of(lastEventTimestamp));
-            doThrow(new RuntimeException("Failed to index user")).when(userPublicEventsIndexer).indexUsers(userIds, lastEventTimestamp);
-
-            // When
-            userPublicEventIndexerJob.execute();
-
-            // Then
-            userIds.forEach(id -> verify(userPublicEventsIndexingJobStorage).startJob(id));
-            verify(userPublicEventsIndexer).indexUsers(userIds, lastEventTimestamp);
-            userIds.forEach(id -> verify(userPublicEventsIndexingJobStorage).failJob(id));
         }
     }
 }

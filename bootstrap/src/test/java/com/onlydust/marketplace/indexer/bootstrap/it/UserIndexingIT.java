@@ -13,6 +13,8 @@ import com.onlydust.marketplace.indexer.postgres.repositories.UserIndexingJobEnt
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAccountEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.UserSocialAccountsRepository;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,17 +36,18 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserIndexingIT extends IntegrationTest {
     private final ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
 
     @Autowired
-    public UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-    public UserSocialAccountsRepository userSocialAccountsRepository;
+    UserSocialAccountsRepository userSocialAccountsRepository;
     @Autowired
-    public GithubAccountEntityRepository githubAccountEntityRepository;
+    GithubAccountEntityRepository githubAccountEntityRepository;
     @Autowired
-    public UserIndexingJobEntityRepository userIndexingJobEntityRepository;
+    UserIndexingJobEntityRepository userIndexingJobEntityRepository;
 
     @BeforeEach
     void setup() {

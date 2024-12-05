@@ -1,27 +1,36 @@
 package com.onlydust.marketplace.indexer.bootstrap;
 
+import com.onlydust.marketplace.indexer.cli.BatchRunner;
 import com.onlydust.marketplace.indexer.cron.JobScheduler;
 import com.onlydust.marketplace.indexer.github.GithubConfiguration;
 import com.onlydust.marketplace.indexer.postgres.PostgresConfiguration;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.TimeZone;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.onlydust.marketplace.indexer")
 @EnableConfigurationProperties
-@EnableScheduling
 @EnableRetry
-@Import({PostgresConfiguration.class, GithubConfiguration.class, JobScheduler.class})
+@Import({PostgresConfiguration.class, GithubConfiguration.class, JobScheduler.class, BatchRunner.class})
+@Slf4j
 public class MarketplaceIndexerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MarketplaceIndexerApplication.class, args);
+        try {
+            final var context = SpringApplication.run(MarketplaceIndexerApplication.class, args);
+
+            if (context.getEnvironment().getProperty("spring.main.web-application-type", WebApplicationType.class) == WebApplicationType.NONE)
+                System.exit(SpringApplication.exit(context));
+        } catch (Exception e) {
+            System.exit(1);
+        }
     }
 
     @PostConstruct

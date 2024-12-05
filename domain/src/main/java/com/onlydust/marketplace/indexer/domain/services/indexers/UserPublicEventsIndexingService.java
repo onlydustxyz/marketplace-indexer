@@ -1,12 +1,11 @@
 package com.onlydust.marketplace.indexer.domain.services.indexers;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPullRequestEventPayload;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPushEventPayload;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.*;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserPublicEventsIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
@@ -16,7 +15,6 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
-import java.util.Set;
 
 @AllArgsConstructor
 @Slf4j
@@ -26,25 +24,21 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
     private final RawStorageWriter rawStorageWriter;
     private final RawStorageReader rawStorageReader;
 
-    private final RepoIndexer repoIndexer;
-    private final UserIndexer userIndexer;
     private final PullRequestIndexer pullRequestIndexer;
-    private final IssueIndexer issueIndexer;
 
     @Override
     public void indexUser(final @NonNull Long userId, final @NonNull ZonedDateTime since) {
         LOGGER.info("Indexing public events for user {} since {}", userId, since);
         publicEventRawStorageReader.userPublicEvents(userId, since)
-                .distinct()
                 .forEach(this::index);
     }
 
     @Override
-    public void indexUsers(final @NonNull Set<Long> userIds, final @NonNull ZonedDateTime since) {
-        LOGGER.info("Indexing public events for {} users since {}", userIds.size(), since);
-        publicEventRawStorageReader.allPublicEvents(since)
+    public void indexAllUsers(final @NonNull ZonedDateTime timestamp) {
+        final var userIds = userPublicEventsIndexingJobStorage.all();
+        LOGGER.info("Indexing public events for {} users at {}", userIds.size(), timestamp);
+        publicEventRawStorageReader.allPublicEvents(timestamp)
                 .filter(event -> userIds.contains(event.actor().getId()))
-                .distinct()
                 .forEach(this::index);
     }
 
@@ -62,16 +56,6 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
 
     private void index(final @NonNull RawPublicEvent event, RawPushEventPayload payload) {
         rawStorageWriter.saveCommits(event.repo().getId(), payload.commits());
-    }
-
-    private void index(final @NonNull RawAccount user) {
-        rawStorageWriter.saveUser(user);
-        userIndexer.indexUser(user.getId());
-    }
-
-    private void index(final @NonNull RawRepo repo) {
-        rawStorageWriter.saveRepo(repo);
-        repoIndexer.indexRepo(repo.getId());
     }
 
     private void index(final @NonNull RawPullRequest pullRequest) {

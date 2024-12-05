@@ -42,9 +42,9 @@ public class PublicEventRawStorageReaderStub implements PublicEventRawStorageRea
     }
 
     @Override
-    public Stream<RawPublicEvent> allPublicEvents(ZonedDateTime since) {
+    public Stream<RawPublicEvent> allPublicEvents(ZonedDateTime timestamp) {
         return events.stream()
-                .filter(e -> e.createdAt().isAfter(since))
+                .filter(e -> e.createdAt().isAfter(timestamp))
                 .sorted(comparing(RawPublicEvent::createdAt));
     }
 }

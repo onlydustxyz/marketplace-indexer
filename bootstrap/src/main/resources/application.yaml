@@ -20,6 +20,9 @@ infrastructure:
       polling-interval: ${AWS_GHA_POLLING_INTERVAL}
       region: ${AWS_REGION}
       catalog: ${AWS_GHA_CATALOG}
+    batch:
+      queue: ${AWS_BATCH_QUEUE}
+      job-definition: ${AWS_BATCH_JOB_DEFINITION}
 
 application:
   web:
@@ -35,7 +38,6 @@ application:
     user-refresh-job-delay: 5000 # 5s
     event-inbox-dequeuer-delay: 1000 # 1s
     commit-indexer-delay: 3600000 # 1h
-    public-event-refresh-job-cron: 0 30 * * * * # every hour (gha download starts at 00:15 and has 15min timeout)
   repo-refresh-job:
     unauthorized-repos-refresh-interval: 86400 # 24h
     unauthorized-repos-refresh-limit: 20
@@ -59,8 +61,7 @@ spring:
       idleTimeout: 30000
       maxLifetime: 60000
       maximumPoolSize: 100
-      initial-size: 10
-      minimumIdle: 10
+      minimumIdle: 20
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
@@ -86,6 +87,11 @@ spring:
     scheduling:
       pool:
         size: 10
+    execution:
+      pool:
+        queue-capacity: 1000
+        core-size: 20
+        max-size: 30
   jackson:
     serialization:
       write-dates-as-timestamps: false
