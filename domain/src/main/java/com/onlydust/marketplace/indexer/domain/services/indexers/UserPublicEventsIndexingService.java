@@ -1,20 +1,24 @@
 package com.onlydust.marketplace.indexer.domain.services.indexers;
 
+import java.time.ZonedDateTime;
+
+import com.onlydust.marketplace.indexer.domain.models.raw.RawIssue;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
+import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawIssuesEventPayload;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPullRequestEventPayload;
 import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPushEventPayload;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserPublicEventsIndexer;
 import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
 import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
+
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-
-import java.time.ZonedDateTime;
 
 @AllArgsConstructor
 @Slf4j
@@ -25,7 +29,7 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
     private final RawStorageReader rawStorageReader;
 
     private final PullRequestIndexer pullRequestIndexer;
-
+    private final IssueIndexer issueIndexer;
     @Override
     public void indexUser(final @NonNull Long userId, final @NonNull ZonedDateTime since) {
         LOGGER.info("Indexing public events for user {} since {}", userId, since);
@@ -52,6 +56,8 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
             index(event, payload);
         else if (rawPayload instanceof RawPushEventPayload payload)
             index(event, payload);
+        else if (rawPayload instanceof RawIssuesEventPayload payload)
+            index(event, payload);
     }
 
     private void index(final @NonNull RawPublicEvent event, RawPushEventPayload payload) {
@@ -72,5 +78,21 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
     private void index(final @NonNull RawPublicEvent event, final @NonNull RawPullRequestEventPayload payload) {
         LOGGER.debug("Indexing event: {}", event);
         index(payload.pullRequest());
+    }
+
+    private void index(final @NonNull RawPublicEvent event, final @NonNull RawIssuesEventPayload payload) {
+        LOGGER.debug("Indexing event: {}", event);
+        index(event.repo().getId(), payload.issue());
+    }
+
+    private void index(final @NonNull Long repoId, final @NonNull RawIssue issue) {
+        rawStorageWriter.saveIssue(repoId, issue);
+
+        rawStorageReader.repo(repoId)
+                .ifPresent(repo -> {
+                    rawStorageReader.repoLanguages(repo.getId());
+                    rawStorageReader.user(repo.getOwner().getId())
+                            .ifPresent(owner -> issueIndexer.indexIssue(owner.getLogin(), repo.getName(), issue.getNumber()));
+                });
     }
 }
