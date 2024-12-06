@@ -1,21 +1,11 @@
 package com.onlydust.marketplace.indexer.domain.services.indexers;
 
-import com.github.javafaker.Faker;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
-import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserPublicEventsIndexer;
-import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
-import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
-import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -23,9 +13,25 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
+import com.github.javafaker.Faker;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawIssue;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawPullRequest;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawRepo;
+import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.IssueIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.PullRequestIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.in.indexers.UserPublicEventsIndexer;
+import com.onlydust.marketplace.indexer.domain.ports.out.jobs.UserPublicEventsIndexingJobStorage;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.PublicEventRawStorageReader;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageReader;
+import com.onlydust.marketplace.indexer.domain.ports.out.raw.RawStorageWriter;
+import com.onlydust.marketplace.indexer.domain.stubs.RawStorageWriterStub;
 
 class UserPublicEventsIndexingServiceTest {
     private final Faker faker = new Faker();
@@ -35,13 +41,15 @@ class UserPublicEventsIndexingServiceTest {
     private final RawStorageReader rawStorageReader = mock(RawStorageReader.class);
 
     private final PullRequestIndexer pullRequestIndexer = mock(PullRequestIndexer.class);
+    private final IssueIndexer issueIndexer = mock(IssueIndexer.class);
 
     private final UserPublicEventsIndexer indexer = new UserPublicEventsIndexingService(
             publicEventRawStorageReader,
             userPublicEventsIndexingJobStorage,
             rawStorageWriter,
             rawStorageReader,
-            pullRequestIndexer
+            pullRequestIndexer,
+            issueIndexer
     );
 
     private final RawAccount onlyDust = RawStorageWriterStub.load("/github/users/onlyDust.json", RawAccount.class);
@@ -51,7 +59,7 @@ class UserPublicEventsIndexingServiceTest {
 
     @BeforeEach
     void setUp() {
-        reset(publicEventRawStorageReader, userPublicEventsIndexingJobStorage, rawStorageWriter, rawStorageReader, pullRequestIndexer);
+        reset(publicEventRawStorageReader, userPublicEventsIndexingJobStorage, rawStorageWriter, rawStorageReader, pullRequestIndexer, issueIndexer);
 
         when(rawStorageReader.user(onlyDust.getId())).thenReturn(Optional.of(onlyDust));
         when(rawStorageReader.repo(marketplaceApi.getId())).thenReturn(Optional.of(marketplaceApi));
@@ -92,6 +100,14 @@ class UserPublicEventsIndexingServiceTest {
             verify(pullRequestIndexer, times(1)).indexPullRequest("onlydustxyz", "marketplace-api", 1186L);
             verify(pullRequestIndexer, times(2)).indexPullRequest("onlydustxyz", "marketplace-api", 1187L);
             verify(pullRequestIndexer, times(1)).indexPullRequest("onlydustxyz", "marketplace-api", 1190L);
+
+            final var issueCaptor = ArgumentCaptor.forClass(RawIssue.class);
+            verify(rawStorageWriter).saveIssue(eq(marketplaceApi.getId()), issueCaptor.capture());
+            assertThat(issueCaptor.getAllValues())
+                    .extracting(RawIssue::getId)
+                    .containsExactly(2693324012L);
+
+            verify(issueIndexer).indexIssue("onlydustxyz", "marketplace-api", 1548L);
         }
     }
 

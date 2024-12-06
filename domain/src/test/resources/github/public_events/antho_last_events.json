@@ -1,5 +1,105 @@
 [
     {
+        "id": "44193134730",
+        "type": "IssuesEvent",
+        "actor": {
+            "id": 43467246,
+            "login": "AnthonyBuisset",
+            "display_login": "AnthonyBuisset",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/AnthonyBuisset",
+            "avatar_url": "https://avatars.githubusercontent.com/u/43467246?"
+        },
+        "repo": {
+            "id": 698096830,
+            "name": "onlydustxyz/marketplace-api",
+            "url": "https://api.github.com/repos/onlydustxyz/marketplace-api"
+        },
+        "payload": {
+            "action": "opened",
+            "issue": {
+                "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/issues/1548",
+                "repository_url": "https://api.github.com/repos/onlydustxyz/marketplace-api",
+                "labels_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/issues/1548/labels{/name}",
+                "comments_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/issues/1548/comments",
+                "events_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/issues/1548/events",
+                "html_url": "https://github.com/onlydustxyz/marketplace-api/issues/1548",
+                "id": 2693324012,
+                "node_id": "I_kwDOIRDrOs6giNzs",
+                "number": 1548,
+                "title": "fix (indexer): specify all main dependencies and sub-dependencies version in the indexer/deps.ts file",
+                "user": {
+                    "login": "AnthonyBuisset",
+                    "id": 43467246,
+                    "node_id": "MDQ6VXNlcjY2ODcxNTcx",
+                    "avatar_url": "https://avatars.githubusercontent.com/u/43467246?v=4",
+                    "gravatar_id": "",
+                    "url": "https://api.github.com/users/AnthonyBuisset",
+                    "html_url": "https://github.com/AnthonyBuisset",
+                    "followers_url": "https://api.github.com/users/AnthonyBuisset/followers",
+                    "following_url": "https://api.github.com/users/AnthonyBuisset/following{/other_user}",
+                    "gists_url": "https://api.github.com/users/AnthonyBuisset/gists{/gist_id}",
+                    "starred_url": "https://api.github.com/users/AnthonyBuisset/starred{/owner}{/repo}",
+                    "subscriptions_url": "https://api.github.com/users/AnthonyBuisset/subscriptions",
+                    "organizations_url": "https://api.github.com/users/AnthonyBuisset/orgs",
+                    "repos_url": "https://api.github.com/users/AnthonyBuisset/repos",
+                    "events_url": "https://api.github.com/users/AnthonyBuisset/events{/privacy}",
+                    "received_events_url": "https://api.github.com/users/AnthonyBuisset/received_events",
+                    "type": "User",
+                    "user_view_type": "public",
+                    "site_admin": false
+                },
+                "labels": [
+                    {
+                        "id": 4697501933,
+                        "node_id": "LA_kwDOIRDrOs8AAAABF_4w7Q",
+                        "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/labels/enhancement",
+                        "name": "enhancement",
+                        "color": "1d76db",
+                        "default": true,
+                        "description": "Enhancement of the code, not introducing new features."
+                    }
+                ],
+                "state": "open",
+                "locked": false,
+                "assignee": null,
+                "assignees": [],
+                "milestone": null,
+                "comments": 0,
+                "created_at": "2024-11-26T06:21:02Z",
+                "updated_at": "2024-11-26T06:21:02Z",
+                "closed_at": null,
+                "author_association": "MEMBER",
+                "active_lock_reason": null,
+                "body": "**Describe the enhancement request**\r\n\r\n<!-- A clear and concise description of what the feature request is. Please include if your feature request is related to a problem. -->\r\n\r\nRPC of Kakarot Sepolia was down this Saturday 23rd November 2024, because of an ethereumJS broken import due to minor bump of versions.\r\nError message:\r\n```\r\nsink configuration error\r\n├╴at /build/source/sinks/sink-common/src/error.rs:195:14\r\n├╴failed to load configuration from script\r\n│\r\n╰─▶ indexer script operation failed\r\n    ├╴at /build/source/script/src/script.rs:340:22\r\n    ├╴failed to run indexer event loop\r\n    ╰╴error: SyntaxError: The requested module '/v135/@ethereumjs/statemanager@2.4.0/esnext/statemanager.mjs' does not provide an export named 'getTreeIndexesForStorageSlot' at https://esm.sh/v135/@ethereumjs/evm@2.2.1/esnext/evm.mjs:3:16725\r\n          at async [script]:2:32\r\n```\r\n![image](https://github.com/user-attachments/assets/f47b2f58-76d4-4a5c-9884-0da93c51e0b2)\r\n\r\nProblem was caused by two different issues:\r\n- ethereumjs had a breaking change in a minor version by breaking their exports\r\n- indexer software does not use lockfile\r\n\r\nShort term fix was back port fix the 0.7.5 tag using this branch apoorvsadana/kkrt-backport:v0.7.5-fix\r\nURL: https://github.com/onlydustxyz/marketplace-api/commit/e0eaa76835fd762fc499447d495e37fa39544ad5\r\n\r\n**Describe Preferred Solution**\r\n\r\n<!-- When preparing an issue, three cases are possible:\r\n- Trivial Issue: explainable in a sentence or two = a slight refactor (should have label = timebox 1hr)\r\n- Structured issue: should have a task list with clear tasks and clear scope, anything outside the scope in a PR comment will create a new issue\r\n- Exploratory Issue (should have label of any timebox)\r\n -->\r\n\r\nFollowing what was done in https://github.com/onlydustxyz/marketplace-api/commit/e0eaa76835fd762fc499447d495e37fa39544ad5,\r\nspecify all main deps version in the import url indexer/deps.ts. Basically extend the current fix with all deps not just the minimal set like now\r\n",
+                "reactions": {
+                    "url": "https://api.github.com/repos/onlydustxyz/marketplace-api/issues/1548/reactions",
+                    "total_count": 0,
+                    "+1": 0,
+                    "-1": 0,
+                    "laugh": 0,
+                    "hooray": 0,
+                    "confused": 0,
+                    "heart": 0,
+                    "rocket": 0,
+                    "eyes": 0
+                },
+                "timeline_url": "https://api.github.com/repos/onlydustxyz/marketplace-api/issues/1548/timeline",
+                "performed_via_github_app": null,
+                "state_reason": null
+            }
+        },
+        "public": true,
+        "created_at": "2024-11-26T06:21:04Z",
+        "org": {
+            "id": 115784313,
+            "login": "onlydustxyz",
+            "gravatar_id": "",
+            "url": "https://api.github.com/orgs/onlydustxyz",
+            "avatar_url": "https://avatars.githubusercontent.com/u/115784313?"
+        }
+    },
+    {
         "id": "42516544181",
         "type": "PushEvent",
         "actor": {

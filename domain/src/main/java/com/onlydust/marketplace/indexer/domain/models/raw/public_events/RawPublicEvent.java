@@ -1,6 +1,10 @@
 package com.onlydust.marketplace.indexer.domain.models.raw.public_events;
 
 
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.Optional;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,11 +14,8 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.onlydust.marketplace.indexer.domain.exception.OnlyDustException;
 import com.onlydust.marketplace.indexer.domain.models.raw.JsonDocument;
-import lombok.*;
 
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.Optional;
+import lombok.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -39,6 +40,7 @@ public record RawPublicEvent(@NonNull Long id,
         return Optional.ofNullable(switch (type) {
             case "PullRequestEvent" -> payloadAs(RawPullRequestEventPayload.class);
             case "PushEvent" -> payloadAs(RawPushEventPayload.class);
+            case "IssuesEvent" -> payloadAs(RawIssuesEventPayload.class);
             default -> null;
         });
     }
