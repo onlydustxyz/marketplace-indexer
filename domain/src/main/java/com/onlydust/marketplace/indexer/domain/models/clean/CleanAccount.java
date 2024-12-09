@@ -1,15 +1,16 @@
 package com.onlydust.marketplace.indexer.domain.models.clean;
 
-import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawShortAccount;
-import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Value;
-
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawShortAccount;
+import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Value;
 
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 @Value
@@ -24,6 +25,7 @@ public class CleanAccount {
     String location;
     String website;
     ZonedDateTime createdAt;
+    Integer followerCount;
     @Builder.Default
     List<RawSocialAccount> socialAccounts = new ArrayList<>();
 
@@ -39,6 +41,7 @@ public class CleanAccount {
                 .location(account.getLocation())
                 .website(account.getBlog())
                 .createdAt(account.getCreatedAt() == null ? null : ZonedDateTime.parse(account.getCreatedAt()))
+                .followerCount(account.getFollowers())
                 .build();
     }
 
@@ -49,9 +52,9 @@ public class CleanAccount {
                 .type(account.getType())
                 .htmlUrl(account.getHtmlUrl())
                 .avatarUrl(account.getAvatarUrl())
+                .followerCount(0)
                 .build();
     }
-
 
     public static CleanAccount of(RawAccount account, List<RawSocialAccount> socialAccounts) {
         return CleanAccount.of(account).toBuilder()

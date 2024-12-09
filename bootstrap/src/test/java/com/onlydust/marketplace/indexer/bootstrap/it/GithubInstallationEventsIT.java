@@ -1,5 +1,18 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.ZonedDateTime;
+import java.util.Comparator;
+import java.util.List;
+
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlydust.marketplace.indexer.domain.ports.in.jobs.JobManager;
@@ -12,18 +25,6 @@ import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubA
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubAppInstallationEntityRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubRepoRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.EventsInboxEntityRepository;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-
-import java.time.ZonedDateTime;
-import java.util.Comparator;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GithubInstallationEventsIT extends IntegrationTest {
@@ -82,6 +83,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
                 .type(GithubAccountEntity.Type.ORGANIZATION)
                 .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
                 .htmlUrl("https://github.com/onlydustxyz")
+                .followerCount(0)
                 .build();
 
         final var installations = githubAppInstallationEntityRepository.findAll();
@@ -116,6 +118,7 @@ public class GithubInstallationEventsIT extends IntegrationTest {
                 .type(GithubAccountEntity.Type.ORGANIZATION)
                 .avatarUrl("https://avatars.githubusercontent.com/u/98735558?v=4")
                 .htmlUrl("https://github.com/onlydustxyz")
+                .followerCount(0)
                 .build();
 
         final var installations = githubAppInstallationEntityRepository.findAll();

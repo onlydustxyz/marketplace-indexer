@@ -133,3 +133,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000064_add_missing_indexes.sql
   - include:
       file: db/changelog/changelogs/00000065_add_missing_indexes.sql
+  - include:
+      file: db/changelog/changelogs/00000066_add_follower_count.sql

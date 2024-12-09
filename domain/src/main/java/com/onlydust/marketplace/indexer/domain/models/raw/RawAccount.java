@@ -2,6 +2,7 @@ package com.onlydust.marketplace.indexer.domain.models.raw;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.*;
 
 @Value
@@ -24,4 +25,5 @@ public class RawAccount extends JsonDocument {
     String blog;
     @JsonProperty("created_at")
     String createdAt;
+    Integer followers;
 }

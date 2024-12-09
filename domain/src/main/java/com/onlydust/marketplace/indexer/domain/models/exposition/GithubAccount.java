@@ -1,11 +1,12 @@
 package com.onlydust.marketplace.indexer.domain.models.exposition;
 
+import java.time.ZonedDateTime;
+
 import com.onlydust.marketplace.indexer.domain.models.clean.CleanAccount;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
-
-import java.time.ZonedDateTime;
 
 @Value
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
@@ -23,6 +24,7 @@ public class GithubAccount {
     String linkedin;
     String telegram;
     ZonedDateTime createdAt;
+    Integer followerCount;
 
     public static GithubAccount of(CleanAccount account) {
         return GithubAccount.builder()
@@ -39,6 +41,7 @@ public class GithubAccount {
                 .linkedin(account.getLinkedin())
                 .telegram(account.getTelegram())
                 .createdAt(account.getCreatedAt())
+                .followerCount(account.getFollowerCount() != null ? account.getFollowerCount() : 0)
                 .build();
     }
 

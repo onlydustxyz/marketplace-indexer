@@ -1,13 +1,15 @@
 package com.onlydust.marketplace.indexer.postgres.entities.exposition;
 
-import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import java.time.ZonedDateTime;
+
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
-import java.time.ZonedDateTime;
+import com.onlydust.marketplace.indexer.domain.models.exposition.GithubAccount;
+
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Builder
@@ -34,6 +36,7 @@ public class GithubAccountEntity {
     String linkedin;
     String telegram;
     ZonedDateTime createdAt;
+    Integer followerCount;
 
     public static GithubAccountEntity of(GithubAccount account) {
         return GithubAccountEntity.builder()
@@ -50,6 +53,7 @@ public class GithubAccountEntity {
                 .linkedin(account.getLinkedin())
                 .telegram(account.getTelegram())
                 .createdAt(account.getCreatedAt())
+                .followerCount(account.getFollowerCount())
                 .build();
     }
 
