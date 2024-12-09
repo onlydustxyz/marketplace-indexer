@@ -1,10 +1,11 @@
 package com.onlydust.marketplace.indexer.domain.jobs;
 
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import org.slf4j.MDC;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class Job implements Runnable {
@@ -14,10 +15,10 @@ public abstract class Job implements Runnable {
         try {
             MDC.put("job", key);
             if (lock(key)) runnable.run();
-            else LOGGER.info("already running, skipped");
+            else LOGGER.debug("already running, skipped");
         } finally {
             unlock(key);
-            LOGGER.info("Job finished");
+            LOGGER.debug("Job finished");
             MDC.remove("job");
         }
     }
