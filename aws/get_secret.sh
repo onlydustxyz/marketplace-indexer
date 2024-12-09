@@ -68,10 +68,7 @@ for secret_arn in $secrets; do
   secret_value=$(echo "$secret" | jq -r '.SecretString')
 
   log_info "== $secret_name =="
-  if [[ -n $secret_value && $(echo "$secret_value" | grep -c '{') -gt 0 ]]; then
-    echo "$secret_value" | jq -r .
-  else
-    echo "$secret_value"
-  fi
+
+  echo "$secret_value" | jq -r . 2> /dev/null || echo "$secret_value"
 
 done
