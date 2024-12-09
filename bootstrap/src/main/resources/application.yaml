@@ -61,7 +61,7 @@ spring:
       idleTimeout: 30000
       maxLifetime: 60000
       maximumPoolSize: 100
-      minimumIdle: 20
+      minimumIdle: 10
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
@@ -87,11 +87,6 @@ spring:
     scheduling:
       pool:
         size: 10
-    execution:
-      pool:
-        queue-capacity: 1000
-        core-size: 20
-        max-size: 30
   jackson:
     serialization:
       write-dates-as-timestamps: false
