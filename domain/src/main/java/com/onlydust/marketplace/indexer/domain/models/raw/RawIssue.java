@@ -1,11 +1,12 @@
 package com.onlydust.marketplace.indexer.domain.models.raw;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
-
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.*;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
@@ -32,6 +33,12 @@ public class RawIssue extends JsonDocument {
     @JsonProperty("pull_request")
     RawPullRequest pullRequest;
     Integer comments;
+    
+    @Getter(AccessLevel.NONE)
     List<RawShortAccount> assignees;
+    public List<RawShortAccount> getAssignees() {
+        return assignees != null ? assignees : List.of();
+    }
+
     @NonNull List<RawLabel> labels;
 }
