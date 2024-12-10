@@ -1,15 +1,16 @@
 package com.onlydust.marketplace.indexer.domain.models.exposition;
 
-import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Value;
-import onlydust.com.marketplace.kernel.model.ContributionUUID;
+import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.internalServerError;
 
 import java.util.Date;
 import java.util.List;
 
-import static com.onlydust.marketplace.indexer.domain.exception.OnlyDustException.internalServerError;
+import com.onlydust.marketplace.indexer.domain.models.clean.CleanIssue;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Value;
+import onlydust.com.marketplace.kernel.model.ContributionUUID;
 
 @Value
 @Builder(access = AccessLevel.PRIVATE)
@@ -60,12 +61,12 @@ public class GithubIssue {
                 case "open":
                     return Status.OPEN;
                 case "closed":
-                    switch (issue.getStateReason()) {
-                        case "completed":
-                            return Status.COMPLETED;
-                        case "not_planned":
-                            return Status.CANCELLED;
-                    }
+                    return switch (issue.getStateReason()) {
+                        case "not_planned" -> Status.CANCELLED;
+                        case "completed" -> Status.COMPLETED;
+                        case null -> Status.COMPLETED;
+                        default -> throw internalServerError("Unknown issue state reason: " + issue.getStateReason());
+                    };
             }
             throw internalServerError("Unknown issue state: " + issue.getState() + " " + issue.getStateReason());
         }
