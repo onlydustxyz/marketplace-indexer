@@ -1,8 +1,8 @@
 package com.onlydust.marketplace.indexer.github;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 public class SanitizerTest {
     @Test
@@ -10,5 +10,9 @@ public class SanitizerTest {
         assertThat(Sanitizer.sanitize("hello\u0000world".getBytes())).isEqualTo("hello\\u0000world");
         assertThat(Sanitizer.sanitize("hello\\u0000world".getBytes())).isEqualTo("hello\\u0000world");
         assertThat(Sanitizer.sanitize("hello\u0000\u0000\\u0000world".getBytes())).isEqualTo("hello\\u0000\\u0000\\u0000world");
+
+        assertThat(Sanitizer.sanitize("hello\u0000world")).isEqualTo("hello\\u0000world");
+        assertThat(Sanitizer.sanitize("hello\\u0000world")).isEqualTo("hello\\u0000world");
+        assertThat(Sanitizer.sanitize("hello\u0000\u0000\\u0000world")).isEqualTo("hello\\u0000\\u0000\\u0000world");
     }
 }

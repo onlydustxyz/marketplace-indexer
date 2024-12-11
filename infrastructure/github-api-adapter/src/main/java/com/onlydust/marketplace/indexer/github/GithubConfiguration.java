@@ -1,20 +1,34 @@
 package com.onlydust.marketplace.indexer.github;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.onlydust.marketplace.indexer.github.adapters.GithubAppContextAdapter;
-import com.onlydust.marketplace.indexer.github.adapters.GithubAppJwtTokenProvider;
-import onlydust.com.marketplace.kernel.infrastructure.github.GithubAppJwtBuilder;
+import java.net.http.HttpClient;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.http.HttpClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.TextNode;
+import com.onlydust.marketplace.indexer.github.adapters.GithubAppContextAdapter;
+import com.onlydust.marketplace.indexer.github.adapters.GithubAppJwtTokenProvider;
+
+import onlydust.com.marketplace.kernel.infrastructure.github.GithubAppJwtBuilder;
 
 @Configuration
 public class GithubConfiguration {
+    private static class UnicodeSpecialCharHandler extends JsonNodeFactory {
+        @Override
+        public TextNode textNode(String text) {
+            return super.textNode(Sanitizer.sanitize(text));
+        }
+    }
+
     @Bean
     public ObjectMapper objectMapper() {
-        return JsonMapper.builder().findAndAddModules().build();
+        return JsonMapper.builder()
+            .findAndAddModules()
+            .nodeFactory(new UnicodeSpecialCharHandler())
+            .build();
     }
 
     @Bean
