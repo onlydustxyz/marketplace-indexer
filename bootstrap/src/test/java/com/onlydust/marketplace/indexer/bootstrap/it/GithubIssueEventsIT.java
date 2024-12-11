@@ -1,5 +1,13 @@
 package com.onlydust.marketplace.indexer.bootstrap.it;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static java.util.Comparator.comparing;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.ContributionEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubIssueEntity;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubLabelEntity;
@@ -8,14 +16,8 @@ import com.onlydust.marketplace.indexer.postgres.repositories.exposition.Contrib
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueAssigneeRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.GithubIssueRepository;
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.RepoContributorRepository;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static java.util.Comparator.comparing;
-import static org.assertj.core.api.Assertions.assertThat;
+import jakarta.transaction.Transactional;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GithubIssueEventsIT extends IntegrationTest {
@@ -140,5 +142,14 @@ public class GithubIssueEventsIT extends IntegrationTest {
         // Then
         assertThat(githubIssueRepository.findById(ISSUE_ID)).isEmpty();
         assertThat(githubIssueAssigneeRepository.findAllByIssueId(ISSUE_ID)).isEmpty();
+    }
+
+    @Test
+    @Order(5)
+    @Transactional
+    void should_handle_issue_event_with_special_characters() {
+        // When
+        processEventsFromPaths("issues",
+                "/github/webhook/events/issues/issue-event-with-special-characters.json");
     }
 }
