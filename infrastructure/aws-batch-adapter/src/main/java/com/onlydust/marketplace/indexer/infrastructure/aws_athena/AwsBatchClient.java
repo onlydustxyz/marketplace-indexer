@@ -2,8 +2,10 @@ package com.onlydust.marketplace.indexer.infrastructure.aws_athena;
 
 import lombok.Data;
 import software.amazon.awssdk.services.batch.BatchClient;
-import software.amazon.awssdk.services.batch.model.ContainerOverrides;
+import software.amazon.awssdk.services.batch.model.EcsPropertiesOverride;
 import software.amazon.awssdk.services.batch.model.SubmitJobRequest;
+import software.amazon.awssdk.services.batch.model.TaskContainerOverrides;
+import software.amazon.awssdk.services.batch.model.TaskPropertiesOverride;
 
 public class AwsBatchClient {
     final BatchClient client;
@@ -19,8 +21,13 @@ public class AwsBatchClient {
                 .jobName(jobName)
                 .jobDefinition(properties.jobDefinition)
                 .jobQueue(properties.queue)
-                .containerOverrides(ContainerOverrides.builder()
-                        .command(args)
+                .ecsPropertiesOverride(EcsPropertiesOverride.builder()
+                        .taskProperties(TaskPropertiesOverride.builder()
+                                .containers(TaskContainerOverrides.builder()
+                                        .name(properties.containerName)
+                                        .command(args)
+                                        .build())
+                                .build())
                         .build())
                 .build());
     }
@@ -29,5 +36,6 @@ public class AwsBatchClient {
     public static class Properties {
         String queue;
         String jobDefinition;
+        String containerName;
     }
 }

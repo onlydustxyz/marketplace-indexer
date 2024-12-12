@@ -23,6 +23,7 @@ infrastructure:
     batch:
       queue: ${AWS_BATCH_QUEUE}
       job-definition: ${AWS_BATCH_JOB_DEFINITION}
+      container-name: ${AWS_BATCH_CONTAINER_NAME}
 
 application:
   web:
