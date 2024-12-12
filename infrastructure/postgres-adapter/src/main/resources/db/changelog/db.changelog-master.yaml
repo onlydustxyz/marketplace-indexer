@@ -135,3 +135,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000065_add_missing_indexes.sql
   - include:
       file: db/changelog/changelogs/00000066_add_follower_count.sql
+  - include:
+      file: db/changelog/changelogs/00000067_add_github_label_index.sql
