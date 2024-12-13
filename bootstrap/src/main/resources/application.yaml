@@ -20,6 +20,9 @@ infrastructure:
       polling-interval: ${AWS_GHA_POLLING_INTERVAL}
       region: ${AWS_REGION}
       catalog: ${AWS_GHA_CATALOG}
+      max-results: 1000
+      parallel-queries: 4
+      batch-size: 900
     batch:
       queue: ${AWS_BATCH_QUEUE}
       job-definition: ${AWS_BATCH_JOB_DEFINITION}

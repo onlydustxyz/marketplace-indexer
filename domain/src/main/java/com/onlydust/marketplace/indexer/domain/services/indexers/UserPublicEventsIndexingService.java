@@ -30,6 +30,7 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
 
     private final PullRequestIndexer pullRequestIndexer;
     private final IssueIndexer issueIndexer;
+
     @Override
     public void indexUser(final @NonNull Long userId, final @NonNull ZonedDateTime since) {
         LOGGER.info("Indexing public events for user {} since {}", userId, since);
@@ -41,9 +42,9 @@ public class UserPublicEventsIndexingService implements UserPublicEventsIndexer 
     public void indexAllUsers(final @NonNull ZonedDateTime timestamp) {
         final var userIds = userPublicEventsIndexingJobStorage.all();
         LOGGER.info("Indexing public events for {} users at {}", userIds.size(), timestamp);
-        publicEventRawStorageReader.allPublicEvents(timestamp)
-                .filter(event -> userIds.contains(event.actor().getId()))
-                .forEach(this::index);
+        
+        publicEventRawStorageReader.allPublicEvents(timestamp, userIds.stream().toList())
+            .forEach(this::index);
     }
 
     private void index(final @NonNull RawPublicEvent event) {

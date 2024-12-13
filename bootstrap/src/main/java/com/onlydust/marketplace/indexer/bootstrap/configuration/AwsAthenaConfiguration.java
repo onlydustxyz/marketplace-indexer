@@ -1,12 +1,13 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
-import com.onlydust.marketplace.indexer.infrastructure.aws_athena.AwsAthenaClient;
-import com.onlydust.marketplace.indexer.infrastructure.aws_athena.adapters.AwsAthenaPublicEventRawStorageReaderAdapter;
+import java.util.concurrent.Executors;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.concurrent.Executors;
+import com.onlydust.marketplace.indexer.infrastructure.aws_athena.AwsAthenaClient;
+import com.onlydust.marketplace.indexer.infrastructure.aws_athena.adapters.AwsAthenaPublicEventRawStorageReaderAdapter;
 
 @Configuration
 public class AwsAthenaConfiguration {
@@ -23,7 +24,7 @@ public class AwsAthenaConfiguration {
     }
 
     @Bean
-    public AwsAthenaPublicEventRawStorageReaderAdapter awsAthenaPublicEventRawStorageReaderAdapter(final AwsAthenaClient awsAthenaClient) {
-        return new AwsAthenaPublicEventRawStorageReaderAdapter(awsAthenaClient);
+    public AwsAthenaPublicEventRawStorageReaderAdapter awsAthenaPublicEventRawStorageReaderAdapter(final AwsAthenaClient awsAthenaClient, final AwsAthenaClient.Properties awsAthenaProperties) {
+        return new AwsAthenaPublicEventRawStorageReaderAdapter(awsAthenaClient, awsAthenaProperties);
     }
 }

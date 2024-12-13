@@ -1,8 +1,5 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
-import java.time.ZonedDateTime;
-import java.util.stream.Stream;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +8,6 @@ import org.springframework.core.task.TaskExecutor;
 import com.onlydust.marketplace.indexer.domain.models.clean.*;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.*;
-import com.onlydust.marketplace.indexer.domain.models.raw.public_events.RawPublicEvent;
 import com.onlydust.marketplace.indexer.domain.ports.in.Exposer;
 import com.onlydust.marketplace.indexer.domain.ports.in.contexts.GithubAppContext;
 import com.onlydust.marketplace.indexer.domain.ports.in.events.EventHandler;
@@ -39,7 +35,6 @@ import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredPull
 import com.onlydust.marketplace.indexer.domain.services.monitoring.MonitoredUserIndexer;
 import com.onlydust.marketplace.indexer.domain.services.observers.GithubOutboxObserver;
 import com.onlydust.marketplace.indexer.domain.services.observers.IndexingOutboxObserver;
-import com.onlydust.marketplace.indexer.infrastructure.aws_athena.AwsAthenaClient;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresCommitIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRepoIndexingJobStorage;
@@ -99,21 +94,8 @@ public class DomainConfiguration {
 
     @Bean
     PublicEventRawStorageReader livePublicEventRawStorageReader(
-            final AwsAthenaClient.Properties awsAthenaProperties,
             final PublicEventRawStorageReader awsAthenaPublicEventRawStorageReaderAdapter
     ) {
-        if (awsAthenaProperties.getDatabase() == null)
-            return new PublicEventRawStorageReader() {
-                @Override
-                public Stream<RawPublicEvent> userPublicEvents(Long userId, ZonedDateTime since) {
-                    return Stream.empty();
-                }
-
-                @Override
-                public Stream<RawPublicEvent> allPublicEvents(ZonedDateTime timestamp) {
-                    return Stream.empty();
-                }
-            };
         return awsAthenaPublicEventRawStorageReaderAdapter;
     }
 
