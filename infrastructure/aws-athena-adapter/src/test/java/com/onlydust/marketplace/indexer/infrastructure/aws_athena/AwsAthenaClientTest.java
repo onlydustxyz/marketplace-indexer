@@ -1,16 +1,17 @@
 package com.onlydust.marketplace.indexer.infrastructure.aws_athena;
 
-import com.onlydust.marketplace.indexer.infrastructure.aws_athena.adapters.AwsAthenaPublicEventRawStorageReaderAdapter;
-import software.amazon.awssdk.regions.Region;
-
 import java.time.ZonedDateTime;
 import java.util.concurrent.Executors;
 
-class AwsAthenaClientTest {
-    private final AwsAthenaClient client = new AwsAthenaClient(Executors.newSingleThreadScheduledExecutor(),
-            new AwsAthenaClient.Properties(Region.EU_WEST_3, "gha_db", "116981777789", "s3://gha-athena-results", 1));
+import com.onlydust.marketplace.indexer.infrastructure.aws_athena.adapters.AwsAthenaPublicEventRawStorageReaderAdapter;
 
-    private final AwsAthenaPublicEventRawStorageReaderAdapter adapter = new AwsAthenaPublicEventRawStorageReaderAdapter(client);
+import software.amazon.awssdk.regions.Region;
+
+class AwsAthenaClientTest {
+    private final AwsAthenaClient.Properties properties = new AwsAthenaClient.Properties(Region.EU_WEST_3, "gha_db", "116981777789", "s3://gha-athena-results", 1, 1000, 4, 900);
+    private final AwsAthenaClient client = new AwsAthenaClient(Executors.newSingleThreadScheduledExecutor(), properties);
+
+    private final AwsAthenaPublicEventRawStorageReaderAdapter adapter = new AwsAthenaPublicEventRawStorageReaderAdapter(client, properties);
 
     //    @Test
     void query() {

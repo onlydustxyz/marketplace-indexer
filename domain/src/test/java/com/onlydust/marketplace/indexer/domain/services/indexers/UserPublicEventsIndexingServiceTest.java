@@ -120,7 +120,7 @@ class UserPublicEventsIndexingServiceTest {
         void should_index_all_users_for_given_timestamp() {
             // Given
             when(userPublicEventsIndexingJobStorage.all()).thenReturn(userIds);
-            when(publicEventRawStorageReader.allPublicEvents(timestamp)).thenReturn(Arrays.stream(events));
+            when(publicEventRawStorageReader.allPublicEvents(timestamp, userIds.stream().toList())).thenReturn(Arrays.stream(events));
 
             // When
             indexer.indexAllUsers(timestamp);
@@ -153,7 +153,7 @@ class UserPublicEventsIndexingServiceTest {
         void should_fail_upon_exception() {
             // Given
             when(userPublicEventsIndexingJobStorage.all()).thenReturn(userIds);
-            when(publicEventRawStorageReader.allPublicEvents(timestamp)).thenReturn(Arrays.stream(events));
+            when(publicEventRawStorageReader.allPublicEvents(timestamp, userIds.stream().toList())).thenReturn(Arrays.stream(events));
             doThrow(new RuntimeException("Failed to index pull request")).when(pullRequestIndexer).indexPullRequest(any(), any(), anyLong());
 
             // When
