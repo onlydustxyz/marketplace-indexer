@@ -137,3 +137,5 @@ databaseChangeLog:
       file: db/changelog/changelogs/00000066_add_follower_count.sql
   - include:
       file: db/changelog/changelogs/00000067_add_github_label_index.sql
+  - include:
+      file: db/changelog/changelogs/00000068_add_processing_event_status.sql

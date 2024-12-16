@@ -10,6 +10,7 @@ import com.onlydust.marketplace.indexer.postgres.repositories.UserPublicEventsIn
 import com.onlydust.marketplace.indexer.postgres.repositories.exposition.*;
 import com.onlydust.marketplace.indexer.postgres.repositories.raw.*;
 import io.hypersistence.utils.spring.repository.BaseJpaRepositoryImpl;
+import onlydust.com.marketplace.kernel.infrastructure.postgres.PostgresOutboxAdapter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
