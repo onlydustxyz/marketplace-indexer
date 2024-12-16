@@ -26,13 +26,17 @@ public class AwsAthenaClient {
     private final ScheduledExecutorService executor;
     private final Semaphore queryLimiter;
 
-    public AwsAthenaClient(final ScheduledExecutorService executor, final Properties properties) {
+    public AwsAthenaClient(final ScheduledExecutorService executor, final Properties properties, final AthenaClient athenaClient) {
         this.executor = executor;
         this.properties = properties;
-        this.client = AthenaClient.builder()
-                .region(properties.region)
-                .build();
+        this.client = athenaClient;
         this.queryLimiter = new Semaphore(properties.parallelQueries);
+    }
+
+    public AwsAthenaClient(final ScheduledExecutorService executor, final Properties properties) {
+        this(executor, properties, AthenaClient.builder()
+                .region(properties.region)
+                .build());
     }
 
     public CompletableFuture<GetQueryResultsIterable> query(final String query, String... args) {
