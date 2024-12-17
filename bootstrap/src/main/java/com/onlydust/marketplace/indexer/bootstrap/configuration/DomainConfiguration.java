@@ -1,10 +1,5 @@
 package com.onlydust.marketplace.indexer.bootstrap.configuration;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.TaskExecutor;
-
 import com.onlydust.marketplace.indexer.domain.models.clean.*;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawStarEvent;
 import com.onlydust.marketplace.indexer.domain.models.raw.github_app_events.*;
@@ -39,10 +34,13 @@ import com.onlydust.marketplace.indexer.postgres.adapters.PostgresCommitIndexing
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRawStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresRepoIndexingJobStorage;
 import com.onlydust.marketplace.indexer.postgres.adapters.PostgresUserIndexingJobStorage;
-
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import onlydust.com.marketplace.kernel.port.output.OutboxPort;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 
 @Slf4j
 @Configuration
@@ -200,6 +198,16 @@ public class DomainConfiguration {
         return new MonitoredUserIndexer(
                 new UserExposerIndexer(
                         new UserIndexingService(diffRawStorageReader), userExposer),
+                registry);
+    }
+
+    @Bean
+    public UserIndexer liveUserIndexer(final RawStorageReader liveRawStorageReader,
+                                       final MeterRegistry registry,
+                                       final Exposer<CleanAccount> userExposer) {
+        return new MonitoredUserIndexer(
+                new UserExposerIndexer(
+                        new UserIndexingService(liveRawStorageReader), userExposer),
                 registry);
     }
 

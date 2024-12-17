@@ -29,6 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -39,6 +40,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -107,32 +109,34 @@ public class IntegrationTest {
     }
 
     protected URI getApiURI(final String path) {
-        return UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host("localhost")
-                .port(port)
-                .path(path)
-                .build()
-                .toUri();
+        return getApiURI(path, Map.of());
     }
 
     protected URI getApiURI(final String path, String paramName, String paramValue) {
+        return getApiURI(path, Map.of(paramName, List.of(paramValue)));
+    }
+
+    protected URI getApiURI(final String path, Map<String, List<String>> queryParams) {
         return UriComponentsBuilder.newInstance()
                 .scheme("http")
                 .host("localhost")
                 .port(port)
                 .path(path)
-                .queryParam(paramName, paramValue)
+                .queryParams(CollectionUtils.toMultiValueMap(queryParams))
                 .build()
                 .toUri();
     }
 
     protected WebTestClient.ResponseSpec put(final String path) {
-        return client.put().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY").exchange();
+        return put(path, Map.of());
     }
 
     protected WebTestClient.ResponseSpec put(final String path, Map<String, String> headers) {
-        final var request = client.put().uri(getApiURI(path)).header("Api-Key", "BACKEND_API_KEY");
+        return put(path, Map.of(), headers);
+    }
+
+    protected WebTestClient.ResponseSpec put(final String path, Map<String, List<String>> queryParams, Map<String, String> headers) {
+        final var request = client.put().uri(getApiURI(path, queryParams)).header("Api-Key", "BACKEND_API_KEY");
         headers.forEach(request::header);
         return request.exchange();
     }
