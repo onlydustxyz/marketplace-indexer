@@ -113,6 +113,13 @@ paths:
           description: The ID of the user to add
           schema:
             $ref: '#/components/schemas/UserId'
+        - in: query
+          name: forceRefresh
+          required: false
+          description: Forces the indexer to refresh user data without using the cache
+          schema:
+            type: boolean
+            default: false
       responses:
         "204":
           description: 'User indexed successfully'

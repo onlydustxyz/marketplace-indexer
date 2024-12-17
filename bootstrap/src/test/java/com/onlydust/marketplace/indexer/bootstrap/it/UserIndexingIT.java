@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import com.onlydust.marketplace.indexer.bootstrap.it.helpers.DatabaseHelper;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawAccount;
 import com.onlydust.marketplace.indexer.domain.models.raw.RawSocialAccount;
 import com.onlydust.marketplace.indexer.postgres.entities.exposition.GithubAccountEntity;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -48,6 +50,8 @@ public class UserIndexingIT extends IntegrationTest {
     GithubAccountEntityRepository githubAccountEntityRepository;
     @Autowired
     UserIndexingJobEntityRepository userIndexingJobEntityRepository;
+    @Autowired
+    DatabaseHelper databaseHelper;
 
     @BeforeEach
     void setup() {
@@ -63,7 +67,7 @@ public class UserIndexingIT extends IntegrationTest {
         final Long ANTHONY = 43467246L;
 
         // When
-        final var response = indexUser(ANTHONY);
+        final var response = indexUser(ANTHONY, false);
 
         // Then
         response.expectStatus().isNoContent();
@@ -106,7 +110,7 @@ public class UserIndexingIT extends IntegrationTest {
         failureStub.apply("Second failure", "Third failure");
 
         // When
-        indexUser(ANTHONY)
+        indexUser(ANTHONY, false)
                 // Then
                 .expectStatus()
                 .isNoContent();
@@ -114,7 +118,53 @@ public class UserIndexingIT extends IntegrationTest {
         githubWireMockServer.verify(4, getRequestedFor(urlEqualTo("/user/" + ANTHONY)));
     }
 
-    private WebTestClient.ResponseSpec indexUser(Long userId) {
-        return put("/api/v1/users/" + userId, Map.of("Authorization", "Bearer ghp_GITHUB_USER_PAT"));
+    @Test
+    public void should_take_user_from_cache() throws IOException {
+        // Given
+        final Long ANTHONY = 43467246L;
+        indexUser(ANTHONY, false).expectStatus().isNoContent();
+        databaseHelper.executeQuery("""
+                update indexer_raw.users set login = 'AnthonyBuissetYOLO', data = jsonb_set(data, '{login}', '"AnthonyBuissetYOLO"')
+                                         where id = 43467246;
+                """, Map.of());
+
+        // When
+        final var response = indexUser(ANTHONY, false);
+
+        // Then
+        response.expectStatus().isNoContent();
+
+        final var user = githubAccountEntityRepository.findById(ANTHONY);
+        assertThat(user).isPresent();
+        assertThat(user.get().getId()).isEqualTo(ANTHONY);
+        assertThat(user.get().getLogin()).isEqualTo("AnthonyBuissetYOLO");
+    }
+
+    @Test
+    public void should_not_take_user_from_cache_when_forceRefresh_is_true() throws IOException {
+        // Given
+        final Long ANTHONY = 43467246L;
+        indexUser(ANTHONY, false).expectStatus().isNoContent();
+        databaseHelper.executeQuery("""
+                update indexer_raw.users set login = 'AnthonyBuissetYOLO', data = jsonb_set(data, '{login}', '"AnthonyBuissetYOLO"')
+                                         where id = 43467246;
+                """, Map.of());
+
+        // When
+        final var response = indexUser(ANTHONY, true);
+
+        // Then
+        response.expectStatus().isNoContent();
+
+        final var user = githubAccountEntityRepository.findById(ANTHONY);
+        assertThat(user).isPresent();
+        assertThat(user.get().getId()).isEqualTo(ANTHONY);
+        assertThat(user.get().getLogin()).isEqualTo("AnthonyBuisset");
+    }
+
+    private WebTestClient.ResponseSpec indexUser(Long userId, Boolean forceRefresh) {
+        return put("/api/v1/users/" + userId,
+                Map.of("forceRefresh", List.of(forceRefresh.toString())),
+                Map.of("Authorization", "Bearer ghp_GITHUB_USER_PAT"));
     }
 }
